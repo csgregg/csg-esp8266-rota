@@ -10,6 +10,7 @@ env:
 
 install:
 - pip install -U platformio
+- platformio lib install WiFiManager
 script:
 - platformio run -e csg-esp8266-rota-ota
 
