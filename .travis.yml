@@ -1,67 +1,26 @@
-# Continuous Integration (CI) is the practice, in software
-# engineering, of merging all developer working copies with a shared mainline
-# several times a day < https://docs.platformio.org/page/ci/index.html >
-#
-# Documentation:
-#
-# * Travis CI Embedded Builds with PlatformIO
-#   < https://docs.travis-ci.com/user/integration/platformio/ >
-#
-# * PlatformIO integration with Travis CI
-#   < https://docs.platformio.org/page/ci/travis.html >
-#
-# * User Guide for `platformio ci` command
-#   < https://docs.platformio.org/page/userguide/cmd_ci.html >
-#
-#
-# Please choose one of the following templates (proposed below) and uncomment
-# it (remove "# " before each line) or use own configuration according to the
-# Travis CI documentation (see above).
-#
+language: python
+python:
+- '2.7'
+sudo: false
+cache:
+  directories:
+  - ~/.platformio
+env:
+- PLATFORMIO_CI_SRC=src/
 
+install:
+- pip install -U platformio
+script:
+- platformio run -e csg-esp8266-rota-ota
 
-#
-# Template #1: General project. Test it using existing `platformio.ini`.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# install:
-#     - pip install -U platformio
-#     - platformio update
-#
-# script:
-#     - platformio run
-
-
-#
-# Template #2: The project is intended to be used as a library with examples.
-#
-
-# language: python
-# python:
-#     - "2.7"
-#
-# sudo: false
-# cache:
-#     directories:
-#         - "~/.platformio"
-#
-# env:
-#     - PLATFORMIO_CI_SRC=path/to/test/file.c
-#     - PLATFORMIO_CI_SRC=examples/file.ino
-#     - PLATFORMIO_CI_SRC=path/to/test/directory
-#
-# install:
-#     - pip install -U platformio
-#     - platformio update
-#
-# script:
-#     - platformio ci --lib="." --board=ID_1 --board=ID_2 --board=ID_N
+deploy:
+  provider: releases
+  overwrite: true
+  skip_cleanup: true
+  on:
+    repo: csgregg/csg-esp8266-rota
+    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
+    branch: master
+  api_key:
+    secure: Xx5JIGkkOUYyNXXYlVk5kLTwTUZGH4dEZLU4fL4f2Q6mtQZ27YjyVE7N+vYtyHzbkOf+zvfPQrZqHMG6R1XCeuEfZ4EDWOdWHfaViB08SdeHum5o2Etyak38llY8Cp4NZzKxiNokXyuVr4Gq6krD1FLVF5kBpi0iCsZ4LKiN4ddXJH5+X7W1R4w+0N5yCIDyLvTy4grZuYmwtxj4JQHWzgQKzthauB0Gq73YUHBPk62iVRlsM/IWYHgUxPXmIZLVRnEPQCcx8oJuRrTlZUNLGCfpXCq9MJGaMwJqMRo/3eeFdYSS91eCSN5TGWAGjea8EMfZu2WAvGvE4ToJJgPpyurh1U64CauUP9Wca3mp/HudfHd7WZ+y3LAKsUVwNMYUX+4QDdmFpIkNrAKRqFf4TrdRaFiCyq8aTwJwFa6ZkZp2bTXn8RMptRAHgx+5W+sRWyAiRhbPX0TO/j+5c+1obLzucwDF3JkAg5cH2unxAn+5Gx364PycBccmliXWOPtCM7LhtLvG6g/niyJszvNf5IzzquoYovRnW0+3Dfj5Ffh5+r8AjSWV9meBa+990qrFr6HcunrJEbJVjvxe/tKKFAEjCJMDRtAd43SKcAgujDllSZgYigbubqL9caAHCu76fax0OVdlITiz5z5oyMzy1MVmkPIEpt25cD+PEoPA+iY=
+  file: "".pio/build/csg-esp8266-rota-ota/firmware.bin
