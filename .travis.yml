@@ -20,7 +20,6 @@ deploy:
   skip_cleanup: true
   on:
     repo: csgregg/csg-esp8266-rota
-    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
     all_branches: true
   api_key:
     secure: Xx5JIGkkOUYyNXXYlVk5kLTwTUZGH4dEZLU4fL4f2Q6mtQZ27YjyVE7N+vYtyHzbkOf+zvfPQrZqHMG6R1XCeuEfZ4EDWOdWHfaViB08SdeHum5o2Etyak38llY8Cp4NZzKxiNokXyuVr4Gq6krD1FLVF5kBpi0iCsZ4LKiN4ddXJH5+X7W1R4w+0N5yCIDyLvTy4grZuYmwtxj4JQHWzgQKzthauB0Gq73YUHBPk62iVRlsM/IWYHgUxPXmIZLVRnEPQCcx8oJuRrTlZUNLGCfpXCq9MJGaMwJqMRo/3eeFdYSS91eCSN5TGWAGjea8EMfZu2WAvGvE4ToJJgPpyurh1U64CauUP9Wca3mp/HudfHd7WZ+y3LAKsUVwNMYUX+4QDdmFpIkNrAKRqFf4TrdRaFiCyq8aTwJwFa6ZkZp2bTXn8RMptRAHgx+5W+sRWyAiRhbPX0TO/j+5c+1obLzucwDF3JkAg5cH2unxAn+5Gx364PycBccmliXWOPtCM7LhtLvG6g/niyJszvNf5IzzquoYovRnW0+3Dfj5Ffh5+r8AjSWV9meBa+990qrFr6HcunrJEbJVjvxe/tKKFAEjCJMDRtAd43SKcAgujDllSZgYigbubqL9caAHCu76fax0OVdlITiz5z5oyMzy1MVmkPIEpt25cD+PEoPA+iY=
