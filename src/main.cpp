@@ -13,6 +13,11 @@
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
+
+#ifndef TRAVIS_TAG
+#define TRAVIS_TAG = BUILD_TAG
+#endif
+
 String buildTag = ESCAPEQUOTE(BUILD_TAG);
 
 
