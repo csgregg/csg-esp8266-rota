@@ -41,6 +41,7 @@ void setup() {
     //wifiManager.autoConnect();
     Serial.println("Started..");
     Serial.println("BUILD_TAG: "+ buildTag);
+    Serial.println("Hello Chris");
 
     // don't wanna miss a thing... Check every 120 seconds
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
