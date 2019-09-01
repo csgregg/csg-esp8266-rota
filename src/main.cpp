@@ -7,12 +7,16 @@
 #include <ESP8266httpUpdate.h>
 #include <Ticker.h>
 
-#define CHECK_INTERVAL 60
-// Stringifying the BUILD_TAG parameter
+#define CHECK_INTERVAL 120
+
+
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
 String buildTag = ESCAPEQUOTE(BUILD_TAG);
+
+
+
 ESP8266WiFiMulti WiFiMulti;
 Ticker updateCheck;
 boolean doUpdateCheck = true;
@@ -38,7 +42,7 @@ void setup() {
     Serial.println("Started..");
     Serial.println("BUILD_TAG: "+ buildTag);
 
-    // don't wanna miss a thing... Check every 60 seconds
+    // don't wanna miss a thing... Check every 120 seconds
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
 }
 
