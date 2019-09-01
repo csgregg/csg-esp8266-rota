@@ -13,14 +13,7 @@
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
-/*
-#ifndef BUILD_TAG
-#define BUILD_TAG = 0.0.0
-#endif
-*/
 String buildTag = ESCAPEQUOTE(BUILD_TAG);
-
-
 
 ESP8266WiFiMulti WiFiMulti;
 Ticker updateCheck;
