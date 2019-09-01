@@ -36,7 +36,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println("BUILD_TAG: "+ buildTag);
     Serial.println("Now starting...");
-    
+
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
@@ -48,7 +48,7 @@ void setup() {
     //wifiManager.autoConnect();
     Serial.println("Started..");
 
-    Serial.println("Hello Chris");
+    Serial.println("Hello C");
 
     // don't wanna miss a thing... Check every 120 seconds
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
