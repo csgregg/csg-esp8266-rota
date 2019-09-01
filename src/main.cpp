@@ -34,7 +34,9 @@ void setup() {
 
     // put your setup code here, to run once:
     Serial.begin(115200);
+    Serial.println("BUILD_TAG: "+ buildTag);
     Serial.println("Now starting...");
+    
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
@@ -45,7 +47,7 @@ void setup() {
     //or use this for auto generated name ESP + ChipID
     //wifiManager.autoConnect();
     Serial.println("Started..");
-    Serial.println("BUILD_TAG: "+ buildTag);
+
     Serial.println("Hello Chris");
 
     // don't wanna miss a thing... Check every 120 seconds
