@@ -9,7 +9,6 @@
 
 #define CHECK_INTERVAL 120
 
-
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
