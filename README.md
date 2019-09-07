@@ -3,8 +3,11 @@
  Uses:
  - PlatformIO IDE
  - GitHub public repos
- - Travis-CI.org for 
+ - Travis-CI.org for CI
+
+## Setup
+**PlatformIO**
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIyMjk3OTE5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
