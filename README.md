@@ -2,20 +2,17 @@
 A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
 Releases tagged in GitHub matching x.x.x release tags will be built by Travis, and the binary stored back as an asset in the release in GitHub.
 Since GitHub uses SSL and it's not supported in the ESP8266, the HTTPUpdate library in the ESP8266 code calls a redirect script to deliver the binary for the firmware update. 
- 
-Uses:
- - PlatformIO IDE
- - GitHub public repos
- - Travis-CI.org for CI
 
 ## Setup
 **PlatformIO**
+
 Add PlatformIO extension to VSCode. Install Git.
  - Create project in PlatformIO
  - Setup build environments - see [platformio.ini](platformio.ini)
  -  Add script to dynamically name binary output file - [extra_script.py](extra_script.py)
 
 **Github**
+
  - Create repository in GitHub
  - Make public
  - Skip step to import an existing repository
@@ -43,7 +40,7 @@ Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-e
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3MzU5NjU0OSwxOTgyNTY2NzE5LDcxND
-EyOTE5NiwyODI2NTQ5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAs
-LTU2ODA4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbLTExNTkwOTc4NTEsMTk4MjU2NjcxOSw3MT
+QxMjkxOTYsMjgyNjU0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQw
+LC01NjgwODg5MjksLTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
