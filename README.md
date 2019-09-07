@@ -1,5 +1,6 @@
 # ESP8266 Remote OTA CI using PlatformIO, Github and Travis
-A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 with Continuous Integration. Releases tagged in GitHub matching x.x.x release tags will be built by Travis, and the binary stored back as an asset in the release in GitHub.
+A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
+Releases tagged in GitHub matching x.x.x release tags will be built by Travis, and the binary stored back as an asset in the release in GitHub.
 Since GitHub uses SSL and it's not supported in the ESP8266, the HTTPUpdate library in the ESP8266 code calls a redirect script to deliver the binary for the firmware update. 
  
 Uses:
@@ -27,7 +28,8 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 
  - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
- - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](.travis.yml) file. Update the rest of the YML file
+ - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](.travis.yml) file
+ - Update the rest of the YML file
 
 
 Useful links -
@@ -35,10 +37,11 @@ Useful links -
  - [http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/](http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/)
  - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
 
+Create 
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg4MzczNTgwLDcxNDEyOTE5NiwyODI2NT
-Q5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwt
-MTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTg4MjI4MDYwNiw3MTQxMjkxOTYsMjgyNj
+U0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5Mjks
+LTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
