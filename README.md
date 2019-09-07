@@ -16,11 +16,12 @@ Uses:
 **Github**
  - Create repository in GitHub 
 		 - Make public
-		 - Skip this step to import an existing repository
+		 - Skip step to import an existing repository
+		 - Use
 
 Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTgwMDUzMTQ1NCwxMDAwODg2NjQwLC01Nj
-gwODg5MjksLTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
+eyJoaXN0b3J5IjpbOTA1MTY1Nzc4LDEwMDA4ODY2NDAsLTU2OD
+A4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
