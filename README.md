@@ -26,6 +26,7 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
  - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
  - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](https://github.com/csgregg/csg-esp8266-rota/blob/master/.travis.yml) file.
+ - The binary is created with a dynamic filename
 
 Useful links -
 
@@ -35,7 +36,7 @@ Useful links -
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTEwMTk0NDMyLDcxNDEyOTE5NiwyODI2NT
+eyJoaXN0b3J5IjpbNTA5NjM2NzM0LDcxNDEyOTE5NiwyODI2NT
 Q5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwt
 MTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
