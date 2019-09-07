@@ -18,13 +18,15 @@ Uses:
 > .. any common options such as include libraries
 >
 >[env]
-
-`
+>platform = espressif8266
+>board = d1_mini
+>framework = arduino
+[env
     
 
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjI5NzgyNTEwLC01NjgwODg5MjksLTExNz
-UzMTM0NTksLTE2NTE4NTMwXX0=
+eyJoaXN0b3J5IjpbMjEyNTIyMDgwNywtNTY4MDg4OTI5LC0xMT
+c1MzEzNDU5LC0xNjUxODUzMF19
 -->
