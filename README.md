@@ -28,7 +28,7 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 
  - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
- - Seed the encrypted OAuth token in the [travis.yml](.travis.yml) file using `travis setup releases` from the local repo folder.
+ - Seed the encrypted OAuth token in the [travis.yml](.travis.yml) file using `travis setup releases` from the local repo folder
  - Update the rest of the YML file
 
 
@@ -43,7 +43,7 @@ Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-e
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTU3NTc5NzMwOSwxOTgyNTY2NzE5LDcxND
+eyJoaXN0b3J5IjpbLTE3MzU5NjU0OSwxOTgyNTY2NzE5LDcxND
 EyOTE5NiwyODI2NTQ5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAs
 LTU2ODA4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
