@@ -8,6 +8,7 @@ Uses:
 
 ## Setup
 **PlatformIO**
+Add PlatformIO extension to VSCode. Install Git.
  - Create project in PlatformIO
  - Setup build environments - see [platformio.ini](https://github.com/csgregg/csg-esp8266-rota/blob/master/platformio.ini)
 		 - Local builds
@@ -17,11 +18,11 @@ Uses:
  - Create repository in GitHub 
 		 - Make public
 		 - Skip step to import an existing repository
-		 - Use
+		 - Use command line to add remote to local Git repo
 
 Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTA1MTY1Nzc4LDEwMDA4ODY2NDAsLTU2OD
+eyJoaXN0b3J5IjpbOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2OD
 A4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
