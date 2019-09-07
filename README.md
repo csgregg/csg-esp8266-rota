@@ -10,23 +10,15 @@ Uses:
 **PlatformIO**
 
  - Create project in PlatformIO
- - Setup build environments
+ - Setup build environments - see 
 		 - Local builds
 		 - Travis builds 
 
-> [common]
-> .. any common options such as include libraries
->
->[env]
->platform = espressif8266
->board = d1_mini
->framework = arduino
-[env
     
 
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjEyNTIyMDgwNywtNTY4MDg4OTI5LC0xMT
+eyJoaXN0b3J5IjpbMTM0MDMzNDQ0MSwtNTY4MDg4OTI5LC0xMT
 c1MzEzNDU5LC0xNjUxODUzMF19
 -->
