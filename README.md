@@ -14,14 +14,17 @@ Uses:
 		 - Local builds
 		 - Travis builds 
 
- 
-
-> asdasdasda
+> [common]
+> .. any common options such as include libraries
+>
+>[env]
 
 `
     
 
+
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTY0NjQ3MTQ2MiwtNTY4MDg4OTI5LC0xMT
-c1MzEzNDU5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbMjI5NzgyNTEwLC01NjgwODg5MjksLTExNz
+UzMTM0NTksLTE2NTE4NTMwXX0=
 -->
