@@ -22,7 +22,11 @@ Add PlatformIO extension to VSCode. Install Git.
 
 Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
+**Travis-CI**
+Install Ruby and Travis locally
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2OD
-A4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTk2NDEzNDYwNyw5MzU3ODIzNDYsMTAwMD
+g4NjY0MCwtNTY4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNjUxODUz
+MF19
 -->
