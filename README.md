@@ -25,15 +25,15 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 **Travis-CI**
 
  - Install Ruby and Travis locally
- - Create encrypted OAuth token using travis setup releases and seed the 
+ - Create encrypted OAuth token using `travis setup releases` and seed the token in the travis.yml file.
 
 Useful links -
 
  - [http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/](http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/)
-
+ - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI3Nzg4OTExMCw5MzU3ODIzNDYsMTAwMD
-g4NjY0MCwtNTY4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNjUxODUz
-MF19
+eyJoaXN0b3J5IjpbMjgyNjU0OTMyLDkzNTc4MjM0NiwxMDAwOD
+g2NjQwLC01NjgwODg5MjksLTExNzUzMTM0NTksLTE2NTE4NTMw
+XX0=
 -->
