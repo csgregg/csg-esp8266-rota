@@ -8,8 +8,11 @@ Uses:
 
 ## Setup
 **PlatformIO**
-Create project in 
+
+ - Create project in PlatformIO
+ - List item
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI3NzI3NTU2OSwtNTY4MDg4OTI5LC0xMT
+eyJoaXN0b3J5IjpbMTQwNTUxMjc0MSwtNTY4MDg4OTI5LC0xMT
 c1MzEzNDU5LC0xNjUxODUzMF19
 -->
