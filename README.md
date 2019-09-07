@@ -18,9 +18,9 @@ Uses:
 		 - Make public
 		 - Skip this step to import an existing repository
 
-Useful vide
+Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExODUxOTg5MDYsMTAwMDg4NjY0MCwtNT
-Y4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTgwMDUzMTQ1NCwxMDAwODg2NjQwLC01Nj
+gwODg5MjksLTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
