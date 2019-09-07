@@ -37,11 +37,12 @@ Useful links -
  - [http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/](http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/)
  - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
 
-Create 
+**Host Redirect**
+Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-esp8266-rota.php)
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg4MjI4MDYwNiw3MTQxMjkxOTYsMjgyNj
+eyJoaXN0b3J5IjpbMTk4MjU2NjcxOSw3MTQxMjkxOTYsMjgyNj
 U0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5Mjks
 LTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
