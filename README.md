@@ -18,6 +18,7 @@ Add PlatformIO extension to VSCode. Install Git.
  - Make public
  - Skip step to import an existing repository
  - Use command line to add remote to local Git repo
+ - Add README.md and LICENSE as necessary
 
 Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
@@ -25,7 +26,7 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 
  - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
- - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](https://github.com/csgregg/csg-esp8266-rota/blob/master/.travis.yml) file.
+ - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](https://github.com/csgregg/csg-esp8266-rota/blob/master/.travis.yml) file. Update the rest of the YML file
  - The binary is created with a dynamic filename
 
 Useful links -
@@ -36,7 +37,7 @@ Useful links -
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTA5NjM2NzM0LDcxNDEyOTE5NiwyODI2NT
-Q5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwt
-MTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTM3MTE1Nzc0Miw3MTQxMjkxOTYsMjgyNj
+U0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5Mjks
+LTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
