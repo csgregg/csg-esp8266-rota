@@ -15,8 +15,10 @@ Uses:
 
 **Github**
  - Create repository in GitHub 
+		 - Make public
+		 - Skip this step to import an existing repository
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NzE3NDA4NjYsLTU2ODA4ODkyOSwtMT
-E3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTAwMDg4NjY0MCwtNTY4MDg4OTI5LC0xMT
+c1MzEzNDU5LC0xNjUxODUzMF19
 -->
