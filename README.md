@@ -38,11 +38,12 @@ Useful links -
  - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
 
 **Host Redirect**
+
 Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-esp8266-rota.php)
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk4MjU2NjcxOSw3MTQxMjkxOTYsMjgyNj
-U0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5Mjks
-LTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
+eyJoaXN0b3J5IjpbMTUyMTMzODQ3NywxOTgyNTY2NzE5LDcxND
+EyOTE5NiwyODI2NTQ5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAs
+LTU2ODA4ODkyOSwtMTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
