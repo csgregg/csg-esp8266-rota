@@ -1,5 +1,5 @@
 # ESP8266 Remote OTA CI using PlatformIO, Github and Travis
- A basic example of how to set up Over-The-Air firmware updates for ESP8266 with Continuous Integration.
+ A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 with Continuous Integration. Releases tagged in GitHub matching x.x.x release tags will be built by Travis and deployed back to 
  
 Uses:
  - PlatformIO IDE
@@ -24,7 +24,7 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 
  - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
- - Create encrypted OAuth token using `travis setup releases` and seed the token in the travis.yml file.
+ - Create encrypted OAuth token using `travis setup releases` and seed the token in the [travis.yml](https://github.com/csgregg/csg-esp8266-rota/blob/master/.travis.yml) file.
 
 Useful links -
 
@@ -34,7 +34,7 @@ Useful links -
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTI3MzY2NDk3OCw3MTQxMjkxOTYsMjgyNj
+eyJoaXN0b3J5IjpbMTc0NjAzMTMyNyw3MTQxMjkxOTYsMjgyNj
 U0OTMyLDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5Mjks
 LTExNzUzMTM0NTksLTE2NTE4NTMwXX0=
 -->
