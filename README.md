@@ -11,9 +11,17 @@ Uses:
 
  - Create project in PlatformIO
  - Setup build environments
-		 - One for local build
+		 - Local builds
+		 - Travis builds 
+
+ 
+
+> asdasdasda
+
+`
+    
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE4ODM5NDI4MDYsLTU2ODA4ODkyOSwtMT
-E3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTY0NjQ3MTQ2MiwtNTY4MDg4OTI5LC0xMT
+c1MzEzNDU5LC0xNjUxODUzMF19
 -->
