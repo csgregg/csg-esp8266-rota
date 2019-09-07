@@ -10,9 +10,10 @@ Uses:
 **PlatformIO**
 
  - Create project in PlatformIO
- - List item
+ - Setup build environments
+		 - One for local build
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTQwNTUxMjc0MSwtNTY4MDg4OTI5LC0xMT
-c1MzEzNDU5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTE4ODM5NDI4MDYsLTU2ODA4ODkyOSwtMT
+E3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
