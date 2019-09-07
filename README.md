@@ -1,4 +1,4 @@
-# Basic ESP8266 OTA CI using PlatformIO, Github and Travis
+# ESP8266 Remp OTA CI using PlatformIO, Github and Travis
  A basic example of how to set up Over-The-Air firmware updates for ESP8266 with Continuous Integration.
  
 Uses:
@@ -22,6 +22,7 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
 
 **Travis-CI**
 
+ - Link Travis-CI.org account to GitHub
  - Install Ruby and Travis locally
  - Create encrypted OAuth token using `travis setup releases` and seed the token in the travis.yml file.
 
@@ -31,7 +32,7 @@ Useful links -
  - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzE0MTI5MTk2LDI4MjY1NDkzMiw5MzU3OD
-IzNDYsMTAwMDg4NjY0MCwtNTY4MDg4OTI5LC0xMTc1MzEzNDU5
-LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTE2MjIzNTgxNzAsNzE0MTI5MTk2LDI4Mj
+Y1NDkzMiw5MzU3ODIzNDYsMTAwMDg4NjY0MCwtNTY4MDg4OTI5
+LC0xMTc1MzEzNDU5LC0xNjUxODUzMF19
 -->
