@@ -3,7 +3,7 @@ A basic example of how to set up Remote Over-The-Air firmware updates for ESP826
 
 Releases tagged in GitHub matching x.x.x release tags will be built by Travis, and the binary stored back as an asset in the release in GitHub.
 
-Since GitHub uses SSL and it's not supported in the ESP8266, the HTTPUpdate library in the ESP8266 code calls a redirect script to deliver the binary for the firmware update. 
+Since GitHub uses SSL and it's not supported in the ESP8266, the HTTPUpdate library in the ESP8266 code calls a redirect script to deliver the binary for the firmware update from the release asset. 
 
 ## Setup
 **PlatformIO**
@@ -42,8 +42,8 @@ Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-e
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTM4NjI1Mzc1MiwtMTE1OTA5Nzg1MSwxOT
-gyNTY2NzE5LDcxNDEyOTE5NiwyODI2NTQ5MzIsOTM1NzgyMzQ2
-LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwtMTE3NTMxMzQ1OSwtMT
-Y1MTg1MzBdfQ==
+eyJoaXN0b3J5IjpbMTcwNzA3Mzc2LC0zODYyNTM3NTIsLTExNT
+kwOTc4NTEsMTk4MjU2NjcxOSw3MTQxMjkxOTYsMjgyNjU0OTMy
+LDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5MjksLTExNz
+UzMTM0NTksLTE2NTE4NTMwXX0=
 -->
