@@ -18,7 +18,9 @@ Uses:
 		 - Make public
 		 - Skip this step to import an existing repository
 
+Useful vide
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTAwMDg4NjY0MCwtNTY4MDg4OTI5LC0xMT
-c1MzEzNDU5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTExODUxOTg5MDYsMTAwMDg4NjY0MCwtNT
+Y4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNjUxODUzMF19
 -->
