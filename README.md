@@ -12,7 +12,7 @@ Uses:
 Add PlatformIO extension to VSCode. Install Git.
  - Create project in PlatformIO
  - Setup build environments - see [platformio.ini](platformio.ini)
- -  Add script to name dynamic filename - [extra_script.py](extra_script.py)
+ -  Add script to dynamically name binary output file - [extra_script.py](extra_script.py)
 
 **Github**
  - Create repository in GitHub
@@ -38,7 +38,7 @@ Useful links -
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNzc1MTY1NDczLDcxNDEyOTE5NiwyODI2NT
+eyJoaXN0b3J5IjpbMTg4MzczNTgwLDcxNDEyOTE5NiwyODI2NT
 Q5MzIsOTM1NzgyMzQ2LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwt
 MTE3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
