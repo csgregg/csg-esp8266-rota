@@ -18,15 +18,17 @@ Add PlatformIO extension to VSCode. Install Git.
  - Create repository in GitHub 
 		 - Make public
 		 - Skip step to import an existing repository
-		 - Use command line to add remote to local Git repo
+ - Use command line to add remote to local Git repo
 
 Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtube.com/watch?v=I7WfxhF2wEg)
 
 **Travis-CI**
-Install Ruby and Travis locally
+
+ - Install Ruby and Travis locally
+ - Create encrypted OAuth token 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk2NDEzNDYwNyw5MzU3ODIzNDYsMTAwMD
+eyJoaXN0b3J5IjpbLTExNjU5MzY1OSw5MzU3ODIzNDYsMTAwMD
 g4NjY0MCwtNTY4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNjUxODUz
 MF19
 -->
