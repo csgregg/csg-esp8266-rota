@@ -1,4 +1,5 @@
-# csg-esp8266-rota
+# Basic ESP8266 CI using VSCode, Github and Travis
+ 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2NTE4NTMwXX0=
+eyJoaXN0b3J5IjpbNjU0MjczNjYwLC0xNjUxODUzMF19
 -->
