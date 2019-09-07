@@ -1,6 +1,8 @@
 # ESP8266 Remote OTA Update using PlatformIO, Github and Travis
 A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
+
 Releases tagged in GitHub matching x.x.x release tags will be built by Travis, and the binary stored back as an asset in the release in GitHub.
+
 Since GitHub uses SSL and it's not supported in the ESP8266, the HTTPUpdate library in the ESP8266 code calls a redirect script to deliver the binary for the firmware update. 
 
 ## Setup
@@ -40,8 +42,8 @@ Host the redirect script somewhere visible - [csg-esp8266-rota.php](server/csg-e
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDQ1MjQxNjcyLC0xMTU5MDk3ODUxLDE5OD
-I1NjY3MTksNzE0MTI5MTk2LDI4MjY1NDkzMiw5MzU3ODIzNDYs
-MTAwMDg4NjY0MCwtNTY4MDg4OTI5LC0xMTc1MzEzNDU5LC0xNj
-UxODUzMF19
+eyJoaXN0b3J5IjpbLTM4NjI1Mzc1MiwtMTE1OTA5Nzg1MSwxOT
+gyNTY2NzE5LDcxNDEyOTE5NiwyODI2NTQ5MzIsOTM1NzgyMzQ2
+LDEwMDA4ODY2NDAsLTU2ODA4ODkyOSwtMTE3NTMxMzQ1OSwtMT
+Y1MTg1MzBdfQ==
 -->
