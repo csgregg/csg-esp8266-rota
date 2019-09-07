@@ -10,7 +10,7 @@ Uses:
 **PlatformIO**
 
  - Create project in PlatformIO
- - Setup build environments - see 
+ - Setup build environments - see [platformio.ini](https://github.com/csgregg/csg-esp8266-rota/blob/master/platformio.ini)
 		 - Local builds
 		 - Travis builds 
 
@@ -19,6 +19,6 @@ Uses:
 
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTM0MDMzNDQ0MSwtNTY4MDg4OTI5LC0xMT
-c1MzEzNDU5LC0xNjUxODUzMF19
+eyJoaXN0b3J5IjpbLTEzMDY0NDQxNzgsLTU2ODA4ODkyOSwtMT
+E3NTMxMzQ1OSwtMTY1MTg1MzBdfQ==
 -->
