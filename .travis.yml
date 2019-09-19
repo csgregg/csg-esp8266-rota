@@ -13,6 +13,7 @@ install:
 - platformio lib install WiFiManager
 script:
 - platformio run -e csg-esp8266-rota-ota
+- platformio run -t buildfs -e csg-esp8266-rota-ota
 
 deploy:
   provider: releases
