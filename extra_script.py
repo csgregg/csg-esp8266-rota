@@ -18,7 +18,7 @@ def deflate_www(sourceFolder,destFolder):
     print('Deflating complete')
 
 
-env.AddPreAction("$BUILD_DIR/partitions.bin", deflate_www(".\www",".\data"))
+env.AddPreAction("$BUILD_DIR/spiffs.bin", deflate_www(".\www",".\data"))
 
 
 my_flags = env.ParseFlags(env['BUILD_FLAGS'])
