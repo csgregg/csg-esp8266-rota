@@ -12,7 +12,9 @@
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
-String buildTag = ESCAPEQUOTE(BUILD_TAG);
+const String buildTag = ESCAPEQUOTE(BUILD_TAG);
+const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);
+const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
 
 ESP8266WiFiMulti WiFiMulti;
 Ticker updateCheck;
@@ -28,6 +30,8 @@ void setup() {
     Serial.begin(115200);
     Serial.println("Now starting...");
     Serial.println("BUILD_TAG: "+ buildTag);
+    Serial.println("Device name: " + deviceName);
+    Serial.println("Device code: " + deviceCode);
 
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
