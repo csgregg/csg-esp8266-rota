@@ -19,8 +19,8 @@ const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
 const String repoName = ESCAPEQUOTE(DEVICE_REPO);
 const String assetService = ESCAPEQUOTE(DEVICE_ASSET_SERVICE);
 
-const char* u_progSuffix = "-P";
-const char* u_FSSuffix = "-F";
+const char* u_progSuffix = "-Pv";
+const char* u_FSSuffix = "-Fv";
 
 
 ESP8266WiFiMulti WiFiMulti;
