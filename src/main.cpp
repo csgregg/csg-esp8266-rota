@@ -12,9 +12,13 @@
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
+// Get Build Flags
 const String buildTag = ESCAPEQUOTE(BUILD_TAG);
 const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);
 const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
+const String repoName = ESCAPEQUOTE(DEVICE_REPO);
+const String assetService = ESCAPEQUOTE(DEVICE_ASSET_SERVICE);
+
 
 ESP8266WiFiMulti WiFiMulti;
 Ticker updateCheck;
@@ -32,7 +36,10 @@ void setup() {
     Serial.println("BUILD_TAG: "+ buildTag);
     Serial.println("Device name: " + deviceName);
     Serial.println("Device code: " + deviceCode);
+    Serial.println("GitHub Repo: " + repoName);
+    Serial.println("Asset service: " + assetService);
 
+    
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
@@ -52,28 +59,33 @@ void loop() {
     // press nodemcu's flash button
     int flashButtonState = digitalRead(0);
     if (flashButtonState == LOW || doUpdateCheck) {
-      Serial.println("Going to update firmware...");
-      if((WiFiMulti.run() == WL_CONNECTED)) {
+        Serial.println("Going to update firmware...");
+        if((WiFiMulti.run() == WL_CONNECTED)) {
 
-              Serial.println("Checking for Update. Current version: " + buildTag);
-              t_httpUpdate_return ret = ESPhttpUpdate.update("http://gleetier-glides.000webhostapp.com/csg-esp8266-rota.php?tag=" + buildTag);
+            Serial.println("Checking for Update. Current version: " + buildTag);
 
-              switch(ret) {
-                  case HTTP_UPDATE_FAILED:
-                      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                      break;
+            String imageFileRequest = "http://" + assetService + "?repo=" + repoName + "&asset=csg-esp8266-rota-v_" + "&tag=" + buildTag;
 
-                  case HTTP_UPDATE_NO_UPDATES:
-                      Serial.println("HTTP_UPDATE_NO_UPDATES");
-                      break;
+            Serial.println("Image file request: " + imageFileRequest);
 
-                  case HTTP_UPDATE_OK:
-                      Serial.println("HTTP_UPDATE_OK");
-                      break;
-              }
-          }
-          doUpdateCheck = false;
-      }
+            t_httpUpdate_return ret = ESPhttpUpdate.update(imageFileRequest);
+
+            switch(ret) {
+                case HTTP_UPDATE_FAILED:
+                    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    break;
+
+                case HTTP_UPDATE_NO_UPDATES:
+                    Serial.println("HTTP_UPDATE_NO_UPDATES");
+                    break;
+
+                case HTTP_UPDATE_OK:
+                    Serial.println("HTTP_UPDATE_OK");
+                    break;
+            }
+        }
+        doUpdateCheck = false;
+    }
 
 
 }
