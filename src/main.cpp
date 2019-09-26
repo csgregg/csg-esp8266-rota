@@ -19,8 +19,8 @@ const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
 const String repoName = ESCAPEQUOTE(DEVICE_REPO);
 const String assetService = ESCAPEQUOTE(DEVICE_ASSET_SERVICE);
 
-const char* u_progSuffix = "-Pv";
-const char* u_FSSuffix = "-Fv";
+const char* progSuffix = "-Pv";
+const char* FSSuffix = "-Fv";
 
 
 ESP8266WiFiMulti WiFiMulti;
@@ -67,7 +67,7 @@ void loop() {
 
             Serial.println("Checking for Update. Current version: " + buildTag);
 
-            String imageFileRequest = "http://" + assetService + "?repo=" + repoName + "&asset=" + deviceCode + u_progSuffix + "&tag=" + buildTag;
+            String imageFileRequest = "http://" + assetService + "?repo=" + repoName + "&asset=" + deviceCode + progSuffix + "&tag=" + buildTag;
 
             Serial.println("Image file request: " + imageFileRequest);
 
