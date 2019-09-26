@@ -62,7 +62,7 @@ void loop() {
     // press nodemcu's flash button
     int flashButtonState = digitalRead(0);
     if (flashButtonState == LOW || doUpdateCheck) {
-        Serial.println("Going to update firmware...");
+        Serial.println("Update firmware...");
         if((WiFiMulti.run() == WL_CONNECTED)) {
 
             Serial.println("Checking for Update. Current version: " + buildTag);
