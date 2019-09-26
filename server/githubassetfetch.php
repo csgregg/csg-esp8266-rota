@@ -77,7 +77,7 @@
 
     // Find asset download URL
     foreach ($json->assets as $asset) if( $asset->name == $imageFile ) $binPath = $asset->browser_download_url;
-    
+        
     if( $DEBUG && empty($binPath) ){
         echo "GitHub asset not found";
         exit;
