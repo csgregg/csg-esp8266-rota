@@ -35,7 +35,7 @@ HTTPClient http;
 
 void filefont1()
 {
-  File file = SPIFFS.open("/font.woff", "r"); 
+  File file = SPIFFS.open("/font.woff.gz", "r"); 
   size_t sent = server.streamFile(file, "application/font-woff");
   sent = sent;
 }
