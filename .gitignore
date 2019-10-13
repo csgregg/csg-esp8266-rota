@@ -4,5 +4,7 @@
 .vscode/launch.json
 .vscode/ipch
 
+data
+
 # Important for Security #
 local
