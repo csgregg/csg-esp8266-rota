@@ -1,6 +1,6 @@
 language: python
 python:
-- '3.4.8'
+- '2.7'
 sudo: false
 cache:
   directories:
