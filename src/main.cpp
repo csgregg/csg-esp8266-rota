@@ -153,18 +153,25 @@ void loop() {
 
             String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + buildTag;
             String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + buildTag;
+        //    String spiffsFileRequest = "http://iot.greggs.org/esp-rota-T1-Fv1.3.8.bin";
 
             Serial.println("FS file request: " + spiffsFileRequest);
 
-            SPIFFS.end();
+            http.begin(spiffsFileRequest);
+            int code = http.GET();
+            int len = http.getSize();
+            http.end();
+            Serial.printf("FS Size: %i", len);
+            Serial.println();
 
-            ESPhttpUpdate.rebootOnUpdate(false);
+            SPIFFS.end();
 
             t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(spiffsFileRequest);
 
             switch(ret) {
                 case HTTP_UPDATE_FAILED:
                     Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    Serial.println();
                     break;
 
                 case HTTP_UPDATE_NO_UPDATES:
@@ -179,13 +186,19 @@ void loop() {
 
             Serial.println("Image file request: " + imageFileRequest);
 
-            ESPhttpUpdate.rebootOnUpdate(true);
+            http.begin(spiffsFileRequest);
+            code = http.GET();
+            len = http.getSize();
+            http.end();
+            Serial.printf("Image Size: %i", len);
+            Serial.println();
 
             ret = ESPhttpUpdate.update(imageFileRequest);
 
             switch(ret) {
                 case HTTP_UPDATE_FAILED:
                     Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    Serial.println();
                     break;
 
                 case HTTP_UPDATE_NO_UPDATES:
