@@ -25,6 +25,7 @@ const char* FSSuffix = "-Fv";
 
 
 ESP8266WiFiMulti WiFiMulti;
+WiFiClient client;
 ESP8266WebServer server(80);
 Ticker updateCheck;
 boolean doUpdateCheck = true;
@@ -77,7 +78,7 @@ void enableUpdateCheck() {
 
 
 String get_http(String url){
-  http.begin(url);
+  http.begin(client, url);
   int httpCode = http.GET();
   if((httpCode > 0) && (httpCode == HTTP_CODE_OK)){
     String payload = http.getString();
@@ -157,8 +158,8 @@ void loop() {
 
             Serial.println("FS file request: " + spiffsFileRequest);
 
-            http.begin(spiffsFileRequest);
-            int code = http.GET();
+            http.begin(client, spiffsFileRequest);
+            http.GET();
             int len = http.getSize();
             http.end();
             Serial.printf("FS Size: %i", len);
@@ -166,7 +167,7 @@ void loop() {
 
             SPIFFS.end();
 
-            t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(spiffsFileRequest);
+            t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
 
             switch(ret) {
                 case HTTP_UPDATE_FAILED:
@@ -186,14 +187,14 @@ void loop() {
 
             Serial.println("Image file request: " + imageFileRequest);
 
-            http.begin(spiffsFileRequest);
-            code = http.GET();
+            http.begin(client, imageFileRequest);
+            http.GET();
             len = http.getSize();
             http.end();
             Serial.printf("Image Size: %i", len);
             Serial.println();
 
-            ret = ESPhttpUpdate.update(imageFileRequest);
+            ret = ESPhttpUpdate.update(client, imageFileRequest);
 
             switch(ret) {
                 case HTTP_UPDATE_FAILED:
