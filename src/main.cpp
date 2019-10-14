@@ -160,7 +160,7 @@ void loop() {
           else {
 
             // Update SPIFFS file system
-            String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
+            String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
             Serial.println("FS file request: " + spiffsFileRequest);
 
             t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
@@ -171,13 +171,17 @@ void loop() {
                     Serial.println();
                     break;
 
+                case HTTP_UPDATE_NO_UPDATES:
+                    Serial.println("No new file system update");
+                    break;
+                    
                 case HTTP_UPDATE_OK:
                     Serial.println("File system updated successfully");
                     break;
             }
 
             // Update image
-            String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
+            String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
             Serial.println("Image file request: " + imageFileRequest);
 
             ret = ESPhttpUpdate.update(client, imageFileRequest);
@@ -186,6 +190,10 @@ void loop() {
                 case HTTP_UPDATE_FAILED:
                     Serial.printf("Image update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
                     Serial.println();
+                    break;
+
+                case HTTP_UPDATE_NO_UPDATES:
+                    Serial.println("No new image update");
                     break;
 
                 case HTTP_UPDATE_OK:
