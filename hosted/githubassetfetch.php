@@ -21,10 +21,12 @@
         header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub repo name', true, 400);
         exit;
     }
+    
+    if( $DEBUG && !empty($requestedTag) ) echo nl2br("Release requested: $requestedTag\n\r");
 
-        if( empty($requestedTag) ){
-
-    $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/latest";
+    // Which release do we want?
+    if( empty($requestedTag) || $requestedTag == "Latest" ) $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/latest";
+    else $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
 
     if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
 
@@ -50,19 +52,19 @@
         exit;
     }
 
-
     // Get tag of latest release
-    $latestTag = $json->tag_name;
-
-    if( $DEBUG && !empty($latestTag) ) echo nl2br("Latest release: $latestTag\n\r");
-    if( $DEBUG && !empty($requestedTag) ) echo nl2br("Release requested: $requestedTag\n\r");
+    if( empty($requestedTag) || $requestedTag == "Latest" ) { 
+        $latestTag = $json->tag_name;
+        if( $DEBUG ) echo nl2br("Latest release: $latestTag\n\r");
+    }  
 
     // return latest version and exit if no ?tag=XXXX
     if( empty($requestedTag) ){
-        if( !$DEBUG ) echo $latestTag;
+        if( !$DEBUG) echo $latestTag;
         exit;
     }
 
+    if( $requestedTag == "Latest" ) $requestedTag = $latestTag;
 
     // Check image file
     if( $DEBUG && empty($imageFilePre) ) {
@@ -78,33 +80,6 @@
     $imageFile = "$imageFilePre$requestedTag.bin";
 
     if( $DEBUG ) echo nl2br("Image file: $imageFile\r\n");
-
-    // Now get the release we want
-    $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
-
-    if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
-
-    // Get API response fpr lastest release
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_URL, $githubApiUrl);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: ESP8266'));
-    curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
-    $result = curl_exec($ch);
-
-    curl_close($ch);
-    $json = json_decode($result);
-
-    // Check valid response    
-    if( $DEBUG && !empty($json->message) ){
-        echo "Repo error: $json->message";
-        exit;
-    }
-    elseif( !$DEBUG && !empty($json->message) ){
-        header($_SERVER["SERVER_PROTOCOL"]." 400 GitHub API error: $json->message", true, 400);
-        exit;
-    }
 
 
     // Find asset download URL
