@@ -8,7 +8,7 @@
 #include <Ticker.h>
 #include <FS.h> 
 
-#define CHECK_INTERVAL 120
+#define CHECK_INTERVAL 60
 
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
@@ -158,6 +158,7 @@ void loop() {
             Serial.println("HTTP_UPDATE_NO_UPDATES");              
           }
           else {
+            ESPhttpUpdate.rebootOnUpdate(false);
 
             // Update SPIFFS file system
             String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
@@ -198,6 +199,11 @@ void loop() {
 
                 case HTTP_UPDATE_OK:
                     Serial.println("Image updated cuccessfully");
+
+                    Serial.println("Rebooting in 5 sec");
+                    delay(5000);
+                    ESP.restart();
+
                     break;
             }
           }
