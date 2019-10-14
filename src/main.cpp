@@ -158,8 +158,6 @@ void loop() {
             Serial.println("HTTP_UPDATE_NO_UPDATES");              
           }
           else {
-            ESPhttpUpdate.rebootOnUpdate(false);
-
             // Update SPIFFS file system
             String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
             Serial.println("FS file request: " + spiffsFileRequest);
@@ -185,6 +183,7 @@ void loop() {
             String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
             Serial.println("Image file request: " + imageFileRequest);
 
+            ESPhttpUpdate.rebootOnUpdate(false);
             ret = ESPhttpUpdate.update(client, imageFileRequest);
 
             switch(ret) {
