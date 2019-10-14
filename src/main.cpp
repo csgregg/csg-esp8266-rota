@@ -147,58 +147,52 @@ void loop() {
         Serial.println("Update firmware...");
         if((WiFiMulti.run() == WL_CONNECTED)) {
 
-            String assetRequestURL = "http://" + assetService + "?repo=" + repoName;
-            String latestTag = get_http(assetRequestURL);
+          String assetRequestURL = "http://" + assetService + "?repo=" + repoName;
+          String latestTag = get_http(assetRequestURL);
 
-            Serial.println("Lastest version: " + latestTag);
-            Serial.println("Current version: " + buildTag);
-            
-            if( latestTag == buildTag ){
-              Serial.println("HTTP_UPDATE_NO_UPDATES");              
+          Serial.println("Lastest version: " + latestTag);
+          Serial.println("Current version: " + buildTag);
+          
+          // Check for update
+          if( latestTag == buildTag ){
+            Serial.println("HTTP_UPDATE_NO_UPDATES");              
+          }
+          else {
+
+            // Update SPIFFS file system
+            String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
+            Serial.println("FS file request: " + spiffsFileRequest);
+
+            t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
+
+            switch(ret) {
+                case HTTP_UPDATE_FAILED:
+                    Serial.printf("File system update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    Serial.println();
+                    break;
+
+                case HTTP_UPDATE_OK:
+                    Serial.println("File system updated successfully");
+                    break;
             }
-            else {
-              String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
-              String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
 
-              Serial.println("FS file request: " + spiffsFileRequest);
+            // Update image
+            String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
+            Serial.println("Image file request: " + imageFileRequest);
 
-              t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
+            ret = ESPhttpUpdate.update(client, imageFileRequest);
 
-              switch(ret) {
-                  case HTTP_UPDATE_FAILED:
-                      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                      Serial.println();
-                      break;
+            switch(ret) {
+                case HTTP_UPDATE_FAILED:
+                    Serial.printf("Image update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                    Serial.println();
+                    break;
 
-                  case HTTP_UPDATE_NO_UPDATES:
-                      Serial.println("HTTP_UPDATE_NO_UPDATES");
-                      break;
-
-                  case HTTP_UPDATE_OK:
-                      Serial.println("HTTP_UPDATE_OK");
-                      break;
-              }
-              SPIFFS.begin();
-
-              Serial.println("Image file request: " + imageFileRequest);
-
-              ret = ESPhttpUpdate.update(client, imageFileRequest);
-
-              switch(ret) {
-                  case HTTP_UPDATE_FAILED:
-                      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                      Serial.println();
-                      break;
-
-                  case HTTP_UPDATE_NO_UPDATES:
-                      Serial.println("HTTP_UPDATE_NO_UPDATES");
-                      break;
-
-                  case HTTP_UPDATE_OK:
-                      Serial.println("HTTP_UPDATE_OK");
-                      break;
-              }
+                case HTTP_UPDATE_OK:
+                    Serial.println("Image updated cuccessfully");
+                    break;
             }
+          }
         }
         doUpdateCheck = false;
     }
