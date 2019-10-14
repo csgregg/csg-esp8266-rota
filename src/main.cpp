@@ -148,67 +148,56 @@ void loop() {
         if((WiFiMulti.run() == WL_CONNECTED)) {
 
             String assetRequestURL = "http://" + assetService + "?repo=" + repoName;
+            String latestTag = get_http(assetRequestURL);
 
-            Serial.println("Lastest version: " + get_http(assetRequestURL));
+            Serial.println("Lastest version: " + latestTag);
             Serial.println("Current version: " + buildTag);
-
-            String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + buildTag;
-            String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + buildTag;
-        //    String spiffsFileRequest = "http://iot.greggs.org/esp-rota-T1-Fv1.3.8.bin";
-
-            Serial.println("FS file request: " + spiffsFileRequest);
-
-            http.begin(client, spiffsFileRequest);
-            http.GET();
-            int len = http.getSize();
-            http.end();
-            Serial.printf("FS Size: %i", len);
-            Serial.println();
-
-            SPIFFS.end();
-
-            t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
-
-            switch(ret) {
-                case HTTP_UPDATE_FAILED:
-                    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                    Serial.println();
-                    break;
-
-                case HTTP_UPDATE_NO_UPDATES:
-                    Serial.println("HTTP_UPDATE_NO_UPDATES");
-                    break;
-
-                case HTTP_UPDATE_OK:
-                    Serial.println("HTTP_UPDATE_OK");
-                    break;
+            
+            if( latestTag == buildTag ){
+              Serial.println("HTTP_UPDATE_NO_UPDATES");              
             }
-            SPIFFS.begin();
+            else {
+              String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
+              String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
 
-            Serial.println("Image file request: " + imageFileRequest);
+              Serial.println("FS file request: " + spiffsFileRequest);
 
-            http.begin(client, imageFileRequest);
-            http.GET();
-            len = http.getSize();
-            http.end();
-            Serial.printf("Image Size: %i", len);
-            Serial.println();
+              t_httpUpdate_return ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
 
-            ret = ESPhttpUpdate.update(client, imageFileRequest);
+              switch(ret) {
+                  case HTTP_UPDATE_FAILED:
+                      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                      Serial.println();
+                      break;
 
-            switch(ret) {
-                case HTTP_UPDATE_FAILED:
-                    Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-                    Serial.println();
-                    break;
+                  case HTTP_UPDATE_NO_UPDATES:
+                      Serial.println("HTTP_UPDATE_NO_UPDATES");
+                      break;
 
-                case HTTP_UPDATE_NO_UPDATES:
-                    Serial.println("HTTP_UPDATE_NO_UPDATES");
-                    break;
+                  case HTTP_UPDATE_OK:
+                      Serial.println("HTTP_UPDATE_OK");
+                      break;
+              }
+              SPIFFS.begin();
 
-                case HTTP_UPDATE_OK:
-                    Serial.println("HTTP_UPDATE_OK");
-                    break;
+              Serial.println("Image file request: " + imageFileRequest);
+
+              ret = ESPhttpUpdate.update(client, imageFileRequest);
+
+              switch(ret) {
+                  case HTTP_UPDATE_FAILED:
+                      Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                      Serial.println();
+                      break;
+
+                  case HTTP_UPDATE_NO_UPDATES:
+                      Serial.println("HTTP_UPDATE_NO_UPDATES");
+                      break;
+
+                  case HTTP_UPDATE_OK:
+                      Serial.println("HTTP_UPDATE_OK");
+                      break;
+              }
             }
         }
         doUpdateCheck = false;
