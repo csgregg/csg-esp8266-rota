@@ -1,5 +1,7 @@
 <?php
 
+    include 'githuboauthtoken.php';
+
     $DEBUG = false;
 
     // Get parameters
@@ -30,6 +32,7 @@
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $githubApiUrl);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: ESP8266'));
+    curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
     $result = curl_exec($ch);
 
     curl_close($ch);
@@ -98,6 +101,7 @@
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
         $out = curl_exec($ch);
         curl_close($ch);
 
