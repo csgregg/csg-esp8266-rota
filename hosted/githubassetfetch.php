@@ -1,18 +1,19 @@
 <?php
 
-    include 'githuboauthtoken.php';
-
     $DEBUG = false;
 
+    // Get GitHub OAuth token
+    include 'githuboauthtoken.php';
+
     // Get parameters
-    if(!empty($_GET["debug"])) $DEBUG = ($_GET["debug"] == "true");
-    if(!empty($_GET["tag"])) $requestedTag = $_GET["tag"];
-    if(!empty($_GET["repo"])) $repoName = $_GET["repo"];
-    if(!empty($_GET["asset"])) $imageFilePre = $_GET["asset"];
+    if( !empty($_GET["debug"]) ) $DEBUG = ($_GET["debug"] == "true");
+    if( !empty($_GET["tag"]) ) $requestedTag = $_GET["tag"];
+    if( !empty($_GET["repo"]) ) $repoName = $_GET["repo"];
+    if( !empty($_GET["asset"]) ) $imageFilePre = $_GET["asset"];
 
 
     // Check for repo 
-    if( $DEBUG && empty($repoName) ) {
+    if( $DEBUG && empty($repoName) ){
         echo "Missing GitHub Repo name";
         exit;
     }
@@ -43,11 +44,11 @@
     $json = json_decode($result);
 
     // Check valid response    
-    if( $DEBUG && !empty($json->message) ){
+    if( $DEBUG && !empty($json->message) ) {
         echo "Repo error: $json->message";
         exit;
     }
-    elseif( !$DEBUG && !empty($json->message) ){
+    elseif( !$DEBUG && !empty($json->message) ) {
         header($_SERVER["SERVER_PROTOCOL"]." 400 GitHub API error: $json->message", true, 400);
         exit;
     }
@@ -64,6 +65,7 @@
         exit;
     }
 
+    // Use latest release if asked
     if( $requestedTag == "Latest" ) $requestedTag = $latestTag;
 
     // Check image file
@@ -71,7 +73,7 @@
         echo "Missing asset name prefix";
         exit;
     }
-    elseif( !$DEBUG && empty($imageFilePre) ){
+    elseif( !$DEBUG && empty($imageFilePre) ) {
         header($_SERVER["SERVER_PROTOCOL"].' 400 Missing asset name prefix', true, 400);
         exit;
     }
@@ -85,11 +87,11 @@
     // Find asset download URL
     foreach ($json->assets as $asset) if( $asset->name == $imageFile ) $binPath = $asset->browser_download_url;
         
-    if( $DEBUG && empty($binPath) ){
+    if( $DEBUG && empty($binPath) ) {
         echo "GitHub asset not found";
         exit;
     }
-    elseif( !$DEBUG && empty($binPath) ){
+    elseif( !$DEBUG && empty($binPath) ) {
         header($_SERVER["SERVER_PROTOCOL"].' 404 GitHub asset not found', true, 404);
         exit;
     }
@@ -114,5 +116,4 @@
         header("Content-Length: ".strlen($out));
         echo $out;
     }
-    exit;
 ?>
