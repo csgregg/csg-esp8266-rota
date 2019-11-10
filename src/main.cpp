@@ -15,7 +15,7 @@
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
-#define SKIPUPDATE true
+#define SKIPUPDATE false
 
 // Get Build Flags
 const String buildTag = ESCAPEQUOTE(BUILD_TAG);
