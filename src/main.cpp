@@ -9,13 +9,14 @@
 #include <FS.h> 
 #include <ArduinoJson.h>
 #include "credentials.h"
+#include "debuglogging.h"
 
 #define CHECK_INTERVAL 60
 
 #define TEXTIFY(A) #A
 #define ESCAPEQUOTE(A) TEXTIFY(A)
 
-#define SKIPUPDATE false
+#define SKIPUPDATE true
 
 // Get Build Flags
 const String buildTag = ESCAPEQUOTE(BUILD_TAG);
@@ -26,6 +27,7 @@ const String assetService = ESCAPEQUOTE(ASSET_SERVICE);
 const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);
 const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);
 const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);
+const long int monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
 
 
 const char* progSuffix = "-Pv";
@@ -34,7 +36,6 @@ const char* FSSuffix = "-Fv";
 bool LED = true;
 
 
-ESP8266WiFiMulti WiFiMulti;
 WiFiClient client;
 ESP8266WebServer server(80);
 Ticker updateCheck;
@@ -49,9 +50,9 @@ HTTPClient http;
   "message": "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
   "Device": {
     "Hardware": {
-      "platform": "12345678901234567890",
-      "board": "12345678901234567890",
-      "framework": "12345678901234567890",
+      "Platform": "12345678901234567890",
+      "Board": "12345678901234567890",
+      "Framework": "12345678901234567890",
       "MAC": "mm:mm:mm:ss:ss:ss"
     },
     "Env": {
@@ -59,6 +60,10 @@ HTTPClient http;
       "Code": "12345678901234567890",
       "Build": "xx.xx.xx",
       "Heap": "1234567890"
+     },
+     "Network": {
+       "IPAddress": "123456789012345",
+       "SSID": "12345678901234567890123456789012"
      }
   }
 }
@@ -81,7 +86,7 @@ void LogToCloud(String customTags, String strMessage){
   http.begin(client, loggingServiceRequestURL);
   http.addHeader("Content-Type", "content-type:text/plain");
   
-  const size_t capacity = JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 382;
+  const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 454;
   DynamicJsonDocument jsonLog(capacity);
   String jsonMessage;
 
@@ -109,6 +114,14 @@ void LogToCloud(String customTags, String strMessage){
       uint32_t free = system_get_free_heap_size(); // get free ram 
       Device_Env["Heap"] = free;
 
+    JsonObject Device_Network = Device.createNestedObject("Network");
+
+      String tempIP = WiFi.localIP().toString();
+      Device_Network["IPAddress"] = tempIP.c_str();
+
+      String tempSSID = WiFi.SSID();
+      Device_Network["SSID"] = tempSSID.c_str();
+
   serializeJson(jsonLog, jsonMessage);
 
   Serial.println(jsonMessage);
@@ -116,7 +129,9 @@ void LogToCloud(String customTags, String strMessage){
   int httpCode = http.POST(jsonMessage);
 
   if( httpCode == HTTP_CODE_OK ) Serial.println("Log to Cloud successful");
-  else Serial.println("Error posting log - Error: " + String(httpCode));
+  else {
+    Serial.println("Error posting log - Error: " + String(httpCode));
+  }
  
   http.end();
 }
@@ -259,7 +274,16 @@ void UpdateFirmware(){
 void setup() {
 
     // put your setup code here, to run once:
-    Serial.begin(115200);
+    Serial.begin(monitorBaud);
+    
+    Serial.println();
+    Serial.println();
+    Serial.println(monitorBaud);
+
+    logger.println("Hello world");
+    logger.printf("Hello %s", "world");
+    logger.print("cc");
+
     Serial.println("Now starting...");
     Serial.println("Build tag: "+ buildTag);
     Serial.println("Device name: " + deviceName);
@@ -267,7 +291,9 @@ void setup() {
     Serial.println("GitHub Repo: " + repoName);
     Serial.println("Asset service: " + assetService);
 
-    pinMode(LED_BUILTIN, OUTPUT);
+    // pinMode(LED_BUILTIN, OUTPUT);
+
+    WiFi.persistent(false);
     
     //WiFiManager
     //Local intialization. Once its business is done, there is no need to keep it around
@@ -316,8 +342,8 @@ void loop() {
   Serial.println("Log to Cloud: " + String(millis()-tmp) + "ms");
   Serial.println("");
 
-  digitalWrite(LED_BUILTIN, LED);
-  LED = !LED;
+  // digitalWrite(LED_BUILTIN, LED);
+  // LED = !LED;
 
 
   tmp = millis();
@@ -327,10 +353,10 @@ void loop() {
     Serial.println("");
   }
 
-  // press nodemcu's flash button
-  bool doUpdates = true;
+  Serial.println(WiFi.status())
+;
 
-  if( WiFiMulti.run() == WL_CONNECTED && doUpdates && doUpdateCheck ) {
+  if(WiFi.status() == WL_CONNECTED && doUpdateCheck ) {
 
     Serial.println("");
     tmp = millis();
