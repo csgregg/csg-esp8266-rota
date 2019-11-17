@@ -2,32 +2,20 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
-#include <ESP8266WiFiMulti.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 #include <Ticker.h>
 #include <FS.h> 
 #include <ArduinoJson.h>
-#include "credentials.h"
 #include "debuglogging.h"
+#include "iot_device.h"
 
 #define CHECK_INTERVAL 60
 
-#define TEXTIFY(A) #A
-#define ESCAPEQUOTE(A) TEXTIFY(A)
+
 
 #define SKIPUPDATE true
 
-// Get Build Flags
-const String buildTag = ESCAPEQUOTE(BUILD_TAG);
-const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);
-const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
-const String repoName = ESCAPEQUOTE(DEVICE_REPO);
-const String assetService = ESCAPEQUOTE(ASSET_SERVICE);
-const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);
-const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);
-const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);
-const long int monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
 
 
 const char* progSuffix = "-Pv";
@@ -41,36 +29,7 @@ ESP8266WebServer server(80);
 Ticker updateCheck;
 boolean doUpdateCheck = true;
 
-HTTPClient http;   
-
-/* JSON Loggining Format
-
-{
-  "localtime": 1234567890,
-  "message": "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
-  "Device": {
-    "Hardware": {
-      "Platform": "12345678901234567890",
-      "Board": "12345678901234567890",
-      "Framework": "12345678901234567890",
-      "MAC": "mm:mm:mm:ss:ss:ss"
-    },
-    "Env": {
-      "Name": "123456789012345678901234567890",
-      "Code": "12345678901234567890",
-      "Build": "xx.xx.xx",
-      "Heap": "1234567890"
-     },
-     "Network": {
-       "IPAddress": "123456789012345",
-       "SSID": "12345678901234567890123456789012"
-     }
-  }
-}
-
-  Use https://arduinojson.org/v6/assistant/
-
-*/
+HTTPClient http;
 
 
 void LogToCloud(String customTags, String strMessage){
@@ -78,7 +37,7 @@ void LogToCloud(String customTags, String strMessage){
 
   if( customTags != "" ) customTags = "," + customTags;
 
-  String loggingServiceRequestURL = "http://" + loggingService + "/" + loggingServiceKey + "/tag/" + loggingGlobalTags + customTags  + "/";
+  String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + customTags  + "/";
 
   Serial.print("Connecting to: ");
   Serial.println(loggingServiceRequestURL);
@@ -99,17 +58,17 @@ void LogToCloud(String customTags, String strMessage){
   JsonObject Device = jsonLog.createNestedObject("Device");
 
     JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-      Device_Hardware["platform"] = "espressif8266";
-      Device_Hardware["board"] = "d1_mini";
-      Device_Hardware["framework"] = "arduino";
+      Device_Hardware["platform"] = device.platform.c_str();
+      Device_Hardware["board"] = device.board.c_str();
+      Device_Hardware["framework"] = device.framework.c_str();
 
       String tempMAC = WiFi.macAddress();
       Device_Hardware["MAC"] = tempMAC.c_str();
 
     JsonObject Device_Env = Device.createNestedObject("Env");
-      Device_Env["Name"] = deviceName.c_str();
-      Device_Env["Code"] = deviceCode.c_str();
-      Device_Env["Build"] = buildTag.c_str();
+      Device_Env["Name"] = device.deviceName.c_str();
+      Device_Env["Code"] = device.deviceCode.c_str();
+      Device_Env["Build"] = device.buildTag.c_str();
 
       uint32_t free = system_get_free_heap_size(); // get free ram 
       Device_Env["Heap"] = free;
@@ -186,7 +145,7 @@ void UpdateFirmware(){
 
   Serial.println("Update firmware...");
 
-  String assetRequestURL = "http://" + assetService + "?repo=" + repoName;
+  String assetRequestURL = "http://" + device.assetService + "?repo=" + device.repoName;
   String latestTag;
 
   http.begin(client, assetRequestURL);
@@ -201,15 +160,15 @@ void UpdateFirmware(){
     http.end();
             
     Serial.println("Lastest version: " + latestTag);
-    Serial.println("Current version: " + buildTag);
+    Serial.println("Current version: " + device.buildTag);
     
     // Check for update
-    if( latestTag == buildTag ){
+    if( latestTag == device.buildTag ){
       Serial.println("No new update");              
     }
     else {
       // Update SPIFFS file system
-      String spiffsFileRequest = assetRequestURL + "&asset=" + deviceCode + FSSuffix + "&tag=" + latestTag;
+      String spiffsFileRequest = assetRequestURL + "&asset=" + device.deviceCode + FSSuffix + "&tag=" + latestTag;
       Serial.println("FS file request: " + spiffsFileRequest);
 
       t_httpUpdate_return ret;
@@ -236,7 +195,7 @@ void UpdateFirmware(){
       }
 
       // Update image
-      String imageFileRequest = assetRequestURL + "&asset=" + deviceCode + progSuffix + "&tag=" + latestTag;
+      String imageFileRequest = assetRequestURL + "&asset=" + device.deviceCode + progSuffix + "&tag=" + latestTag;
       Serial.println("Image file request: " + imageFileRequest);
 
       ESPhttpUpdate.rebootOnUpdate(false);
@@ -273,23 +232,18 @@ void UpdateFirmware(){
 
 void setup() {
 
-    // put your setup code here, to run once:
-    Serial.begin(monitorBaud);
-    
-    Serial.println();
-    Serial.println();
-    Serial.println(monitorBaud);
+    logger.begin( http, client );
+    logger.setMode( device.logAsSerial, false, t_logging_level(device.loggingLevel) );
 
-    logger.println("Hello world");
-    logger.printf("Hello %s", "world");
-    logger.print("cc");
+ 
+    logger.println(LOG_INFO, TAG_STATUS, "Starting Setup()...");
 
-    Serial.println("Now starting...");
-    Serial.println("Build tag: "+ buildTag);
-    Serial.println("Device name: " + deviceName);
-    Serial.println("Device code: " + deviceCode);
-    Serial.println("GitHub Repo: " + repoName);
-    Serial.println("Asset service: " + assetService);
+    logger.println(LOG_INFO, TAG_STATUS, "Build tag: " + device.buildTag);
+    logger.println(LOG_INFO, TAG_STATUS, "Device name: " + device.deviceName);
+    logger.println(LOG_INFO, TAG_STATUS, "Device code: " + device.deviceCode);
+    logger.println(LOG_INFO, TAG_STATUS, "GitHub Repo: " + device.repoName);
+    logger.println(LOG_INFO, TAG_STATUS, "Asset service: " + device.assetService);
+
 
     // pinMode(LED_BUILTIN, OUTPUT);
 
@@ -304,13 +258,12 @@ void setup() {
     wifiManager.autoConnect("AutoConnectAP");
     //or use this for auto generated name ESP + ChipID
     //wifiManager.autoConnect();
-    Serial.println("Started..");
 
+    logger.setMode( device.logAsSerial, device.logAsService, t_logging_level(device.loggingLevel) );
 
-    Serial.println(WiFi.localIP());
+    logger.println(LOG_INFO, TAG_STATUS, "WiFI Started: " + WiFi.localIP().toString());
 
     server.begin(); 
-
 
     server.on("/", fileindex);
     server.on("/index.html", fileindex);
@@ -332,37 +285,17 @@ void setup() {
 
 void loop() {
 
-  delay(1000);
-  // Serial.print(".");
-  uint32_t free = system_get_free_heap_size(); // get free ram   
-  Serial.println(free); // output ram to serial 
+  delay(10000);
 
-  int tmp = millis();
-  LogToCloud("UpDateService", "Debug...");
-  Serial.println("Log to Cloud: " + String(millis()-tmp) + "ms");
-  Serial.println("");
+  logger.println(LOG_INFO, TAG_STATUS, "Looping every second");
 
   // digitalWrite(LED_BUILTIN, LED);
   // LED = !LED;
 
-
-  tmp = millis();
-  server.handleClient();
-    if( (millis()-tmp) >2 ){
-    Serial.println("Handle Client: " + String(millis()-tmp) + "ms");
-    Serial.println("");
-  }
-
-  Serial.println(WiFi.status())
-;
-
   if(WiFi.status() == WL_CONNECTED && doUpdateCheck ) {
 
-    Serial.println("");
-    tmp = millis();
+    logger.println(LOG_INFO, TAG_STATUS, "Updating Firmware...");
     UpdateFirmware();
-    Serial.println("Update Firmware: " + String(millis()-tmp) + "ms");
-    Serial.println("");
 
     doUpdateCheck = false;
   }
