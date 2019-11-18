@@ -32,69 +32,6 @@ boolean doUpdateCheck = true;
 HTTPClient http;
 
 
-void LogToCloud(String customTags, String strMessage){
-  Serial.println("Logging to Cloud"); 
-
-  if( customTags != "" ) customTags = "," + customTags;
-
-  String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + customTags  + "/";
-
-  Serial.print("Connecting to: ");
-  Serial.println(loggingServiceRequestURL);
-  
-  http.begin(client, loggingServiceRequestURL);
-  http.addHeader("Content-Type", "content-type:text/plain");
-  
-  const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 454;
-  DynamicJsonDocument jsonLog(capacity);
-  String jsonMessage;
-
-  jsonLog["localtime"] = millis();
-
-  if(strMessage.length() > 140 ) strMessage = strMessage.substring(0, 140);
-
-  jsonLog["message"] = strMessage;
-
-  JsonObject Device = jsonLog.createNestedObject("Device");
-
-    JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-      Device_Hardware["platform"] = device.platform.c_str();
-      Device_Hardware["board"] = device.board.c_str();
-      Device_Hardware["framework"] = device.framework.c_str();
-
-      String tempMAC = WiFi.macAddress();
-      Device_Hardware["MAC"] = tempMAC.c_str();
-
-    JsonObject Device_Env = Device.createNestedObject("Env");
-      Device_Env["Name"] = device.deviceName.c_str();
-      Device_Env["Code"] = device.deviceCode.c_str();
-      Device_Env["Build"] = device.buildTag.c_str();
-
-      uint32_t free = system_get_free_heap_size(); // get free ram 
-      Device_Env["Heap"] = free;
-
-    JsonObject Device_Network = Device.createNestedObject("Network");
-
-      String tempIP = WiFi.localIP().toString();
-      Device_Network["IPAddress"] = tempIP.c_str();
-
-      String tempSSID = WiFi.SSID();
-      Device_Network["SSID"] = tempSSID.c_str();
-
-  serializeJson(jsonLog, jsonMessage);
-
-  Serial.println(jsonMessage);
-
-  int httpCode = http.POST(jsonMessage);
-
-  if( httpCode == HTTP_CODE_OK ) Serial.println("Log to Cloud successful");
-  else {
-    Serial.println("Error posting log - Error: " + String(httpCode));
-  }
- 
-  http.end();
-}
-
 
 
 void filefont1()
@@ -244,7 +181,7 @@ void setup() {
     logger.println(LOG_INFO, TAG_STATUS, "GitHub Repo: " + device.repoName);
     logger.println(LOG_INFO, TAG_STATUS, "Asset service: " + device.assetService);
 
-
+    delay(1000);
     // pinMode(LED_BUILTIN, OUTPUT);
 
     WiFi.persistent(false);
@@ -258,6 +195,8 @@ void setup() {
     wifiManager.autoConnect("AutoConnectAP");
     //or use this for auto generated name ESP + ChipID
     //wifiManager.autoConnect();
+
+    delay(1000);
 
     logger.setMode( device.logAsSerial, device.logAsService, t_logging_level(device.loggingLevel) );
 
