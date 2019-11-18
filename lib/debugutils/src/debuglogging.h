@@ -64,6 +64,10 @@ Default debug mode -
 
     #define MAX_MESSAGE_LEN 140
 
+
+  
+
+
     typedef enum : int {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_LOW = 1,          // Critical only
@@ -94,11 +98,16 @@ Default debug mode -
   
             LogClient();
 
+            template <typename Generic>
+            void DEBUG_INFO(Generic text);
+
             void setMode( bool modeSerial = false, bool modeService = false, t_logging_level level = LOGGING_OFF );
 
             void begin( HTTPClient &http, WiFiClient &client );
 
+            void setTypeTag(t_log_type type, t_log_tag tag);
             void printf(const char *format, ...);
+            
             void println(t_log_type type, t_log_tag tag, const String &s);
             void println(t_log_type type, t_log_tag tag, const char c[]);
             void println(t_log_type type, t_log_tag tag, char c);
@@ -113,11 +122,13 @@ Default debug mode -
 
             t_logging_level _logginglevel = LOGGING_OFF;
 
-            bool LogToService(String customTags, String strMessage);
+            void inline LogPrefix(t_log_type type, t_log_tag tag);
 
-            size_t LogToSerial(t_log_type type, t_log_tag tag, const String &s);
-            size_t LogToSerial(t_log_type type, t_log_tag tag, const char c[]);
-            size_t LogToSerial(t_log_type type, t_log_tag tag, char c);
+            void LogToSerial(t_log_type type, t_log_tag tag, String strMessage);
+            void LogToService(t_log_type type, t_log_tag tag, String strMessage);
+
+            t_log_type _lasttype;
+            t_log_tag _lasttag;
 
         private:
     };

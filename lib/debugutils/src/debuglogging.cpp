@@ -5,10 +5,18 @@
 
 #include "debuglogging.h"
 
+
+
+
 LogClient::LogClient() {
 
 }
 
+
+template <typename Generic>
+void LogClient::DEBUG_INFO(Generic text) {
+    println(LOG_INFO, TAG_DEBUG, text);
+}
 
 
 void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
@@ -16,7 +24,10 @@ void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
     _client = &client;
 
     Serial.begin(device.monitorBaud);
-    Serial.printf("\n\nLOG: %s :: %s - Starting Logging\n", c_log_tag_descript[TAG_STATUS], c_log_type_descript[LOG_INFO]); 
+    Serial.println();
+    LogPrefix(LOG_INFO, TAG_STATUS);
+    Serial.println("Starting Logging");
+    Serial.println();
 }
 
 
@@ -25,37 +36,49 @@ void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level leve
     _serviceOn = modeService;
     _logginglevel = level;
 
-
-    logger.printf("Logging set at level: %i", device.loggingLevel);
+    setTypeTag(LOG_INFO, TAG_STATUS);
+    printf("Logging set at level: %i", device.loggingLevel);
 
     if(_serviceOn) logger.println(LOG_INFO, TAG_STATUS, "Logging Service: ON");
     else logger.println(LOG_INFO, TAG_STATUS, "Logging Service: OFF");
 }
 
 
+void LogClient::setTypeTag(t_log_type type, t_log_tag tag){
+    _lasttype = type;
+    _lasttag = tag;
+}
+
+
 void LogClient::printf(const char *format, ...) {
+
     va_list arg;
     va_start(arg, format);
     char temp[64];
     char* buffer = temp;
+
     size_t len = vsnprintf(temp, sizeof(temp), format, arg);
     va_end(arg);
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            Serial.println("LogClient:: Buffer error");
+            println(LOG_INFO, TAG_STATUS, "LogClient:: Buffer error");
             return;
         }
         va_start(arg, format);
         vsnprintf(buffer, len + 1, format, arg);
         va_end(arg);
     }
-    len = Serial.write((const uint8_t*) buffer, len);
+
     if (buffer != temp) {
         delete[] buffer;
     }
-    Serial.println();
+
+    String s(temp);
+
+    println(_lasttype, _lasttag, s);  
 }
+
 
 void LogClient::println(t_log_type type, t_log_tag tag, const String &s) {
 
@@ -63,77 +86,53 @@ void LogClient::println(t_log_type type, t_log_tag tag, const String &s) {
     if( _logginglevel == LOGGING_LEVEL_LOW && type != LOG_CRITICAL ) return;
     if( _logginglevel == LOGGING_LEVEL_MED && type == LOG_INFO ) return;
     
-        if( _serialOn ) {
-        Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
-        Serial.println(s);
-    }
-
-    if( _serviceOn ) LogToService( c_log_tag_descript[tag], s );
+    if( _serialOn ) LogToSerial(type, tag, s);
+    if( _serviceOn ) LogToService(type, tag, s);
 
 }
 
 void LogClient::println(t_log_type type, t_log_tag tag, const char c[]) {
 
-    String message(c);
+    String s(c);
 
-    if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_LOW && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_MED && type == LOG_INFO ) return;
-    
-    if( _serialOn ) {
-        Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
-        Serial.println(c);
-    }
-
-    if( _serviceOn ) LogToService( c_log_tag_descript[tag], message );
+    println(type, tag, s);
 
 }
 
 void LogClient::println(t_log_type type, t_log_tag tag, char c) {
 
-    String message(c);
+    String s(c);
 
-    if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_LOW && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_MED && type == LOG_INFO ) return;
-    
-    if( _serialOn ) {        
-        Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
-        Serial.println(c);
-    }
-
-    if( _serviceOn ) LogToService( c_log_tag_descript[tag], message );
+    println(type, tag, s);
 
 }
 
 
-
-size_t LogToSerial(t_log_type type, t_log_tag tag, const String &s){
-
+void LogClient::LogPrefix(t_log_type type, t_log_tag tag){
+    uint32_t free = system_get_free_heap_size(); // get free ram
+    if( _logginglevel == LOGGING_LEVEL_HIGH ) Serial.printf("LOG: %s :: %s - Heap: %i, Millis: %li - ", c_log_tag_descript[tag], c_log_type_descript[type], free, millis());
+    else Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
 }
 
 
-size_t LogToSerial(t_log_type type, t_log_tag tag, const char c[]){
-
+void LogClient::LogToSerial(t_log_type type, t_log_tag tag, String message){
+    LogPrefix(type, tag);
+    Serial.println(message);
 }
 
 
-size_t LogToSerial(t_log_type type, t_log_tag tag, char c){
-    Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
-    Serial.println(c);
-}
+void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 
+    String _tag(c_log_tag_descript[tag]);
+    String _type(c_log_type_descript[type]);
 
+    _tag = "," + _tag;
 
-bool LogClient::LogToService(String customTags, String strMessage){
-  
-      // Prepare to add to global tags
-    if( customTags != "" ) customTags = "," + customTags;
-
-    String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + customTags  + "/";
+    String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + _tag  + "/";
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-        Serial.printf("LOG: %s :: %s - Connecting to: ", c_log_tag_descript[TAG_STATUS], c_log_type_descript[LOG_INFO]);
+        LogPrefix(LOG_INFO, TAG_STATUS);
+        Serial.print("Logging to: ");
         Serial.println(loggingServiceRequestURL);
     }
 
@@ -146,9 +145,9 @@ bool LogClient::LogToService(String customTags, String strMessage){
 
     jsonLog["localtime"] = millis();
 
-    if(strMessage.length() > MAX_MESSAGE_LEN ) strMessage = strMessage.substring(0, MAX_MESSAGE_LEN);
+    if(message.length() > MAX_MESSAGE_LEN ) message = message.substring(0, MAX_MESSAGE_LEN);
 
-    jsonLog["message"] = strMessage;
+    jsonLog["message"] = message;
 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
@@ -179,7 +178,8 @@ bool LogClient::LogToService(String customTags, String strMessage){
     serializeJson(jsonLog, jsonMessage);
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-        Serial.printf("LOG: %s :: %s - Log message (JSON): ", c_log_tag_descript[TAG_STATUS], c_log_type_descript[LOG_INFO]);
+        LogPrefix(LOG_INFO, TAG_STATUS);
+        Serial.print("Log message (JSON): ");
         Serial.println(jsonMessage); 
     }
 
@@ -193,15 +193,19 @@ bool LogClient::LogToService(String customTags, String strMessage){
 
     if( httpCode == HTTP_CODE_OK ) {
         if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-            Serial.printf("LOG: %s :: %s - Logging to servce: SUCCESS %i\n", c_log_tag_descript[TAG_STATUS], c_log_type_descript[LOG_INFO], httpCode); 
+            LogPrefix(LOG_INFO, TAG_STATUS);
+            Serial.printf("Logging to servce: SUCCESS %i", httpCode);
+            Serial.println();
         }
-        return true;
+        return;
     }
     else {
         if( _serialOn && _logginglevel > LOGGING_LEVEL_LOW ) {
-            Serial.printf("LOG: %s :: %s - Logging to servce: ERROR %i\n", c_log_tag_descript[TAG_STATUS], c_log_type_descript[LOG_WARNING], httpCode); 
+            LogPrefix(LOG_WARNING, TAG_STATUS);
+            Serial.printf("Logging to servce: ERROR %i", httpCode);
+            Serial.println(); 
         }
-        return false;
+        return;
     }
 
 }
