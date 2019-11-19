@@ -46,8 +46,11 @@ Defines the physical details of the IOT device and the build environment
         protected:
 
 
-
     };
+
+    #if LOG_LEVEL == 0
+        #define NO_DEBUG
+    #endif
 
     extern iot_device device;
 
