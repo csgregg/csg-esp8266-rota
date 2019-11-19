@@ -60,14 +60,13 @@ Default debug mode -
 
     #define MAX_MESSAGE_LEN 140
 
+    #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define DEBUG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
 
-    #define DEBUG_INFO(text) logger.println(LOG_INFO, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-    #define DEBUG_WARN(text) logger.println(LOG_WARNING, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-    #define DEBUG_CRIT(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-
-    #define LOG_INFO(text) logger.println(LOG_INFO, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-    #define LOG_WARN(text) logger.println(LOG_WARNING, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-    #define LOG_CRIT(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define LOG_DETAIL(text) logger.println(LOG_DETAIL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
 
 
     #define DEBUG_STOP() while(true){yield();}
@@ -75,16 +74,16 @@ Default debug mode -
 
     typedef enum : int {
         LOGGING_OFF = 0,                // None
-        LOGGING_LEVEL_LOW = 1,          // Critical only
-        LOGGING_LEVEL_MED = 2,          // Warning and critical
-        LOGGING_LEVEL_HIGH = 3          // All (Info, Warning, Critical)
+        LOGGING_LEVEL_CRITICAL = 1,      // Critical only
+        LOGGING_LEVEL_NORMAL = 2,       // Normal and critical
+        LOGGING_LEVEL_VERBOSE = 3       // All (Detail, Normal, Critical)
     } t_logging_level;
 
 
     typedef enum : int {
         LOG_CRITICAL,
-        LOG_WARNING,
-        LOG_INFO
+        LOG_NORMAL,
+        LOG_DETAIL
     } t_log_type;
 
     
@@ -132,8 +131,8 @@ Default debug mode -
             t_log_type _lasttype;
             t_log_tag _lasttag;
 
-            const char* const c_log_type_descript[3] = {"CRIT","Warn","Info"};
-            const char* const c_log_tag_descript[2] = {" DEBUG","STATUS"};
+            const char* const c_log_type_descript[3] = {"CRITICAL","Normal","Verbose"};
+            const char* const c_log_tag_descript[2] = {"DEBUG","STATUS"};
 
         private:
     };

@@ -16,37 +16,55 @@ LogClient::LogClient() {
 
 
 void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
+
+#ifndef NO_DEBUG
+
     _http = &http;
     _client = &client;
 
     Serial.begin(device.monitorBaud);
 
     Serial.println("\r\n\r\nLOG: (Logger) Starting Logging\r\n");
+
+#endif
     
 }
 
 
 void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level level ){
+
+#ifndef NO_DEBUG
+
     _serialOn = modeSerial;
     _serviceOn = modeService;
     _logginglevel = level;
 
-    setTypeTag(LOG_INFO, TAG_STATUS);
+    setTypeTag(LOG_NORMAL, TAG_STATUS);
     printf("(Logger) Logging set at level: %i", device.loggingLevel);
 
-    if(_serviceOn) logger.println(LOG_INFO, TAG_STATUS, "(Logger) Logging Service: ON");
-    else logger.println(LOG_INFO, TAG_STATUS, "(Logger) Logging Service: OFF");
+    if(_serviceOn) logger.println(LOG_NORMAL, TAG_STATUS, "(Logger) Logging Service: ON");
+    else logger.println(LOG_NORMAL, TAG_STATUS, "(Logger) Logging Service: OFF");
+
+#endif
 
 }
 
 
 void LogClient::setTypeTag(t_log_type type, t_log_tag tag){
+
+#ifndef NO_DEBUG
+    
     _lasttype = type;
     _lasttag = tag;
+
+#endif
+
 }
 
 
 void LogClient::printf(const char *format, ...) {
+
+#ifndef NO_DEBUG
 
     va_list arg;
     va_start(arg, format);
@@ -58,7 +76,7 @@ void LogClient::printf(const char *format, ...) {
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(LOG_INFO, TAG_STATUS, "(Logger) LogClient:: Buffer error");
+            println(LOG_CRITICAL, TAG_DEBUG, "(Logger) LogClient:: Buffer error");
             return;
         }
         va_start(arg, format);
@@ -72,59 +90,96 @@ void LogClient::printf(const char *format, ...) {
 
     String s(temp);
 
-    println(_lasttype, _lasttag, s);  
+    println(_lasttype, _lasttag, s);
+
+#endif
+
 }
 
 
 void LogClient::println(t_log_type type, t_log_tag tag, const String &s) {
 
+#ifndef NO_DEBUG
+
     if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_LOW && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_MED && type == LOG_INFO ) return;
+    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
+    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
     
     if( _serialOn ) LogToSerial(type, tag, s);
     if( _serviceOn ) LogToService(type, tag, s);
+
+#endif
 
 }
 
 void LogClient::println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line ){
 
-    String str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
+#ifndef NO_DEBUG
+
+    String str;
+    
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
+    else str = s;
+
     println(type, tag, str);
+
+#endif
 
 }
 
 
 void LogClient::println(t_log_type type, t_log_tag tag, const char c[]) {
 
+#ifndef NO_DEBUG
+
     String s(c);
 
     println(type, tag, s);
+
+#endif
 
 }
 
 void LogClient::println(t_log_type type, t_log_tag tag, char c) {
 
+#ifndef NO_DEBUG
+
     String s(c);
 
     println(type, tag, s);
+
+#endif
 
 }
 
 
 void LogClient::LogPrefix(t_log_type type, t_log_tag tag){
-    if( _logginglevel == LOGGING_LEVEL_HIGH ) Serial.printf("LOG: %s: %s - Millis: %li, Heap: %i - ", c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
+
+#ifndef NO_DEBUG
+
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE) Serial.printf("LOG: %s: %s - Millis: %li, Heap: %i - ", c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
     else Serial.printf("LOG: %s: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
+
+#endif
+
 }
 
 
 void LogClient::LogToSerial(t_log_type type, t_log_tag tag, String message){
+
+#ifndef NO_DEBUG
+
     LogPrefix(type, tag);
     Serial.println(message);
+
+#endif
+
 }
 
 
 void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
+
+#ifndef NO_DEBUG
 
     String _tag(c_log_tag_descript[tag]);
     String _type(c_log_type_descript[type]);
@@ -133,8 +188,8 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 
     String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + _tag  + "/";
 
-    if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-        LogPrefix(LOG_INFO, TAG_STATUS);
+    if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+        LogPrefix(LOG_DETAIL, TAG_STATUS);
         Serial.print("(Logger) Logging to: ");
         Serial.println(loggingServiceRequestURL);
     }
@@ -180,8 +235,8 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 
     serializeJson(jsonLog, jsonMessage);
 
-    if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-        LogPrefix(LOG_INFO, TAG_STATUS);
+    if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+        LogPrefix(LOG_DETAIL, TAG_STATUS);
         Serial.print("(Logger) Log (JSON): ");
         Serial.println(jsonMessage); 
     }
@@ -195,21 +250,23 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
     _http->end();
 
     if( httpCode == HTTP_CODE_OK ) {
-        if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
-            LogPrefix(LOG_INFO, TAG_STATUS);
+        if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+            LogPrefix(LOG_DETAIL, TAG_STATUS);
             Serial.printf("(Logger) Logging to servce: SUCCESS %i", httpCode);
             Serial.println();
         }
         return;
     }
     else {
-        if( _serialOn && _logginglevel > LOGGING_LEVEL_LOW ) {
-            LogPrefix(LOG_WARNING, TAG_STATUS);
+        if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
+            LogPrefix(LOG_CRITICAL, TAG_STATUS);
             Serial.printf("(Logger) Logging to servce: ERROR %i", httpCode);
             Serial.println(); 
         }
         return;
     }
+
+#endif
 
 }
 
