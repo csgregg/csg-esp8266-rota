@@ -61,10 +61,17 @@ Default debug mode -
     #define MAX_MESSAGE_LEN 140
 
 
-    #define DEBUG_INFO(text) logger.println(LOG_INFO, TAG_DEBUG, text)
-    #define DEBUG_WARN(text) logger.println(LOG_WARNING, TAG_DEBUG, text)
-    #define DEBUG_CRIT(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text)
+    #define DEBUG_INFO(text) logger.println(LOG_INFO, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define DEBUG_WARN(text) logger.println(LOG_WARNING, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define DEBUG_CRIT(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
 
+    #define LOG_INFO(text) logger.println(LOG_INFO, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define LOG_WARN(text) logger.println(LOG_WARNING, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+    #define LOG_CRIT(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+
+
+    #define DEBUG_STOP() while(true){yield();}
+    #define DEBUG_RAW(text) Serial.println(text)
 
     typedef enum : int {
         LOGGING_OFF = 0,                // None
@@ -80,17 +87,13 @@ Default debug mode -
         LOG_INFO
     } t_log_type;
 
-    const char* const c_log_type_descript[] = {"CRITICAL","Warning ","Info    "};
-
-
+    
     typedef enum : int {
         TAG_DEBUG,
         TAG_STATUS
     } t_log_tag;
 
-    const char* const c_log_tag_descript[] = {"DEBUG ","STATUS"};
-
-
+    
     class LogClient {
         public:
   
@@ -106,6 +109,10 @@ Default debug mode -
             void println(t_log_type type, t_log_tag tag, const String &s);
             void println(t_log_type type, t_log_tag tag, const char c[]);
             void println(t_log_type type, t_log_tag tag, char c);
+
+
+            void println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line );
+
 
         protected:
 
@@ -124,6 +131,9 @@ Default debug mode -
 
             t_log_type _lasttype;
             t_log_tag _lasttag;
+
+            const char* const c_log_type_descript[3] = {"CRIT","Warn","Info"};
+            const char* const c_log_tag_descript[2] = {" DEBUG","STATUS"};
 
         private:
     };

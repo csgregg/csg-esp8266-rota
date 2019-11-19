@@ -169,18 +169,18 @@ void UpdateFirmware(){
 
 void setup() {
 
-    logger.begin( http, client );
+
+
+    logger.begin( http, client );    
     logger.setMode( device.logAsSerial, false, t_logging_level(device.loggingLevel) );
 
-    DEBUG_INFO("Test Error");
- 
-    logger.println(LOG_INFO, TAG_STATUS, "Starting Setup()...");
+    LOG_INFO("Starting Setup()...");
 
-    logger.println(LOG_INFO, TAG_STATUS, "Build tag: " + device.buildTag);
-    logger.println(LOG_INFO, TAG_STATUS, "Device name: " + device.deviceName);
-    logger.println(LOG_INFO, TAG_STATUS, "Device code: " + device.deviceCode);
-    logger.println(LOG_INFO, TAG_STATUS, "GitHub Repo: " + device.repoName);
-    logger.println(LOG_INFO, TAG_STATUS, "Asset service: " + device.assetService);
+    LOG_INFO("Build tag: " + device.buildTag);
+    LOG_INFO("Device name: " + device.deviceName);
+    LOG_INFO("Device code: " + device.deviceCode);
+    LOG_INFO("GitHub Repo: " + device.repoName);
+    LOG_INFO("Asset service: " + device.assetService);
 
     delay(1000);
     // pinMode(LED_BUILTIN, OUTPUT);
@@ -201,7 +201,7 @@ void setup() {
 
     logger.setMode( device.logAsSerial, device.logAsService, t_logging_level(device.loggingLevel) );
 
-    logger.println(LOG_INFO, TAG_STATUS, "WiFI Started: " + WiFi.localIP().toString());
+    LOG_INFO("WiFI Started: " + WiFi.localIP().toString());
 
     server.begin(); 
 
@@ -221,20 +221,22 @@ void setup() {
 
     // don't wanna miss a thing... Check every 120 seconds
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
+    
+
 }
 
 void loop() {
 
   delay(10000);
 
-  logger.println(LOG_INFO, TAG_STATUS, "Looping every second");
+  DEBUG_INFO("Looping every second");
 
   // digitalWrite(LED_BUILTIN, LED);
   // LED = !LED;
 
   if(WiFi.status() == WL_CONNECTED && doUpdateCheck ) {
 
-    logger.println(LOG_INFO, TAG_STATUS, "Updating Firmware...");
+    LOG_WARN("Updating Firmware...");
     UpdateFirmware();
 
     doUpdateCheck = false;

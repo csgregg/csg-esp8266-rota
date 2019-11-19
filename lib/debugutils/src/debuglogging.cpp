@@ -20,10 +20,9 @@ void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
     _client = &client;
 
     Serial.begin(device.monitorBaud);
-    Serial.println();
-    LogPrefix(LOG_INFO, TAG_STATUS);
-    Serial.println("Starting Logging");
-    Serial.println();
+
+    Serial.println("\r\n\r\nLOG: (Logger) Starting Logging\r\n");
+    
 }
 
 
@@ -33,10 +32,11 @@ void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level leve
     _logginglevel = level;
 
     setTypeTag(LOG_INFO, TAG_STATUS);
-    printf("Logging set at level: %i", device.loggingLevel);
+    printf("(Logger) Logging set at level: %i", device.loggingLevel);
 
-    if(_serviceOn) logger.println(LOG_INFO, TAG_STATUS, "Logging Service: ON");
-    else logger.println(LOG_INFO, TAG_STATUS, "Logging Service: OFF");
+    if(_serviceOn) logger.println(LOG_INFO, TAG_STATUS, "(Logger) Logging Service: ON");
+    else logger.println(LOG_INFO, TAG_STATUS, "(Logger) Logging Service: OFF");
+
 }
 
 
@@ -58,7 +58,7 @@ void LogClient::printf(const char *format, ...) {
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(LOG_INFO, TAG_STATUS, "LogClient:: Buffer error");
+            println(LOG_INFO, TAG_STATUS, "(Logger) LogClient:: Buffer error");
             return;
         }
         va_start(arg, format);
@@ -87,6 +87,14 @@ void LogClient::println(t_log_type type, t_log_tag tag, const String &s) {
 
 }
 
+void LogClient::println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line ){
+
+    String str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
+    println(type, tag, str);
+
+}
+
+
 void LogClient::println(t_log_type type, t_log_tag tag, const char c[]) {
 
     String s(c);
@@ -105,9 +113,8 @@ void LogClient::println(t_log_type type, t_log_tag tag, char c) {
 
 
 void LogClient::LogPrefix(t_log_type type, t_log_tag tag){
-    uint32_t free = system_get_free_heap_size(); // get free ram
-    if( _logginglevel == LOGGING_LEVEL_HIGH ) Serial.printf("LOG: %s :: %s - Heap: %i, Millis: %li - ", c_log_tag_descript[tag], c_log_type_descript[type], free, millis());
-    else Serial.printf("LOG: %s :: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
+    if( _logginglevel == LOGGING_LEVEL_HIGH ) Serial.printf("LOG: %s: %s - Millis: %li, Heap: %i - ", c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
+    else Serial.printf("LOG: %s: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
 }
 
 
@@ -128,7 +135,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
         LogPrefix(LOG_INFO, TAG_STATUS);
-        Serial.print("Logging to: ");
+        Serial.print("(Logger) Logging to: ");
         Serial.println(loggingServiceRequestURL);
     }
 
@@ -175,7 +182,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
         LogPrefix(LOG_INFO, TAG_STATUS);
-        Serial.print("Log message (JSON): ");
+        Serial.print("(Logger) Log (JSON): ");
         Serial.println(jsonMessage); 
     }
 
@@ -190,7 +197,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
     if( httpCode == HTTP_CODE_OK ) {
         if( _serialOn && _logginglevel == LOGGING_LEVEL_HIGH ) {
             LogPrefix(LOG_INFO, TAG_STATUS);
-            Serial.printf("Logging to servce: SUCCESS %i", httpCode);
+            Serial.printf("(Logger) Logging to servce: SUCCESS %i", httpCode);
             Serial.println();
         }
         return;
@@ -198,7 +205,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
     else {
         if( _serialOn && _logginglevel > LOGGING_LEVEL_LOW ) {
             LogPrefix(LOG_WARNING, TAG_STATUS);
-            Serial.printf("Logging to servce: ERROR %i", httpCode);
+            Serial.printf("(Logger) Logging to servce: ERROR %i", httpCode);
             Serial.println(); 
         }
         return;
