@@ -2,20 +2,16 @@
 */
 
 
+#include <ESP8266HTTPClient.h>
+#include <ESP8266WiFi.h>
+#include <ArduinoJson.h>
 
+#include "iot_device.h"
 #include "debuglogging.h"
-
-
 
 
 LogClient::LogClient() {
 
-}
-
-
-template <typename Generic>
-void LogClient::DEBUG_INFO(Generic text) {
-    println(LOG_INFO, TAG_DEBUG, text);
 }
 
 

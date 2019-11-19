@@ -3,8 +3,7 @@
 Defines the physical details of the IOT device and the build environment
 
 */
-#include <Arduino.h>
-#include "credentials.h"
+
 
 
 #ifndef IOT_DEVICE_H

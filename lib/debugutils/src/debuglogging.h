@@ -49,12 +49,8 @@ Default debug mode -
 
 
 
-#include <stdio.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266WiFi.h>
-#include <ArduinoJson.h>
 
-#include "iot_device.h"
+
 
 
 
@@ -65,7 +61,9 @@ Default debug mode -
     #define MAX_MESSAGE_LEN 140
 
 
-  
+    #define DEBUG_INFO(text) logger.println(LOG_INFO, TAG_DEBUG, text)
+    #define DEBUG_WARN(text) logger.println(LOG_WARNING, TAG_DEBUG, text)
+    #define DEBUG_CRIT(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text)
 
 
     typedef enum : int {
@@ -97,9 +95,6 @@ Default debug mode -
         public:
   
             LogClient();
-
-            template <typename Generic>
-            void DEBUG_INFO(Generic text);
 
             void setMode( bool modeSerial = false, bool modeService = false, t_logging_level level = LOGGING_OFF );
 

@@ -172,6 +172,7 @@ void setup() {
     logger.begin( http, client );
     logger.setMode( device.logAsSerial, false, t_logging_level(device.loggingLevel) );
 
+    DEBUG_INFO("Test Error");
  
     logger.println(LOG_INFO, TAG_STATUS, "Starting Setup()...");
 
