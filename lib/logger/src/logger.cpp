@@ -7,14 +7,18 @@
 #include <ArduinoJson.h>
 
 #include "iot_device.h"
-#include "debuglogging.h"
+#include "logger.h"
 
 
+// Public
+
+// Creator - not used
 LogClient::LogClient() {
 
 }
 
 
+// Sets up logger - needs to be followed by setMode() to actually start
 void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
 
 #ifndef NO_DEBUG
@@ -31,6 +35,7 @@ void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
 }
 
 
+// Sets logging mode
 void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level level ){
 
 #ifndef NO_DEBUG
@@ -50,7 +55,70 @@ void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level leve
 }
 
 
-void LogClient::setTypeTag(t_log_type type, t_log_tag tag){
+// Main log function
+void LogClient::println( t_log_type type, t_log_tag tag, const String &s ) {
+
+#ifndef NO_DEBUG
+
+    if( _logginglevel == LOGGING_OFF ) return;
+    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
+    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
+    
+    if( _serialOn ) LogToSerial(type, tag, s);
+    if( _serviceOn ) LogToService(type, tag, s);
+
+#endif
+
+}
+
+
+// Overload println() - with code context
+void LogClient::println( t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line ){
+
+#ifndef NO_DEBUG
+
+    String str;
+    
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
+    else str = s;
+
+    println(type, tag, str);
+
+#endif
+
+}
+
+
+// Overload println() - char[]
+void LogClient::println( t_log_type type, t_log_tag tag, const char c[] ) {
+
+#ifndef NO_DEBUG
+
+    String s(c);
+
+    println(type, tag, s);
+
+#endif
+
+}
+
+
+// Overload println() - char
+void LogClient::println( t_log_type type, t_log_tag tag, char c ) {
+
+#ifndef NO_DEBUG
+
+    String s(c);
+
+    println(type, tag, s);
+
+#endif
+
+}
+
+
+// Sets up Tag and Type for printf() function
+void LogClient::setTypeTag( t_log_type type, t_log_tag tag ){
 
 #ifndef NO_DEBUG
     
@@ -62,7 +130,8 @@ void LogClient::setTypeTag(t_log_type type, t_log_tag tag){
 }
 
 
-void LogClient::printf(const char *format, ...) {
+// Formatted log function - needs to be preceded by setTagType()
+void LogClient::printf( const char *format, ... ) {
 
 #ifndef NO_DEBUG
 
@@ -97,63 +166,10 @@ void LogClient::printf(const char *format, ...) {
 }
 
 
-void LogClient::println(t_log_type type, t_log_tag tag, const String &s) {
+// Protected:
 
-#ifndef NO_DEBUG
-
-    if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
-    
-    if( _serialOn ) LogToSerial(type, tag, s);
-    if( _serviceOn ) LogToService(type, tag, s);
-
-#endif
-
-}
-
-void LogClient::println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line ){
-
-#ifndef NO_DEBUG
-
-    String str;
-    
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
-    else str = s;
-
-    println(type, tag, str);
-
-#endif
-
-}
-
-
-void LogClient::println(t_log_type type, t_log_tag tag, const char c[]) {
-
-#ifndef NO_DEBUG
-
-    String s(c);
-
-    println(type, tag, s);
-
-#endif
-
-}
-
-void LogClient::println(t_log_type type, t_log_tag tag, char c) {
-
-#ifndef NO_DEBUG
-
-    String s(c);
-
-    println(type, tag, s);
-
-#endif
-
-}
-
-
-void LogClient::LogPrefix(t_log_type type, t_log_tag tag){
+// Create and log prefix - needs to be followed by message using Serial.println()
+void LogClient::LogPrefix( t_log_type type, t_log_tag tag ){
 
 #ifndef NO_DEBUG
 
@@ -165,7 +181,8 @@ void LogClient::LogPrefix(t_log_type type, t_log_tag tag){
 }
 
 
-void LogClient::LogToSerial(t_log_type type, t_log_tag tag, String message){
+// Log message to serial
+void LogClient::LogToSerial( t_log_type type, t_log_tag tag, String message ){
 
 #ifndef NO_DEBUG
 
@@ -177,7 +194,8 @@ void LogClient::LogToSerial(t_log_type type, t_log_tag tag, String message){
 }
 
 
-void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
+// Log message to Loggly Service
+void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
 
 #ifndef NO_DEBUG
 
@@ -195,8 +213,8 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
     }
 
     // Build JSON
-
     // Use https://arduinojson.org/v6/assistant/
+
     const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 454;
     DynamicJsonDocument jsonLog(capacity);
     String jsonMessage;
@@ -222,7 +240,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
         Device_Env["Code"] = device.deviceCode.c_str();
         Device_Env["Build"] = device.buildTag.c_str();
 
-        uint32_t free = system_get_free_heap_size(); // get free ram 
+        uint32_t free = system_get_free_heap_size();    // get free ram 
         Device_Env["Heap"] = free;
 
         JsonObject Device_Network = Device.createNestedObject("Network");
@@ -271,7 +289,7 @@ void LogClient::LogToService(t_log_type type, t_log_tag tag, String message){
 }
 
 
-
+// Create the global logger
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_LOGGER)
     LogClient logger;

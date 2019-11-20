@@ -5,16 +5,13 @@ Defines the physical details of the IOT device and the build environment
 */
 
 
-
 #ifndef IOT_DEVICE_H
 
     #define IOT_DEVICE_H
 
-
     #define TEXTIFY(...) #__VA_ARGS__
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
-
     class iot_device {
 
         public:
@@ -46,8 +43,12 @@ Defines the physical details of the IOT device and the build environment
         protected:
 
 
+        private:
+
+
     };
 
+    // Turn off all debug
     #if LOG_LEVEL == 0
         #define NO_DEBUG
     #endif

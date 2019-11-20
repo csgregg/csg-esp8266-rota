@@ -7,15 +7,12 @@
 #include <Ticker.h>
 #include <FS.h> 
 #include <ArduinoJson.h>
-#include "debuglogging.h"
+#include "logger.h"
 #include "iot_device.h"
 
 #define CHECK_INTERVAL 60
 
-
-
 #define SKIPUPDATE true
-
 
 
 const char* progSuffix = "-Pv";
@@ -23,14 +20,12 @@ const char* FSSuffix = "-Fv";
 
 bool LED = true;
 
-
 WiFiClient client;
 ESP8266WebServer server(80);
-Ticker updateCheck;
-boolean doUpdateCheck = true;
-
 HTTPClient http;
 
+Ticker updateCheck;
+boolean doUpdateCheck = true;
 
 
 
@@ -41,12 +36,14 @@ void filefont1()
   sent = sent;
 }
 
+
 void fileindex()
 {
   File file = SPIFFS.open("/index.html.gz", "r"); 
   size_t sent = server.streamFile(file, "text/html");
   sent = sent;
 }
+
 
 void bootstrap()
 {
@@ -55,6 +52,7 @@ void bootstrap()
   sent = sent;
 }
 
+
 void bootstrapmin()
 {
   File file = SPIFFS.open("/bootstrap.min.js.gz", "r"); 
@@ -62,14 +60,13 @@ void bootstrapmin()
   sent = sent;
 }
 
+
 void jquerymin()
 {
   File file = SPIFFS.open("/jquery-3.4.1.min.js.gz", "r"); 
   size_t sent = server.streamFile(file, "application/javascript");
   sent = sent;
 }
-
-
 
 
 void enableUpdateCheck() {
@@ -169,8 +166,6 @@ void UpdateFirmware(){
 
 void setup() {
 
-
-
     logger.begin( http, client );    
     logger.setMode( device.logAsSerial, false, t_logging_level(device.loggingLevel) );
 
@@ -216,18 +211,16 @@ void setup() {
     server.on("/fonts/glyphicons-halflings-regular.woff", filefont1);
     server.on("fonts/glyphicons-halflings-regular.woff", filefont1);
 
-    //NEW
     SPIFFS.begin(); 
 
     // don't wanna miss a thing... Check every 120 seconds
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
     
-
 }
 
 void loop() {
 
-  delay(10000);
+  delay(5000);
 
   DEBUG("Looping every second");
 
