@@ -1,16 +1,19 @@
+
 <?php
+
+// NEED TO DOCUMENT USE
 
     $DEBUG = false;
 
     // Get GitHub OAuth token
     include 'githuboauthtoken.php';
+    // NEED TO DESCRIBE FORMAT OF THIS
 
     // Get parameters
     if( !empty($_GET["debug"]) ) $DEBUG = ($_GET["debug"] == "true");
     if( !empty($_GET["tag"]) ) $requestedTag = $_GET["tag"];
     if( !empty($_GET["repo"]) ) $repoName = $_GET["repo"];
     if( !empty($_GET["asset"]) ) $imageFilePre = $_GET["asset"];
-
 
     // Check for repo 
     if( $DEBUG && empty($repoName) ){
@@ -27,7 +30,7 @@
 
     // Which release do we want?
     if( empty($requestedTag) || $requestedTag == "Latest" ) $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/latest";
-    else $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
+    else $githubApiUrl  "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
 
     if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
 
@@ -59,6 +62,9 @@
         if( $DEBUG ) echo nl2br("Latest release: $latestTag\n\r");
     }  
 
+    // NEED TO CHANGE
+    // Suggest return JSON which can be interpreted properly
+    
     // return latest version and exit if no ?tag=XXXX
     if( empty($requestedTag) ){
         if( !$DEBUG) echo $latestTag;
@@ -95,7 +101,6 @@
         header($_SERVER["SERVER_PROTOCOL"].' 404 GitHub asset not found', true, 404);
         exit;
     }
-   
 
     // Download file
     if( $DEBUG ) echo "Serving file: $binPath";

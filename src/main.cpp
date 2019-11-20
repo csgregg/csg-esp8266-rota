@@ -6,7 +6,7 @@
 #include <ESP8266httpUpdate.h>
 #include <Ticker.h>
 #include <FS.h> 
-#include <ArduinoJson.h>
+
 #include "logger.h"
 #include "iot_device.h"
 
@@ -74,7 +74,6 @@ void enableUpdateCheck() {
 }
 
 
-
 void UpdateFirmware(){
 
   LOG("Update firmware...");
@@ -90,6 +89,11 @@ void UpdateFirmware(){
     DEBUG("Error getting latest release - Error: " + String(httpCode));
   }
   else {
+
+    // NEED TO CHANGE 
+    // For stuations like a captive portal redirect which returns an alternative page redirect. The page content gets loaded as the latest tag which is bad
+    // Suggest - githubfetchasset needs to return JSON which can then be confirmed and interpreted. 
+    
     latestTag = http.getString();
     http.end();
             
