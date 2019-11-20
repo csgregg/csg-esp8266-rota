@@ -1,44 +1,92 @@
-/* Info and License
+/* IOT Device Library
 
-Defines the physical details of the IOT device and the build environment
+MIT License
+
+Copyright (c) 2019 Chris Gregg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------------------------------------------------------------------------
+
+Defines the physical attributes of the IOT device and the build environment.
+
+Build flags are loaded from platformio.ini
 
 */
+
+
+#include "credentials.h"         // Contains private definitions (excluded from repo)
 
 
 #ifndef IOT_DEVICE_H
 
     #define IOT_DEVICE_H
 
+    // Used to stringify debug flags
+
     #define TEXTIFY(...) #__VA_ARGS__
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
+    // Turn off all debug
+
+    #if LOG_LEVEL == 0
+        #define NO_DEBUG
+    #endif
+
+
+    // IOT Device Class
+
     class iot_device {
 
         public:
 
-            // Get Build Flags
-
-            const String buildTag = ESCAPEQUOTE(BUILD_TAG);
-            const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);
-            const String deviceName = ESCAPEQUOTE(DEVICE_NAME);
-            const String repoName = ESCAPEQUOTE(DEVICE_REPO);
-            const String assetService = ESCAPEQUOTE(ASSET_SERVICE);
-
-
-            const bool logAsSerial = atoi(ESCAPEQUOTE(LOG_AS_SERIAL));
-            const bool logAsService = atoi(ESCAPEQUOTE(LOG_AS_SERVICE));
-            const uint loggingLevel = atoi(ESCAPEQUOTE(LOG_LEVEL));
-
-            const long monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
-
-            const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);
-            const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);
-            const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);
-
-
+            // Physcial board
+            
             const String platform = ESCAPEQUOTE(PLATFORM);
             const String board = ESCAPEQUOTE(BOARD);
             const String framework = ESCAPEQUOTE(FRAMEWORK);
+           
+           // General build details
+
+            const String buildTag = ESCAPEQUOTE(BUILD_TAG);                         // Build tag - when used in Travis-CI comes from the GitHub Release
+            const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);                     // Short code name for the device
+            const String deviceName = ESCAPEQUOTE(DEVICE_NAME);                     // Full device name
+
+            // Used by CI_OTA library
+
+            const String repoName = ESCAPEQUOTE(DEVICE_REPO);                       // GitHub reprositary holding this code
+            const String assetService = ESCAPEQUOTE(ASSET_SERVICE);                 // Path to PHP used to return GitHub assets
+
+            // Used by Logger library
+
+            const bool logAsSerial = atoi(ESCAPEQUOTE(LOG_AS_SERIAL));              // 0 - 1 to turn on serial logging
+            const bool logAsService = atoi(ESCAPEQUOTE(LOG_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
+            const uint loggingLevel = atoi(ESCAPEQUOTE(LOG_LEVEL));                 // 0 - 3 to set log level
+
+            const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);             // Path to Loggly API
+            const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);      // Loggly API key - stored in credentials.h for privacy
+            const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);      // Tags to globally apply to logs
+
+            // Serial monitor speed 
+            
+            const long monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
+
 
         protected:
 
@@ -48,11 +96,6 @@ Defines the physical details of the IOT device and the build environment
 
     };
 
-    // Turn off all debug
-    #if LOG_LEVEL == 0
-        #define NO_DEBUG
-    #endif
-
-    extern iot_device device;
+    extern iot_device device;              // Declaring global instance
 
 #endif
