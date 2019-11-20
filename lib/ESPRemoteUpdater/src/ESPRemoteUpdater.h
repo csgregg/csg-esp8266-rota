@@ -45,8 +45,13 @@ binaries built by Travis-CI.
         public:
 
             ESPRemoteUpdater();
+            
+            void begin( HTTPClient &http, WiFiClient &client );
 
         protected:
+
+            const char* progSuffix = "-Pv";
+            const char* FSSuffix = "-Fv";
 
 
         private:
