@@ -77,7 +77,7 @@ void enableUpdateCheck() {
 
 void UpdateFirmware(){
 
-  Serial.println("Update firmware...");
+  LOG("Update firmware...");
 
   String assetRequestURL = "http://" + device.assetService + "?repo=" + device.repoName;
   String latestTag;
@@ -87,73 +87,73 @@ void UpdateFirmware(){
 
   if( httpCode != HTTP_CODE_OK ) {
     http.end();
-    Serial.println("Error getting latest release - Error: " + String(httpCode));
+    DEBUG("Error getting latest release - Error: " + String(httpCode));
   }
   else {
     latestTag = http.getString();
     http.end();
             
-    Serial.println("Lastest version: " + latestTag);
-    Serial.println("Current version: " + device.buildTag);
+    LOG("Lastest version: " + latestTag);
+    LOG("Current version: " + device.buildTag);
     
     // Check for update
     if( latestTag == device.buildTag ){
-      Serial.println("No new update");              
+      LOG("No new update");              
     }
     else {
       // Update SPIFFS file system
       String spiffsFileRequest = assetRequestURL + "&asset=" + device.deviceCode + FSSuffix + "&tag=" + latestTag;
-      Serial.println("FS file request: " + spiffsFileRequest);
+      LOG("FS file request: " + spiffsFileRequest);
 
       t_httpUpdate_return ret;
 
        if( SKIPUPDATE ){
-        Serial.println("Skipping update");
+        LOG("Skipping update");
         ret = HTTP_UPDATE_NO_UPDATES;
       }
       else ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
 
       switch(ret) {
         case HTTP_UPDATE_FAILED:
-            Serial.printf("File system update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-            Serial.println();
+            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
+            logger.printf("File system update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
             break;
 
         case HTTP_UPDATE_NO_UPDATES:
-            Serial.println("No new file system update");
+            LOG("No new file system update");
             break;
             
         case HTTP_UPDATE_OK:
-            Serial.println("File system updated successfully");
+            LOG("File system updated successfully");
             break;
       }
 
       // Update image
       String imageFileRequest = assetRequestURL + "&asset=" + device.deviceCode + progSuffix + "&tag=" + latestTag;
-      Serial.println("Image file request: " + imageFileRequest);
+      LOG("Image file request: " + imageFileRequest);
 
       ESPhttpUpdate.rebootOnUpdate(false);
 
       if( SKIPUPDATE ){
-        Serial.println("Skipping update");
+        LOG("Skipping update");
         ret = HTTP_UPDATE_NO_UPDATES;
       }
       else ret = ESPhttpUpdate.update(client, imageFileRequest);
 
       switch(ret) {
         case HTTP_UPDATE_FAILED:
-            Serial.printf("Image update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-            Serial.println();
+            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
+            logger.printf("Image update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
             break;
 
         case HTTP_UPDATE_NO_UPDATES:
-            Serial.println("No new image update");
+            LOG("No new image update");
             break;
 
         case HTTP_UPDATE_OK:
-            Serial.println("Image updated cuccessfully");
+            LOG("Image updated cuccessfully");
 
-            Serial.println("Rebooting in 5 sec");
+            logger.println(LOG_CRITICAL, TAG_STATUS, "Rebooting in 5 sec");
             delay(5000);
             ESP.restart();
 
@@ -217,6 +217,7 @@ void setup() {
     updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
     
 }
+
 
 void loop() {
 
