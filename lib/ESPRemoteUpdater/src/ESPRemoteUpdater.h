@@ -1,4 +1,4 @@
-/* IOT Device Library
+/* Remote Updater Library
 
 MIT License
 
@@ -22,17 +22,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+-----------------------------------------------------------------------------
+
+Implements a remote update service for ESP using GitHub to store code and
+binaries built by Travis-CI.
+
 */
 
 
-#include <Arduino.h>
+#include <ESP8266httpUpdate.h>
 
-#include "iot_device.h"
-#include "credentials.h"
+#ifndef ESP_REMOTE_UPDATER_H
+
+    #define ESP_REMOTE_UPDATER_H
 
 
-// Create the global device instance
 
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_IOT_DEVICE)
-    iot_device device;
+    // Remote Updater Class
+
+    class ESPRemoteUpdater {
+        
+        public:
+
+            ESPRemoteUpdater();
+
+        protected:
+
+
+        private:
+        
+
+    };
+
+    extern ESPRemoteUpdater updater;
+
 #endif
+
+

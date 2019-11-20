@@ -31,7 +31,7 @@ Build flags are loaded from platformio.ini
 */
 
 
-#include "credentials.h"         // Contains private definitions (excluded from repo)
+#include "Credentials.h"         // Contains private definitions (excluded from repo)
 
 
 #ifndef IOT_DEVICE_H
@@ -52,7 +52,7 @@ Build flags are loaded from platformio.ini
 
     // IOT Device Class
 
-    class iot_device {
+    class IOTDevice {
 
         public:
 
@@ -68,7 +68,7 @@ Build flags are loaded from platformio.ini
             const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);                     // Short code name for the device
             const String deviceName = ESCAPEQUOTE(DEVICE_NAME);                     // Full device name
 
-            // Used by CI_OTA library
+            // Used by CI_Remote_OTA library
 
             const String repoName = ESCAPEQUOTE(DEVICE_REPO);                       // GitHub reprositary holding this code
             const String assetService = ESCAPEQUOTE(ASSET_SERVICE);                 // Path to PHP used to return GitHub assets
@@ -96,6 +96,6 @@ Build flags are loaded from platformio.ini
 
     };
 
-    extern iot_device device;              // Declaring global instance
+    extern IOTDevice device;              // Declaring global instance
 
 #endif

@@ -7,8 +7,9 @@
 #include <Ticker.h>
 #include <FS.h> 
 
-#include "logger.h"
-#include "iot_device.h"
+#include "Logger.h"
+#include "IOTDevice.h"
+#include "ESPRemoteUpdater.h"
 
 #define CHECK_INTERVAL 60
 
