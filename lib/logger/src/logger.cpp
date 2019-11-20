@@ -29,8 +29,8 @@ SOFTWARE.
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-#include "iot_device.h"
-#include "logger.h"
+#include "IOTDevice.h"
+#include "Logger.h"
 
 
 // Public
