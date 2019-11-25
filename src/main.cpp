@@ -58,6 +58,38 @@ void jquerymin()
 
 
 
+
+void elaborateTags() {
+
+    LOG("Platform: " + device.platform);
+    LOG("Board: " + device.board);
+    LOG("Framework: " + device.framework);
+
+    LOG("Device name: " + device.deviceName);
+    LOG("Device code: " + device.deviceCode);
+
+    LOG("Build tag: " + device.buildTag);
+    LOG("GitHub Repo: " + device.repoName);
+    LOG("Asset service: " + device.assetService);
+
+    logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
+    logger.printf("Update interval: %f", device.updateInterval );
+    logger.printf("Skip update: %i", device.skipUpdate );
+    
+    logger.printf("Log as serial: %i", device.logAsSerial);
+    logger.printf("Log as service: %i", device.logAsService);
+    logger.printf("Logging level: %i", device.loggingLevel);
+
+    LOG("Logging service: " + device.loggingService);
+    LOG("Logging serice key: " + device.loggingServiceKey);
+    LOG("Logging global tags: " + device.loggingGlobalTags);
+
+    logger.printf("Monitor baud: %i", device.updateInterval );
+    
+}
+
+
+
 void setup() {
 
     logger.begin( http, client );    
@@ -65,11 +97,7 @@ void setup() {
 
     LOG("Starting Setup()...");
 
-    LOG("Build tag: " + device.buildTag);
-    LOG("Device name: " + device.deviceName);
-    LOG("Device code: " + device.deviceCode);
-    LOG("GitHub Repo: " + device.repoName);
-    LOG("Asset service: " + device.assetService);
+    elaborateTags();
 
     delay(1000);
     // pinMode(LED_BUILTIN, OUTPUT);
