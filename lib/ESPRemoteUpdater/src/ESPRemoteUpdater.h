@@ -35,9 +35,7 @@ binaries built by Travis-CI.
 
     #define ESP_REMOTE_UPDATER_H
 
-    #define DEFAULT_UPDATE_INTERVAL 120
-
-    #define SKIPUPDATE true
+    #define DEFAULT_UPDATE_INTERVAL 300
 
     #include <Ticker.h>
 
@@ -57,25 +55,26 @@ binaries built by Travis-CI.
 
             ESPRemoteUpdater();
             
-            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval );
-            void begin( HTTPClient &http, WiFiClient &client );
+            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval, bool skip );
+            void begin( HTTPClient& http, WiFiClient& client );
 
             void handle();
 
-            bool getLatestBuild();
+            String getLatestBuild();
 
-            t_update_result getLastError();
+            int getLastError();
             String getLastErrorString();
 
         protected:
 
-            const char* progSuffix = "-Pv";
-            const char* FSSuffix = "-Fv";
+            const char* _progSuffix = "-Pv";
+            const char* _FSSuffix = "-Fv";
 
             String _assetRequestURL;
             String _deviceCode;
             String _buildTag;
             String _latestTag;
+            bool _skipUpdates;
 
             HTTPClient * _http;
             WiFiClient * _client;
@@ -86,6 +85,11 @@ binaries built by Travis-CI.
             float _updateinterval = DEFAULT_UPDATE_INTERVAL;
 
             static void TriggerUpdateCheck();
+
+            int _lastError;
+
+            HTTPUpdateResult UpdateFS();
+            HTTPUpdateResult UpdateProg( bool restart );
 
         private:
         

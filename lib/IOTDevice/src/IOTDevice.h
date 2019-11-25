@@ -72,6 +72,8 @@ Build flags are loaded from platformio.ini
 
             const String repoName = ESCAPEQUOTE(DEVICE_REPO);                       // GitHub reprositary holding this code
             const String assetService = ESCAPEQUOTE(ASSET_SERVICE);                 // Path to PHP used to return GitHub assets
+            const bool skipUpdate = ESCAPEQUOTE(SKIP_UPDATE);                       // Skip any updates
+            const float updateInterval = atof(ESCAPEQUOTE(UPDATE_INTERVAL));        // Interval between update checks
 
             // Used by Logger library
 
