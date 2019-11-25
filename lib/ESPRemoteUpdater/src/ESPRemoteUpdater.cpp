@@ -26,14 +26,95 @@ SOFTWARE.
 
 
 #include <ESP8266httpUpdate.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <Ticker.h>
 
 #include "IOTDevice.h"
+#include "Logger.h"
 #include "ESPRemoteUpdater.h"
 
 
 
 ESPRemoteUpdater::ESPRemoteUpdater() {
 
+}
+
+bool ESPRemoteUpdater::_doUpdateCheck;
+
+
+void ESPRemoteUpdater::setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval ) {
+
+    _assetRequestURL = assetRequestURL;
+    _deviceCode = deviceCode;
+    _buildTag = buildTag;
+    _updateinterval = updateinterval;
+
+}
+
+
+
+void ESPRemoteUpdater::begin( HTTPClient &http, WiFiClient &client ) {
+
+    _http = &http;
+    _client = &client;
+
+    _doUpdateCheck = false;
+
+    _updateCheck.attach( _updateinterval, TriggerUpdateCheck );
+}
+
+
+void ESPRemoteUpdater::TriggerUpdateCheck() {
+    _doUpdateCheck = true;
+}
+
+
+bool ESPRemoteUpdater::getLatestBuild() {
+
+    LOG("Updating Firmware...");
+
+    if ( WiFi.status() == WL_CONNECTED && _http != NULL ) {
+
+        _http->begin( *_client, _assetRequestURL );
+        int httpCode = _http->GET();
+
+        if( httpCode != HTTP_CODE_OK ) {
+            _http->end();
+            DEBUG("Error getting latest release - Error: " + String(httpCode));
+
+            return false;
+        }
+        else {
+
+            // NEED TO CHANGE 
+            // For stuations like a captive portal redirect which returns an alternative page redirect. The page content gets loaded as the latest tag which is bad
+            // Suggest - githubfetchasset needs to return JSON which can then be confirmed and interpreted. 
+
+            _latestTag = _http->getString();
+            _http->end();
+            
+            LOG("Lastest version: " + _latestTag);
+
+            return true;
+        }
+    }
+    else{
+         DEBUG("Cannot connect to update service");
+    }
+
+    return false;
+}
+ 
+
+void ESPRemoteUpdater::handle() {
+
+    if ( WiFi.status() == WL_CONNECTED && _http != NULL && _doUpdateCheck ) {
+
+        _doUpdateCheck = false;
+
+        getLatestBuild();
+    }
 }
 
 

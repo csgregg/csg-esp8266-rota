@@ -25,8 +25,6 @@ WiFiClient client;
 ESP8266WebServer server(80);
 HTTPClient http;
 
-Ticker updateCheck;
-boolean doUpdateCheck = true;
 
 
 
@@ -69,10 +67,6 @@ void jquerymin()
   sent = sent;
 }
 
-
-void enableUpdateCheck() {
-  doUpdateCheck = true;
-}
 
 
 void UpdateFirmware(){
@@ -218,8 +212,8 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    // don't wanna miss a thing... Check every 120 seconds
-    updateCheck.attach(CHECK_INTERVAL, enableUpdateCheck);
+    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, CHECK_INTERVAL );
+    updater.begin( http, client );
     
 }
 
@@ -228,17 +222,8 @@ void loop() {
 
   delay(5000);
 
-  DEBUG("Looping every second");
+  DEBUG("Looping every 5 seconds");
 
-  // digitalWrite(LED_BUILTIN, LED);
-  // LED = !LED;
-
-  if(WiFi.status() == WL_CONNECTED && doUpdateCheck ) {
-
-    LOG("Updating Firmware...");
-    UpdateFirmware();
-
-    doUpdateCheck = false;
-  }
+  updater.handle();
 
 }
