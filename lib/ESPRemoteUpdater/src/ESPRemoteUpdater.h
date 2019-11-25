@@ -30,12 +30,23 @@ binaries built by Travis-CI.
 */
 
 
-#include <ESP8266httpUpdate.h>
 
 #ifndef ESP_REMOTE_UPDATER_H
 
     #define ESP_REMOTE_UPDATER_H
 
+    #define DEFAULT_UPDATE_INTERVAL 120
+
+    #define SKIPUPDATE true
+
+    #include <Ticker.h>
+
+    typedef enum : int {
+        REMOTE_FS_UPDATE_FAILED,
+        REMOTE_IMG_UPDATE_FAILED,
+        REMOTE_UPDATE_NO_UPDATES,
+        REMOTE_UPDATE_OK
+    } t_update_result;
 
 
     // Remote Updater Class
@@ -46,13 +57,35 @@ binaries built by Travis-CI.
 
             ESPRemoteUpdater();
             
+            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval );
             void begin( HTTPClient &http, WiFiClient &client );
+
+            void handle();
+
+            bool getLatestBuild();
+
+            t_update_result getLastError();
+            String getLastErrorString();
 
         protected:
 
             const char* progSuffix = "-Pv";
             const char* FSSuffix = "-Fv";
 
+            String _assetRequestURL;
+            String _deviceCode;
+            String _buildTag;
+            String _latestTag;
+
+            HTTPClient * _http;
+            WiFiClient * _client;
+
+            Ticker _updateCheck;
+            static bool _doUpdateCheck;
+
+            float _updateinterval = DEFAULT_UPDATE_INTERVAL;
+
+            static void TriggerUpdateCheck();
 
         private:
         
