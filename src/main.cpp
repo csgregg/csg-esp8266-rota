@@ -11,21 +11,10 @@
 #include "IOTDevice.h"
 #include "ESPRemoteUpdater.h"
 
-#define CHECK_INTERVAL 60
-
-#define SKIPUPDATE true
-
-
-const char* progSuffix = "-Pv";
-const char* FSSuffix = "-Fv";
-
-bool LED = true;
 
 WiFiClient client;
-ESP8266WebServer server(80);
 HTTPClient http;
-
-
+ESP8266WebServer server(80);
 
 
 void filefont1()
@@ -69,100 +58,6 @@ void jquerymin()
 
 
 
-void UpdateFirmware(){
-
-  LOG("Update firmware...");
-
-  String assetRequestURL = "http://" + device.assetService + "?repo=" + device.repoName;
-  String latestTag;
-
-  http.begin(client, assetRequestURL);
-  int httpCode = http.GET();
-
-  if( httpCode != HTTP_CODE_OK ) {
-    http.end();
-    DEBUG("Error getting latest release - Error: " + String(httpCode));
-  }
-  else {
-
-    // NEED TO CHANGE 
-    // For stuations like a captive portal redirect which returns an alternative page redirect. The page content gets loaded as the latest tag which is bad
-    // Suggest - githubfetchasset needs to return JSON which can then be confirmed and interpreted. 
-    
-    latestTag = http.getString();
-    http.end();
-            
-    LOG("Lastest version: " + latestTag);
-    LOG("Current version: " + device.buildTag);
-    
-    // Check for update
-    if( latestTag == device.buildTag ){
-      LOG("No new update");              
-    }
-    else {
-      // Update SPIFFS file system
-      String spiffsFileRequest = assetRequestURL + "&asset=" + device.deviceCode + FSSuffix + "&tag=" + latestTag;
-      LOG("FS file request: " + spiffsFileRequest);
-
-      t_httpUpdate_return ret;
-
-       if( SKIPUPDATE ){
-        LOG("Skipping update");
-        ret = HTTP_UPDATE_NO_UPDATES;
-      }
-      else ret = ESPhttpUpdate.updateSpiffs(client, spiffsFileRequest);
-
-      switch(ret) {
-        case HTTP_UPDATE_FAILED:
-            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-            logger.printf("File system update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-            break;
-
-        case HTTP_UPDATE_NO_UPDATES:
-            LOG("No new file system update");
-            break;
-            
-        case HTTP_UPDATE_OK:
-            LOG("File system updated successfully");
-            break;
-      }
-
-      // Update image
-      String imageFileRequest = assetRequestURL + "&asset=" + device.deviceCode + progSuffix + "&tag=" + latestTag;
-      LOG("Image file request: " + imageFileRequest);
-
-      ESPhttpUpdate.rebootOnUpdate(false);
-
-      if( SKIPUPDATE ){
-        LOG("Skipping update");
-        ret = HTTP_UPDATE_NO_UPDATES;
-      }
-      else ret = ESPhttpUpdate.update(client, imageFileRequest);
-
-      switch(ret) {
-        case HTTP_UPDATE_FAILED:
-            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-            logger.printf("Image update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-            break;
-
-        case HTTP_UPDATE_NO_UPDATES:
-            LOG("No new image update");
-            break;
-
-        case HTTP_UPDATE_OK:
-            LOG("Image updated cuccessfully");
-
-            logger.println(LOG_CRITICAL, TAG_STATUS, "Rebooting in 5 sec");
-            delay(5000);
-            ESP.restart();
-
-            break;
-      }
-    }
-  }
-}
-
-
 void setup() {
 
     logger.begin( http, client );    
@@ -180,16 +75,8 @@ void setup() {
     // pinMode(LED_BUILTIN, OUTPUT);
 
     WiFi.persistent(false);
-    
-    //WiFiManager
-    //Local intialization. Once its business is done, there is no need to keep it around
     WiFiManager wifiManager;
-    //reset saved settings
-    //wifiManager.resetSettings();
-
     wifiManager.autoConnect("AutoConnectAP");
-    //or use this for auto generated name ESP + ChipID
-    //wifiManager.autoConnect();
 
     delay(1000);
 
@@ -212,10 +99,11 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, CHECK_INTERVAL );
+    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdate );
     updater.begin( http, client );
     
 }
+
 
 
 void loop() {
