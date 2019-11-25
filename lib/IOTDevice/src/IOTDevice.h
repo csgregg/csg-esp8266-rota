@@ -31,12 +31,14 @@ Build flags are loaded from platformio.ini
 */
 
 
-#include "Credentials.h"         // Contains private definitions (excluded from repo)
-
-
 #ifndef IOT_DEVICE_H
 
     #define IOT_DEVICE_H
+
+    #include <Arduino.h>
+    
+    #include "Credentials.h"         // Contains private definitions (excluded from repo)
+    
 
     // Used to stringify debug flags
 

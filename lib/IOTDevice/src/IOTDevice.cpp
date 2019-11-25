@@ -24,9 +24,6 @@ SOFTWARE.
 
 */
 
-
-#include <Arduino.h>
-
 #include "IOTDevice.h"
 #include "Credentials.h"
 
