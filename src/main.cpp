@@ -74,7 +74,7 @@ void elaborateTags() {
 
     logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
     logger.printf("Update interval: %f", device.updateInterval );
-    logger.printf("Skip update: %i", device.skipUpdate );
+    logger.printf("Skip update: %i", device.skipUpdates );
     
     logger.printf("Log as serial: %i", device.logAsSerial);
     logger.printf("Log as service: %i", device.logAsService);
@@ -84,7 +84,7 @@ void elaborateTags() {
     LOG("Logging serice key: " + device.loggingServiceKey);
     LOG("Logging global tags: " + device.loggingGlobalTags);
 
-    logger.printf("Monitor baud: %i", device.updateInterval );
+    logger.printf("Monitor baud: %i", device.monitorBaud );
     
 }
 
@@ -127,7 +127,7 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdate );
+    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdates );
     updater.begin( http, client );
     
 }
