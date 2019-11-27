@@ -69,7 +69,8 @@ String get_env_var( String const & key ) {
 
 void elaborateBuildFlags() {
 
-    LOG(get_env_var("PLATFORMIO_CORE_DIR"));
+    LOG(get_env_var("LOGGING_SERVICE_KEY2"));
+    LOG(ESCAPEQUOTE(LOGGING_SERVICE_KEY2));
 
     LOG("Platform: " + device.platform);
     LOG("Board: " + device.board);
