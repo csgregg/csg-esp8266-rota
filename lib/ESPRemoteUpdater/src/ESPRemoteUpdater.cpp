@@ -218,6 +218,9 @@ void ESPRemoteUpdater::handle() {
         }
         else {
 */
+
+            getLatestBuild();
+
             UpdateFS();
 
             UpdateProg( true );
