@@ -9,8 +9,11 @@
 #endif
 
 
+// Environment variables encrypted using Travis CLI
+
 // Logging Service
+// Define in case missed by Travis
 #ifndef LOGGING_SERVICE_KEY
-    #define LOGGING_SERVICE_KEY bf8b4993-cc16-4c3f-90ba-0826d97768fc
+    #define LOGGING_SERVICE_KEY "Defined"
 #endif
 
