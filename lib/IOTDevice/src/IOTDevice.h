@@ -116,8 +116,6 @@ Build flags are loaded from platformio.ini
             const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);      // Loggly API key - stored in credentials.h for privacy
             const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);      // Tags to globally apply to logs
 
-            // TODO - Encrypt logging service key
-
             // Serial monitor speed 
             
             const long monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
