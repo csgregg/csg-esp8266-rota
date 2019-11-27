@@ -1,4 +1,5 @@
-// Public copy of secrets - don't store anything here
+// Public copy of secrets - don't store anything here. Use copy in private folder instead
+
 
 // Local WiFi
 #ifndef WIFI_SSID
@@ -12,8 +13,9 @@
 // Environment variables encrypted using Travis CLI
 
 // Logging Service
-// Define in case missed by Travis
+// RUN: travis encrypt LOGGING_SERVICE_KEY=<<Secret>> --add env.global
+// PLATFORMIO.INI: -DLOGGING_SERVICE_KEY=${sysenv.LOGGING_SERVICE_KEY}
 #ifndef LOGGING_SERVICE_KEY
-    #define LOGGING_SERVICE_KEY "Defined"
+    #define LOGGING_SERVICE_KEY ""
 #endif
 

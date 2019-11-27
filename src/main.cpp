@@ -69,9 +69,6 @@ String get_env_var( String const & key ) {
 
 void elaborateBuildFlags() {
 
-    LOG(get_env_var("LOGGING_SERVICE_KEY2"));
-    LOG(ESCAPEQUOTE(LOGGING_SERVICE_KEY2));
-
     LOG("Platform: " + device.platform);
     LOG("Board: " + device.board);
     LOG("Framework: " + device.framework);
@@ -110,7 +107,6 @@ void setup() {
     LOG("Starting Setup()...");
 
     delay(1000);
-    // pinMode(LED_BUILTIN, OUTPUT);
 
     WiFi.persistent(false);
     WiFiManager wifiManager;
@@ -148,10 +144,10 @@ void setup() {
 
 void loop() {
 
-  delay(5000);
+  updater.handle();
 
   DEBUG("Looping every 5 seconds");
 
-  updater.handle();
+  delay(5000);
 
 }
