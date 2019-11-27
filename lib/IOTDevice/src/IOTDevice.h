@@ -45,6 +45,34 @@ Build flags are loaded from platformio.ini
     #define TEXTIFY(...) #__VA_ARGS__
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
+
+    // In case build flags are missing for non-string members
+
+    #ifndef SKIP_UPDATES
+        #define SKIP_UPDATES 1
+    #endif
+
+    #ifndef LOG_AS_SERIAL
+        #define LOG_AS_SERIAL 1
+    #endif
+
+    #ifndef LOG_AS_SERVICE
+        #define LOG_AS_SERVICE 0
+    #endif
+
+    #ifndef UPDATE_INTERVAL
+        #define UPDATE_INTERVAL 300
+    #endif
+
+    #ifndef LOG_LEVEL
+        #define LOG_LEVEL 3
+    #endif
+
+    #ifndef MONITOR_SPEED
+        #define MONITOR_SPEED 115200
+    #endif
+
+
     // Turn off all debug
 
     #if LOG_LEVEL == 0
