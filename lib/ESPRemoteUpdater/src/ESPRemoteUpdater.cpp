@@ -72,7 +72,7 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 String ESPRemoteUpdater::getLatestBuild() {
 
-    LOG("Checking latest buitld...");
+    LOG("Checking latest build...");
 
     if ( _http != NULL ) {
 
@@ -97,7 +97,7 @@ String ESPRemoteUpdater::getLatestBuild() {
             _latestTag = _http->getString();
             _http->end();
             
-            LOG("Lastest version: " + _latestTag);
+            LOG("Latest version: " + _latestTag);
 
             return _latestTag;
         }
