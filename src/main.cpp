@@ -109,8 +109,6 @@ void setup() {
 
     LOG("Starting Setup()...");
 
-    elaborateBuildFlags();
-
     delay(1000);
     // pinMode(LED_BUILTIN, OUTPUT);
 
@@ -123,6 +121,8 @@ void setup() {
     logger.setMode( device.logAsSerial, device.logAsService, t_logging_level(device.loggingLevel) );
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
+
+    elaborateBuildFlags();
 
     server.begin(); 
 
