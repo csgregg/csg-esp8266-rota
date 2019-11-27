@@ -95,6 +95,7 @@ Build flags are loaded from platformio.ini
            // General build details
 
             const String buildTag = ESCAPEQUOTE(BUILD_TAG);                         // Build tag - when used in Travis-CI comes from the GitHub Release
+            const String buildEnv = ESCAPEQUOTE(BUILD_ENV);                         // Build environmoent - Local or Travis-CI
             const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);                     // Short code name for the device
             const String deviceName = ESCAPEQUOTE(DEVICE_NAME);                     // Full device name
 
@@ -114,6 +115,8 @@ Build flags are loaded from platformio.ini
             const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);             // Path to Loggly API
             const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);      // Loggly API key - stored in credentials.h for privacy
             const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);      // Tags to globally apply to logs
+
+            // TODO - Encrypt logging service key
 
             // Serial monitor speed 
             

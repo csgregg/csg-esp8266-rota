@@ -4,10 +4,12 @@ python:
 sudo: false
 cache:
   directories:
-  - ~/.platformio
+  - "~/.platformio"
 env:
-- PLATFORMIO_CI_SRC=src/
-
+  matrix:
+  - PLATFORMIO_CI_SRC=src/
+  global:
+    secure: SUBE7Dxj9sE6DplrLSrUk9qrzJ8XRNJmuHCtE4SIS62bXeY6OywkocQ22XhvI4xHWHlBrzZHxqj5Agb3Xbh0O4+xMzvjqYn0VCBsn7cQd12mzYo1c7ihpgOUz+UGMNNKQOKt27d5XsMY4R7c4jYfjqal2C41gLNRHOIrnA8KUfP8yD4j0O7Ha9A2OIXVseNbY6DbtW1uT4xpddNjQi6YsYsCFwuOuMSIDQxJkzQ7pb4K7I3n0/OZQcKkb/QeNyxURRjoDb4ai/rYGKw2SCrvg0G00v5ACvZdCAkjYS+cu6vKzH20b0p79QrzDWMV6FWAeg1hqitN1WAatEW8fqPPZP8G0cF8itLOwzheztwfcDz8ZlF5p/qS80DMNjlLjFFzB3zYtst/0vximfEejJRI3QSjWl9bj+7KCL7XF3aWdRiSgsBvtLi17zxkF42R3ujdrWAVcMgDIxo/d7s7B6GoLicHctb2xfMHPPknknUFnZk4cgWy2FiDzE654ZZiyZwaRFI+HMPUXUooYbjkjxvxV6FCKex110hoIqqyqNU7VzYt8jDpNg6nD9pIBcgGwhQDW9/h5E4t1/0ASwoySv/YVaX1y74F2Jbmu0sCSQegCk8CxHQCFyCY/6koBJ8yAEKo+MV4c0lucLHgb0IN5IBdBUtbgsbF9Pkel90FSc9oYyM=
 install:
 - pip install -U platformio
 - platformio lib install WiFiManager
@@ -15,7 +17,6 @@ install:
 script:
 - platformio run -e csg-esp8266-rota-ota
 - platformio run -t buildfs -e csg-esp8266-rota-ota
-
 deploy:
   provider: releases
   overwrite: true
@@ -23,7 +24,7 @@ deploy:
   on:
     repo: csgregg/csg-esp8266-rota
     all_branches: true
-    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
+    condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
   api_key:
     secure: Xx5JIGkkOUYyNXXYlVk5kLTwTUZGH4dEZLU4fL4f2Q6mtQZ27YjyVE7N+vYtyHzbkOf+zvfPQrZqHMG6R1XCeuEfZ4EDWOdWHfaViB08SdeHum5o2Etyak38llY8Cp4NZzKxiNokXyuVr4Gq6krD1FLVF5kBpi0iCsZ4LKiN4ddXJH5+X7W1R4w+0N5yCIDyLvTy4grZuYmwtxj4JQHWzgQKzthauB0Gq73YUHBPk62iVRlsM/IWYHgUxPXmIZLVRnEPQCcx8oJuRrTlZUNLGCfpXCq9MJGaMwJqMRo/3eeFdYSS91eCSN5TGWAGjea8EMfZu2WAvGvE4ToJJgPpyurh1U64CauUP9Wca3mp/HudfHd7WZ+y3LAKsUVwNMYUX+4QDdmFpIkNrAKRqFf4TrdRaFiCyq8aTwJwFa6ZkZp2bTXn8RMptRAHgx+5W+sRWyAiRhbPX0TO/j+5c+1obLzucwDF3JkAg5cH2unxAn+5Gx364PycBccmliXWOPtCM7LhtLvG6g/niyJszvNf5IzzquoYovRnW0+3Dfj5Ffh5+r8AjSWV9meBa+990qrFr6HcunrJEbJVjvxe/tKKFAEjCJMDRtAd43SKcAgujDllSZgYigbubqL9caAHCu76fax0OVdlITiz5z5oyMzy1MVmkPIEpt25cD+PEoPA+iY=
   file_glob: true
