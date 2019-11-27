@@ -207,7 +207,7 @@ void ESPRemoteUpdater::handle() {
     if ( WiFi.status() == WL_CONNECTED && _http != NULL && _doUpdateCheck ) {
 
         _doUpdateCheck = false;
-
+/*
         LOG("Current version: " + _buildTag);
 
         // Check for update
@@ -217,12 +217,12 @@ void ESPRemoteUpdater::handle() {
 
         }
         else {
-
+*/
             UpdateFS();
 
             UpdateProg( true );
 
-        }
+   //     }
     }
 }
 
