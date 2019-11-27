@@ -56,10 +56,20 @@ void jquerymin()
   sent = sent;
 }
 
+String get_env_var( String const & key ) {                                 
+    char * val;                                                                        
+    val = getenv( key.c_str() );                                                       
+    String retval = "";                                                           
+    if (val != NULL) {                                                                 
+        retval = val;                                                                    
+    }                                                                                  
+    return retval;                                                                        
+}     
 
 
+void elaborateBuildFlags() {
 
-void elaborateTags() {
+    LOG(get_env_var("PLATFORMIO_CORE_DIR"));
 
     LOG("Platform: " + device.platform);
     LOG("Board: " + device.board);
@@ -69,6 +79,7 @@ void elaborateTags() {
     LOG("Device code: " + device.deviceCode);
 
     LOG("Build tag: " + device.buildTag);
+    LOG("Build environment: " + device.buildEnv);
     LOG("GitHub Repo: " + device.repoName);
     LOG("Asset service: " + device.assetService);
 
@@ -97,7 +108,7 @@ void setup() {
 
     LOG("Starting Setup()...");
 
-    elaborateTags();
+    elaborateBuildFlags();
 
     delay(1000);
     // pinMode(LED_BUILTIN, OUTPUT);
