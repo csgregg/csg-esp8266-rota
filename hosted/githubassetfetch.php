@@ -61,9 +61,6 @@
         $latestTag = $json->tag_name;
         if( $DEBUG ) echo nl2br("Latest release: $latestTag\n\r");
     }  
-
-    // NEED TO CHANGE
-    // Suggest return JSON which can be interpreted properly
     
     // return latest version and exit if no ?tag=XXXX
     if( empty($requestedTag) ){
