@@ -26,11 +26,7 @@
         exit;
     }
     
-    if( $DEBUG && !empty($requestedTag) ) echo nl2br("Release requested: $requestedTag\n\r");
-
-    // Which release do we want?
-    if( empty($requestedTag) || $requestedTag == "Latest" ) $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/latest";
-    else $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
+    $githubApiUrl = "https://api.github.com/repos/${repoName}/releases";
 
     if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
 
@@ -56,39 +52,70 @@
         exit;
     }
 
-    // Get tag of latest release
-    if( empty($requestedTag) || $requestedTag == "Latest" ) { 
-        $latestTag = $json->tag_name;
-        if( $DEBUG ) echo nl2br("Latest release: $latestTag\n\r");
-    }  
 
-    // NEED TO CHANGE
-    // Suggest return JSON which can be interpreted properly
     
-    // return latest version and exit if no ?tag=XXXX
-    if( empty($requestedTag) ){
-        if( !$DEBUG) echo $latestTag;
-        exit;
+
+    class githubapiresponse {
+        public $repo;
+        public $releases;
     }
 
-    // Use latest release if asked
-    if( $requestedTag == "Latest" ) $requestedTag = $latestTag;
-
-    // Check image file
-    if( $DEBUG && empty($imageFilePre) ) {
-        echo "Missing asset name prefix";
-        exit;
-    }
-    elseif( !$DEBUG && empty($imageFilePre) ) {
-        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing asset name prefix', true, 400);
-        exit;
+    class githubrelease {
+        public $tag;
+        public $date;
+        public $assets;
     }
 
-    // Build image file name
-    $imageFile = "$imageFilePre$requestedTag.bin";
+    class githubasset {
+        public $name;
+        public $URL;
+    }
 
-    if( $DEBUG ) echo nl2br("Image file: $imageFile\r\n");
+    $reponse = new githubapiresponse();
 
+    $reponse->repo = $repoName;
+
+    $releases = array();
+
+    foreach( $json as $key=>$release){
+
+        $thisrelease = new githubrelease();
+        $thisrelease->tag = $release->tag_name;
+        $thisrelease->date = $release->published_at;
+
+        $assets = array();
+
+        foreach ($release->assets as $asset){
+
+            $thisasset = new githubasset();
+            $thisasset->name = $asset->name;
+            $thisasset->URL = $asset->browser_download_url;
+
+            array_push($assets, $thisasset);
+        }
+
+        $thisrelease->assets = $assets;
+
+        array_push( $releases, $thisrelease );
+        
+    }
+
+    $reponse->releases = $releases;
+
+    echo json_encode( $reponse );
+
+    exit;
+
+
+
+
+        // Get tag of latest release
+        if( empty($requestedTag) || $requestedTag == "Latest" ) { 
+            $latestTag = $json->tag_name;
+            if( $DEBUG ) echo nl2br("Latest release: $latestTag\n\r");
+        }  
+    
+    
 
     // Find asset download URL
     foreach ($json->assets as $asset) if( $asset->name == $imageFile ) $binPath = $asset->browser_download_url;
