@@ -33,7 +33,7 @@ Usage:
     debug=true              Sets debug mode
     repo=<repo>             Name of GitHub repo
     user=<user>             GitHub user
-    token=<token>           GitHub API OAuth Token
+    (token=<token>)         GitHub API OAuth Token - only for private repos
 
 Mode 1 - Get latest release details
     (tag)                   Omitted
@@ -115,15 +115,8 @@ $githuboauthtoken="<token>";
     }
 
     // Check for token 
-    if( $DEBUG && empty($token) ){
-        echo "Missing GitHub API token";
-        exit;
-    }
+    if( $DEBUG && empty($token) ) echo nl2br("Public repo only\r\n");
     elseif( $DEBUG ) echo nl2br("Token: $token\r\n");
-    elseif( empty($token) ){
-        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub API token', true, 400);
-        exit;
-    }
 
     // Default max releases to 30
     if( empty($maxReleases) ) $maxReleases = 30;
@@ -152,7 +145,7 @@ $githuboauthtoken="<token>";
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $githubApiUrl);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: ESP8266'));
-    curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
+    if( !empty(githuboauthtoken) ) curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
     $result = curl_exec($ch);
 
     curl_close($ch);
@@ -279,7 +272,7 @@ $githuboauthtoken="<token>";
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
+            if( !empty(githuboauthtoken) ) curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
             $out = curl_exec($ch);
             curl_close($ch);
     

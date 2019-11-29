@@ -102,8 +102,8 @@ Build flags are loaded from platformio.ini
             // Used by CI_Remote_OTA library
 
             const String repoName = ESCAPEQUOTE(UPDATE_REPO);                       // GitHub reprositary holding this code
-            const String repoToken = ESCAPEQUOTE(UPDATE_TOKEN);                     // GitHub API OAUTH token
             const String repoUser = ESCAPEQUOTE(UPDATE_USER);                       // GitHub API user
+            const String repoToken = ESCAPEQUOTE(UPDATE_TOKEN);                     // GitHub API OAUTH token
             const String assetService = ESCAPEQUOTE(UPDATE_SERVICE);                // Path to PHP used to return GitHub assets
             const bool skipUpdates = atoi(ESCAPEQUOTE(UPDATE_SKIP));                // Skip any updates
             const float updateInterval = atof(ESCAPEQUOTE(UPDATE_INTERVAL));        // Interval between update checks
