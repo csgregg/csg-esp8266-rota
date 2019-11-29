@@ -32,6 +32,7 @@ doesn't support HTTPS.
 Usage:
     debug=true              Sets debug mode
     repo=<user/repo>        Name of GitHub repo
+    token=<token>           GitHub API OAuth Token
 
 Mode 1 - Get latest release details
     (tag)                   Omitted
@@ -77,6 +78,18 @@ $githuboauthtoken="<token>";
     if( !empty($_GET["repo"]) ) $repoName = $_GET["repo"];
     if( !empty($_GET["asset"]) ) $imageFilePre = $_GET["asset"];
     if( !empty($_GET["max"]) ) $maxReleases = $_GET["max"];
+    if( !empty($_GET["token"]) ) $token = $_GET["token"];
+    if( !empty($_GET["user"]) ) $user = $_GET["user"];
+
+    if( $DEBUG ) echo nl2br("ESP8266 Remote Updater - GitHub Asset Fetch Service\r\n");
+
+    // Set mode
+    if( empty($requestedTag) ) $mode = 1;
+    elseif( $requestedTag == "all" ) $mode = 2;
+    elseif( $requestedTag == "latest" ) $mode = 3;
+    else $mode = 4;
+
+    if( $DEBUG ) echo nl2br("Mode: $mode\r\n");
 
     // Check for repo 
     if( $DEBUG && empty($repoName) ){
@@ -89,24 +102,38 @@ $githuboauthtoken="<token>";
         exit;
     }
     
+    // Check for user 
+    if( $DEBUG && empty($user) ){
+        echo "Missing GitHub API user";
+        exit;
+    }
+    elseif( $DEBUG ) echo nl2br("User: $user\r\n");
+    elseif( empty($user) ){
+        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub API user', true, 400);
+        exit;
+    }
+
+    // Check for token 
+    if( $DEBUG && empty($token) ){
+        echo "Missing GitHub API token";
+        exit;
+    }
+    elseif( $DEBUG ) echo nl2br("Token: $token\r\n");
+    elseif( empty($token) ){
+        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub API token', true, 400);
+        exit;
+    }
+
     // Default max releases to 30
-    if( empty($maxReleases) ) $maxReleases = 10;
-
-    // Set mode
-    if( empty($requestedTag) ) $mode = 1;
-    elseif( $requestedTag == "all" ) $mode = 2;
-    elseif( $requestedTag == "latest" ) $mode = 3;
-    else $mode = 4;
-
-    if( $DEBUG ) echo "Missing asset file name";
+    if( empty($maxReleases) ) $maxReleases = 30;
 
     // Check for filename 
-    if( $mode == 3 || $mode == 4 ) 
-        if( $DEBUG && empty($imageFilePre) ){
+    if( $mode == 3 || $mode == 4 ) {
+        if( $DEBUG && empty($imageFilePre) ) {
             echo "Missing asset file name";
             exit;
         }
-        elseif( empty($imageFilePre) ){
+        elseif( empty($imageFilePre) ) {
             header($_SERVER["SERVER_PROTOCOL"].' 400 Missing asset file name', true, 400);
             exit;
         }
@@ -174,9 +201,12 @@ $githuboauthtoken="<token>";
         $thisrelease = new githubrelease();
         $thisrelease->tag = $release->tag_name;
         $thisrelease->date = $release->published_at;
+
+        if( $count == 1 ) $latestTag = $release->tag_name;
      
         // Check to see if this is the release we want
-        if( $mode == 3 || $mode == 4 ) $assetName = "$imageFilePre$release->tag_name.bin";
+        if( $mode == 3 ) $assetName = "$imageFilePre$release->tag_name.bin";
+        if( $mode == 4 ) $assetName = "$imageFilePre$requestedTag.bin";
 
         $assets = array();
 
@@ -197,25 +227,21 @@ $githuboauthtoken="<token>";
         array_push( $releases, $thisrelease );
 
         // Stop if just want latest
-        if( $mode == 1 || $mode == 3 ) {
-            $latestTag = $release->tag_name;
-            break;
-        }
+        if( $mode == 1 || $mode == 3 ) break;
 
         // Stop if found asset
         if( !empty($binPath) ) break;
 
         // Stop if max reached
-        if( $count >= $maxReleases ) break;
+        if( $mode == 2 && $count >= $maxReleases ) break;
         
     }
 
     $response->releases = $releases;
 
     if( $DEBUG ) {
-        echo nl2br("Requested release: $requestedTag\n\r");
         echo nl2br("Latest release: $latestTag\n\r");
-        echo nl2br("Bimary path: $binPath\n\r");
+        echo nl2br("Requested release: $requestedTag\n\r");
         echo nl2br("Max repleases: $maxReleases\n\r");
     }
 
@@ -237,7 +263,7 @@ $githuboauthtoken="<token>";
         $jsonResponse = json_encode( $response );
 
         if( $DEBUG ) echo nl2br("JSON Response: \n\r$jsonResponse");
-        else echo jsonResponse;
+        else echo $jsonResponse;
 
         exit;
     }
@@ -258,7 +284,7 @@ $githuboauthtoken="<token>";
     
             // Set header for binary
             header('Content-type: application/octet-stream');
-            header("Content-disposition: attachment; filename=$imageFile");
+            header("Content-disposition: attachment; filename=$assetName");
             header('Content-Transfer-Encoding: binary');
             header("Content-Length: ".strlen($out));
             echo $out;
