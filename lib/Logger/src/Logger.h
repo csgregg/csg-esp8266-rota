@@ -65,7 +65,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     #include "IOTDevice.h"
 
-    #define MAX_MESSAGE_LEN 140     // Longest message to be processed. Truncated otherwise
+    #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
 
     #ifndef NO_DEBUG
 

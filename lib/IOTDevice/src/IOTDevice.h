@@ -48,8 +48,8 @@ Build flags are loaded from platformio.ini
 
     // In case build flags are missing for non-string members
 
-    #ifndef SKIP_UPDATES
-        #define SKIP_UPDATES 1
+    #ifndef UPDATE_SKIP
+        #define UPDATE_SKIP 1
     #endif
 
     #ifndef LOG_AS_SERIAL
@@ -101,9 +101,11 @@ Build flags are loaded from platformio.ini
 
             // Used by CI_Remote_OTA library
 
-            const String repoName = ESCAPEQUOTE(DEVICE_REPO);                       // GitHub reprositary holding this code
-            const String assetService = ESCAPEQUOTE(ASSET_SERVICE);                 // Path to PHP used to return GitHub assets
-            const bool skipUpdates = atoi(ESCAPEQUOTE(SKIP_UPDATES));               // Skip any updates
+            const String repoName = ESCAPEQUOTE(UPDATE_REPO);                       // GitHub reprositary holding this code
+            const String repoToken = ESCAPEQUOTE(UPDATE_TOKEN);                     // GitHub API OAUTH token
+            const String repoUser = ESCAPEQUOTE(UPDATE_USER);                       // GitHub API user
+            const String assetService = ESCAPEQUOTE(UPDATE_SERVICE);                // Path to PHP used to return GitHub assets
+            const bool skipUpdates = atoi(ESCAPEQUOTE(UPDATE_SKIP));                // Skip any updates
             const float updateInterval = atof(ESCAPEQUOTE(UPDATE_INTERVAL));        // Interval between update checks
 
             // Used by Logger library
