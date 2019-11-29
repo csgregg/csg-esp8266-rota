@@ -19,3 +19,9 @@
     #define LOGGING_SERVICE_KEY ""
 #endif
 
+// Remote Update
+// RUN: travis encrypt UPDATE_TOKEN=<<Secret>> --add env.global
+// PLATFORMIO.INI: -DUPDATE_TOKEN=${sysenv.UPDATE_TOKEN}
+#ifndef UPDATE_TOKEN
+    #define UPDATE_TOKEN ""
+#endif
