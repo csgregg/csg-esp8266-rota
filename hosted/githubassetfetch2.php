@@ -31,7 +31,8 @@ doesn't support HTTPS.
 
 Usage:
     debug=true              Sets debug mode
-    repo=<user/repo>        Name of GitHub repo
+    repo=<repo>             Name of GitHub repo
+    user=<user>             GitHub user
     token=<token>           GitHub API OAuth Token
 
 Mode 1 - Get latest release details
@@ -141,7 +142,7 @@ $githuboauthtoken="<token>";
 
     // Get details of all releases
 
-    $githubApiUrl = "https://api.github.com/repos/${repoName}/releases";
+    $githubApiUrl = "https://api.github.com/repos/${user}/${repoName}/releases";
 
     if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
 
