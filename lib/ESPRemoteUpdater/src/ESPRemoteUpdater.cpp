@@ -29,6 +29,7 @@ SOFTWARE.
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <Ticker.h>
+#include <ArduinoJson.h>
 
 #include "Logger.h"
 #include "ESPRemoteUpdater.h"
@@ -76,6 +77,8 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     if ( _http != NULL ) {
 
+        DEBUG("Update URL: " + _assetRequestURL);
+
         _http->begin( *_client, _assetRequestURL );
 
         _lastError = _http->GET();
@@ -90,14 +93,39 @@ String ESPRemoteUpdater::getLatestBuild() {
         }
         else {
 
-            // NEED TO CHANGE 
-            // For stuations like a captive portal redirect which returns an alternative page redirect. The page content gets loaded as the latest tag which is bad
-            // Suggest - githubfetchasset needs to return JSON which can then be confirmed and interpreted. 
+            // Expecting JSON back with latest release details
 
-            _latestTag = _http->getString();
+            const size_t capacity = 600;
+            DynamicJsonDocument responseJSON(capacity);
+
+            String rawJSON = _http->getString();
             _http->end();
+
+            DEBUG("JSON: " + rawJSON);
+
+            deserializeJson( responseJSON, rawJSON );
+
+            String repoName = responseJSON["repo"];
+
+
+            // TODO: Better error handling
+
+            if( repoName != device.repoName ) {
+
+                DEBUG("JSON Error getting latest release");
+
+                return "";
+            }
+
+            JsonObject latestRelease = responseJSON["releases"][0];
+            const char* latestTag = latestRelease["tag"];
+            const char* releaseDate = latestRelease["date"];
+
+            _latestTag = latestTag;
+            String str = releaseDate;
             
             LOG("Latest version: " + _latestTag);
+            LOG("Release date: " + str);
 
             return _latestTag;
         }

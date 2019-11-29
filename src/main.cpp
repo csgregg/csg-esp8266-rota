@@ -78,7 +78,10 @@ void elaborateBuildFlags() {
 
     LOG("Build tag: " + device.buildTag);
     LOG("Build environment: " + device.buildEnv);
+
     LOG("GitHub Repo: " + device.repoName);
+    LOG("GitHub User: " + device.repoUser);
+    LOG("GitHub Token: " + device.repoToken);
     LOG("Asset service: " + device.assetService);
 
     logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
@@ -135,7 +138,7 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    updater.setup("http://" + device.assetService + "?repo=" + device.repoName, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdates );
+    updater.setup("http://" + device.assetService + "?repo=" + device.repoName + "&user=" + device.repoUser + "&token=" + device.repoToken, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdates );
     updater.begin( http, client );
     
 }
