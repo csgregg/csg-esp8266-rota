@@ -40,7 +40,7 @@ Mode 1 - Get latest release details
 
 Mode 2 - Get all releases
     tag=all
-    max=<max>               Sets max number of releases to return
+    max=<max>               Sets max number of releases to return - default 30
 
     Returns JSON detailing all releases (up to maxtags)
 
@@ -91,6 +91,26 @@ $githuboauthtoken="<token>";
     
     // Default max releases to 30
     if( empty($maxReleases) ) $maxReleases = 10;
+
+    // Set mode
+    if( empty($requestedTag) ) $mode = 1;
+    elseif( $requestedTag == "all" ) $mode = 2;
+    elseif( $requestedTag == "latest" ) $mode = 3;
+    else $mode = 4;
+
+    if( $DEBUG ) echo "Missing asset file name";
+
+    // Check for filename 
+    if( $mode == 3 || $mode == 4 ) 
+        if( $DEBUG && empty($imageFilePre) ){
+            echo "Missing asset file name";
+            exit;
+        }
+        elseif( empty($imageFilePre) ){
+            header($_SERVER["SERVER_PROTOCOL"].' 400 Missing asset file name', true, 400);
+            exit;
+        }
+    }
 
     // Get details of all releases
 
@@ -156,7 +176,7 @@ $githuboauthtoken="<token>";
         $thisrelease->date = $release->published_at;
      
         // Check to see if this is the release we want
-        if( $requestedTag == "latest" || $requestedTag == $release->tag_name ) $imageFile = "$imageFilePre$release->tag_name.bin";
+        if( $mode == 3 || $mode == 4 ) $assetName = "$imageFilePre$release->tag_name.bin";
 
         $assets = array();
 
@@ -167,7 +187,7 @@ $githuboauthtoken="<token>";
             $thisasset->URL = $asset->browser_download_url;
 
             // Check for the asset we want
-            if( $asset->name == $imageFile ) $binPath = $asset->browser_download_url;
+            if( $asset->name == $assetName ) $binPath = $asset->browser_download_url;
 
             array_push($assets, $thisasset);
         }
@@ -177,7 +197,7 @@ $githuboauthtoken="<token>";
         array_push( $releases, $thisrelease );
 
         // Stop if just want latest
-        if( $requestedTag == "latest" || empty($requestedTag) ) {
+        if( $mode == 1 || $mode == 3 ) {
             $latestTag = $release->tag_name;
             break;
         }
@@ -199,32 +219,20 @@ $githuboauthtoken="<token>";
         echo nl2br("Max repleases: $maxReleases\n\r");
     }
 
-    if( !empty($requestedTag) && $requestedTag != "all" ) {
-
-    }
-
-    
-    // Check for filename 
-    if( $DEBUG && empty($imageFilePre) ){
-        echo "Missing asset file name";
-        exit;
-    }
-    elseif( empty($imageFilePre) ){
-        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing asset file name', true, 400);
-        exit;
-    }
-
-    if( $DEBUG && empty($binPath) && !empty($requestedTag) && $requestedTag != "all" ) {
-        echo "GitHub asset not found";
-        exit;
-    }
-    elseif( !$DEBUG && empty($binPath) && !empty($requestedTag) && $requestedTag != "all" ) {
-        header($_SERVER["SERVER_PROTOCOL"].' 404 GitHub asset not found', true, 404);
-        exit;
+ 
+    if( $mode == 3 || $mode == 4 ) {
+        if( $DEBUG && empty($binPath) && !empty($requestedTag) && $requestedTag != "all" ) {
+            echo "GitHub asset not found";
+            exit;
+        }
+        elseif( !$DEBUG && empty($binPath) && !empty($requestedTag) && $requestedTag != "all" ) {
+            header($_SERVER["SERVER_PROTOCOL"].' 404 GitHub asset not found', true, 404);
+            exit;
+        }
     }
 
     // Output JSON
-    if( empty($binPath) ) {
+    if( $mode == 1 || $mode == 2 ) {
 
         $jsonResponse = json_encode( $response );
 
@@ -236,9 +244,6 @@ $githuboauthtoken="<token>";
     else {
 
         // Serve file
-
-
-
 
         if( $DEBUG ) echo "Serving file: $binPath";
         else {
