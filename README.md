@@ -1,3 +1,5 @@
+[![Status](https://travis-ci.org/csgregg/REPO.svg?branch=master)](https://travis-ci.org/csgregg/REPO) 
+
 # ESP8266 Remote OTA Update using PlatformIO, Github and Travis
 A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
 
