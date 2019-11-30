@@ -59,13 +59,6 @@ Mode 4 - Serve specific release
     Serves the asset image file from the specific release
 
 
-GitHub OAuth token included from separate file
-
-<?php
-$githubusername="<user>";
-$githuboauthtoken="<token>";
-?>
-
 */
 
     $DEBUG = false;

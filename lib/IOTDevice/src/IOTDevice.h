@@ -106,7 +106,7 @@ Build flags are loaded from platformio.ini
             const String repoToken = ESCAPEQUOTE(UPDATE_TOKEN);                     // GitHub API OAUTH token
             const String assetService = ESCAPEQUOTE(UPDATE_SERVICE);                // Path to PHP used to return GitHub assets
             const bool skipUpdates = atoi(ESCAPEQUOTE(UPDATE_SKIP));                // Skip any updates
-            const float updateInterval = atof(ESCAPEQUOTE(UPDATE_INTERVAL));        // Interval between update checks
+            const long updateInterval = atol(ESCAPEQUOTE(UPDATE_INTERVAL));         // Interval between update checks
 
             // Used by Logger library
 

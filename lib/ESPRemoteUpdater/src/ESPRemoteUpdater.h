@@ -55,7 +55,7 @@ binaries built by Travis-CI.
 
             ESPRemoteUpdater();
             
-            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval, bool skip );
+            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
             void begin( HTTPClient& http, WiFiClient& client );
 
             void handle();
