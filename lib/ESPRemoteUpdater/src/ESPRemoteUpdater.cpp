@@ -247,6 +247,7 @@ void ESPRemoteUpdater::handle() {
             return;
         }
 
+
         if( checkTag == "" ) return;
         
         if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
