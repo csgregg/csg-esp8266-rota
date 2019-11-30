@@ -242,17 +242,15 @@ void ESPRemoteUpdater::handle() {
 
         String checkTag = getLatestBuild();
 
-        if( checkTag() == _buildTag ) {
+        if( checkTag == _buildTag ) {
             LOG("No new update");  
             return;
         }
 
-
         if( checkTag == "" ) return;
         
         if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
-
-        }  
+        
     }
 }
 
