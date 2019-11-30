@@ -177,6 +177,7 @@ $githuboauthtoken="<token>";
 
     class githubasset {
         public $name;
+        public $size;
         public $URL;
     }
 
@@ -208,6 +209,7 @@ $githuboauthtoken="<token>";
 
             $thisasset = new githubasset();
             $thisasset->name = $asset->name;
+            $thisasset->size = $asset->size;
             $thisasset->URL = $asset->browser_download_url;
 
             // Check for the asset we want
