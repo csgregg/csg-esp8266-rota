@@ -56,16 +56,6 @@ void jquerymin()
   sent = sent;
 }
 
-String get_env_var( String const & key ) {                                 
-    char * val;                                                                        
-    val = getenv( key.c_str() );                                                       
-    String retval = "";                                                           
-    if (val != NULL) {                                                                 
-        retval = val;                                                                    
-    }                                                                                  
-    return retval;                                                                        
-}     
-
 
 void elaborateBuildFlags() {
 
