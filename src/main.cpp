@@ -97,8 +97,6 @@ void setup() {
     logger.begin( http, client );    
     logger.setMode( device.logAsSerial, false, t_logging_level(device.loggingLevel) );
 
-    LOG("Starting Setup()...");
-
     delay(1000);
 
     WiFi.persistent(false);
@@ -130,6 +128,8 @@ void setup() {
 
     updater.setup("http://" + device.assetService + "?repo=" + device.repoName + "&user=" + device.repoUser + "&token=" + device.repoToken, device.deviceCode, device.buildTag, device.updateInterval, device.skipUpdates );
     updater.begin( http, client );
+
+    LOG("Starting loop()");
     
 }
 
@@ -138,9 +138,6 @@ void setup() {
 void loop() {
 
   updater.handle();
-
-  DEBUG("Looping every 5 seconds");
-
-  delay(5000);
+  server.handleClient();
 
 }

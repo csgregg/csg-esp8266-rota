@@ -43,7 +43,7 @@ ESPRemoteUpdater::ESPRemoteUpdater() {
 bool ESPRemoteUpdater::_doUpdateCheck;
 
 
-void ESPRemoteUpdater::setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, float updateinterval, bool skip = false ) {
+void ESPRemoteUpdater::setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
 
     _assetRequestURL = assetRequestURL;
     _deviceCode = deviceCode;
