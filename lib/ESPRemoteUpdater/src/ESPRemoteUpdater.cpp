@@ -77,7 +77,7 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     if ( _http != NULL ) {
 
-        DEBUG("Update URL: " + _assetRequestURL);
+        DEBUG_DETAIL("Update URL: " + _assetRequestURL);
 
         _http->begin( *_client, _assetRequestURL );
 
@@ -101,7 +101,7 @@ String ESPRemoteUpdater::getLatestBuild() {
             String rawJSON = _http->getString();
             _http->end();
 
-            DEBUG("JSON: " + rawJSON);
+            DEBUG_DETAIL("JSON: " + rawJSON);
 
             deserializeJson( responseJSON, rawJSON );
 
@@ -239,13 +239,19 @@ void ESPRemoteUpdater::handle() {
         LOG("Current version: " + _buildTag);
 
         // Check for update
-        if( getLatestBuild() == _buildTag ){
 
-           LOG("No new update");      
+        String checkTag = getLatestBuild();
 
+        if( checkTag() == _buildTag ) {
+            LOG("No new update");  
+            return;
         }
-        else if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
+
+        if( checkTag == "" ) return;
         
+        if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
+
+        }  
     }
 }
 
