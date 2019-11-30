@@ -244,13 +244,8 @@ void ESPRemoteUpdater::handle() {
            LOG("No new update");      
 
         }
-        else {
-
-            UpdateFS();
-
-            UpdateProg( true );
-
-        }
+        else if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
+        
     }
 }
 

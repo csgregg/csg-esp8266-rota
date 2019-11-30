@@ -75,7 +75,7 @@ void elaborateBuildFlags() {
     LOG("Asset service: " + device.assetService);
 
     logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
-    logger.printf("Update interval: %f", device.updateInterval );
+    logger.printf("Update interval: %li", device.updateInterval );
     logger.printf("Skip update: %i", device.skipUpdates );
     
     logger.printf("Log as serial: %i", device.logAsSerial);
