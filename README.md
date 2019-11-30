@@ -1,3 +1,6 @@
+[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT) [![Status](http://img.shields.io/travis/csgregg/csg-esp8266-rota/master.svg?style=flat)](https://travis-ci.org/csgregg/csg-esp8266-rota "See test builds")
+
+
 # ESP8266 Remote OTA Update using PlatformIO, Github and Travis
 A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
 
