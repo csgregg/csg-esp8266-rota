@@ -1,4 +1,5 @@
-[![Status](https://travis-ci.org/csgregg/csg-esp8266-rota.svg?branch=master)](https://travis-ci.org/csgregg/csg-esp8266-rota) 
+[![Status](https://travis-ci.org/csgregg/csg-esp8266-rota.svg?branch=master)](https://travis-ci.org/csgregg/csg-esp8266-rota) [![Status](http://img.shields.io/travis/csgregg/csg-esp8266-rota/master.svg?style=flat)](https://travis-ci.org/csgregg/csg-esp8266-rota "See test builds")
+
 
 # ESP8266 Remote OTA Update using PlatformIO, Github and Travis
 A basic example of how to set up Remote Over-The-Air firmware updates for ESP8266 using Travis Continuous Integration.
