@@ -74,13 +74,14 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
       // Macros to simplifiy common usage
 
-      #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-      #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-      #define DEBUG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+   //   #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+      #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define DEBUG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
 
-      #define LOG_DETAIL(text) logger.println(LOG_DETAIL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-      #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
-      #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
+      #define LOG_DETAIL(text) logger.println(LOG_DETAIL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
 
       #define DEBUG_STOP() while(true){yield();}
       #define DEBUG_RAW(text) Serial.println(text)
@@ -143,17 +144,19 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             // Log messages (with overloads)
 
-            void println(t_log_type type, t_log_tag tag, const String &s);
-            void println(t_log_type type, t_log_tag tag, const char * c);
-            void println(t_log_type type, t_log_tag tag, char c);
-            void println( t_log_type type, t_log_tag tag, const char * s, const char * file, const char * func, const int line );
+            void println(const t_log_type type, const t_log_tag tag, const char * message);
+            void println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line );
 
-            void println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line );
+            void println(const t_log_type type, const t_log_tag tag, const char c);
+            void println(const t_log_type type, const t_log_tag tag, const char c, const char * file, const char * func_P, const int line );    
+
+            void println(const t_log_type type, const t_log_tag tag, const String &message);
+            void println(const t_log_type type, const t_log_tag tag, const String &message, const char * file, const char * func_P, const int line );      
 
             // Special for formated message
 
-            void setTypeTag(t_log_type type, t_log_tag tag);
-            void printf(const char *format, ...);
+            void setTypeTag(const t_log_type type, const t_log_tag tag);
+            void printf(const char * format, ...);
 
         protected:
 
