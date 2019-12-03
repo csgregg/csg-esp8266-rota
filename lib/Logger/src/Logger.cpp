@@ -78,61 +78,8 @@ void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level leve
 }
 
 
-// Main log function
-void LogClient::println( t_log_type type, t_log_tag tag, const String &s ) {
-
-#ifndef NO_DEBUG
-
-    if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
-    
-    if( _serialOn ) LogToSerial(type, tag, s.c_str());
-    if( _serviceOn ) LogToService(type, tag, s.c_str());
-
-#endif
-
-}
-
-
-// Overload println() - with code context
-void LogClient::println( t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line ){
-
-#ifndef NO_DEBUG
-
-    String str;
-    
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) str = "(Context: " + file + " " + func + " " + String(line) + ") " + s;
-    else str = s;
-
-    println(type, tag, str);
-
-#endif
-
-}
-
-
-// Overload println() - with code context
-void LogClient::println( t_log_type type, t_log_tag tag, const char * s, const char * file, const char * func, const int line ){
-
-#ifndef NO_DEBUG
-
-    char str[MAX_MESSAGE_LEN];
-    
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) {
-        sprintf(str, "(Context: %s %s %i %s) ", file, func, line, s);
-        str[MAX_MESSAGE_LEN-1] = 0;
-    }
-    else strcpy(str, s);
-
-    println(type, tag, str);
-
-#endif
-
-}
-
-// Overload println() - char[]
-void LogClient::println( t_log_type type, t_log_tag tag, const char * message ) {
+// Main log function - char[]
+void LogClient::println( const t_log_type type, const t_log_tag tag, const char * message ) {
 
 #ifndef NO_DEBUG
 
@@ -148,14 +95,83 @@ void LogClient::println( t_log_type type, t_log_tag tag, const char * message ) 
 }
 
 
-// Overload println() - char
-void LogClient::println( t_log_type type, t_log_tag tag, char c ) {
+// Overload - with context
+void LogClient::println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line ) {
 
 #ifndef NO_DEBUG
 
-    String s(c);
+    char shortened[MAX_MESSAGE_LEN];
+    char func[MAX_MESSAGE_LEN];
 
-    println(type, tag, s);
+    strcpy_P(func, func_P);
+
+    const char format[] = "(Context: %s %s %i) %s";
+
+    strncpy( shortened, message, MAX_MESSAGE_LEN - ( strlen(format) + strlen(file) + strlen(func) ) );        // Truncate if too long
+    
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+        char str[MAX_MESSAGE_LEN];
+        sprintf(str, format, file, func, line, shortened);
+        str[MAX_MESSAGE_LEN-1] = 0;
+        println(type, tag, str);
+    }
+    else println(type, tag, shortened);
+
+#endif
+
+}
+
+
+// Overload println() - char
+void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
+
+#ifndef NO_DEBUG
+
+    char c_str[2];
+    c_str[0] = c;
+    c_str[1] = 0;
+
+    println(type, tag, c_str);
+
+#endif
+
+}
+
+
+// Overload println() - char with context
+void LogClient::println( const t_log_type type, const t_log_tag tag, char c, const char * file, const char * func_P, const int line ) {
+
+#ifndef NO_DEBUG
+
+    char c_str[2];
+    c_str[0] = c;
+    c_str[1] = 0;
+  
+    println(type, tag, c_str, file, func_P, line);
+
+#endif
+
+}
+
+
+// Overload println() - string
+void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s ) {
+
+#ifndef NO_DEBUG
+
+    println( type, tag, s.c_str() );
+
+#endif
+
+}
+
+
+// Overload println() - string with context
+void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s, const char * file, const char * func_P, const int line ) {
+
+#ifndef NO_DEBUG
+
+    println( type, tag, s.c_str(), file, func_P, line  );
 
 #endif
 
@@ -163,7 +179,7 @@ void LogClient::println( t_log_type type, t_log_tag tag, char c ) {
 
 
 // Sets up Tag and Type for printf() function
-void LogClient::setTypeTag( t_log_type type, t_log_tag tag ){
+void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 
 #ifndef NO_DEBUG
     
@@ -202,9 +218,7 @@ void LogClient::printf( const char *format, ... ) {
         delete[] buffer;
     }
 
-    String s(temp);
-
-    println(_lasttype, _lasttag, s);
+    println(_lasttype, _lasttag, temp);
 
 #endif
 
