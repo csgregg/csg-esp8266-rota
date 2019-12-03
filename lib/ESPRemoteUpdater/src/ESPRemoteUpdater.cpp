@@ -25,10 +25,7 @@ SOFTWARE.
 */
 
 
-#include <ESP8266httpUpdate.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
-#include <Ticker.h>
 #include <ArduinoJson.h>
 
 #include "Logger.h"
