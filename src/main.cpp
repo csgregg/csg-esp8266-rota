@@ -1,10 +1,7 @@
-#include <ESP8266WiFi.h>
-#include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
-#include <ESP8266HTTPClient.h>
-#include <ESP8266httpUpdate.h>
-#include <Ticker.h>
+
+
 #include <FS.h> 
 
 #include "Logger.h"

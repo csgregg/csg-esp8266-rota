@@ -87,8 +87,8 @@ void LogClient::println( t_log_type type, t_log_tag tag, const String &s ) {
     if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
     if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
     
-    if( _serialOn ) LogToSerial(type, tag, s);
-    if( _serviceOn ) LogToService(type, tag, s);
+    if( _serialOn ) LogToSerial(type, tag, s.c_str());
+    if( _serviceOn ) LogToService(type, tag, s.c_str());
 
 #endif
 
@@ -112,14 +112,36 @@ void LogClient::println( t_log_type type, t_log_tag tag, const String &s, const 
 }
 
 
-// Overload println() - char[]
-void LogClient::println( t_log_type type, t_log_tag tag, const char c[] ) {
+// Overload println() - with code context
+void LogClient::println( t_log_type type, t_log_tag tag, const char * s, const char * file, const char * func, const int line ){
 
 #ifndef NO_DEBUG
 
-    String s(c);
+    char str[MAX_MESSAGE_LEN];
+    
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+        sprintf(str, "(Context: %s %s %i %s) ", file, func, line, s);
+        str[MAX_MESSAGE_LEN-1] = 0;
+    }
+    else strcpy(str, s);
 
-    println(type, tag, s);
+    println(type, tag, str);
+
+#endif
+
+}
+
+// Overload println() - char[]
+void LogClient::println( t_log_type type, t_log_tag tag, const char * message ) {
+
+#ifndef NO_DEBUG
+
+    if( _logginglevel == LOGGING_OFF ) return;
+    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
+    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
+    
+    if( _serialOn ) LogToSerial(type, tag, message);
+    if( _serviceOn ) LogToService(type, tag, message);
 
 #endif
 
@@ -160,7 +182,7 @@ void LogClient::printf( const char *format, ... ) {
 
     va_list arg;
     va_start(arg, format);
-    char temp[64];
+    char temp[MAX_MESSAGE_LEN];
     char* buffer = temp;
 
     size_t len = vsnprintf(temp, sizeof(temp), format, arg);
@@ -205,14 +227,16 @@ void LogClient::LogPrefix( t_log_type type, t_log_tag tag ){
 
 
 // Log message to serial
-void LogClient::LogToSerial( t_log_type type, t_log_tag tag, String message ){
+void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * message ){
 
 #ifndef NO_DEBUG
 
-    if(message.length() > MAX_MESSAGE_LEN ) message = message.substring(0, MAX_MESSAGE_LEN);        // Truncate if too long
+    char shortened[MAX_MESSAGE_LEN+1];
+
+    strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
 
     LogPrefix(type, tag);
-    Serial.println(message);
+    Serial.println(shortened);
 
 #endif
 
@@ -220,21 +244,32 @@ void LogClient::LogToSerial( t_log_type type, t_log_tag tag, String message ){
 
 
 // Log message to Loggly Service
-void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
+void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const char * message ){
 
 #ifndef NO_DEBUG
 
-    String _tag(c_log_tag_descript[tag]);
-    String _type(c_log_type_descript[type]);
+    char thistag[strlen(c_log_tag_descript[tag])];
+    strcpy(thistag, c_log_tag_descript[tag]);
 
-    _tag = "," + _tag;
+    char thistype[strlen(c_log_type_descript[type])];
+    strcpy(thistype, c_log_type_descript[type]);
 
-    String loggingServiceRequestURL = "http://" + device.loggingService + "/" + device.loggingServiceKey + "/tag/" + device.loggingGlobalTags + _tag  + "/";
+    char loggingURL[strlen("http://") + strlen(device.loggingService.c_str()) + strlen("/") + strlen(device.loggingServiceKey.c_str()) + strlen("/tag/") + strlen(device.loggingGlobalTags.c_str()) + strlen(",") + strlen(thistag) + strlen("/") + 1];
 
+    strcpy(loggingURL, "http://");
+    strcat(loggingURL, device.loggingService.c_str());
+    strcat(loggingURL, "/");
+    strcat(loggingURL, device.loggingServiceKey.c_str());
+    strcat(loggingURL, "/tag/"); 
+    strcat(loggingURL, device.loggingGlobalTags.c_str()); 
+    strcat(loggingURL, ",");  
+    strcat(loggingURL, thistag); 
+    strcat(loggingURL, "/");  
+   
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
         Serial.print("(Logger) Logging to: ");
-        Serial.println(loggingServiceRequestURL);
+        Serial.println(loggingURL);
     }
 
     // Build JSON
@@ -242,13 +277,14 @@ void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
 
     const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 454;
     DynamicJsonDocument jsonLog(capacity);
-    String jsonMessage;
 
     jsonLog["localtime"] = millis();
 
-    if(message.length() > MAX_MESSAGE_LEN ) message = message.substring(0, MAX_MESSAGE_LEN);        // Truncate if too long
+    char shortened[MAX_MESSAGE_LEN+1];
 
-    jsonLog["message"] = message;
+    strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
+
+    jsonLog["message"] = shortened;
 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
@@ -276,7 +312,10 @@ void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
         String tempSSID = WiFi.SSID();
         Device_Network["SSID"] = tempSSID.c_str();
 
-    serializeJson(jsonLog, jsonMessage);
+    int jsonSize = measureJson(jsonLog)+1;
+    char jsonMessage[jsonSize];
+
+    serializeJson(jsonLog, jsonMessage, jsonSize);
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
@@ -285,10 +324,10 @@ void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
     }
 
     // Start the connection
-    _http->begin(*_client, loggingServiceRequestURL);
+    _http->begin(*_client, loggingURL);
     _http->addHeader("Content-Type", "content-type:text/plain");
 
-    int httpCode = _http->POST(jsonMessage);
+    int httpCode = _http->POST((uint8_t *) &jsonMessage, jsonSize);
 
     _http->end();
 
@@ -312,6 +351,7 @@ void LogClient::LogToService( t_log_type type, t_log_tag tag, String message ){
 #endif
 
 }
+
 
 
 // Create the global logger instance

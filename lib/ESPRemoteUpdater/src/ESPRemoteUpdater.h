@@ -37,8 +37,6 @@ binaries built by Travis-CI.
 
     #define DEFAULT_UPDATE_INTERVAL 300
 
-    #include <Ticker.h>
-
     typedef enum : int {
         REMOTE_FS_UPDATE_FAILED,
         REMOTE_IMG_UPDATE_FAILED,

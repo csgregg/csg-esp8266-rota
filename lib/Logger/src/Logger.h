@@ -63,6 +63,9 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     #define DEBUGLOGGING_H
 
+    #include <Ticker.h>
+    #include <ESP8266httpUpdate.h>
+
     #include "IOTDevice.h"
 
     #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
@@ -141,8 +144,9 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
             // Log messages (with overloads)
 
             void println(t_log_type type, t_log_tag tag, const String &s);
-            void println(t_log_type type, t_log_tag tag, const char c[]);
+            void println(t_log_type type, t_log_tag tag, const char * c);
             void println(t_log_type type, t_log_tag tag, char c);
+            void println( t_log_type type, t_log_tag tag, const char * s, const char * file, const char * func, const int line );
 
             void println(t_log_type type, t_log_tag tag, const String &s, const String &file, const String &func, const int line );
 
@@ -163,8 +167,8 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             void inline LogPrefix(t_log_type type, t_log_tag tag);
 
-            void LogToSerial(t_log_type type, t_log_tag tag, String strMessage);
-            void LogToService(t_log_type type, t_log_tag tag, String strMessage);
+            void LogToSerial( t_log_type type, t_log_tag tag, const char * message );
+            void LogToService(const t_log_type type, const t_log_tag tag, const char * message);
 
             t_log_type _lasttype;
             t_log_tag _lasttag;
