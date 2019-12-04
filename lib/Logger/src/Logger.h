@@ -140,7 +140,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
             /// To set up logging
 
             void begin( HTTPClient &http, WiFiClient &client );
-            void setMode( bool modeSerial = false, bool modeService = false, t_logging_level level = LOGGING_OFF );
+            void setMode( const bool modeSerial = false, const bool modeService = false, const t_logging_level level = LOGGING_OFF );
 
             // Log messages (with overloads)
 
@@ -158,6 +158,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
             void setTypeTag(const t_log_type type, const t_log_tag tag);
             void printf(const char * format, ...);
 
+
         protected:
 
             HTTPClient * _http;
@@ -168,16 +169,16 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             t_logging_level _logginglevel = LOGGING_OFF;
 
-            void inline LogPrefix(t_log_type type, t_log_tag tag);
+            void inline LogPrefix(const t_log_type type, const t_log_tag tag);
 
-            void LogToSerial( t_log_type type, t_log_tag tag, const char * message );
+            void LogToSerial(const t_log_type type, const t_log_tag tag, const char * message);
             void LogToService(const t_log_type type, const t_log_tag tag, const char * message);
 
             t_log_type _lasttype;
             t_log_tag _lasttag;
 
-            const char* const c_log_type_descript[3] = {"CRITICAL","Normal","Verbose"};
-            const char* const c_log_tag_descript[2] = {"DEBUG","STATUS"};
+            const char * const c_log_type_descript[3] = {"CRITICAL","Normal","Verbose"};
+            const char * const c_log_tag_descript[2] = {"DEBUG","STATUS"};
 
         private:
 

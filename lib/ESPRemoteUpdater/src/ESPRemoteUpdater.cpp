@@ -70,7 +70,7 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 String ESPRemoteUpdater::getLatestBuild() {
 
-    LOG("Checking latest build...");
+    LOG(F("Checking latest build..."));
 
     if ( _http != NULL ) {
 
@@ -107,9 +107,9 @@ String ESPRemoteUpdater::getLatestBuild() {
 
             // TODO: Better error handling
 
-            if( repoName != device.repoName ) {
+            if( repoName != FPSTR(STR_UPDATE_REPO_P) ) {
 
-                DEBUG("JSON Error getting latest release");
+                DEBUG(F("JSON Error getting latest release"));
 
                 return "";
             }
@@ -130,7 +130,7 @@ String ESPRemoteUpdater::getLatestBuild() {
     else {
 
         _lastError = HTTP_CODE_BAD_REQUEST;
-        DEBUG("Cannot connect to update service");
+        DEBUG(F("Cannot connect to update service"));
     }
 
     return "";
@@ -149,7 +149,7 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
 
     if( _skipUpdates ) {
 
-        LOG("Skipping update");
+        LOG(F("Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -163,11 +163,11 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG("No new file system update");
+        LOG(F("No new file system update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG("File system updated successfully");
+        LOG(F("File system updated successfully"));
         break;
     }
 
@@ -187,7 +187,7 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
 
     if( _skipUpdates ) {
 
-        LOG("Skipping update");
+        LOG(F("Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -205,17 +205,17 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG("No new program update");
+        LOG(F("No new program update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG("Program updated successfully");
+        LOG(F("Program updated successfully"));
         break;
     }
 
     if( ret == HTTP_UPDATE_OK && restart ) {
         
-        logger.println(LOG_CRITICAL, TAG_STATUS, "Rebooting in 5 sec");
+        logger.println(LOG_CRITICAL, TAG_STATUS, F("Rebooting in 5 sec"));
         delay(5000);
         ESP.restart();
 
@@ -240,7 +240,7 @@ void ESPRemoteUpdater::handle() {
         String checkTag = getLatestBuild();
 
         if( checkTag == _buildTag ) {
-            LOG("No new update");  
+            LOG(F("No new update"));  
             return;
         }
 
