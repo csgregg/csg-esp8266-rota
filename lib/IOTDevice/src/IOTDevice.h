@@ -78,59 +78,37 @@ Build flags are loaded from platformio.ini
     #if LOG_LEVEL == 0
         #define NO_DEBUG
     #endif
+   
 
+    // Physcial board
+    static const char STR_PLATFORM_P[] PROGMEM = ESCAPEQUOTE(PLATFORM);
+    static const char STR_BOARD_P[] PROGMEM = ESCAPEQUOTE(BOARD);
+    static const char STR_FRAMEWORK_P[] PROGMEM = ESCAPEQUOTE(FRAMEWORK);
 
-    // IOT Device Class
+    // General build details
+    static const char STR_BUILD_TAG_P[] PROGMEM = ESCAPEQUOTE(BUILD_TAG);                       // Build tag - when used in Travis-CI comes from the GitHub Release
+    static const char STR_BUILD_ENV_P[] PROGMEM = ESCAPEQUOTE(BUILD_ENV);                       // Build environmoent - Local or Travis-CI
+    static const char STR_DEVICE_CODE_P[] PROGMEM = ESCAPEQUOTE(DEVICE_CODE);                   // Short code name for the device
+    static const char STR_DEVICE_NAME_P[] PROGMEM = ESCAPEQUOTE(DEVICE_NAME);                   // Full device name
 
-    class IOTDevice {
+    // Used by CI_Remote_OTA library
+    static const char STR_UPDATE_REPO_P[] PROGMEM = ESCAPEQUOTE(UPDATE_REPO);                     // GitHub reprositary holding this code
+    static const char STR_UPDATE_USER_P[] PROGMEM = ESCAPEQUOTE(UPDATE_USER);                     // GitHub API user
+    static const char STR_UPDATE_TOKEN_P[] PROGMEM = ESCAPEQUOTE(UPDATE_TOKEN);                   // GitHub API OAUTH token
+    static const char STR_UPDATE_SERVICE_P[] PROGMEM = ESCAPEQUOTE(UPDATE_SERVICE);              // Path to PHP used to return GitHub assets
+    static const bool B_SKIPUPDATES = atoi(ESCAPEQUOTE(UPDATE_SKIP));                         // Skip any updates
+    static const long L_UPDATEINTERVAL = atol(ESCAPEQUOTE(UPDATE_INTERVAL));                  // Interval between update checks
 
-        public:
+    // Used by Logger library
+    static const bool B_LOG_AS_SERIAL = atoi(ESCAPEQUOTE(LOG_AS_SERIAL));                     // 0 - 1 to turn on serial logging
+    static const bool B_LOG_AS_SERVICE = atoi(ESCAPEQUOTE(LOG_AS_SERVICE));                   // 0 - 1 to turn on logging to Loggly service
+    static const uint U_LOGGING_LEVEL = atoi(ESCAPEQUOTE(LOG_LEVEL));                         // 0 - 3 to set log level
 
-            // Physcial board
-            
-            const String platform = ESCAPEQUOTE(PLATFORM);
-            const String board = ESCAPEQUOTE(BOARD);
-            const String framework = ESCAPEQUOTE(FRAMEWORK);
-           
-           // General build details
+    static const char STR_LOGGING_SERVICE_P[] PROGMEM = ESCAPEQUOTE(LOGGING_SERVICE);           // Path to Loggly API
+    static const char STR_LOGGING_SERVICE_KEY_P[] PROGMEM = ESCAPEQUOTE(LOGGING_SERVICE_KEY);   // Loggly API key - stored in credentials.h for privacy
+    static const char STR_LOGGING_GLOBAL_TAGS_P[] PROGMEM = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);   // Tags to globally apply to logs
 
-            const String buildTag = ESCAPEQUOTE(BUILD_TAG);                         // Build tag - when used in Travis-CI comes from the GitHub Release
-            const String buildEnv = ESCAPEQUOTE(BUILD_ENV);                         // Build environmoent - Local or Travis-CI
-            const String deviceCode = ESCAPEQUOTE(DEVICE_CODE);                     // Short code name for the device
-            const String deviceName = ESCAPEQUOTE(DEVICE_NAME);                     // Full device name
-
-            // Used by CI_Remote_OTA library
-
-            const String repoName = ESCAPEQUOTE(UPDATE_REPO);                       // GitHub reprositary holding this code
-            const String repoUser = ESCAPEQUOTE(UPDATE_USER);                       // GitHub API user
-            const String repoToken = ESCAPEQUOTE(UPDATE_TOKEN);                     // GitHub API OAUTH token
-            const String assetService = ESCAPEQUOTE(UPDATE_SERVICE);                // Path to PHP used to return GitHub assets
-            const bool skipUpdates = atoi(ESCAPEQUOTE(UPDATE_SKIP));                // Skip any updates
-            const long updateInterval = atol(ESCAPEQUOTE(UPDATE_INTERVAL));         // Interval between update checks
-
-            // Used by Logger library
-
-            const bool logAsSerial = atoi(ESCAPEQUOTE(LOG_AS_SERIAL));              // 0 - 1 to turn on serial logging
-            const bool logAsService = atoi(ESCAPEQUOTE(LOG_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
-            const uint loggingLevel = atoi(ESCAPEQUOTE(LOG_LEVEL));                 // 0 - 3 to set log level
-
-            const String loggingService = ESCAPEQUOTE(LOGGING_SERVICE);             // Path to Loggly API
-            const String loggingServiceKey = ESCAPEQUOTE(LOGGING_SERVICE_KEY);      // Loggly API key - stored in credentials.h for privacy
-            const String loggingGlobalTags = ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);      // Tags to globally apply to logs
-
-            // Serial monitor speed 
-            
-            const long monitorBaud = atol(ESCAPEQUOTE(MONITOR_SPEED));
-
-
-        protected:
-
-
-        private:
-
-
-    };
-
-    extern IOTDevice device;              // Declaring global instance
+    // Serial monitor speed 
+    static const long L_MONITOR_BAUD = atol(ESCAPEQUOTE(MONITOR_SPEED));
 
 #endif

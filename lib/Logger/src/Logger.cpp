@@ -49,9 +49,9 @@ void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
     _http = &http;
     _client = &client;
 
-    Serial.begin(device.monitorBaud);
+    Serial.begin(L_MONITOR_BAUD);
 
-    Serial.println("\r\n\r\nLOG: (Logger) Starting Logging\r\n");
+    Serial.println(F("\r\n\r\nLOG: (Logger) Starting Logging\r\n"));
 
 #endif
     
@@ -59,7 +59,7 @@ void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
 
 
 // Sets logging mode
-void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level level ){
+void LogClient::setMode( const bool modeSerial, const bool modeService, const t_logging_level level ){
 
 #ifndef NO_DEBUG
 
@@ -68,10 +68,11 @@ void LogClient::setMode( bool modeSerial, bool modeService, t_logging_level leve
     _logginglevel = level;
 
     setTypeTag(LOG_NORMAL, TAG_STATUS);
-    printf("(Logger) Logging set at level: %i", device.loggingLevel);
+    static const char msg1[] PROGMEM = "(Logger) Logging set at level:" ESCAPEQUOTE(LOG_LEVEL);
+    LOG( msg1 );
 
-    if(_serviceOn) logger.println(LOG_NORMAL, TAG_STATUS, "(Logger) Logging Service: ON");
-    else logger.println(LOG_NORMAL, TAG_STATUS, "(Logger) Logging Service: OFF");
+    if(_serviceOn) logger.println(LOG_NORMAL, TAG_STATUS, F("(Logger) Logging Service: ON"));
+    else logger.println(LOG_NORMAL, TAG_STATUS, F("(Logger) Logging Service: OFF"));
 
 #endif
 
@@ -103,7 +104,7 @@ void LogClient::println(const t_log_type type, const t_log_tag tag, const char *
     char shortened[MAX_MESSAGE_LEN];
     char func[MAX_MESSAGE_LEN];
 
-    strcpy_P(func, func_P);
+    strcpy_P(func, func_P);             // __FUNC__ is held in PROGMEM so handle appropriately
 
     const char format[] = "(Context: %s %s %i) %s";
 
@@ -192,7 +193,7 @@ void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 
 
 // Formatted log function - needs to be preceded by setTagType()
-void LogClient::printf( const char *format, ... ) {
+void LogClient::printf( const char * format, ... ) {
 
 #ifndef NO_DEBUG
 
@@ -206,7 +207,7 @@ void LogClient::printf( const char *format, ... ) {
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(LOG_CRITICAL, TAG_DEBUG, "(Logger) LogClient:: Buffer error");
+            println(LOG_CRITICAL, TAG_DEBUG, F("(Logger) LogClient: Buffer error"));
             return;
         }
         va_start(arg, format);
@@ -228,7 +229,7 @@ void LogClient::printf( const char *format, ... ) {
 // Protected:
 
 // Create and log prefix - needs to be followed by message using Serial.println()
-void LogClient::LogPrefix( t_log_type type, t_log_tag tag ){
+void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 
 #ifndef NO_DEBUG
 
@@ -268,21 +269,17 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     char thistype[strlen(c_log_type_descript[type])];
     strcpy(thistype, c_log_type_descript[type]);
 
-    char loggingURL[strlen("http://") + strlen(device.loggingService.c_str()) + strlen("/") + strlen(device.loggingServiceKey.c_str()) + strlen("/tag/") + strlen(device.loggingGlobalTags.c_str()) + strlen(",") + strlen(thistag) + strlen("/") + 1];
+    static char url[] PROGMEM = "http://" ESCAPEQUOTE(LOGGING_SERVICE) "/" ESCAPEQUOTE(LOGGING_SERVICE_KEY) "/tag/" ESCAPEQUOTE(LOGGING_GLOBAL_TAGS) ",";
 
-    strcpy(loggingURL, "http://");
-    strcat(loggingURL, device.loggingService.c_str());
-    strcat(loggingURL, "/");
-    strcat(loggingURL, device.loggingServiceKey.c_str());
-    strcat(loggingURL, "/tag/"); 
-    strcat(loggingURL, device.loggingGlobalTags.c_str()); 
-    strcat(loggingURL, ",");  
+    char loggingURL[strlen(url) + strlen(thistag) + 2];
+    strcpy( loggingURL, url );
+
     strcat(loggingURL, thistag); 
     strcat(loggingURL, "/");  
    
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
-        Serial.print("(Logger) Logging to: ");
+        Serial.print(F("(Logger) Logging to: "));
         Serial.println(loggingURL);
     }
 
@@ -303,20 +300,18 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-        Device_Hardware["platform"] = device.platform.c_str();
-        Device_Hardware["board"] = device.board.c_str();
-        Device_Hardware["framework"] = device.framework.c_str();
+        Device_Hardware["platform"] = FPSTR(STR_PLATFORM_P);
+        Device_Hardware["board"] = FPSTR(STR_BOARD_P);
+        Device_Hardware["framework"] = FPSTR(STR_FRAMEWORK_P);
 
         String tempMAC = WiFi.macAddress();
-        Device_Hardware["MAC"] = tempMAC.c_str();
+        Device_Hardware["MAC"] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject("Env");
-        Device_Env["Name"] = device.deviceName.c_str();
-        Device_Env["Code"] = device.deviceCode.c_str();
-        Device_Env["Build"] = device.buildTag.c_str();
-
-        uint32_t free = system_get_free_heap_size();    // get free ram 
-        Device_Env["Heap"] = free;
+        Device_Env["Name"] = FPSTR(STR_DEVICE_NAME_P);
+        Device_Env["Code"] = FPSTR(STR_DEVICE_CODE_P);
+        Device_Env["Build"] = FPSTR(STR_BUILD_ENV_P);
+        Device_Env["Heap"] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject("Network");
 
@@ -333,13 +328,13 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
-        Serial.print("(Logger) Log (JSON): ");
+        Serial.print(F("(Logger) Log (JSON): "));
         Serial.println(jsonMessage); 
     }
 
     // Start the connection
     _http->begin(*_client, loggingURL);
-    _http->addHeader("Content-Type", "content-type:text/plain");
+    _http->addHeader(F("Content-Type"), F("content-type:text/plain"));
 
     int httpCode = _http->POST((uint8_t *) &jsonMessage, jsonSize);
 
