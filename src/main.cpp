@@ -56,71 +56,42 @@ void jquerymin()
 
 
 
+
 void elaborateBuildFlags() {
 
-    static const char platform[] PROGMEM = "Platform: " ESCAPEQUOTE(PLATFORM);
-    static const char board[] PROGMEM = "Board: " ESCAPEQUOTE(BOARD);
-    static const char framework[] PROGMEM = "Framework: " ESCAPEQUOTE(FRAMEWORK);
+    LOG(device.getPlatform(true));
+    LOG(device.getBoard(true));
+    LOG(device.getFramework(true));
 
-    static const char devicename[] PROGMEM = "Device name: " ESCAPEQUOTE(DEVICE_NAME);
-    static const char devicecode[] PROGMEM = "Device code: " ESCAPEQUOTE(DEVICE_CODE);
+    LOG(device.getChipId(true));
+    LOG(device.getName(true));
+    LOG(device.getCode(true));
+    LOG(device.getBuild(true));
+    LOG(device.getEnvironment(true));
 
-    static const char buildtag[] PROGMEM = "Build tag: " ESCAPEQUOTE(BUILD_TAG);
-    static const char buildenv[] PROGMEM = "Build environment: " ESCAPEQUOTE(BUILD_ENV);
+    LOG(device.getUpdaterRepo(true));
+    LOG(device.getUpdaterUser(true));
+    LOG(device.getUpdaterService(true));
+    LOG(device.getUpdaterToken(true));
+    LOG(device.getUpdaterInterval(true));
+    LOG(device.getUpdaterSkip(true));
 
-    static const char updaterepo[] PROGMEM = "GitHub Repo: " ESCAPEQUOTE(UPDATE_REPO);
-    static const char updateuser[] PROGMEM = "GitHub User: " ESCAPEQUOTE(UPDATE_USER);
-    static const char updatetoken[] PROGMEM = "GitHub Token: " ESCAPEQUOTE(UPDATE_TOKEN);
-    static const char updateservice[] PROGMEM = "Asset service: " ESCAPEQUOTE(UPDATE_SERVICE);
-    static const char updateinterval[] PROGMEM = "Update interval: " ESCAPEQUOTE(UPDATE_INTERVAL);
-    static const char updateskip[] PROGMEM = "Skipping update: " ESCAPEQUOTE(UPDATE_INTERVAL);
-
-    static const char logasserial[] PROGMEM = "Log as serial: " ESCAPEQUOTE(LOG_AS_SERIAL);
-    static const char logasservice[] PROGMEM = "Log as service: " ESCAPEQUOTE(LOG_AS_SERVICE);
-    static const char loglevel[] PROGMEM = "Logging level: " ESCAPEQUOTE(LOG_LEVEL);
-
-    static const char loggingservice[] PROGMEM = "Logging service: " ESCAPEQUOTE(LOGGING_SERVICE);
-    static const char loggingservicekey[] PROGMEM = "Logging service key: " ESCAPEQUOTE(LOGGING_SERVICE_KEY);
-    static const char loggingservicetags[] PROGMEM = "Logging global tags: " ESCAPEQUOTE(LOGGING_GLOBAL_TAGS);
-
-    static const char monitorbaud[] PROGMEM = "Monitor baud: " ESCAPEQUOTE(MONITOR_SPEED);
-
-    LOG( platform );
-    LOG( board );
-    LOG( framework );
-
-    LOG( devicename );
-    LOG( devicecode );
-
-    LOG( buildtag );
-    LOG( buildenv );
-
-    LOG( updaterepo );
-    LOG( updateuser );
-    LOG( updatetoken );
-    LOG( updateservice );
-    LOG( updateinterval );
-    LOG( updateskip );
-
-    LOG( logasserial );
-    LOG( logasservice );
-    LOG( loglevel );
-
-    LOG( loggingservice );
-    LOG( loggingservicekey );
-    LOG( loggingservicetags );
-
-    LOG( monitorbaud );
+    LOG(device.getLoggerAsSerial(true));
+    LOG(device.getLoggerAsService(true));
+    LOG(device.getLoggerLogLevel(true));
+    LOG(device.getLoggerGlobalTags(true));
+    LOG(device.getLoggerService(true));
+    LOG(device.getLoggerServiceKey(true));
+    LOG(device.getLoggerBaud(true));
     
 }
 
 
-
 void setup() {
 
-    logger.begin( http, client );    
-    logger.setMode( B_LOG_AS_SERIAL, false, t_logging_level(U_LOGGING_LEVEL) );
-
+    logger.begin( http, client, device.getLoggerBaud(), device.getLoggerService(), device.getLoggerServiceKey(), device.getLoggerGlobalTags() );    
+    logger.setMode( device.getLoggerAsSerial(), false, t_logging_level(device.getLoggerLogLevel()) );
+    elaborateBuildFlags();
     delay(1000);
 
     WiFi.persistent(false);
@@ -129,14 +100,11 @@ void setup() {
 
     delay(1000);
 
-    logger.setMode( B_LOG_AS_SERIAL, B_LOG_AS_SERVICE, t_logging_level(U_LOGGING_LEVEL) );
+    logger.setMode( device.getLoggerAsSerial(), device.getLoggerAsService(), t_logging_level(device.getLoggerLogLevel()));
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
 
-    elaborateBuildFlags();
-
     server.begin(); 
-
     server.on("/", fileindex);
     server.on("/index.html", fileindex);
     server.on("/bootstrap.min.css", bootstrap);
@@ -150,8 +118,8 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    static const char updaterurl[] PROGMEM = "http://" ESCAPEQUOTE(UPDATE_SERVICE) "?repo=" ESCAPEQUOTE(UPDATE_REPO) "&user=" ESCAPEQUOTE(UPDATE_USER) "&token=" ESCAPEQUOTE(UPDATE_TOKEN);
-    updater.setup(updaterurl, FPSTR(STR_DEVICE_CODE_P) , FPSTR(STR_BUILD_TAG_P), L_UPDATEINTERVAL, B_SKIPUPDATES );
+    PGM_P updaterurl = PSTR("http://" ESCAPEQUOTE(UPDATE_SERVICE) "?repo=" ESCAPEQUOTE(UPDATE_REPO) "&user=" ESCAPEQUOTE(UPDATE_USER) "&token=" ESCAPEQUOTE(UPDATE_TOKEN));
+    updater.setup(updaterurl, device.getCode() , device.getBuild(), device.getUpdaterInterval(), device.getUpdaterSkip() );
     updater.begin( http, client );
 
     LOG(F("Starting loop()"));

@@ -33,7 +33,7 @@ JSON Loggining Format
 
 {
   "localtime": 1234567890,
-  "message": "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
+  "message": "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456",
   "Device": {
     "Hardware": {
       "Platform": "12345678901234567890",
@@ -68,13 +68,12 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     #include "IOTDevice.h"
 
-    #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
+    #define DEFAULT_MONITOR_BAUD 115200
 
     #ifndef NO_DEBUG
 
       // Macros to simplifiy common usage
 
-   //   #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, FPSTR(__FUNCTION__), __LINE__)
       #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
       #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
       #define DEBUG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
@@ -100,6 +99,23 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
       #define DEBUG_RAW(text)
 
     #endif
+
+
+    #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
+
+    // Define max JSON key sizes
+    #define JSON_SIZE_LOCALTIME 10
+    #define JSON_SIZE_MESSAGE MAX_MESSAGE_LEN
+    #define JSON_SIZE_PLATFORM 20
+    #define JSON_SIZE_BOARD 20
+    #define JSON_SIZE_FRAMEWORK 20
+    #define JSON_SIZE_MAC 17
+    #define JSON_SIZE_NAME 30
+    #define JSON_SIZE_CODE 20
+    #define JSON_SIZE_BUILD 8
+    #define JSON_SIZE_HEAP 10
+    #define JSON_SIZE_IP 15
+    #define JSON_SIZE_SSID 32
 
     
     // Logging level to filter logs 
@@ -139,7 +155,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             /// To set up logging
 
-            void begin( HTTPClient &http, WiFiClient &client );
+            void begin( HTTPClient &http, WiFiClient &client, const long baud, const String &service, const String &key, const String &tags );
             void setMode( const bool modeSerial = false, const bool modeService = false, const t_logging_level level = LOGGING_OFF );
 
             // Log messages (with overloads)
@@ -163,6 +179,8 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             HTTPClient * _http;
             WiFiClient * _client;
+
+            String _ServiceURL;
 
             bool _serialOn = false;
             bool _serviceOn = false;
