@@ -42,16 +42,18 @@ LogClient::LogClient() {
 
 
 // Sets up logger - needs to be followed by setMode() to actually start
-void LogClient::begin( HTTPClient &http, WiFiClient &client ) {
+void LogClient::begin( HTTPClient &http, WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
 
 #ifndef NO_DEBUG
 
     _http = &http;
     _client = &client;
 
-    Serial.begin(L_MONITOR_BAUD);
+    _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
 
-    Serial.println(F("\r\n\r\nLOG: (Logger) Starting Logging\r\n"));
+    Serial.begin(baud);
+
+    Serial.println(F("\n\nLOG: (Logger) Starting Logging\n"));
 
 #endif
     
@@ -68,11 +70,11 @@ void LogClient::setMode( const bool modeSerial, const bool modeService, const t_
     _logginglevel = level;
 
     setTypeTag(LOG_NORMAL, TAG_STATUS);
-    static const char msg1[] PROGMEM = "(Logger) Logging set at level:" ESCAPEQUOTE(LOG_LEVEL);
-    LOG( msg1 );
+    PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
+    logger.printf( format1, _logginglevel );
 
-    if(_serviceOn) logger.println(LOG_NORMAL, TAG_STATUS, F("(Logger) Logging Service: ON"));
-    else logger.println(LOG_NORMAL, TAG_STATUS, F("(Logger) Logging Service: OFF"));
+    if(_serviceOn) LOG(F("(Logger) Logging Service: ON"));
+    else LOG(F("(Logger) Logging Service: OFF"));
 
 #endif
 
@@ -101,22 +103,25 @@ void LogClient::println(const t_log_type type, const t_log_tag tag, const char *
 
 #ifndef NO_DEBUG
 
-    char shortened[MAX_MESSAGE_LEN];
     char func[MAX_MESSAGE_LEN];
 
-    strcpy_P(func, func_P);             // __FUNC__ is held in PROGMEM so handle appropriately
+    strcpy_P(func, func_P);             // __FUNC__ is held in Flash so handle appropriately
 
-    const char format[] = "(Context: %s %s %i) %s";
-
-    strncpy( shortened, message, MAX_MESSAGE_LEN - ( strlen(format) + strlen(file) + strlen(func) ) );        // Truncate if too long
-    
     if( _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+
+        PGM_P format = PSTR("(Context: %s %s %i) %s");
+        size_t contextsize =  ( strlen(format) - 8 ) + strlen(file) + strlen(func);
+
+        char shortened[MAX_MESSAGE_LEN];
+        strncpy( shortened, message, MAX_MESSAGE_LEN - contextsize );        // Truncate if too long
+        shortened[(MAX_MESSAGE_LEN - contextsize)-1]=0;
+
         char str[MAX_MESSAGE_LEN];
         sprintf(str, format, file, func, line, shortened);
         str[MAX_MESSAGE_LEN-1] = 0;
         println(type, tag, str);
     }
-    else println(type, tag, shortened);
+    else println(type, tag, message);
 
 #endif
 
@@ -233,8 +238,14 @@ void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 
 #ifndef NO_DEBUG
 
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE) Serial.printf("LOG: %s: %s - Millis: %li, Heap: %i - ", c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
-    else Serial.printf("LOG: %s: %s - ", c_log_tag_descript[tag], c_log_type_descript[type]);
+    if( _logginglevel == LOGGING_LEVEL_VERBOSE) {
+        PGM_P format = PSTR("LOG: %s: %s - Millis: %li, Heap: %i - ");
+        Serial.printf(format, c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
+    }
+    else {
+        PGM_P format = PSTR("LOG: %s: %s - ");
+        Serial.printf(format, c_log_tag_descript[tag], c_log_type_descript[type]);
+    }
 
 #endif
 
@@ -269,13 +280,7 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     char thistype[strlen(c_log_type_descript[type])];
     strcpy(thistype, c_log_type_descript[type]);
 
-    static char url[] PROGMEM = "http://" ESCAPEQUOTE(LOGGING_SERVICE) "/" ESCAPEQUOTE(LOGGING_SERVICE_KEY) "/tag/" ESCAPEQUOTE(LOGGING_GLOBAL_TAGS) ",";
-
-    char loggingURL[strlen(url) + strlen(thistag) + 2];
-    strcpy( loggingURL, url );
-
-    strcat(loggingURL, thistag); 
-    strcat(loggingURL, "/");  
+    String loggingURL = _ServiceURL + String(thistag) + "/";
    
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
@@ -285,32 +290,31 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
 
     // Build JSON
     // Use https://arduinojson.org/v6/assistant/
-
-    const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 454;
+    
+    const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 640;
     DynamicJsonDocument jsonLog(capacity);
 
     jsonLog["localtime"] = millis();
 
-    char shortened[MAX_MESSAGE_LEN+1];
+    char shortened[MAX_MESSAGE_LEN];
 
     strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
+    shortened[MAX_MESSAGE_LEN-1]=0;
 
     jsonLog["message"] = shortened;
 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-        Device_Hardware["platform"] = FPSTR(STR_PLATFORM_P);
-        Device_Hardware["board"] = FPSTR(STR_BOARD_P);
-        Device_Hardware["framework"] = FPSTR(STR_FRAMEWORK_P);
-
-        String tempMAC = WiFi.macAddress();
-        Device_Hardware["MAC"] =  tempMAC.c_str();
+        Device_Hardware["platform"] = device.getPlatform();
+        Device_Hardware["board"] = device.getBoard();
+        Device_Hardware["framework"] = device.getFramework();
+        String tempMAC = WiFi.macAddress(); Device_Hardware["MAC"] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject("Env");
-        Device_Env["Name"] = FPSTR(STR_DEVICE_NAME_P);
-        Device_Env["Code"] = FPSTR(STR_DEVICE_CODE_P);
-        Device_Env["Build"] = FPSTR(STR_BUILD_ENV_P);
+        Device_Env["Name"] = device.getName();
+        Device_Env["Code"] = device.getCode();
+        Device_Env["Build"] = device.getBuild();
         Device_Env["Heap"] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject("Network");
@@ -343,7 +347,9 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     if( httpCode == HTTP_CODE_OK ) {
         if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(LOG_DETAIL, TAG_STATUS);
-            Serial.printf("(Logger) Logging to servce: SUCCESS %i", httpCode);
+
+            PGM_P format = PSTR("(Logger) Logging to servce: SUCCESS %i");
+            Serial.printf(format, httpCode);
             Serial.println();
         }
         return;
@@ -351,7 +357,9 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     else {
         if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
-            Serial.printf("(Logger) Logging to servce: ERROR %i", httpCode);
+
+            PGM_P format = PSTR("(Logger) Logging to servce: ERROR %i");
+            Serial.printf(format, httpCode);
             Serial.println(); 
         }
         return;
