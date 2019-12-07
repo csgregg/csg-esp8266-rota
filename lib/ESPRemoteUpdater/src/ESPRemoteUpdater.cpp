@@ -104,8 +104,9 @@ String ESPRemoteUpdater::getLatestBuild() {
 
 
             // TODO: Better error handling
+            // and need to pass repo to protected var
 
-            if( repoName != F(ESCAPEQUOTE(UPDATE_REPO)) ) {
+            if( repoName != device_getBuildFlag(flag_UPDATER_REPO) ) {
 
                 DEBUG("JSON Error getting latest release");
 
