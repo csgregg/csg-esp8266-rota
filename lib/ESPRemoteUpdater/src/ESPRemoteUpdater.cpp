@@ -33,16 +33,14 @@ SOFTWARE.
 
 
 
-ESPRemoteUpdater::ESPRemoteUpdater() {
-
-}
-
 bool ESPRemoteUpdater::_doUpdateCheck;
 
 
-void ESPRemoteUpdater::setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
+void ESPRemoteUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
 
-    _assetRequestURL = assetRequestURL;
+    _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo;
+    if( user != "" ) _assetRequestURL += PSTR("&user=") + user + PSTR("&token=") + token;
+
     _deviceCode = deviceCode;
     _buildTag = buildTag;
     _updateinterval = updateinterval;
