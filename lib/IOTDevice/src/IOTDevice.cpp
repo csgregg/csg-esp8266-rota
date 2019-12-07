@@ -78,17 +78,17 @@ String IOTDevice::getUpdaterRepo( bool described ) {
 }
 
 String IOTDevice::getUpdaterUser( bool described ) {
-    if( described ) return String(F("(Updater) Repo: ")) + FPSTR(flag_updater_user);
+    if( described ) return String(F("(Updater) User: ")) + FPSTR(flag_updater_user);
     else return FPSTR(flag_updater_user);
 }
 
 String IOTDevice::getUpdaterToken( bool described ) {
-    if( described ) return String(F("(Updater) Repo: ")) + FPSTR(flag_updater_token);
+    if( described ) return String(F("(Updater) Token: ")) + FPSTR(flag_updater_token);
     else return FPSTR(flag_updater_token);
 }
 
 String IOTDevice::getUpdaterService( bool described ) {
-    if( described ) return String(F("(Updater) Repo: ")) + FPSTR(flag_updater_service);
+    if( described ) return String(F("(Updater) Service: ")) + FPSTR(flag_updater_service);
     else return FPSTR(flag_updater_service);
 }
 

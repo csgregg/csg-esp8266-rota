@@ -118,8 +118,7 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    PGM_P updaterurl = PSTR("http://" ESCAPEQUOTE(UPDATE_SERVICE) "?repo=" ESCAPEQUOTE(UPDATE_REPO) "&user=" ESCAPEQUOTE(UPDATE_USER) "&token=" ESCAPEQUOTE(UPDATE_TOKEN));
-    updater.setup(updaterurl, device.getCode() , device.getBuild(), device.getUpdaterInterval(), device.getUpdaterSkip() );
+    updater.setup(device.getUpdaterService(), device.getUpdaterRepo(), device.getUpdaterUser(), device.getUpdaterToken(), device.getCode() , device.getBuild(), device.getUpdaterInterval(), device.getUpdaterSkip() );
     updater.begin( http, client );
 
     LOG(F("Starting loop()"));

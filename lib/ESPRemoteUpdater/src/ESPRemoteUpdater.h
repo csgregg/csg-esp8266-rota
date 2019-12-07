@@ -50,10 +50,8 @@ binaries built by Travis-CI.
     class ESPRemoteUpdater {
         
         public:
-
-            ESPRemoteUpdater();
             
-            void setup( const String &assetRequestURL, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
+            void setup(  const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
             void begin( HTTPClient& http, WiFiClient& client );
 
             void handle();
