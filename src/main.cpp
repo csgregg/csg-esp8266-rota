@@ -59,39 +59,39 @@ void jquerymin()
 
 void elaborateBuildFlags() {
 
-    LOG(device.getPlatform(true));
-    LOG(device.getBoard(true));
-    LOG(device.getFramework(true));
+    LOG(device_getBuildFlag(flag_PLATFORM, true));
+    LOG(device_getBuildFlag(flag_BOARD,true));
+    LOG(device_getBuildFlag(flag_FRAMEWORK,true));
 
     LOG(device.getChipId(true));
-    LOG(device.getName(true));
-    LOG(device.getCode(true));
-    LOG(device.getBuild(true));
-    LOG(device.getEnvironment(true));
+    LOG(device_getBuildFlag(flag_DEVICE_NAME,true));
+    LOG(device_getBuildFlag(flag_DEVICE_CODE,true));
+    LOG(device_getBuildFlag(flag_BUILD_TAG,true));
+    LOG(device_getBuildFlag(flag_BUILD_ENV,true));
 
-    LOG(device.getUpdaterRepo(true));
-    LOG(device.getUpdaterUser(true));
-    LOG(device.getUpdaterService(true));
-    LOG(device.getUpdaterToken(true));
-    LOG(device.getUpdaterInterval(true));
-    LOG(device.getUpdaterSkip(true));
+    LOG(device_getBuildFlag(flag_UPDATER_REPO,true));
+    LOG(device_getBuildFlag(flag_UPDATER_USER,true));
+    LOG(device_getBuildFlag(flag_UPDATER_TOKEN,true));
+    LOG(device_getBuildFlag(flag_UPDATER_SERVICE,true));
+    LOG(device_getBuildFlag(flag_UPDATER_INTERVAL,true));
+    LOG(device_getBuildFlag(flag_UPDATER_SKIP,true));
 
-    LOG(device.getLoggerAsSerial(true));
-    LOG(device.getLoggerAsService(true));
-    LOG(device.getLoggerLogLevel(true));
-    LOG(device.getLoggerGlobalTags(true));
-    LOG(device.getLoggerService(true));
-    LOG(device.getLoggerServiceKey(true));
-    LOG(device.getLoggerBaud(true));
-    
+    LOG(device_getBuildFlag(flag_LOGGER_LEVEL,true));
+    LOG(device_getBuildFlag(flag_LOGGVER_AS_SERIAL,true));
+    LOG(device_getBuildFlag(flag_LOGGER_AS_SERVICE,true));
+    LOG(device_getBuildFlag(flag_LOGGER_SERVICE,true));
+    LOG(device_getBuildFlag(flag_LOGGER_SERVICE_KEY,true));
+    LOG(device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS,true));
+    LOG(device_getBuildFlag(flag_MONITOR_SPEED,true));
+       
 }
 
 
 void setup() {
 
-    logger.begin( http, client, device.getLoggerBaud(), device.getLoggerService(), device.getLoggerServiceKey(), device.getLoggerGlobalTags() );    
-    logger.setMode( device.getLoggerAsSerial(), false, t_logging_level(device.getLoggerLogLevel()) );
-    elaborateBuildFlags();
+    logger.begin( http, client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
+    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+
     delay(1000);
 
     WiFi.persistent(false);
@@ -100,7 +100,9 @@ void setup() {
 
     delay(1000);
 
-    logger.setMode( device.getLoggerAsSerial(), device.getLoggerAsService(), t_logging_level(device.getLoggerLogLevel()));
+    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+
+    elaborateBuildFlags();
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
 
@@ -118,7 +120,7 @@ void setup() {
 
     SPIFFS.begin(); 
 
-    updater.setup(device.getUpdaterService(), device.getUpdaterRepo(), device.getUpdaterUser(), device.getUpdaterToken(), device.getCode() , device.getBuild(), device.getUpdaterInterval(), device.getUpdaterSkip() );
+    updater.setup( device_getBuildFlag(flag_UPDATER_SERVICE), device_getBuildFlag(flag_UPDATER_REPO), device_getBuildFlag(flag_UPDATER_USER), device_getBuildFlag(flag_UPDATER_TOKEN), device_getBuildFlag(flag_DEVICE_CODE), device_getBuildFlag(flag_BUILD_TAG), device_getBuildFlag(flag_UPDATER_INTERVAL), device_getBuildFlag(flag_UPDATER_SKIP) );
     updater.begin( http, client );
 
     LOG(F("Starting loop()"));

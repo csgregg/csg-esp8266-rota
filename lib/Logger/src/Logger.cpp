@@ -306,15 +306,15 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-        Device_Hardware["platform"] = device.getPlatform();
-        Device_Hardware["board"] = device.getBoard();
-        Device_Hardware["framework"] = device.getFramework();
+        Device_Hardware["platform"] = device_getBuildFlag(flag_PLATFORM);
+        Device_Hardware["board"] = device_getBuildFlag(flag_BUILD_TAG);
+        Device_Hardware["framework"] = device_getBuildFlag(flag_FRAMEWORK);
         String tempMAC = WiFi.macAddress(); Device_Hardware["MAC"] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject("Env");
-        Device_Env["Name"] = device.getName();
-        Device_Env["Code"] = device.getCode();
-        Device_Env["Build"] = device.getBuild();
+        Device_Env["Name"] = device_getBuildFlag(flag_DEVICE_NAME);
+        Device_Env["Code"] = device_getBuildFlag(flag_DEVICE_CODE);
+        Device_Env["Build"] = device_getBuildFlag(flag_BUILD_ENV);
         Device_Env["Heap"] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject("Network");
