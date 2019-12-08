@@ -51,7 +51,7 @@ binaries built by Travis-CI.
         
         public:
             
-            void setup(  const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
+            void setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
             void begin( HTTPClient& http, WiFiClient& client );
 
             void handle();
@@ -67,6 +67,7 @@ binaries built by Travis-CI.
             const char* _FSSuffix = "-Fv";
 
             String _assetRequestURL;
+            String _repoName;
             String _deviceCode;
             String _buildTag;
             String _latestTag;

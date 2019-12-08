@@ -41,10 +41,12 @@ void ESPRemoteUpdater::setup( const String &service, const String &repo, const S
     _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo;
     if( user != "" ) _assetRequestURL += PSTR("&user=") + user + PSTR("&token=") + token;
 
+    _repoName = repo;
     _deviceCode = deviceCode;
     _buildTag = buildTag;
     _updateinterval = updateinterval;
     _skipUpdates = skip;
+
 
 }
 
@@ -106,7 +108,7 @@ String ESPRemoteUpdater::getLatestBuild() {
             // TODO: Better error handling
             // and need to pass repo to protected var
 
-            if( repoName != device_getBuildFlag(flag_UPDATER_REPO) ) {
+            if( repoName != _repoName ) {
 
                 DEBUG("JSON Error getting latest release");
 
