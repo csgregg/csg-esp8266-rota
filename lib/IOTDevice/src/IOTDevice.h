@@ -94,7 +94,7 @@ Build flags are loaded from platformio.ini
     // Used by CI_Remote_OTA library
     static const char flag_UPDATER_REPO [] PROGMEM = ESCAPEQUOTE(UPDATER_REPO);                 // GitHub reprositary holding this code
     static const char flag_UPDATER_USER [] PROGMEM = ESCAPEQUOTE(UPDATER_USER);                 // GitHub API user
-    static const char flag_UPDATER_TOKEN [] PROGMEM = ESCAPEQUOTE(UPDATE_TOKEN);               // GitHub API OAUTH token
+    static const char flag_UPDATER_TOKEN [] PROGMEM = ESCAPEQUOTE(UPDATER_TOKEN);               // GitHub API OAUTH token
     static const char flag_UPDATER_SERVICE [] PROGMEM = ESCAPEQUOTE(UPDATER_SERVICE);           // Path to PHP used to return GitHub assets
     static const bool flag_UPDATER_SKIP = atoi(ESCAPEQUOTE(UPDATER_SKIP));                      // Skip any updates
     static const long flag_UPDATER_INTERVAL = atol(ESCAPEQUOTE(UPDATER_INTERVAL));              // Interval between update checks
@@ -105,7 +105,7 @@ Build flags are loaded from platformio.ini
     static const bool flag_LOGGER_AS_SERVICE = atoi(ESCAPEQUOTE(LOGGER_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
     static const uint flag_LOGGER_LEVEL = atoi(ESCAPEQUOTE(LOGGER_LEVEL));                      // 0 - 3 to set log level
     static const char flag_LOGGER_SERVICE [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE);             // Path to Loggly API
-    static const char flag_LOGGER_SERVICE_KEY [] PROGMEM = ESCAPEQUOTE(LOGGING_SERVICE_KEY);     // Loggly API key - stored in credentials.h for privacy
+    static const char flag_LOGGER_SERVICE_KEY [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE_KEY);     // Loggly API key - stored in credentials.h for privacy
     static const char flag_LOGGER_GLOBAL_TAGS [] PROGMEM = ESCAPEQUOTE(LOGGER_GLOBAL_TAGS);     // Tags to globally apply to logs
     static const long flag_MONITOR_SPEED = atol(ESCAPEQUOTE(MONITOR_SPEED));                    // Monitor baud
 
