@@ -77,11 +77,12 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         DEBUG_DETAIL("Update URL: " + _assetRequestURL);
 
-        DEBUG(_assetRequestURL);
-
         _http->begin( *_client, _assetRequestURL );
 
         _lastError = _http->GET();
+
+        logger.setTypeTag( LOG_CRITICAL, TAG_DEBUG);
+        logger.printf("Last error: %i", _lastError);
 
         if( _lastError != HTTP_CODE_OK ) {
 
