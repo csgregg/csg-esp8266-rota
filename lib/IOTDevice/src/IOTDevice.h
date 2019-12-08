@@ -39,7 +39,7 @@ Build flags are loaded from platformio.ini
     #include <Esp.h>
     
     #include "Credentials.h"         // Contains private definitions (excluded from repo)
-    
+
 
     // Used to stringify debug flags
 
@@ -47,26 +47,26 @@ Build flags are loaded from platformio.ini
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
 
-    // In case build flags are missing for non-string members
+    // In case build flags are missing for non-string flags
 
-    #ifndef UPDATE_SKIP
-        #define UPDATE_SKIP 1
+    #ifndef UPDATER_SKIP
+        #define UPDATER_SKIP 1
     #endif
 
-    #ifndef LOG_AS_SERIAL
-        #define LOG_AS_SERIAL 1
+    #ifndef LOGGER_AS_SERIAL
+        #define LOGGER_AS_SERIAL 1
     #endif
 
-    #ifndef LOG_AS_SERVICE
-        #define LOG_AS_SERVICE 0
+    #ifndef LOGGER_AS_SERVICE
+        #define LOGGER_AS_SERVICE 0
     #endif
 
-    #ifndef UPDATE_INTERVAL
-        #define UPDATE_INTERVAL 300
+    #ifndef UPDATER_INTERVAL
+        #define UPDATER_INTERVAL 300
     #endif
 
-    #ifndef LOG_LEVEL
-        #define LOG_LEVEL 3
+    #ifndef LOGGER_LEVEL
+        #define LOGGER_LEVEL 3
     #endif
 
     #ifndef MONITOR_SPEED
@@ -76,7 +76,7 @@ Build flags are loaded from platformio.ini
 
     // Turn off all debug
 
-    #if LOG_LEVEL == 0
+    #if LOGGER_LEVEL == 0
         #define NO_DEBUG
     #endif
    
