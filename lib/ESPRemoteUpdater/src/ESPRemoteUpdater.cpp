@@ -77,6 +77,8 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         DEBUG_DETAIL("Update URL: " + _assetRequestURL);
 
+        DEBUG(_assetRequestURL);
+
         _http->begin( *_client, _assetRequestURL );
 
         _lastError = _http->GET();
