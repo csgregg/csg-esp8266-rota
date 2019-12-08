@@ -14,7 +14,7 @@
 
 // Logging Service
 // RUN: travis encrypt LOGGER_SERVICE_KEY=<<Secret>> --add env.global
-// PLATFORMIO.INI: -DLOGGER_SERVICE_KEY=${sysenv.LOGGING_SERVICE_KEY}
+// PLATFORMIO.INI: -DLOGGER_SERVICE_KEY=${sysenv.LOGGER_SERVICE_KEY}
 #ifndef LOGGER_SERVICE_KEY
     #define LOGGER_SERVICE_KEY "KEY"
 #endif
