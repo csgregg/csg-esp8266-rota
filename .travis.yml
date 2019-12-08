@@ -1,6 +1,6 @@
 language: python
 python:
-- '2.7'
+- '3.8'
 sudo: false
 cache:
   directories:
@@ -29,4 +29,4 @@ deploy:
   api_key:
     secure: TpxjT3CKVLiplHaZLzRyNaFi9IfG4tI+b5zhQvUA4xnzoJWYCtKr8DVe22yNdEcze8Z2KO9KkC4UCcTTt6ZVQLMZSst/SA2/yiwbvKbHSP6Ise27tTgg1j3G9Tzb4R2oDyv7DHutd2lRJfxUzhPsS1ZvUvPyjyiZjqy4/vygMjr0BBbP8rysfGzCvUy+LF09cFhYCT0Q1+Ua+me8WnwO5asoAeR0fhMDxNw4LLmJj/V5EQ4pTLGSyuNbQl/8IIQ6CECzyP0CeYUaIwEierPdgen1HlzOzmcfU7BBt82dB4DTndJryERa0gGYL2OSvNa9fr0rYtMoOT5bQBYXipoenGkNdlJQnVL7Lzy/Veqqi9Jy4es8WPqy7bFZZQ2W2w52eorr0fL38+2KGahkr7U3PMGaS2D4/HgYEgruJwkIMHz2pOau8uWZyq8+76Wfb14mhLaYzetie+/B7/feFdgQDOFNWU/SduIWlOTDCnMc5vAwCAI7u7BHU7e/SNicxQGptw9d8gOLWuEAysxzQbjd+DdYEZj08GVIeHCd6WqM24SCBGey58ehM3Xnhi1T1wWexYB8KaWQG0hBJv76cPwib3LmF1YXlesRCCI6N0fMBMIsgNEBZbfS7KsrSDAK/x5zgpN9WJjLn1Kr/wi+68b/Ol5hHISOH4VIPunKEbM4SLk=
   file_glob: true
-  file: ".pio/build/csg-esp8266-rota-ota/*.bin"
+  file: ".pio/build/csg-esp8266-rota-travis/*.bin"
