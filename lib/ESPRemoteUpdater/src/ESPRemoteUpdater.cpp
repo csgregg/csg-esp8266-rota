@@ -31,6 +31,7 @@ SOFTWARE.
 #include "Logger.h"
 #include "ESPRemoteUpdater.h"
 
+// TODO : Sort out strings
 
 
 bool ESPRemoteUpdater::_doUpdateCheck;
