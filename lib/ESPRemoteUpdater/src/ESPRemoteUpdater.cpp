@@ -102,7 +102,7 @@ String ESPRemoteUpdater::getLatestBuild() {
             String rawJSON = _http->getString();
             _http->end();
 
-            DEBUG_DETAIL("JSON: " + rawJSON);
+            DEBUG("JSON: " + rawJSON);
 
             deserializeJson( responseJSON, rawJSON );
 
