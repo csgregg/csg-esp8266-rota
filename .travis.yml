@@ -15,7 +15,6 @@ install:
 - pip install -U platformio
 - platformio lib install WiFiManager
 - platformio lib install ArduinoJson
-- platformio lib install Esp
 script:
 - platformio run -e csg-esp8266-rota-travis
 - platformio run -t buildfs -e csg-esp8266-rota-travis
