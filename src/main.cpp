@@ -59,11 +59,12 @@ void jquerymin()
 
 void elaborateBuildFlags() {
 
+    LOG(device.getChipId(true));
+    
     LOG(device_getBuildFlag(flag_PLATFORM, true));
     LOG(device_getBuildFlag(flag_BOARD,true));
     LOG(device_getBuildFlag(flag_FRAMEWORK,true));
 
-    LOG(device.getChipId(true));
     LOG(device_getBuildFlag(flag_DEVICE_NAME,true));
     LOG(device_getBuildFlag(flag_DEVICE_CODE,true));
     LOG(device_getBuildFlag(flag_BUILD_TAG,true));
