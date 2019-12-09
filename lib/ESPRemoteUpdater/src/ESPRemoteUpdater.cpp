@@ -78,8 +78,10 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         DEBUG("Update URL: " + _assetRequestURL);
 
-        _http->begin( *_client, _assetRequestURL );
+   //     _http->begin( *_client, _assetRequestURL );
 
+
+_http->begin( *_client, "http://iot.greggs.org/tools/githubassetfetch.php?repo=csg-esp8266-rota&user=csgregg&token=b65a3aa5f98fe361ad146f0f41d15c0631d5200c");
         _lastError = _http->GET();
 
         if( _lastError != HTTP_CODE_OK ) {
