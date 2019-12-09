@@ -84,6 +84,7 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         if( _lastError != HTTP_CODE_OK ) {
 
+            Serial.printf("error %i\n", _lastError);
             LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(_lastError));
 
             _http->end();
