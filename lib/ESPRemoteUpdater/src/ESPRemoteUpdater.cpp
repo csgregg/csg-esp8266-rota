@@ -76,7 +76,7 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     if ( _http != NULL ) {
 
-        LOG_DETAIL("Update URL: " + _assetRequestURL);
+        DEBUG("Update URL: " + _assetRequestURL);
 
         _http->begin( *_client, _assetRequestURL );
 
@@ -84,9 +84,9 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         if( _lastError != HTTP_CODE_OK ) {
 
-            _http->end();
-
             LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(_lastError));
+
+            _http->end();
 
             return "";
         }
