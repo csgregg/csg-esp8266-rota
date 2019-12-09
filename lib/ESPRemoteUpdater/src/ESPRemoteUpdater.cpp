@@ -72,11 +72,11 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 String ESPRemoteUpdater::getLatestBuild() {
 
-    LOG("Checking latest build...");
+    LOG(F("Checking latest build..."));
 
     if ( _http != NULL ) {
 
-        DEBUG("Update URL: " + _assetRequestURL);
+        LOG_DETAIL("Update URL: " + _assetRequestURL);
 
         _http->begin( *_client, _assetRequestURL );
 
@@ -86,7 +86,7 @@ String ESPRemoteUpdater::getLatestBuild() {
 
             _http->end();
 
-            DEBUG("Error getting latest release - Error: " + _http->errorToString(_lastError));
+            LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(_lastError));
 
             return "";
         }
@@ -129,11 +129,11 @@ String ESPRemoteUpdater::getLatestBuild() {
 
             String repoName = responseJSON["repo"];
 
-            DEBUG(repoName);
+            LOG_DETAIL(repoName);
 
             if( repoName != _repoName ) {
 
-                DEBUG("JSON Error getting latest release");
+                LOG_CRITICAL("JSON Error getting latest release");
 
                 return "";
             }
@@ -154,7 +154,7 @@ String ESPRemoteUpdater::getLatestBuild() {
     else {
 
         _lastError = HTTP_CODE_BAD_REQUEST;
-        DEBUG("Cannot connect to update service");
+        LOG_CRITICAL(F("Cannot connect to update service"));
     }
 
     return "";

@@ -348,9 +348,8 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
         if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(LOG_DETAIL, TAG_STATUS);
 
-            PGM_P format = PSTR("(Logger) Logging to servce: SUCCESS %i");
-            Serial.printf(format, httpCode);
-            Serial.println();
+            Serial.println(F("(Logger) Logging to servce: SUCCESS "));
+            Serial.println(_http->errorToString(httpCode));
         }
         return;
     }
@@ -358,9 +357,8 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
         if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
 
-            PGM_P format = PSTR("(Logger) Logging to servce: ERROR %i");
-            Serial.printf(format, httpCode);
-            Serial.println(); 
+            Serial.println(F("(Logger) Logging to servce: ERROR "));
+            Serial.println(_http->errorToString(httpCode));
         }
         return;
     }
