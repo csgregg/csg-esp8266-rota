@@ -82,12 +82,13 @@ String ESPRemoteUpdater::getLatestBuild() {
 
 
 _http->begin( *_client, "http://iot.greggs.org/tools/githubassetfetch.php?repo=csg-esp8266-rota&user=csgregg&token=b65a3aa5f98fe361ad146f0f41d15c0631d5200c");
-        _lastError = _http->GET();
 
-        if( _lastError != HTTP_CODE_OK ) {
+        int err = _http->GET();
 
-            Serial.printf("error %i\n", _lastError);
-            LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(_lastError));
+        if( err != HTTP_CODE_OK ) {
+
+            Serial.printf("error %i\n", err);
+            LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(err));
 
             _http->end();
 
