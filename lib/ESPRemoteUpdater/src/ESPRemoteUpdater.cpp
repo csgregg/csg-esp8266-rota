@@ -28,6 +28,7 @@ SOFTWARE.
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
+
 #include "Logger.h"
 #include "ESPRemoteUpdater.h"
 
@@ -75,14 +76,11 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     if ( _http != NULL ) {
 
-        DEBUG_DETAIL("Update URL: " + _assetRequestURL);
+        DEBUG("Update URL: " + _assetRequestURL);
 
         _http->begin( *_client, _assetRequestURL );
 
         _lastError = _http->GET();
-
-        logger.setTypeTag( LOG_CRITICAL, TAG_DEBUG);
-        logger.printf("Last error: %i", _lastError);
 
         if( _lastError != HTTP_CODE_OK ) {
 
@@ -96,21 +94,42 @@ String ESPRemoteUpdater::getLatestBuild() {
 
             // Expecting JSON back with latest release details
 
-            const size_t capacity = 600;
+
+            /*
+
+            {
+                "repo": "123456789012345678901234567890",
+                "releases": [{
+                    "tag": "xx.xx.xx",
+                    "date": "2019-12-08T20:58:02Z",
+                    "assets": [{
+                        "name": "12345678901234567890-Fvxx.xx.xx.bin",
+                        "size": 0000000,
+                        "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+                    }, {
+                        "name": "12345678901234567890-Fvxx.xx.xx.bin",
+                        "size": 0000000,
+                        "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+                    }]
+                }]
+            }
+
+
+            https://arduinojson.org/v6/assistant/
+
+            */
+
+            const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(3) + 435; 
             DynamicJsonDocument responseJSON(capacity);
 
-            String rawJSON = _http->getString();
+            DeserializationError error = deserializeJson( responseJSON, _http->getString() );
+            if (error) LOG(error.c_str());
+
             _http->end();
-
-            DEBUG("JSON: " + rawJSON);
-
-            deserializeJson( responseJSON, rawJSON );
 
             String repoName = responseJSON["repo"];
 
-
-            // TODO: Better error handling
-            // and need to pass repo to protected var
+            DEBUG(repoName);
 
             if( repoName != _repoName ) {
 
