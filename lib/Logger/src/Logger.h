@@ -155,7 +155,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
             /// To set up logging
 
-            void begin( HTTPClient &http, WiFiClient &client, const long baud, const String &service, const String &key, const String &tags );
+            void begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags );
             void setMode( const bool modeSerial = false, const bool modeService = false, const t_logging_level level = LOGGING_OFF );
 
             // Log messages (with overloads)
@@ -177,7 +177,6 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
         protected:
 
-            HTTPClient * _http;
             WiFiClient * _client;
 
             String _ServiceURL;

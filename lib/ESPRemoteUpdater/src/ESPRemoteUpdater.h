@@ -52,7 +52,7 @@ binaries built by Travis-CI.
         public:
             
             void setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
-            void begin( HTTPClient& http, WiFiClient& client );
+            void begin( WiFiClient& client );
 
             void handle();
 
@@ -73,7 +73,6 @@ binaries built by Travis-CI.
             String _latestTag;
             bool _skipUpdates;
 
-            HTTPClient * _http;
             WiFiClient * _client;
 
             Ticker _updateCheck;
