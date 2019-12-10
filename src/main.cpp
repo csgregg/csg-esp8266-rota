@@ -10,7 +10,6 @@
 
 
 WiFiClient client;
-HTTPClient http;
 ESP8266WebServer server(80);
 
 
@@ -90,7 +89,7 @@ void elaborateBuildFlags() {
 
 void setup() {
 
-    logger.begin( http, client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
+    logger.begin( client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
     logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     delay(1000);
@@ -106,7 +105,7 @@ void setup() {
     elaborateBuildFlags();
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
-
+/*
     server.begin(); 
     server.on("/", fileindex);
     server.on("/index.html", fileindex);
@@ -120,10 +119,12 @@ void setup() {
     server.on("fonts/glyphicons-halflings-regular.woff", filefont1);
 
     SPIFFS.begin(); 
+*/
+
 
     updater.setup( device_getBuildFlag(flag_UPDATER_SERVICE), device_getBuildFlag(flag_UPDATER_REPO), device_getBuildFlag(flag_UPDATER_USER), device_getBuildFlag(flag_UPDATER_TOKEN), device_getBuildFlag(flag_DEVICE_CODE), device_getBuildFlag(flag_BUILD_TAG), device_getBuildFlag(flag_UPDATER_INTERVAL), device_getBuildFlag(flag_UPDATER_SKIP) );
-    updater.begin( http, client );
-
+    updater.begin( client );
+    
     LOG(F("Starting loop()"));
     
 }
@@ -133,6 +134,6 @@ void setup() {
 void loop() {
 
   updater.handle();
-  server.handleClient();
+ // server.handleClient();
 
 }

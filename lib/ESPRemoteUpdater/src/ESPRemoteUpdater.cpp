@@ -40,8 +40,8 @@ bool ESPRemoteUpdater::_doUpdateCheck;
 
 void ESPRemoteUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
 
-    _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo;
-    if( user != "" ) _assetRequestURL += PSTR("&user=") + user + PSTR("&token=") + token;
+    _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo + PSTR("&user=") + user;
+    if( token != "" ) _assetRequestURL += PSTR("&token=") + token;
 
     _repoName = repo;
     _deviceCode = deviceCode;
@@ -54,9 +54,10 @@ void ESPRemoteUpdater::setup( const String &service, const String &repo, const S
 
 
 
-void ESPRemoteUpdater::begin( HTTPClient &http, WiFiClient &client ) {
+// TODO - Change like ESP8266HTTPUpdate::handleUpdate
 
-    _http = &http;
+void ESPRemoteUpdater::begin( WiFiClient &client ) {
+
     _client = &client;
 
     _doUpdateCheck = false;
@@ -74,91 +75,81 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     LOG(F("Checking latest build..."));
 
-    if ( _http != NULL ) {
+    HTTPClient http;
 
-        DEBUG("Update URL: " + _assetRequestURL);
+    DEBUG("Update URL: " + _assetRequestURL);
 
-   //     _http->begin( *_client, _assetRequestURL );
+    http.begin( *_client, _assetRequestURL );
 
+    int err = http.GET();
 
-_http->begin( *_client, "http://iot.greggs.org/tools/githubassetfetch.php?repo=csg-esp8266-rota&user=csgregg&token=b65a3aa5f98fe361ad146f0f41d15c0631d5200c");
+    if( err != HTTP_CODE_OK ) {
 
-        int err = _http->GET();
+        LOG_CRITICAL("Error getting latest release - Error: " + http.errorToString(err));
 
-        if( err != HTTP_CODE_OK ) {
+        http.end();
 
-            Serial.printf("error %i\n", err);
-            LOG_CRITICAL("Error getting latest release - Error: " + _http->errorToString(err));
-
-            _http->end();
-
-            return "";
-        }
-        else {
-
-            // Expecting JSON back with latest release details
-
-
-            /*
-
-            {
-                "repo": "123456789012345678901234567890",
-                "releases": [{
-                    "tag": "xx.xx.xx",
-                    "date": "2019-12-08T20:58:02Z",
-                    "assets": [{
-                        "name": "12345678901234567890-Fvxx.xx.xx.bin",
-                        "size": 0000000,
-                        "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
-                    }, {
-                        "name": "12345678901234567890-Fvxx.xx.xx.bin",
-                        "size": 0000000,
-                        "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
-                    }]
-                }]
-            }
-
-
-            https://arduinojson.org/v6/assistant/
-
-            */
-
-            const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(3) + 435; 
-            DynamicJsonDocument responseJSON(capacity);
-
-            DeserializationError error = deserializeJson( responseJSON, _http->getString() );
-            if (error) LOG(error.c_str());
-
-            _http->end();
-
-            String repoName = responseJSON["repo"];
-
-            LOG_DETAIL(repoName);
-
-            if( repoName != _repoName ) {
-
-                LOG_CRITICAL("JSON Error getting latest release");
-
-                return "";
-            }
-
-            JsonObject latestRelease = responseJSON["releases"][0];
-            const char* latestTag = latestRelease["tag"];
-            const char* releaseDate = latestRelease["date"];
-
-            _latestTag = latestTag;
-            String str = releaseDate;
-            
-            LOG("Latest version: " + _latestTag);
-            LOG("Release date: " + str);
-
-            return _latestTag;
-        }
+        return "";
     }
     else {
 
-        _lastError = HTTP_CODE_BAD_REQUEST;
-        LOG_CRITICAL(F("Cannot connect to update service"));
+        // Expecting JSON back with latest release details
+
+
+        /*
+
+        {
+            "repo": "123456789012345678901234567890",
+            "releases": [{
+                "tag": "xx.xx.xx",
+                "date": "2019-12-08T20:58:02Z",
+                "assets": [{
+                    "name": "12345678901234567890-Fvxx.xx.xx.bin",
+                    "size": 0000000,
+                    "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+                }, {
+                    "name": "12345678901234567890-Fvxx.xx.xx.bin",
+                    "size": 0000000,
+                    "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+                }]
+            }]
+        }
+
+
+        https://arduinojson.org/v6/assistant/
+
+        */
+
+        const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(3) + 435; 
+        DynamicJsonDocument responseJSON(capacity);
+
+        DeserializationError error = deserializeJson( responseJSON, http.getString() );
+        if (error) LOG(error.c_str());
+
+        http.end();
+
+        String repoName = responseJSON["repo"];
+
+        LOG_DETAIL(repoName);
+
+        if( repoName != _repoName ) {
+
+            LOG_CRITICAL("JSON Error getting latest release");
+
+            return "";
+        }
+
+        JsonObject latestRelease = responseJSON["releases"][0];
+        const char* latestTag = latestRelease["tag"];
+        const char* releaseDate = latestRelease["date"];
+
+        _latestTag = latestTag;
+        String str = releaseDate;
+        
+        LOG("Latest version: " + _latestTag);
+        LOG("Release date: " + str);
+
+        return _latestTag;
     }
 
     return "";
@@ -257,7 +248,7 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
 
 void ESPRemoteUpdater::handle() {
 
-    if ( WiFi.status() == WL_CONNECTED && _http != NULL && _doUpdateCheck ) {
+    if ( WiFi.status() == WL_CONNECTED && _doUpdateCheck ) {
 
         _doUpdateCheck = false;
 

@@ -42,14 +42,14 @@ LogClient::LogClient() {
 
 
 // Sets up logger - needs to be followed by setMode() to actually start
-void LogClient::begin( HTTPClient &http, WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
+void LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
 
 #ifndef NO_DEBUG
 
-    _http = &http;
     _client = &client;
 
     _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
+    Serial.println(_ServiceURL);
 
     Serial.begin(baud);
 
@@ -325,10 +325,9 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
         String tempSSID = WiFi.SSID();
         Device_Network["SSID"] = tempSSID.c_str();
 
-    int jsonSize = measureJson(jsonLog)+1;
-    char jsonMessage[jsonSize];
+    String jsonMessage;
 
-    serializeJson(jsonLog, jsonMessage, jsonSize);
+    serializeJson(jsonLog, jsonMessage);
 
     if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
@@ -336,20 +335,23 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
         Serial.println(jsonMessage); 
     }
 
+
     // Start the connection
-    _http->begin(*_client, loggingURL);
-    _http->addHeader(F("Content-Type"), F("content-type:text/plain"));
+    
+    HTTPClient http;
 
-    int httpCode = _http->POST((uint8_t *) &jsonMessage, jsonSize);
+    http.begin(*_client, loggingURL);
+    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
-    _http->end();
+    int httpCode = http.POST(jsonMessage);
+    http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
         if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(LOG_DETAIL, TAG_STATUS);
 
-            Serial.println(F("(Logger) Logging to servce: SUCCESS "));
-            Serial.println(_http->errorToString(httpCode));
+            Serial.print(F("(Logger) Logging to servce: SUCCESS "));
+            Serial.println(http.errorToString(httpCode));
         }
         return;
     }
@@ -357,8 +359,8 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
         if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
 
-            Serial.println(F("(Logger) Logging to servce: ERROR "));
-            Serial.println(_http->errorToString(httpCode));
+            Serial.print(F("(Logger) Logging to servce: ERROR "));
+            Serial.println(http.errorToString(httpCode));
         }
         return;
     }
