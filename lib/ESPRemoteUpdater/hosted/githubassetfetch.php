@@ -63,9 +63,6 @@ Mode 4 - Serve specific release
 
     $DEBUG = false;
 
-    // Get GitHub OAuth token
-    include 'githuboauthtoken.php';
-
     // Get parameters
     if( !empty($_GET["debug"]) ) $DEBUG = ($_GET["debug"] == "true");
     if( !empty($_GET["tag"]) ) $requestedTag = $_GET["tag"];
@@ -85,17 +82,6 @@ Mode 4 - Serve specific release
 
     if( $DEBUG ) echo nl2br("Mode: $mode\r\n");
 
-    // Check for repo 
-    if( $DEBUG && empty($repoName) ){
-        echo "Missing GitHub Repo name";
-        exit;
-    }
-    elseif( $DEBUG ) echo nl2br("Repo: $repoName\r\n");
-    elseif( empty($repoName) ){
-        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub repo name', true, 400);
-        exit;
-    }
-    
     // Check for user 
     if( $DEBUG && empty($user) ){
         echo "Missing GitHub API user";
@@ -104,6 +90,17 @@ Mode 4 - Serve specific release
     elseif( $DEBUG ) echo nl2br("User: $user\r\n");
     elseif( empty($user) ){
         header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub API user', true, 400);
+        exit;
+    }
+
+    // Check for repo 
+    if( $DEBUG && empty($repoName) ){
+        echo "Missing GitHub Repo name";
+        exit;
+    }
+    elseif( $DEBUG ) echo nl2br("Repo: $repoName\r\n");
+    elseif( empty($repoName) ){
+        header($_SERVER["SERVER_PROTOCOL"].' 400 Missing GitHub repo name', true, 400);
         exit;
     }
 
@@ -138,7 +135,7 @@ Mode 4 - Serve specific release
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_URL, $githubApiUrl);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: ESP8266'));
-    if( !empty(githuboauthtoken) ) curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
+    if( !empty($token) ) curl_setopt($ch, CURLOPT_USERPWD, "$user:$token");
     $result = curl_exec($ch);
 
     curl_close($ch);
@@ -206,7 +203,7 @@ Mode 4 - Serve specific release
             $thisasset->URL = $asset->browser_download_url;
 
             // Check for the asset we want
-            if( $asset->name == $assetName ) $binPath = $asset->browser_download_url;
+            if( ($mode == 3) || ($mode == 4) ) if($asset->name == $assetName) $binPath = $asset->browser_download_url;
 
             array_push($assets, $thisasset);
         }
@@ -230,7 +227,7 @@ Mode 4 - Serve specific release
 
     if( $DEBUG ) {
         echo nl2br("Latest release: $latestTag\n\r");
-        echo nl2br("Requested release: $requestedTag\n\r");
+        if( $mode != 1 ) echo nl2br("Requested release: $requestedTag\n\r");
         echo nl2br("Max repleases: $maxReleases\n\r");
     }
 
@@ -267,7 +264,7 @@ Mode 4 - Serve specific release
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            if( !empty(githuboauthtoken) ) curl_setopt($ch, CURLOPT_USERPWD, "$githubusername:$githuboauthtoken");
+            if( !empty($token) ) curl_setopt($ch, CURLOPT_USERPWD, "$user:$token");
             $out = curl_exec($ch);
             curl_close($ch);
     
