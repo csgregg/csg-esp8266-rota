@@ -70,6 +70,7 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
     _doUpdateCheck = true;
 }
 
+// TODO change to POST intead of GET
 
 String ESPRemoteUpdater::getLatestBuild() {
 
@@ -78,16 +79,19 @@ String ESPRemoteUpdater::getLatestBuild() {
     HTTPClient http;
 
     DEBUG("Update URL: " + _assetRequestURL);
-
     http.begin( *_client, _assetRequestURL );
 
-    int err = http.GET();
+    http.setUserAgent(F("ESP8266-http-Update"));
+    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
-    if( err != HTTP_CODE_OK ) {
+    int httperror = http.GET();
+    String httppayload = http.getString();
+    http.end();
 
-        LOG_CRITICAL("Error getting latest release - Error: " + http.errorToString(err));
+    if( httperror != HTTP_CODE_OK ) {
 
-        http.end();
+        String msg = "Error getting latest release - Error: " + http.errorToString(httperror);
+        LOG_CRITICAL(msg);
 
         return "";
     }
@@ -122,11 +126,10 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(3) + 435; 
         DynamicJsonDocument responseJSON(capacity);
+        
+        DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
 
-        DeserializationError error = deserializeJson( responseJSON, http.getString() );
-        if (error) LOG(error.c_str());
-
-        http.end();
+        if (jsonerror) LOG(jsonerror.c_str());          // TODO better error handling
 
         String repoName = responseJSON["repo"];
 
