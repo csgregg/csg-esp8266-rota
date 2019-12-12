@@ -340,6 +340,8 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     
     HTTPClient http;
 
+ //   http.setTimeout(5000);
+ //   http.setReuse(false);
     http.begin(*_client, loggingURL);
 
     http.setUserAgent(F("ESP8266-http-logger"));
@@ -347,22 +349,20 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
 
     int httpCode = http.POST(jsonMessage);
     String payload = http.getString();
+  //  http.getStream().flush();                       // Clean buffer
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
         if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(LOG_DETAIL, TAG_STATUS);
-
-            Serial.print(F("(Logger) Logging to servce: SUCCESS "));
-            Serial.println(http.errorToString(httpCode));
+            Serial.println(F("(Logger) Logging to servce: SUCCESS "));
         }
     }
     else {
         if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
-
-            Serial.print(F("(Logger) Logging to servce: ERROR "));
-            Serial.println(http.errorToString(httpCode));
+            if( httpCode < 0 ) Serial.printf("(Logger) Logging to servce: ERROR %s\n", http.errorToString(httpCode).c_str());
+            else Serial.printf("(Logger) Logging to servce: ERROR %i\n", httpCode);
         }
     }
 
