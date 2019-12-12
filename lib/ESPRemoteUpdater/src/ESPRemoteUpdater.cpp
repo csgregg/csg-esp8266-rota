@@ -78,7 +78,6 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     HTTPClient http;
 
-//    http.setTimeout(5000);
     http.setReuse(false);
 
     DEBUG("Update URL: " + _assetRequestURL);
@@ -89,9 +88,7 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     int httperror = http.GET();
     String httppayload = http.getString();
- //   http.getStream().flush();                       // Clean buffer
     http.end();
-
 
     if( httperror != HTTP_CODE_OK ) {
 
