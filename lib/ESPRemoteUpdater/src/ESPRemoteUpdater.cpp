@@ -78,6 +78,9 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     HTTPClient http;
 
+//    http.setTimeout(5000);
+    http.setReuse(false);
+
     DEBUG("Update URL: " + _assetRequestURL);
     http.begin( *_client, _assetRequestURL );
 
@@ -86,14 +89,18 @@ String ESPRemoteUpdater::getLatestBuild() {
 
     int httperror = http.GET();
     String httppayload = http.getString();
+ //   http.getStream().flush();                       // Clean buffer
     http.end();
+
 
     if( httperror != HTTP_CODE_OK ) {
 
-        String msg = "Error getting latest release - Error: " + http.errorToString(httperror);
-        LOG_CRITICAL(msg);
+        logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
 
-        return "";
+        if( httperror < 0 ) logger.printf("(Updater) Error getting latest release: ERROR %s\n", http.errorToString(httperror).c_str() );
+        else logger.printf("(Updater) Error getting latest release: ERROR %i\n", httperror);
+
+        return "";      // TODO - should this be String();
     }
     else {
 
