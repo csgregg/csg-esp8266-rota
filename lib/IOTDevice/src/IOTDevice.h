@@ -36,7 +36,7 @@ Build flags are loaded from platformio.ini
     #define IOT_DEVICE_H
 
     #include <Arduino.h>
-    #include <Esp.h>
+
     
     #include "Credentials.h"         // Contains private definitions (excluded from repo)
 

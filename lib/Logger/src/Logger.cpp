@@ -340,8 +340,6 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     
     HTTPClient http;
 
- //   http.setTimeout(5000);
- //   http.setReuse(false);
     http.begin(*_client, loggingURL);
 
     http.setUserAgent(F("ESP8266-http-logger"));
@@ -349,7 +347,6 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
 
     int httpCode = http.POST(jsonMessage);
     String payload = http.getString();
-  //  http.getStream().flush();                       // Clean buffer
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
