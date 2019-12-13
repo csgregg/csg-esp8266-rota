@@ -22,13 +22,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+-----------------------------------------------------------------------------
+
+Defines the physical attributes of the IOT device and the build environment.
+
+Build flags are loaded from platformio.ini
+
+Builds on Espclass
+
 */
 
 
 #include "IOTDevice.h"
 
 
+// Public:
 
+// Return type String build flag or flag with descriton string
 String IOTDevice::getBuildFlag( const char * name, const char * flag, bool described ) {
     if( described ) {
 
@@ -41,11 +51,13 @@ String IOTDevice::getBuildFlag( const char * name, const char * flag, bool descr
 }
 
 
+// Return type bool build flag
 bool IOTDevice::IOTDevice::getBuildFlag( const char * name, const bool flag ) {
     return flag;
 }
 
 
+// Return type bool build flag with descripton string
 String IOTDevice::getBuildFlag( const char * name, const bool flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(bool)*8 ];
@@ -56,11 +68,13 @@ String IOTDevice::getBuildFlag( const char * name, const bool flag, const bool d
 }
 
 
+// Return type uint build flag
 uint IOTDevice::IOTDevice::getBuildFlag( const char * name, const uint flag ) {
     return flag;
 }
 
 
+// Return type uint build flag with description string
 String IOTDevice::getBuildFlag( const char * name, const uint flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(uint)*8 ];
@@ -71,11 +85,13 @@ String IOTDevice::getBuildFlag( const char * name, const uint flag, const bool d
 }
 
 
+// Return type long build flag
 long IOTDevice::IOTDevice::getBuildFlag( const char * name, const long flag ) {
     return flag;
 }
 
 
+// Return type long build flag with description string
 String IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %li") - 5 ) + sizeof(long)*8 ];
@@ -85,6 +101,8 @@ String IOTDevice::getBuildFlag( const char * name, const long flag, const bool d
 
 }
 
+
+// Get unique chip ID and return as string or with desription string
 String IOTDevice::getChipId(bool described){
     
     uint32_t id = EspClass::getChipId();

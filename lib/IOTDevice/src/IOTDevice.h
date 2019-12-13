@@ -36,13 +36,11 @@ Build flags are loaded from platformio.ini
     #define IOT_DEVICE_H
 
     #include <Arduino.h>
-
     
     #include "Credentials.h"         // Contains private definitions (excluded from repo)
 
 
     // Used to stringify debug flags
-
     #define TEXTIFY(...) #__VA_ARGS__
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
@@ -73,12 +71,6 @@ Build flags are loaded from platformio.ini
         #define MONITOR_SPEED 115200
     #endif
 
-
-    // Turn off all debug
-
-    #if LOGGER_LEVEL == 0
-        #define NO_DEBUG
-    #endif
    
     // Physcial board
     static const char flag_PLATFORM [] PROGMEM = ESCAPEQUOTE(PLATFORM);                         // Device platform
@@ -99,7 +91,6 @@ Build flags are loaded from platformio.ini
     static const bool flag_UPDATER_SKIP = atoi(ESCAPEQUOTE(UPDATER_SKIP));                      // Skip any updates
     static const long flag_UPDATER_INTERVAL = atol(ESCAPEQUOTE(UPDATER_INTERVAL));              // Interval between update checks
 
-
     // Used by Logger library
     static const bool flag_LOGGVER_AS_SERIAL = atoi(ESCAPEQUOTE(LOGGER_AS_SERIAL));             // 0 - 1 to turn on serial logging
     static const bool flag_LOGGER_AS_SERVICE = atoi(ESCAPEQUOTE(LOGGER_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
@@ -112,6 +103,7 @@ Build flags are loaded from platformio.ini
 
     // Expand the EspClass to add build flags, etc
     class IOTDevice : public EspClass {
+
         public:
 
             // Get build flags + overloads
@@ -130,6 +122,7 @@ Build flags are loaded from platformio.ini
 
     extern IOTDevice device;
 
+    // Used to pass flag name as argument to method
     #define device_getBuildFlag(name, ...) device.getBuildFlag(#name, name, ##__VA_ARGS__)
 
 #endif

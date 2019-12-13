@@ -27,37 +27,7 @@ SOFTWARE.
 Packages debug and logging to the Loggly.com service for simple logging or
 debug of code. Macros are defined for to simplifiy common usage. 
 
-THe Loggly service requires a JSON file :
-
-JSON Loggining Format
-
-{
-  "localtime": 1234567890,
-  "message": "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456",
-  "Device": {
-    "Hardware": {
-      "Platform": "12345678901234567890",
-      "Board": "12345678901234567890",
-      "Framework": "12345678901234567890",
-      "MAC": "mm:mm:mm:ss:ss:ss"
-    },
-    "Env": {
-      "Name": "123456789012345678901234567890",
-      "Code": "12345678901234567890",
-      "Build": "xx.xx.xx",
-      "Heap": "1234567890"
-     },
-     "Network": {
-       "IPAddress": "123456789012345",
-       "SSID": "12345678901234567890123456789012"
-     }
-  }
-}
-
-Use https://arduinojson.org/v6/assistant/ to determine size of file.
-
 */
-
 
 #ifndef DEBUGLOGGING_H
 
@@ -68,9 +38,14 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     #include "IOTDevice.h"
 
+    // Turn off all debug if necessary
+    #ifndef LOGGER_LEVEL
+        #define NO_LOGGING
+    #endif
+
     #define DEFAULT_MONITOR_BAUD 115200
 
-    #ifndef NO_DEBUG
+    #ifndef NO_LOGGING
 
       // Macros to simplifiy common usage
 
@@ -119,7 +94,6 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     
     // Logging level to filter logs 
-
     typedef enum : int {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_CRITICAL = 1,     // Critical only
@@ -129,7 +103,6 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
 
     // Type of log - used in the filter of log level and added to message
-
     typedef enum : int {
         LOG_CRITICAL,
         LOG_NORMAL,
@@ -138,7 +111,6 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
 
     // Tags applied to message
-    
     typedef enum : int {
         TAG_DEBUG,
         TAG_STATUS
@@ -146,12 +118,9 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
     
     // Logger Class
-
     class LogClient {
         
         public:
-  
-            LogClient();
 
             /// To set up logging
 
