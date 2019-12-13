@@ -70,7 +70,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 // Public:
 
 // Sets up logger - needs to be followed by setMode() to actually start
-void LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
+ICACHE_FLASH_ATTR void LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
 
 #ifndef NO_LOGGING
 
@@ -88,7 +88,7 @@ void LogClient::begin( WiFiClient &client, const long baud, const String &servic
 
 
 // Sets logging mode
-void LogClient::setMode( const bool modeSerial, const bool modeService, const t_logging_level level ){
+ICACHE_FLASH_ATTR void LogClient::setMode( const bool modeSerial, const bool modeService, const t_logging_level level ){
 
 #ifndef NO_LOGGING
 
@@ -109,7 +109,7 @@ void LogClient::setMode( const bool modeSerial, const bool modeService, const t_
 
 
 // Main log function - char[]
-void LogClient::println( const t_log_type type, const t_log_tag tag, const char * message ) {
+ICACHE_FLASH_ATTR void LogClient::println( const t_log_type type, const t_log_tag tag, const char * message ) {
 
 #ifndef NO_LOGGING
 
@@ -126,7 +126,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const char 
 
 
 // Overload - with context
-void LogClient::println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line ) {
+ICACHE_FLASH_ATTR void LogClient::println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -156,7 +156,7 @@ void LogClient::println(const t_log_type type, const t_log_tag tag, const char *
 
 
 // Overload println() - char
-void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
+ICACHE_FLASH_ATTR void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
 
 #ifndef NO_LOGGING
 
@@ -172,7 +172,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
 
 
 // Overload println() - char with context
-void LogClient::println( const t_log_type type, const t_log_tag tag, char c, const char * file, const char * func_P, const int line ) {
+ICACHE_FLASH_ATTR void LogClient::println( const t_log_type type, const t_log_tag tag, char c, const char * file, const char * func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -188,7 +188,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, char c, con
 
 
 // Overload println() - string
-void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s ) {
+ICACHE_FLASH_ATTR void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s ) {
 
 #ifndef NO_LOGGING
 
@@ -200,7 +200,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const Strin
 
 
 // Overload println() - string with context
-void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s, const char * file, const char * func_P, const int line ) {
+ICACHE_FLASH_ATTR void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s, const char * file, const char * func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -212,7 +212,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const Strin
 
 
 // Sets up Tag and Type for printf() function
-void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
+ICACHE_FLASH_ATTR void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 
 #ifndef NO_LOGGING
     
@@ -225,7 +225,7 @@ void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 
 
 // Formatted log function - needs to be preceded by setTagType()
-void LogClient::printf( const char * format, ... ) {
+ICACHE_FLASH_ATTR void LogClient::printf( const char * format, ... ) {
 
 #ifndef NO_LOGGING
 
@@ -261,7 +261,7 @@ void LogClient::printf( const char * format, ... ) {
 // Protected:
 
 // Create and log prefix - needs to be followed by message using Serial.println()
-void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
+ICACHE_FLASH_ATTR void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 
 #ifndef NO_LOGGING
 
@@ -280,7 +280,7 @@ void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 
 
 // Log message to serial
-void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * message ){
+ICACHE_FLASH_ATTR void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * message ){
 
 #ifndef NO_LOGGING
 
@@ -297,7 +297,7 @@ void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * messag
 
 
 // Log message to Loggly Service
-void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const char * message ){
+ICACHE_FLASH_ATTR void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const char * message ){
 
 #ifndef NO_LOGGING
 
