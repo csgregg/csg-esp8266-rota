@@ -20,7 +20,7 @@ String getContentType(String filename); // convert the file extension to the MIM
 bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
 
-String getContentType(String filename) { // convert the file extension to the MIME type
+ICACHE_FLASH_ATTR String getContentType(String filename) { // convert the file extension to the MIME type
   if (filename.endsWith(".html")) return "text/html";
   else if (filename.endsWith(".html.gz")) return "text/html";
   else if (filename.endsWith(".css")) return "text/css";
@@ -61,7 +61,7 @@ bool handleFileRead(String shortpath) {
 
 
 
-void elaborateBuildFlags() {
+ICACHE_FLASH_ATTR void elaborateBuildFlags() {
 
     LOG(device.getChipId(true));
     
@@ -92,7 +92,7 @@ void elaborateBuildFlags() {
 }
 
 
-void setup() {
+ICACHE_FLASH_ATTR void setup() {
 
     logger.begin( client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
     logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
