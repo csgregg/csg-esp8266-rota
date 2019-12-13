@@ -74,13 +74,16 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 String ESPRemoteUpdater::getLatestBuild() {
 
-    LOG(F("Checking latest build..."));
+    LOG(F("(Updater) Checking latest build..."));
 
     HTTPClient http;
 
     http.setReuse(false);
 
-    DEBUG("Update URL: " + _assetRequestURL);
+    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+    PGM_P format1 = PSTR("(Updater) URL: %s");
+    logger.printf( format1, _assetRequestURL.c_str() );
+
     http.begin( *_client, _assetRequestURL );
 
     http.setUserAgent(F("ESP8266-http-Update"));
@@ -94,8 +97,14 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
 
-        if( httperror < 0 ) logger.printf("(Updater) Error getting latest release: ERROR %s\n", http.errorToString(httperror).c_str() );
-        else logger.printf("(Updater) Error getting latest release: ERROR %i\n", httperror);
+        if( httperror < 0 ) {
+            PGM_P format2 = PSTR("(Updater) Error getting latest release: ERROR %s");
+            logger.printf( format2, http.errorToString(httperror).c_str() );
+        }
+        else {
+            PGM_P format3 = PSTR("(Updater) Error getting latest release: ERROR %i");
+            logger.printf( format3, httperror );
+        }
 
         return "";      // TODO - should this be String();
     }
@@ -135,26 +144,31 @@ String ESPRemoteUpdater::getLatestBuild() {
 
         if (jsonerror) LOG(jsonerror.c_str());          // TODO better error handling
 
-        String repoName = responseJSON["repo"];
+        String repoName = responseJSON[F("repo")];
 
-        LOG_DETAIL(repoName);
+        logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+        PGM_P format4 = PSTR("(Updater) Returned Repo: %s");
+        logger.printf( format4, repoName.c_str() );
 
         if( repoName != _repoName ) {
 
-            LOG_CRITICAL("JSON Error getting latest release");
+            LOG_CRITICAL(F("(UPdater) JSON Error getting latest release"));
 
             return "";
         }
 
-        JsonObject latestRelease = responseJSON["releases"][0];
-        const char* latestTag = latestRelease["tag"];
-        const char* releaseDate = latestRelease["date"];
+        JsonObject latestRelease = responseJSON[F("releases")][0];
+        const char* latestTag = latestRelease[F("tag")];
+        const char* releaseDate = latestRelease[F("date")];
 
         _latestTag = latestTag;
         String str = releaseDate;
         
-        LOG("Latest version: " + _latestTag);
-        LOG("Release date: " + str);
+        logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+        PGM_P format5 = PSTR("(Updater) Latest version: %s");
+        logger.printf( format5, _latestTag.c_str() );
+        PGM_P format6 = PSTR("(Updater) Release date: %s");
+        logger.printf( format6, str.c_str() );
 
         return _latestTag;
     }
@@ -168,14 +182,18 @@ String ESPRemoteUpdater::getLatestBuild() {
 HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
 
     // Update SPIFFS file system
-    String spiffsFileRequest = _assetRequestURL + "&asset=" + _deviceCode + _FSSuffix + "&tag=" + _latestTag;
-    LOG("File system image request: " + spiffsFileRequest);
+    String spiffsFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
+
+    LOG(F("(Updater) Updating File System"));
+    logger.setTypeTag(LOG_DETAIL,TAG_STATUS);
+    PGM_P format1 = PSTR("(Updater) File system image request: %s");
+    logger.printf( format1, spiffsFileRequest.c_str() );
 
     HTTPUpdateResult ret;
 
     if( _skipUpdates ) {
 
-        LOG(F("Skipping update"));
+        LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -183,17 +201,19 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
 
     switch(ret) {
 
-    case HTTP_UPDATE_FAILED:
-        logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-        logger.printf("File system update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    case HTTP_UPDATE_FAILED: {
+            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
+            PGM_P format2 = PSTR("(Updater) File system update failed - Error (%d): %s");
+            logger.printf( format2, ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+        }
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG("No new file system update");
+        LOG(F("(Updater) No new file system update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG("File system updated successfully");
+        LOG(F("(Updater) File system updated successfully"));
         break;
     }
 
@@ -206,14 +226,18 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
 HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
 
     // Update program image
-    String imageFileRequest = _assetRequestURL + "&asset=" + _deviceCode + _progSuffix + "&tag=" + _latestTag;
-    LOG("Program image request: " + imageFileRequest);
+    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag;
+
+    LOG(F("(Updater) Updating Program"));
+    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+    PGM_P format1 = PSTR("(Updater) Program image request: %s");
+    logger.printf( format1, imageFileRequest.c_str() );
 
     HTTPUpdateResult ret;
 
     if( _skipUpdates ) {
 
-        LOG("Skipping update");
+        LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -225,23 +249,24 @@ HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
 
     switch(ret) {
 
-    case HTTP_UPDATE_FAILED:
-        logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-        logger.printf("Program update failed - Error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    case HTTP_UPDATE_FAILED: {
+            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
+            PGM_P format2 = PSTR("(Updater) Program update failed - Error (%d): %s");
+            logger.printf( format2, ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
+        }
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG("No new program update");
+        LOG(F("(Updater) No new program update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG("Program updated successfully");
+        LOG(F("(Updater) Program updated successfully"));
         break;
     }
 
     if( ret == HTTP_UPDATE_OK && restart ) {
-        
-        logger.println(LOG_CRITICAL, TAG_STATUS, "Rebooting in 5 sec");
+        logger.println(LOG_CRITICAL, TAG_STATUS, F("(Updater) Rebooting in 5 sec"));
         delay(5000);
         ESP.restart();
 
@@ -259,14 +284,16 @@ void ESPRemoteUpdater::handle() {
 
         _doUpdateCheck = false;
 
-        LOG("Current version: " + _buildTag);
+        logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
+        PGM_P format1 = PSTR("(Updater) Current version: %s");
+        logger.printf( format1, _buildTag.c_str() );
 
         // Check for update
 
         String checkTag = getLatestBuild();
 
         if( checkTag == _buildTag ) {
-            LOG("No new update");  
+            LOG(F("(Updater) No new update"));  
             return;
         }
 

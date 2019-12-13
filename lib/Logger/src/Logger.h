@@ -138,6 +138,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             void println(const t_log_type type, const t_log_tag tag, const String &message);
             void println(const t_log_type type, const t_log_tag tag, const String &message, const char * file, const char * func_P, const int line );      
 
+            // TODO Add overload for FlashStrings
+
             // Special for formated message
 
             void setTypeTag(const t_log_type type, const t_log_tag tag);
