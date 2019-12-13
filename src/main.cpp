@@ -98,7 +98,7 @@ void setup() {
 
     WiFi.persistent(false);
     WiFiManager wifiManager;
-    wifiManager.autoConnect("AutoConnectAP");
+    wifiManager.autoConnect( device_getBuildFlag(flag_DEVICE_CODE).c_str() );
 
     delay(1000);
 
