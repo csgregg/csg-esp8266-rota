@@ -107,7 +107,7 @@ void setup() {
     elaborateBuildFlags();
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
-/*
+
     server.begin(); 
     server.on("/", fileindex);
     server.on("/index.html", fileindex);
@@ -121,7 +121,7 @@ void setup() {
     server.on("fonts/glyphicons-halflings-regular.woff", filefont1);
 
     SPIFFS.begin(); 
-*/
+
 
 
     updater.setup( device_getBuildFlag(flag_UPDATER_SERVICE), device_getBuildFlag(flag_UPDATER_REPO), device_getBuildFlag(flag_UPDATER_USER), device_getBuildFlag(flag_UPDATER_TOKEN), device_getBuildFlag(flag_DEVICE_CODE), device_getBuildFlag(flag_BUILD_TAG), device_getBuildFlag(flag_UPDATER_INTERVAL), device_getBuildFlag(flag_UPDATER_SKIP) );
@@ -136,6 +136,6 @@ void setup() {
 void loop() {
 
   updater.handle();
- // server.handleClient();
+  server.handleClient();
 
 }
