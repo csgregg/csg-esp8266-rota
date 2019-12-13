@@ -22,6 +22,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+-----------------------------------------------------------------------------
+
+Packages debug and logging to the Loggly.com service for simple logging or
+debug of code. Macros are defined for to simplifiy common usage. 
+
+THe Loggly service requires a JSON file :
+
+JSON Loggining Format
+
+{
+  "localtime": 1234567890,
+  "message": "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456",
+  "Device": {
+    "Hardware": {
+      "Platform": "12345678901234567890",
+      "Board": "12345678901234567890",
+      "Framework": "12345678901234567890",
+      "MAC": "mm:mm:mm:ss:ss:ss"
+    },
+    "Env": {
+      "Name": "123456789012345678901234567890",
+      "Code": "12345678901234567890",
+      "Build": "xx.xx.xx",
+      "Heap": "1234567890"
+     },
+     "Network": {
+       "IPAddress": "123456789012345",
+       "SSID": "12345678901234567890123456789012"
+     }
+  }
+}
+
+Use https://arduinojson.org/v6/assistant/ to determine size of file.
+
 */
 
 
@@ -33,23 +67,16 @@ SOFTWARE.
 #include "Logger.h"
 
 
-// Public
-
-// Creator - not used
-LogClient::LogClient() {
-
-}
-
+// Public:
 
 // Sets up logger - needs to be followed by setMode() to actually start
 void LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     _client = &client;
 
     _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
-    Serial.println(_ServiceURL);
 
     Serial.begin(baud);
 
@@ -63,7 +90,7 @@ void LogClient::begin( WiFiClient &client, const long baud, const String &servic
 // Sets logging mode
 void LogClient::setMode( const bool modeSerial, const bool modeService, const t_logging_level level ){
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     _serialOn = modeSerial;
     _serviceOn = modeService;
@@ -84,7 +111,7 @@ void LogClient::setMode( const bool modeSerial, const bool modeService, const t_
 // Main log function - char[]
 void LogClient::println( const t_log_type type, const t_log_tag tag, const char * message ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     if( _logginglevel == LOGGING_OFF ) return;
     if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
@@ -101,7 +128,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const char 
 // Overload - with context
 void LogClient::println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     char func[MAX_MESSAGE_LEN];
 
@@ -131,7 +158,7 @@ void LogClient::println(const t_log_type type, const t_log_tag tag, const char *
 // Overload println() - char
 void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     char c_str[2];
     c_str[0] = c;
@@ -147,7 +174,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, char c ) {
 // Overload println() - char with context
 void LogClient::println( const t_log_type type, const t_log_tag tag, char c, const char * file, const char * func_P, const int line ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     char c_str[2];
     c_str[0] = c;
@@ -163,7 +190,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, char c, con
 // Overload println() - string
 void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     println( type, tag, s.c_str() );
 
@@ -175,7 +202,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const Strin
 // Overload println() - string with context
 void LogClient::println( const t_log_type type, const t_log_tag tag, const String &s, const char * file, const char * func_P, const int line ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     println( type, tag, s.c_str(), file, func_P, line  );
 
@@ -187,7 +214,7 @@ void LogClient::println( const t_log_type type, const t_log_tag tag, const Strin
 // Sets up Tag and Type for printf() function
 void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
     
     _lasttype = type;
     _lasttag = tag;
@@ -200,7 +227,7 @@ void LogClient::setTypeTag( const t_log_type type, const t_log_tag tag ){
 // Formatted log function - needs to be preceded by setTagType()
 void LogClient::printf( const char * format, ... ) {
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     va_list arg;
     va_start(arg, format);
@@ -236,7 +263,7 @@ void LogClient::printf( const char * format, ... ) {
 // Create and log prefix - needs to be followed by message using Serial.println()
 void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     if( _logginglevel == LOGGING_LEVEL_VERBOSE) {
         PGM_P format = PSTR("LOG: %s: %s - Millis: %li, Heap: %i - ");
@@ -255,7 +282,7 @@ void LogClient::LogPrefix( const t_log_type type, const t_log_tag tag ){
 // Log message to serial
 void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * message ){
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     char shortened[MAX_MESSAGE_LEN+1];
 
@@ -272,7 +299,7 @@ void LogClient::LogToSerial( t_log_type type, t_log_tag tag, const char * messag
 // Log message to Loggly Service
 void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const char * message ){
 
-#ifndef NO_DEBUG
+#ifndef NO_LOGGING
 
     char thistag[strlen(c_log_tag_descript[tag])];
     strcpy(thistag, c_log_tag_descript[tag]);
@@ -294,36 +321,36 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 640;
     DynamicJsonDocument jsonLog(capacity);
 
-    jsonLog["localtime"] = millis();
+    jsonLog[F("localtime")] = millis();
 
     char shortened[MAX_MESSAGE_LEN];
 
     strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
     shortened[MAX_MESSAGE_LEN-1]=0;
 
-    jsonLog["message"] = shortened;
+    jsonLog[F("message")] = shortened;
 
     JsonObject Device = jsonLog.createNestedObject("Device");
 
-        JsonObject Device_Hardware = Device.createNestedObject("Hardware");
-        Device_Hardware["platform"] = device_getBuildFlag(flag_PLATFORM);
-        Device_Hardware["board"] = device_getBuildFlag(flag_BUILD_TAG);
-        Device_Hardware["framework"] = device_getBuildFlag(flag_FRAMEWORK);
-        String tempMAC = WiFi.macAddress(); Device_Hardware["MAC"] =  tempMAC.c_str();
+        JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
+        Device_Hardware[F("platform")] = device_getBuildFlag(flag_PLATFORM);
+        Device_Hardware[F("board")] = device_getBuildFlag(flag_BUILD_TAG);
+        Device_Hardware[F("framework")] = device_getBuildFlag(flag_FRAMEWORK);
+        String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
-        JsonObject Device_Env = Device.createNestedObject("Env");
-        Device_Env["Name"] = device_getBuildFlag(flag_DEVICE_NAME);
-        Device_Env["Code"] = device_getBuildFlag(flag_DEVICE_CODE);
-        Device_Env["Build"] = device_getBuildFlag(flag_BUILD_ENV);
-        Device_Env["Heap"] = system_get_free_heap_size();
+        JsonObject Device_Env = Device.createNestedObject(F("Env"));
+        Device_Env[F("Name")] = device_getBuildFlag(flag_DEVICE_NAME);
+        Device_Env[F("Code")] = device_getBuildFlag(flag_DEVICE_CODE);
+        Device_Env[F("Build")] = device_getBuildFlag(flag_BUILD_ENV);
+        Device_Env[F("Heap")] = system_get_free_heap_size();
 
-        JsonObject Device_Network = Device.createNestedObject("Network");
+        JsonObject Device_Network = Device.createNestedObject(F("Network"));
 
         String tempIP = WiFi.localIP().toString();
-        Device_Network["IPAddress"] = tempIP.c_str();
+        Device_Network[F("IPAddress")] = tempIP.c_str();
 
         String tempSSID = WiFi.SSID();
-        Device_Network["SSID"] = tempSSID.c_str();
+        Device_Network[F("SSID")] = tempSSID.c_str();
 
     String jsonMessage;
 
@@ -358,15 +385,15 @@ void LogClient::LogToService( const t_log_type type, const t_log_tag tag, const 
     else {
         if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
-            if( httpCode < 0 ) Serial.printf("(Logger) Logging to servce: ERROR %s\n", http.errorToString(httpCode).c_str());
-            else Serial.printf("(Logger) Logging to servce: ERROR %i\n", httpCode);
+            Serial.print(F("(Logger) Logging to servce: ERROR "));
+            if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
+            else Serial.println( httpCode );
         }
     }
 
 #endif
 
 }
-
 
 
 // Create the global logger instance
