@@ -7,6 +7,7 @@
 #include "Logger.h"
 #include "IOTDevice.h"
 #include "ESPRemoteUpdater.h"
+#include "ConfigManager.h"
 
 
 
@@ -20,7 +21,7 @@ String getContentType(String filename); // convert the file extension to the MIM
 bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
 
-ICACHE_FLASH_ATTR String getContentType(String filename) { // convert the file extension to the MIME type
+String ICACHE_FLASH_ATTR getContentType(String filename) { // convert the file extension to the MIME type
   if (filename.endsWith(".html")) return "text/html";
   else if (filename.endsWith(".html.gz")) return "text/html";
   else if (filename.endsWith(".css")) return "text/css";
@@ -35,7 +36,7 @@ ICACHE_FLASH_ATTR String getContentType(String filename) { // convert the file e
 }
 
 // send the right file to the client (if it exists)
-bool handleFileRead(String shortpath) {
+bool ICACHE_FLASH_ATTR handleFileRead(String shortpath) {
 
   Serial.println("handleFileRead: " + shortpath);
   if (shortpath.endsWith("/")) shortpath += "index.html";         // If a folder is requested, send the index file
@@ -61,7 +62,7 @@ bool handleFileRead(String shortpath) {
 
 
 
-ICACHE_FLASH_ATTR void elaborateBuildFlags() {
+void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
     LOG(device.getChipId(true));
     
@@ -92,10 +93,10 @@ ICACHE_FLASH_ATTR void elaborateBuildFlags() {
 }
 
 
-ICACHE_FLASH_ATTR void setup() {
+void ICACHE_FLASH_ATTR setup() {
 
     logger.begin( client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
-    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     delay(1000);
 
@@ -105,7 +106,7 @@ ICACHE_FLASH_ATTR void setup() {
 
     delay(1000);
 
-    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), t_logging_level(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     elaborateBuildFlags();
 

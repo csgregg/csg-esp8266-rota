@@ -39,7 +39,7 @@ Builds on Espclass
 // Public:
 
 // Return type String build flag or flag with descriton string
-ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const char * flag, bool described ) {
+String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const char * flag, bool described ) {
     if( described ) {
 
         char buffer[ (sizeof("(Build) %s : %s") - 4 ) + strlen_P(flag) ];
@@ -52,13 +52,13 @@ ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const char 
 
 
 // Return type bool build flag
-ICACHE_FLASH_ATTR bool IOTDevice::IOTDevice::getBuildFlag( const char * name, const bool flag ) {
+bool ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, const bool flag ) {
     return flag;
 }
 
 
 // Return type bool build flag with descripton string
-ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const bool flag, const bool decribed ) {
+String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const bool flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(bool)*8 ];
     sprintf(buffer, PSTR("(Build) %s : %i"), name, flag);
@@ -69,13 +69,13 @@ ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const bool 
 
 
 // Return type uint build flag
-ICACHE_FLASH_ATTR uint IOTDevice::IOTDevice::getBuildFlag( const char * name, const uint flag ) {
+uint ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, const uint flag ) {
     return flag;
 }
 
 
 // Return type uint build flag with description string
-ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const uint flag, const bool decribed ) {
+String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const uint flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(uint)*8 ];
     sprintf(buffer, PSTR("(Build) %s : %i"), name, flag);
@@ -86,13 +86,13 @@ ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const uint 
 
 
 // Return type long build flag
-ICACHE_FLASH_ATTR long IOTDevice::IOTDevice::getBuildFlag( const char * name, const long flag ) {
+long ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, const long flag ) {
     return flag;
 }
 
 
 // Return type long build flag with description string
-ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
+String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
 
     char buffer[ (sizeof("(Build) %s : %li") - 5 ) + sizeof(long)*8 ];
     sprintf(buffer, PSTR("(Build) %s : %li"), name, flag);
@@ -103,7 +103,7 @@ ICACHE_FLASH_ATTR String IOTDevice::getBuildFlag( const char * name, const long 
 
 
 // Get unique chip ID and return as string or with desription string
-ICACHE_FLASH_ATTR String IOTDevice::getChipId(bool described){
+String ICACHE_FLASH_ATTR IOTDevice::getChipId(bool described){
     
     uint32_t id = EspClass::getChipId();
     char buffer [sizeof("(Device) Chip ID: ") + sizeof(uint32_t)*2];

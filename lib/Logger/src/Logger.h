@@ -29,14 +29,16 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 */
 
-#ifndef DEBUGLOGGING_H
 
-    #define DEBUGLOGGING_H
+#ifndef LOGGER_H
+
+    #define LOGGER_H
 
     #include <Ticker.h>
     #include <ESP8266httpUpdate.h>
 
     #include "IOTDevice.h"
+
 
     // Turn off all debug if necessary
     #ifndef LOGGER_LEVEL
@@ -92,29 +94,29 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define JSON_SIZE_IP 15
     #define JSON_SIZE_SSID 32
 
-    
+
     // Logging level to filter logs 
-    typedef enum : int {
+    enum loggingLevel {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_CRITICAL = 1,     // Critical only
         LOGGING_LEVEL_NORMAL = 2,       // Normal and critical
         LOGGING_LEVEL_VERBOSE = 3       // All (Detail, Normal, Critical)
-    } t_logging_level;
+    };
 
 
     // Type of log - used in the filter of log level and added to message
-    typedef enum : int {
+    enum logType {
         LOG_CRITICAL,
         LOG_NORMAL,
         LOG_DETAIL
-    } t_log_type;
+    } ;
 
 
     // Tags applied to message
-    typedef enum : int {
+    enum logTag {
         TAG_DEBUG,
         TAG_STATUS
-    } t_log_tag;
+    } ;
 
     
     // Logger Class
@@ -125,24 +127,24 @@ debug of code. Macros are defined for to simplifiy common usage.
             /// To set up logging
 
             void begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags );
-            void setMode( const bool modeSerial = false, const bool modeService = false, const t_logging_level level = LOGGING_OFF );
+            void setMode( const bool modeSerial = false, const bool modeService = false, const loggingLevel level = LOGGING_OFF );
 
             // Log messages (with overloads)
 
-            void println(const t_log_type type, const t_log_tag tag, const char * message);
-            void println(const t_log_type type, const t_log_tag tag, const char * message, const char * file, const char * func_P, const int line );
+            void println(const logType type, const logTag tag, const char * message);
+            void println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line );
 
-            void println(const t_log_type type, const t_log_tag tag, const char c);
-            void println(const t_log_type type, const t_log_tag tag, const char c, const char * file, const char * func_P, const int line );    
+            void println(const logType type, const logTag tag, const char c);
+            void println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
 
-            void println(const t_log_type type, const t_log_tag tag, const String &message);
-            void println(const t_log_type type, const t_log_tag tag, const String &message, const char * file, const char * func_P, const int line );      
+            void println(const logType type, const logTag tag, const String &message);
+            void println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
             // TODO Add overload for FlashStrings
 
             // Special for formated message
 
-            void setTypeTag(const t_log_type type, const t_log_tag tag);
+            void setTypeTag(const logType type, const logTag tag);
             void printf(const char * format, ...);
 
 
@@ -155,15 +157,15 @@ debug of code. Macros are defined for to simplifiy common usage.
             bool _serialOn = false;
             bool _serviceOn = false;
 
-            t_logging_level _logginglevel = LOGGING_OFF;
+            loggingLevel _logginglevel = LOGGING_OFF;
 
-            void inline LogPrefix(const t_log_type type, const t_log_tag tag);
+            void inline LogPrefix(const logType type, const logTag tag);
 
-            void LogToSerial(const t_log_type type, const t_log_tag tag, const char * message);
-            void LogToService(const t_log_type type, const t_log_tag tag, const char * message);
+            void LogToSerial(const logType type, const logTag tag, const char * message);
+            void LogToService(const logType type, const logTag tag, const char * message);
 
-            t_log_type _lasttype;
-            t_log_tag _lasttag;
+            logType _lasttype;
+            logTag _lasttag;
 
             const char * const c_log_type_descript[3] = {"CRITICAL","Normal","Verbose"};
             const char * const c_log_tag_descript[2] = {"DEBUG","STATUS"};
