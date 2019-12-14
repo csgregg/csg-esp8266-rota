@@ -62,7 +62,7 @@ https://arduinojson.org/v6/assistant/
 bool ESPRemoteUpdater::_doUpdateCheck;
 
 
-ICACHE_FLASH_ATTR void ESPRemoteUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
+void ICACHE_FLASH_ATTR ESPRemoteUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
 
     _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo + PSTR("&user=") + user;
     if( token != "" ) _assetRequestURL += PSTR("&token=") + token;
@@ -80,7 +80,7 @@ ICACHE_FLASH_ATTR void ESPRemoteUpdater::setup( const String &service, const Str
 
 // TODO - Change like ESP8266HTTPUpdate::handleUpdate
 
-ICACHE_FLASH_ATTR void ESPRemoteUpdater::begin( WiFiClient &client ) {
+void ICACHE_FLASH_ATTR ESPRemoteUpdater::begin( WiFiClient &client ) {
 
     _client = &client;
 
@@ -96,7 +96,7 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 // TODO change to POST intead of GET
 
-ICACHE_FLASH_ATTR String ESPRemoteUpdater::getLatestBuild() {
+String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
     LOG(F("(Updater) Checking latest build..."));
 
@@ -179,7 +179,7 @@ ICACHE_FLASH_ATTR String ESPRemoteUpdater::getLatestBuild() {
  
 
 
-ICACHE_FLASH_ATTR HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
+HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
 
     // Update SPIFFS file system
     String spiffsFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
@@ -223,7 +223,7 @@ ICACHE_FLASH_ATTR HTTPUpdateResult ESPRemoteUpdater::UpdateFS() {
 
 
 
-ICACHE_FLASH_ATTR HTTPUpdateResult ESPRemoteUpdater::UpdateProg( bool restart = false ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( bool restart = false ) {
 
     // Update program image
     String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag;
