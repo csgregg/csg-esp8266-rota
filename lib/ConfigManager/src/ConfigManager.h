@@ -24,6 +24,9 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
+Manages saving a configuration set to the EEPROM section of the flash (First
+sector before SPIFFS). Settings are read and write on block and accessed
+through the settings member.
 
 */
 
@@ -116,11 +119,12 @@ SOFTWARE.
 
             ConfigManager();
 
-            void Initialize(bool forceInit = false);
-            void ResetToDefaults();
-            void Read();
-            void Save(bool force = false);
+            void Initialize(bool forceInit = false);        // Start the config manager
+            void ResetToDefaults();                         // Saves the default settings
+            void Read();                                    // Reads all the settings
+            void Save(bool force = false);                  // Saves all the settings
 
+            // Making the settings set accessible
             deviceSettings Settings;
 
 
@@ -137,7 +141,6 @@ SOFTWARE.
 
     };
 
-    extern ConfigManager config;
-
+    extern ConfigManager config;        // Declaring the global instance
 
 #endif

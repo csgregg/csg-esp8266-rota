@@ -24,6 +24,10 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
+Manages saving a configuration set to the EEPROM section of the flash (First
+sector before SPIFFS). Settings are read and write on block and accessed
+through the settings member.
+
 */
 
 #include <EEPROM.h>
@@ -31,24 +35,21 @@ SOFTWARE.
 
 #include "ConfigManager.h"
 #include "Logger.h"
-
-
-
-
+#include "IOTDevice.h"
 
 
 // Public:
 
 // Consructor
 ConfigManager::ConfigManager() {
-    _IsInitialized = false;
-
-    
+    _IsInitialized = false;             // Don't do anything until flash is initialized   
 }
 
 
+// Initialize the flash
 void ICACHE_FLASH_ATTR ConfigManager::Initialize( bool forceInit ) {
 
+    // Start it up
     if( !_IsInitialized ) {
 
         EEPROM.begin(SPI_FLASH_SEC_SIZE);
@@ -57,6 +58,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Initialize( bool forceInit ) {
         LOG(F("(Config) Starting Configuation Manager"));
     }
 
+    // Check to see if it has been used before and has the right marker in place to confim
     if( !CheckMarker() || forceInit ) {
 
         LOG(F("(Config) Initializing flash"));
@@ -73,49 +75,69 @@ void ICACHE_FLASH_ATTR ConfigManager::Initialize( bool forceInit ) {
     }
     else {
 
+        // Flash is already set up and ready to use
         LOG(F("(Config) Flash ready"));
 
-        Read();
+        Read();         // Get the settings for the first time
     }
 
 }
 
 
+// Saves the default settings to flash
 void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 
     LOG(F("(Config) Reset to defaults"));
+
+    if( !_IsInitialized ) {
+        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot save"));
+        return;
+    }
 
     // Default settings
     Settings.wifiMode = WIFI_OFF;
 
     for( int i = 0; i<MAX_SSIDS; i++ ) {
-        strcpy(Settings.clientSetting[i].clientSSID, "SSID");
-        strcpy(Settings.clientSetting[i].clientPwd, "PASS");
+        strcpy(Settings.clientSetting[i].clientSSID, "");
+        strcpy(Settings.clientSetting[i].clientPwd, "");
         Settings.clientSetting[i].clientDHCPMode = DHCP;
-        Settings.clientSetting[i].clientStaticIP.fromString("123.123.123.123");
+        Settings.clientSetting[i].clientStaticIP.fromString("192.168.1.1");
     }
 
-    strcpy(Settings.apSSID, "SSID");
-    strcpy(Settings.apPwd, "PWD");
-    Settings.apChannel = 13;
+    strcpy(Settings.apSSID, device_getBuildFlag(flag_DEVICE_CODE).c_str());
+    strcpy(Settings.apPwd, device_getBuildFlag(flag_DEVICE_CODE).c_str());        // TODO Make secure token for this
+    Settings.apChannel = 11;
 
     // Save to flash
     Save(true);
 }
 
 
+// Read settings from flash 
 void ICACHE_FLASH_ATTR ConfigManager::Read() {
 
     LOG(F("(Config) Reading settings"));
 
-	Settings = EEPROM.get(markerDataSize, Settings);
+    // Don't do anything unless ready to use
+    if( !_IsInitialized ) {
+        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot read"));
+        return;
+    }
 
+    // Get the settings
+	Settings = EEPROM.get(markerDataSize, Settings);
 }
 
 
 void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
 
     LOG(F("(Config) Saving settings"));
+
+    // Don't do anything unless ready to use
+    if( !_IsInitialized ) {
+        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot save"));
+        return;
+    }
 
     // Check to see what is there first and only save if differnet 
 
@@ -144,6 +166,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
 // Protected:
 
 
+// Look for the marker that was placed when the flash was set up
 bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 	startMarker markerData = EEPROM.get(0, markerData);
@@ -152,11 +175,12 @@ bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
     PGM_P format = PSTR("(Config) Marker from flash: %s");
     logger.printf( format, markerData.marker );
     
+    // Return if it is there
     return (strcmp(markerData.marker, CONFIG_START_MARKER) == 0);
-
 }
 
 
+// Write the marker that shows that the flash is set up
 void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
     startMarker markerData;
@@ -170,6 +194,7 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 }
 
 
+// Erase the content of the flash to 0
 void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
 
     LOG(F("(Config) Erasing flash"));
