@@ -147,6 +147,9 @@ debug of code. Macros are defined for to simplifiy common usage.
             void setTypeTag(const logType type, const logTag tag);
             void printf(const char * format, ...);
 
+            bool SerialOn() { return _serialOn; };
+            bool ServiceOn() { return _serviceOn; };
+
 
         protected:
 

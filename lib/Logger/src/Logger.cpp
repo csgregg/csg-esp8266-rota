@@ -242,7 +242,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const char * format, ... ) {
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(LOG_CRITICAL, TAG_DEBUG, F("(Logger) LogClient: Buffer error"));
+            println(LOG_CRITICAL, TAG_STATUS, F("(Logger) LogClient: Buffer error"));
             return;
         }
         va_start(arg, format);
