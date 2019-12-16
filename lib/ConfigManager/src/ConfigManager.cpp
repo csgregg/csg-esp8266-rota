@@ -33,6 +33,10 @@ SOFTWARE.
 #include "Logger.h"
 
 
+
+
+
+
 // Public:
 
 // Consructor
@@ -43,17 +47,96 @@ ConfigManager::ConfigManager() {
 }
 
 
+void ICACHE_FLASH_ATTR ConfigManager::Initialize( bool forceInit ) {
+
+    if( !_IsInitialized ) {
+
+        EEPROM.begin(SPI_FLASH_SEC_SIZE);
+		_IsInitialized = true;
+
+        LOG(F("(Config) Starting Configuation Manager"));
+    }
+
+    if( !CheckMarker() || forceInit ) {
+
+        LOG(F("(Config) Initializing flash"));
+
+        // Erase flash
+        EraseFlash();
+
+        // Initialize flag
+        WriteMarker();
+
+        // Reset to defauls
+        ResetToDefaults();
+
+    }
+    else {
+
+        LOG(F("(Config) Flash ready"));
+
+        Read();
+    }
+
+}
+
+
 void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 
+    LOG(F("(Config) Reset to defaults"));
+
+    // Default settings
+    Settings.wifiMode = WIFI_OFF;
+
+    for( int i = 0; i<MAX_SSIDS; i++ ) {
+        strcpy(Settings.clientSetting[i].clientSSID, "SSID");
+        strcpy(Settings.clientSetting[i].clientPwd, "PASS");
+        Settings.clientSetting[i].clientDHCPMode = DHCP;
+        Settings.clientSetting[i].clientStaticIP.fromString("123.123.123.123");
+    }
+
+    strcpy(Settings.apSSID, "SSID");
+    strcpy(Settings.apPwd, "PWD");
+    Settings.apChannel = 13;
+
+    // Save to flash
+    Save(true);
 }
 
 
-void ICACHE_FLASH_ATTR ConfigManager::ReadConfig() {
+void ICACHE_FLASH_ATTR ConfigManager::Read() {
+
+    LOG(F("(Config) Reading settings"));
+
+	Settings = EEPROM.get(markerDataSize, Settings);
 
 }
 
 
-void ICACHE_FLASH_ATTR ConfigManager::SaveConfig() {
+void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
+
+    LOG(F("(Config) Saving settings"));
+
+    // Check to see what is there first and only save if differnet 
+
+    if( !force ) {
+
+        deviceSettings readset = EEPROM.get(markerDataSize, readset);
+
+        if( readset == Settings ) {
+
+            LOG(F("(Config) Settings unchanged - not saving"));
+
+            return;
+        }
+    }
+
+    // Different so save
+
+    EEPROM.put(markerDataSize, Settings);
+	EEPROM.commit();
+
+    LOG(F("(Config) New sttings saved"));
 
 }
 
@@ -61,25 +144,42 @@ void ICACHE_FLASH_ATTR ConfigManager::SaveConfig() {
 // Protected:
 
 
-bool ICACHE_FLASH_ATTR ConfigManager::CheckFlashInitialized() {
+bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 	startMarker markerData = EEPROM.get(0, markerData);
-	
+
     logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
-    PGM_P format = PSTR("(Config) initialization marker: %s");
-    logger.printf( format, markerData );
+    PGM_P format = PSTR("(Config) Marker from flash: %s");
+    logger.printf( format, markerData.marker );
     
     return (strcmp(markerData.marker, CONFIG_START_MARKER) == 0);
 
 }
 
 
-void ICACHE_FLASH_ATTR ConfigManager::InitializeFlash() {
+void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
+    startMarker markerData;
+
+    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+    PGM_P format = PSTR("(Config) Writing marker: %s");
+    logger.printf( format, markerData.marker );
+
+    strncpy(markerData.marker, CONFIG_START_MARKER, sizeof(CONFIG_START_MARKER));
+	markerData = EEPROM.put(0, markerData);
 }
 
 
 void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
+
+    LOG(F("(Config) Erasing flash"));
+
+	for (uint16_t i = 0 ; i < SPI_FLASH_SEC_SIZE ; i++) {
+		EEPROM.write(i, 0);
+		yield();
+	}
+
+    LOG(F("\n(Config) Flash erased"));
 
 }
 

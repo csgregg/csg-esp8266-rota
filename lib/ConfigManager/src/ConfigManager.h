@@ -79,6 +79,24 @@ SOFTWARE.
         char apPwd[MAX_CONFIG_STRING_LEN];
         byte apChannel;
 
+        // Create a compare operator
+        bool operator==(const deviceSettings& other) const {
+
+            bool sameclients = true;
+            for( int i = 0; i < MAX_SSIDS; i++ ) {
+                if( strcmp(clientSetting[i].clientSSID, other.clientSetting[i].clientSSID) != 0 ) sameclients = false;
+                if( strcmp(clientSetting[i].clientPwd, other.clientSetting[i].clientPwd) != 0 ) sameclients = false;
+                if( clientSetting[i].clientDHCPMode != other.clientSetting[i].clientDHCPMode ) sameclients = false;
+                if( clientSetting[i].clientStaticIP != other.clientSetting[i].clientStaticIP ) sameclients = false;
+            }
+
+            return sameclients
+                && wifiMode == other.wifiMode
+                && (strcmp(apSSID, other.apSSID)==0)
+                && (strcmp(apPwd, other.apPwd)==0)
+                && apChannel == other.apChannel;
+
+        }
     };
 
 
@@ -98,22 +116,23 @@ SOFTWARE.
 
             ConfigManager();
 
+            void Initialize(bool forceInit = false);
             void ResetToDefaults();
-            void ReadConfig();
-            void SaveConfig();
+            void Read();
+            void Save(bool force = false);
 
             deviceSettings Settings;
 
 
         protected:
 
-            bool CheckFlashInitialized();
-            void InitializeFlash();
+            bool CheckMarker();
+            void WriteMarker();
             void EraseFlash();
 
             bool _IsInitialized;
 
-        //    startMarker _markerData;
+        private:
 
 
     };

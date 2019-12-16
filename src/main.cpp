@@ -99,7 +99,7 @@ void ICACHE_FLASH_ATTR setup() {
     logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     delay(1000);
-
+/*
     WiFi.persistent(false);
     WiFiManager wifiManager;
     wifiManager.autoConnect( device_getBuildFlag(flag_DEVICE_CODE).c_str() );
@@ -111,6 +111,13 @@ void ICACHE_FLASH_ATTR setup() {
     elaborateBuildFlags();
 
     LOG("WiFI Started: " + WiFi.localIP().toString());
+
+*/
+
+    config.Initialize();
+
+   // config.ResetToDefaults();
+
 
     server.begin(); 
 
