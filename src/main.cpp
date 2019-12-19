@@ -8,6 +8,7 @@
 #include "IOTDevice.h"
 #include "ESPRemoteUpdater.h"
 #include "ConfigManager.h"
+#include "LiteralManager.h"
 
 
 
@@ -98,26 +99,24 @@ void ICACHE_FLASH_ATTR setup() {
     logger.begin( client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
     logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
-    delay(1000);
-/*
+    config.Initialize();
+    //config.ResetToDefaults();
+
+        Serial.println(literals.Get(litMessage));
+
+        DEBUG_STOP();
+
     WiFi.persistent(false);
     WiFiManager wifiManager;
-    wifiManager.autoConnect( device_getBuildFlag(flag_DEVICE_CODE).c_str() );
-
-    delay(1000);
+    wifiManager.autoConnect( config.Settings.apSSID, config.Settings.apPwd );
 
     logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     elaborateBuildFlags();
 
+
+
     LOG("WiFI Started: " + WiFi.localIP().toString());
-
-*/
-
-    config.Initialize();
-
-   // config.ResetToDefaults();
-
 
     server.begin(); 
 

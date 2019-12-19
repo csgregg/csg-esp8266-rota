@@ -152,7 +152,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
         if( repoName != _repoName ) {
 
-            LOG_CRITICAL(F("(UPdater) JSON Error getting latest release"));
+            LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
 
             return "";
         }
