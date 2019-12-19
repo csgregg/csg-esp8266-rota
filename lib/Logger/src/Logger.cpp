@@ -108,13 +108,16 @@ void ICACHE_FLASH_ATTR LogClient::setMode( const bool modeSerial, const bool mod
 }
 
 
-// TODO Need to add print functions 
-// TODO NEed to add return JSON header only
+// TODO Need to add print functions for flashstringhelper
+// TODO Need to add return JSON header only
 
 // Main log function - char[]
 void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const char * message ) {
 
 #ifndef NO_LOGGING
+
+    // TODO - since this is build specific might move this logic to the preprocessor to save memory.
+    // Need to consider if we want to be able to change log level at runtime
 
     if( _logginglevel == LOGGING_OFF ) return;
     if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
@@ -144,7 +147,7 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
         char shortened[MAX_MESSAGE_LEN];
         strncpy( shortened, message, MAX_MESSAGE_LEN - contextsize );        // Truncate if too long
-        shortened[(MAX_MESSAGE_LEN - contextsize)-1]=0;
+        shortened[(MAX_MESSAGE_LEN - contextsize)-1] = 0;
 
         char str[MAX_MESSAGE_LEN];
         sprintf(str, format, file, func, line, shortened);

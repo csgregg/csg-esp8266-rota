@@ -101,7 +101,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
         strcpy(Settings.clientSetting[i].clientSSID, "");
         strcpy(Settings.clientSetting[i].clientPwd, "");
         Settings.clientSetting[i].clientDHCPMode = DHCP;
-        Settings.clientSetting[i].clientStaticIP.fromString("192.168.1.1");
+        Settings.clientSetting[i].clientStaticIP.fromString(F("192.168.1.1"));
     }
 
     strcpy(Settings.apSSID, device_getBuildFlag(flag_DEVICE_CODE).c_str());
