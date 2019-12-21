@@ -4,7 +4,7 @@ import shutil
 
 Import("env")
 
-print("Extra Script - Pre")
+print("Extra Script (Pre): deflate_www_pre.py")
 
 try:
     os.mkdir("data")

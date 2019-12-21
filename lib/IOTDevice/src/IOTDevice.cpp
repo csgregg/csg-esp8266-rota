@@ -42,8 +42,8 @@ Builds on Espclass
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const char * flag, bool described ) {
     if( described ) {
 
-        char buffer[ (sizeof("(Build) %s : %s") - 4 ) + strlen_P(flag) ];
-        sprintf(buffer, PSTR("(Build) %s : %s"), name, FPSTR(flag));
+        char buffer[ (sizeof("(Build) %s: %s") - 4 ) + strlen_P(flag) ];
+        sprintf(buffer, PSTR("(Build) %s: %s"), name, FPSTR(flag));
 
         return String(buffer);
     }
@@ -60,8 +60,8 @@ bool ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, co
 // Return type bool build flag with descripton string
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const bool flag, const bool decribed ) {
 
-    char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(bool)*8 ];
-    sprintf(buffer, PSTR("(Build) %s : %i"), name, flag);
+    char buffer[ (sizeof("(Build) %s: %i") - 4 ) + sizeof(bool)*8 ];
+    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
 
     return String(buffer);
 
@@ -77,8 +77,8 @@ uint ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, co
 // Return type uint build flag with description string
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const uint flag, const bool decribed ) {
 
-    char buffer[ (sizeof("(Build) %s : %i") - 4 ) + sizeof(uint)*8 ];
-    sprintf(buffer, PSTR("(Build) %s : %i"), name, flag);
+    char buffer[ (sizeof("(Build) %s: %i") - 4 ) + sizeof(uint)*8 ];
+    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
 
     return String(buffer);
 
@@ -94,8 +94,8 @@ long ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, co
 // Return type long build flag with description string
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
 
-    char buffer[ (sizeof("(Build) %s : %li") - 5 ) + sizeof(long)*8 ];
-    sprintf(buffer, PSTR("(Build) %s : %li"), name, flag);
+    char buffer[ (sizeof("(Build) %s: %li") - 5 ) + sizeof(long)*8 ];
+    sprintf(buffer, PSTR("(Build) %s: %li"), name, flag);
 
     return String(buffer);
 

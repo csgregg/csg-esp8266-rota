@@ -75,6 +75,8 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
     LOG(device_getBuildFlag(flag_DEVICE_CODE,true));
     LOG(device_getBuildFlag(flag_BUILD_TAG,true));
     LOG(device_getBuildFlag(flag_BUILD_ENV,true));
+    LOG(device_getBuildFlag(flag_BUILD_NO,true));
+    LOG(device_getBuildFlag(flag_BUILD_TIMESTAMP,true));
 
     LOG(device_getBuildFlag(flag_UPDATER_REPO,true));
     LOG(device_getBuildFlag(flag_UPDATER_USER,true));
@@ -84,7 +86,7 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
     LOG(device_getBuildFlag(flag_UPDATER_SKIP,true));
 
     LOG(device_getBuildFlag(flag_LOGGER_LEVEL,true));
-    LOG(device_getBuildFlag(flag_LOGGVER_AS_SERIAL,true));
+    LOG(device_getBuildFlag(flag_LOGGER_AS_SERIAL,true));
     LOG(device_getBuildFlag(flag_LOGGER_AS_SERVICE,true));
     LOG(device_getBuildFlag(flag_LOGGER_SERVICE,true));
     LOG(device_getBuildFlag(flag_LOGGER_SERVICE_KEY,true));
@@ -97,12 +99,12 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 void ICACHE_FLASH_ATTR setup() {
 
     logger.begin( client, device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS) );    
-    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+    logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     config.Initialize();
     //config.ResetToDefaults();
 
-        Serial.println(literals.Get(litMessage));
+        elaborateBuildFlags();
 
         DEBUG_STOP();
 
@@ -110,9 +112,9 @@ void ICACHE_FLASH_ATTR setup() {
     WiFiManager wifiManager;
     wifiManager.autoConnect( config.Settings.apSSID, config.Settings.apPwd );
 
-    logger.setMode( device_getBuildFlag(flag_LOGGVER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+    logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
-    elaborateBuildFlags();
+
 
 
 

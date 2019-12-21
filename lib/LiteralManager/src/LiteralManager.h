@@ -38,7 +38,7 @@ Acknowledgements
 
     #include "Literals.h"       // TODO - Need to figure out how to move this to the main src folder
 
-    // Enum the IDs for the literals
+    // Enumerate the IDs for the literals
     enum literalID {
     #define LITERAL(enumVal, str) enumVal,
         LITERAL_TABLE
@@ -46,13 +46,13 @@ Acknowledgements
     };
 
     // Put the literals in flash, checking they are not too large along the way
-    #define LITERAL(enumVal, str) const char CLI_STR_ ## enumVal[] PROGMEM = str; static_assert( sizeof(str) <= MAX_LITERAL_SIZE, "Literal too large");     // TODO can the preprocessor assert the str as well
+    #define LITERAL(enumVal, str) const char LIT_REF_ ## enumVal[] PROGMEM = str; static_assert( sizeof(str) <= MAX_LITERAL_SIZE, "Literal too large");
         LITERAL_TABLE
     #undef LITERAL
 
     // Create array of references 
     const char* const LiteralRefs[] PROGMEM = {
-    #define LITERAL(enumVal, str) CLI_STR_ ## enumVal,
+    #define LITERAL(enumVal, str) LIT_REF_ ## enumVal,
         LITERAL_TABLE
     #undef LITERAL
     };
@@ -69,6 +69,7 @@ Acknowledgements
         protected:
 
             char _Buffer[MAX_LITERAL_SIZE];
+
 
     };
     
