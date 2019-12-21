@@ -1,6 +1,11 @@
 .pio
 .vscode
 
+# Local build number
+.version
+include/Version.h
+
+# Local temp data 
 data
 
 # Important for Security #

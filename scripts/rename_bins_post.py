@@ -2,7 +2,7 @@ import os
 
 Import("env", "projenv")
 
-print("Extra Script - Post")
+print("Extra Script (Post): rename_bins_post.py")
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
