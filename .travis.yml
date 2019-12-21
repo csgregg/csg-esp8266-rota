@@ -17,7 +17,7 @@ install:
 - platformio lib install ArduinoJson
 script:
 - platformio run -e csg-esp8266-rota-travis
-- platformio run -t buildfs -e csg-esp8266-rota-travis
+- platformio run -v -t buildfs -e csg-esp8266-rota-travis
 deploy:
   provider: releases
   overwrite: true
