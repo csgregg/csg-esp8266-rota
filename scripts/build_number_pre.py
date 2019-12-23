@@ -19,8 +19,8 @@ with open(FILENAME_BUILDNO, 'w+') as f:
     print('Build number: {}'.format(build_no))
 
 hf = """
-#ifndef LOCAL_BUILD_NUMBER
-  #define LOCAL_BUILD_NUMBER {}
+#ifndef BUILD_NUMBER
+  #define BUILD_NUMBER {}
 #endif
 """.format(build_no)
 with open(FILENAME_VERSION_H, 'w+') as f:
@@ -36,5 +36,5 @@ with open(FILENAME_VERSION_H, 'w+') as f:
 ## Define platform name
 print('Build platform: ' + platform.node())
 env.Append(CPPDEFINES=[
-  ("BUILD_PLATFORM", platform.node())
+  ("BUILD_ENV", platform.node())
 ])
