@@ -75,6 +75,7 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
     LOG(device_getBuildFlag(flag_DEVICE_CODE,true));
     LOG(device_getBuildFlag(flag_BUILD_TAG,true));
     LOG(device_getBuildFlag(flag_BUILD_ENV,true));
+    LOG(device_getBuildFlag(flag_BUILD_PLATFORM,true));
     LOG(device_getBuildFlag(flag_BUILD_NO,true));
     LOG(device_getBuildFlag(flag_BUILD_TIMESTAMP,true));
 
