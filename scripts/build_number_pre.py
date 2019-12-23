@@ -1,4 +1,6 @@
 Import("env")
+import platform
+
 
 print("Extra Script (Pre): build_number_pre.py")
 
@@ -29,3 +31,10 @@ with open(FILENAME_VERSION_H, 'w+') as f:
 # env.Append(CPPDEFINES=[
 #   ("LOCAL_BUILD_NUMBER", build_no)
 # ])
+
+
+## Define platform name
+print('Build platform: ' + platform.node())
+env.Append(CPPDEFINES=[
+  ("BUILD_PLATFORM", platform.node())
+])
