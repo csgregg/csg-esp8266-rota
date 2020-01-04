@@ -33,6 +33,7 @@ SOFTWARE.
 
     #define NETWORK_MANAGER_H
 
+    #include <ESP8266WebServer.h>
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
@@ -187,6 +188,7 @@ SOFTWARE.
             bool isAPRunning( ) { return _APRunning; };
             bool isInternetConnected( ) { return _ConnectedToInternet; };
 
+            WiFiClient& getWiFiClient() { return _client; };
 
         protected:
 
@@ -198,6 +200,9 @@ SOFTWARE.
             bool startWiFiStation( const int id = 0 );
             bool checkInternet();
 
+            void InitializeWiFi();
+            void InitializeWebServer();
+
             NetworkSettings *_networkSettings;
 
             bool _StationConnected;         // Are we connected to WiFi
@@ -205,6 +210,12 @@ SOFTWARE.
             bool _ConnectedToInternet;      // Is there a route to the internet
            
             int _disconnectedStation;       // Used to see how long disconnected in station mode
+
+            ESP8266WebServer _server;
+            WiFiClient _client;
+
+            String getContentType(String filename); // convert the file extension to the MIME type
+            bool handleFileRead(String path);       // send the right file to the client (if it exists)
    
         private:
 

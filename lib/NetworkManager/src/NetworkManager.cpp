@@ -28,6 +28,8 @@ SOFTWARE.
 */
 
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <FS.h> 
 
 
 #include "NetworkManager.h"
@@ -79,7 +81,82 @@ NetworkManager::NetworkManager() {
 
 void NetworkManager::begin( NetworkSettings &settings ) {
 
+    LOG(F("(Network) Starting network services"));
+
     _networkSettings = &settings;
+
+    InitializeWiFi();
+
+    InitializeWebServer();
+
+}
+
+
+void NetworkManager::InitializeWebServer() {
+
+    _server.begin(); 
+
+    _server.onNotFound([&]() {                              // If the client requests any URI
+      if( !handleFileRead(_server.uri()) )                  // send it if it exists
+        _server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+    });
+
+    SPIFFS.begin(); 
+
+}
+
+
+
+String NetworkManager::getContentType(String filename) { // convert the file extension to the MIME type
+  if (filename.endsWith(F(".html"))) return F("text/html");
+  else if (filename.endsWith(F(".html.gz"))) return F("text/html");
+  else if (filename.endsWith(F(".css"))) return F("text/css");
+  else if (filename.endsWith(F(".css.gz"))) return F("text/css");
+  else if (filename.endsWith(F(".js"))) return F("application/javascript");
+  else if (filename.endsWith(F(".js.gz"))) return F("application/javascript");
+  else if (filename.endsWith(F(".ico"))) return F("image/x-icon");
+  else if (filename.endsWith(F(".ico.gz"))) return F("image/x-icon");
+  else if (filename.endsWith(F(".woff"))) return F("application/font-woff");
+  else if (filename.endsWith(F(".woff.gz"))) return F("application/font-woff");
+  return F("text/plain");
+}
+
+// send the right file to the client (if it exists)
+bool NetworkManager::handleFileRead(String shortpath) {
+
+    logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
+    logger.printf("(Network) Web server - file: %s", shortpath.c_str() );
+
+    if (shortpath.endsWith("/")) shortpath += F("index.html");         // If a folder is requested, send the index file
+
+    shortpath.replace(F("fonts/glyphicons-halflings-regular"), F("font"));      // Deal with std bootstrap naming
+
+    String path = shortpath + ".gz";
+
+    String contentType = getContentType(path);          // Get the MIME type
+    if (SPIFFS.exists(path)) {                          // If the file exists
+    File file = SPIFFS.open(path, "r");                 // Open it
+    _server.streamFile(file, contentType);              // And send it to the client
+    file.close();                                       // Then close the file again
+                                
+    return true;
+    }
+
+    LOG(F("(Network) Web server - file not found"));
+
+    return false;                                         // If the file doesn't exist, return false
+}
+
+
+
+
+
+void NetworkManager::InitializeWiFi() {
+
+    LOG(F("(Network) Starting WiFi"));
+
+    // Initize WiFi
+    
     _disconnectedStation = 0;
 
     WiFi.persistent(false);
@@ -89,7 +166,6 @@ void NetworkManager::begin( NetworkSettings &settings ) {
     // Restart to start fresh
     WiFi.mode(WiFiMode::WIFI_OFF);
 
-    LOG(F("(Network) Starting network services"));
     handle();   // Initial WiFi start
 
 }
@@ -98,6 +174,8 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 void NetworkManager::handle() {
 
     handleWiFi();
+
+    _server.handleClient();
 
 }
 
