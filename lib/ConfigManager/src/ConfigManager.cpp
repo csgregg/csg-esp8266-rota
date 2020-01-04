@@ -47,7 +47,7 @@ ConfigManager::ConfigManager() {
 
 
 // Initialize the flash
-void ICACHE_FLASH_ATTR ConfigManager::Initialize( bool forceInit ) {
+void ICACHE_FLASH_ATTR ConfigManager::Initialize( const bool forceInit ) {
 
     // Start it up
     if( !_IsInitialized ) {
@@ -95,18 +95,11 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
     }
 
     // Default settings
-    Settings.wifiMode = WIFI_OFF;
 
-    for( int i = 0; i<MAX_SSIDS; i++ ) {
-        strcpy(Settings.clientSetting[i].clientSSID, "");
-        strcpy(Settings.clientSetting[i].clientPwd, "");
-        Settings.clientSetting[i].clientDHCPMode = DHCP;
-        Settings.clientSetting[i].clientStaticIP.fromString(F("192.168.1.1"));
-    }
+    settings.networkConfig.setWiFiModeDefault();
+    settings.networkConfig.setStationDefaults(true);
+    settings.networkConfig.setAPDefaults();
 
-    strcpy(Settings.apSSID, device_getBuildFlag(flag_DEVICE_CODE).c_str());
-    strcpy(Settings.apPwd, device_getBuildFlag(flag_DEVICE_CODE).c_str());        // TODO Make secure token for this
-    Settings.apChannel = 11;
 
     // Save to flash
     Save(true);
@@ -125,11 +118,11 @@ void ICACHE_FLASH_ATTR ConfigManager::Read() {
     }
 
     // Get the settings
-	Settings = EEPROM.get(markerDataSize, Settings);
+	settings = EEPROM.get(markerDataSize, settings);
 }
 
 
-void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
+void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 
     LOG(F("(Config) Saving settings"));
 
@@ -145,7 +138,8 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
 
         deviceSettings readset = EEPROM.get(markerDataSize, readset);
 
-        if( readset == Settings ) {
+        // TODO - is this necessary?
+        if( readset == settings ) {
 
             LOG(F("(Config) Settings unchanged - not saving"));
 
@@ -155,7 +149,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( bool force ) {
 
     // Different so save
 
-    EEPROM.put(markerDataSize, Settings);
+    EEPROM.put(markerDataSize, settings);
 	EEPROM.commit();
 
     LOG(F("(Config) New sttings saved"));

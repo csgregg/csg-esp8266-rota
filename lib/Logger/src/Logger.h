@@ -59,7 +59,7 @@ debug of code. Macros are defined for to simplifiy common usage.
       #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
 
-      #define DEBUG_STOP() while(true){yield();}
+      #define DEBUG_STOP() Serial.printf("(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
       #define DEBUG_RAW(text) Serial.println(text)
 
     #else

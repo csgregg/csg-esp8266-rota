@@ -56,6 +56,9 @@ JSON Loggining Format
 
 Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
+
+TODO - Add function to check in and regsiter
+
 */
 
 
@@ -78,7 +81,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, const long baud, co
 
     _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
 
-    Serial.begin(baud);
+    Serial.begin(baud);             // TODO - only do this if serial on
 
     Serial.println(F("\n\nLOG: (Logger) Starting Logging\n"));
 
@@ -373,7 +376,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     
     HTTPClient http;
 
-    http.begin(*_client, loggingURL);
+    http.begin(*_client, loggingURL);           // TODO - add some error handling
 
     http.setUserAgent(F("ESP8266-http-logger"));
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));

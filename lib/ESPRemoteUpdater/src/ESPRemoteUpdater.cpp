@@ -87,6 +87,8 @@ void ICACHE_FLASH_ATTR ESPRemoteUpdater::begin( WiFiClient &client ) {
     _doUpdateCheck = false;
 
     _updateCheck.attach( _updateinterval, TriggerUpdateCheck );
+
+    LOG(F("(Updater) Starting updater"));
 }
 
 

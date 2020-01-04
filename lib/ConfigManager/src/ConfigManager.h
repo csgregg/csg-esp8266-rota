@@ -39,9 +39,10 @@ through the settings member.
 
     #include <ESP8266WiFi.h>
 
+    #include "NetworkManager.h"
+
 
     #define MAX_CONFIG_STRING_LEN 32
-    #define MAX_SSIDS 3
     #define CONFIG_START_MARKER_SIZE 16
     #define CONFIG_START_MARKER "CONFIG_START_V1"
 
@@ -52,56 +53,23 @@ through the settings member.
     };
 
 
-    // DHCP Mode
-    enum dhcpMode { DHCP, STATIC };
+    // Configuration Definitions
 
+    struct deviceSettings
+    {
+        NetworkSettings networkConfig;
 
-    // Individual network config
-    struct clientConfig {
-
-        // Client mode settings
-        char clientSSID[MAX_CONFIG_STRING_LEN];
-        char clientPwd[MAX_CONFIG_STRING_LEN];
-        dhcpMode clientDHCPMode;
-        IPAddress clientStaticIP;
-
-    };
-
-
-    // Full device config set
-    struct deviceSettings {
-
-        // WiFi Mode
-        WiFiMode wifiMode;          // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
-
-        // Save multiple networks
-        clientConfig clientSetting[MAX_SSIDS];
-
-        // Access point mode settings
-        char apSSID[MAX_CONFIG_STRING_LEN];
-        char apPwd[MAX_CONFIG_STRING_LEN];
-        byte apChannel;
-
-        // Create a compare operator
+        // Create a compare operators
         bool operator==(const deviceSettings& other) const {
-
-            bool sameclients = true;
-            for( int i = 0; i < MAX_SSIDS; i++ ) {
-                if( strcmp(clientSetting[i].clientSSID, other.clientSetting[i].clientSSID) != 0 ) sameclients = false;
-                if( strcmp(clientSetting[i].clientPwd, other.clientSetting[i].clientPwd) != 0 ) sameclients = false;
-                if( clientSetting[i].clientDHCPMode != other.clientSetting[i].clientDHCPMode ) sameclients = false;
-                if( clientSetting[i].clientStaticIP != other.clientSetting[i].clientStaticIP ) sameclients = false;
-            }
-
-            return sameclients
-                && wifiMode == other.wifiMode
-                && (strcmp(apSSID, other.apSSID)==0)
-                && (strcmp(apPwd, other.apPwd)==0)
-                && apChannel == other.apChannel;
-
+            return networkConfig == other.networkConfig;
         }
-    };
 
+        bool operator!=(const deviceSettings& other) const {
+            return networkConfig != other.networkConfig;
+        }
+
+    };
+    
 
     // How big is everything
     const size_t markerDataSize = sizeof(startMarker);
@@ -119,13 +87,13 @@ through the settings member.
 
             ConfigManager();
 
-            void Initialize(bool forceInit = false);        // Start the config manager
-            void ResetToDefaults();                         // Saves the default settings
-            void Read();                                    // Reads all the settings
-            void Save(bool force = false);                  // Saves all the settings
+            void Initialize(const bool forceInit = false);          // Start the config manager
+            void ResetToDefaults();                                 // Saves the default settings
+            void Read();                                            // Reads all the settings
+            void Save(const bool force = false);                    // Saves all the settings
 
-            // Making the settings set accessible
-            deviceSettings Settings;
+            // Make the settings set accessible
+            deviceSettings settings;
 
 
         protected:
