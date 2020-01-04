@@ -9,6 +9,7 @@
 #include "ESPRemoteUpdater.h"
 #include "ConfigManager.h"
 #include "LiteralManager.h"
+#include "NetworkManager.h"
 
 
 
@@ -104,21 +105,11 @@ void ICACHE_FLASH_ATTR setup() {
     config.Initialize();
     //config.ResetToDefaults();
 
-        elaborateBuildFlags();
 
-        DEBUG_STOP();
 
-    WiFi.persistent(false);
-    WiFiManager wifiManager;
-    wifiManager.autoConnect( config.Settings.apSSID, config.Settings.apPwd );
+    network.begin( config.settings.networkConfig );
 
     logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
-
-
-
-
-
-    LOG("WiFI Started: " + WiFi.localIP().toString());
 
     server.begin(); 
 
@@ -133,7 +124,8 @@ void ICACHE_FLASH_ATTR setup() {
     updater.setup( device_getBuildFlag(flag_UPDATER_SERVICE), device_getBuildFlag(flag_UPDATER_REPO), device_getBuildFlag(flag_UPDATER_USER), device_getBuildFlag(flag_UPDATER_TOKEN), device_getBuildFlag(flag_DEVICE_CODE), device_getBuildFlag(flag_BUILD_TAG), device_getBuildFlag(flag_UPDATER_INTERVAL), device_getBuildFlag(flag_UPDATER_SKIP) );
     updater.begin( client );
     
-    LOG(F("Starting loop()"));
+    elaborateBuildFlags();
+    LOG(F("(Loop) Starting"));
     
 }
 
@@ -143,5 +135,6 @@ void loop() {
 
   updater.handle();
   server.handleClient();
+  network.handle();
 
 }
