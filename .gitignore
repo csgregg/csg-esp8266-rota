@@ -3,9 +3,14 @@
 
 # Local build number
 .version
+include/Version.h
 
 # Local temp data 
 data
+fonts
+
+# Librarys that are not managed
+lib/EmbAJAX
 
 # Important for Security #
 private

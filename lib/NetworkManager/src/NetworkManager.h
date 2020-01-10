@@ -34,6 +34,7 @@ SOFTWARE.
     #define NETWORK_MANAGER_H
 
     #include <ESP8266WebServer.h>
+    #include "EmbAJAX.h"
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
@@ -123,6 +124,9 @@ SOFTWARE.
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
     #define DEFAULT_GATEWAY 0xFE01A8C0          // 192.168.1.254
     #define DEFAULT_CHANNEL 11
+
+
+    #define WEB_PORT 80
     
 
     struct NetworkSettings {
@@ -169,13 +173,116 @@ SOFTWARE.
 
 
 
+    class thiswebpage {
+
+        public:
+            EmbAJAXCheckButton check;
+            EmbAJAXMutableSpan check_d;
+
+            EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+            void (*ptr)() = NULL;
+
+            thiswebpage() : 
+                check("check", " That option"),
+                check_d("check_d"),
+                page(page_elements, "This")
+                {
+                    ptr = (void(*)())(&thiswebpage::update);              // This is a bit nasty 
+                };
+
+            void update() {
+                check_d.setValue(check.isChecked() ? "checked" : "not checked");
+            };
+
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
+
+            String URI;
+            String gzURI;
+
+            void install(const char *path, ESP8266WebServer *server) {
+                URI = path;
+                gzURI = URI + ".gz";
+                update();
+                server->on(path, [=]() {
+                    if (server->method() == HTTP_POST) {  // AJAX request
+
+                        page.handleRequest( ptr );
+
+                    } else {  // Page load
+                        if(SPIFFS.exists(gzURI)) {
+                            File file = SPIFFS.open(gzURI, "r");                 // Open it
+                            server->streamFile(file, "text/html");              // And send it to the client
+                            file.close();                                       // Then close the file again
+                        }
+                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+                    }
+                });
+            }
+    };
+
+
+
+    class thatwebpage {
+
+        public:
+            EmbAJAXCheckButton check;
+            EmbAJAXMutableSpan check_d;
+
+            EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+            void (*ptr)() = NULL;
+
+            thatwebpage() : 
+                check("check", " That option"),
+                check_d("check_d"),
+                page(page_elements, "That")
+                {
+                    ptr = (void(*)())(&thatwebpage::update);              // This is a bit nasty 
+                };
+
+            void update() {
+                check_d.setValue(check.isChecked() ? "checked" : "not checked");
+            };
+
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
+
+            String URI;
+            String gzURI;
+
+            void install(const char *path, ESP8266WebServer *server) {
+                URI = path;
+                gzURI = URI + ".gz";
+                update();
+                server->on(path, [=]() {
+                    if (server->method() == HTTP_POST) {  // AJAX request
+                        page.handleRequest( ptr );
+                    } else {  // Page load
+                        if(SPIFFS.exists(gzURI)) {
+                            File file = SPIFFS.open(gzURI, "r");                 // Open it
+                            server->streamFile(file, "text/html");              // And send it to the client
+                            file.close();                                       // Then close the file again
+                        }
+                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+                    }
+                });
+            }
+    };
+
+
+
+
     // Network Manager Class
 
     class NetworkManager {
 
         public:
 
-            NetworkManager();
+            NetworkManager() : _server(WEB_PORT), _ajax(&_server)  {
+                _StationConnected = false;
+                _APRunning = false;
+                _ConnectedToInternet = false;
+            }
 
             void begin( NetworkSettings &settings );
 
@@ -189,6 +296,9 @@ SOFTWARE.
             bool isInternetConnected( ) { return _ConnectedToInternet; };
 
             WiFiClient& getWiFiClient() { return _client; };
+            ESP8266WebServer& getWebServer() { return _server; };
+
+           
 
         protected:
 
@@ -211,8 +321,13 @@ SOFTWARE.
            
             int _disconnectedStation;       // Used to see how long disconnected in station mode
 
-            ESP8266WebServer _server;
+            EmbAJAXOutputDriverWebServerClass _server;
             WiFiClient _client;
+            EmbAJAXOutputDriver _ajax;
+            thiswebpage _thispage;
+            thatwebpage _thatpage;
+            
+            static void updateUI();
 
             String getContentType(String filename); // convert the file extension to the MIME type
             bool handleFileRead(String path);       // send the right file to the client (if it exists)
