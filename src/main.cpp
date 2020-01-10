@@ -7,6 +7,7 @@
 
 
 
+
 void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
     LOG(device.getChipId(true));
@@ -57,6 +58,7 @@ void ICACHE_FLASH_ATTR setup() {
     
     elaborateBuildFlags();
     LOG(F("(Loop) Starting"));
+
     
 }
 
@@ -65,5 +67,7 @@ void loop() {
 
   updater.handle();
   network.handle();
+
+  
 
 }

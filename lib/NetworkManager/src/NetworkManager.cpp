@@ -32,6 +32,8 @@ SOFTWARE.
 #include <FS.h> 
 
 
+
+
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
@@ -65,6 +67,7 @@ void NetworkSettings::setAPDefaults() {
 }
 
 
+
 // TODO - Flash cache
 
 
@@ -72,11 +75,12 @@ void NetworkSettings::setAPDefaults() {
 
 // Public:
 
-NetworkManager::NetworkManager() {
-    _StationConnected = false;
-    _APRunning = false;
-    _ConnectedToInternet = false;
-}
+
+
+
+
+
+
 
 
 void NetworkManager::begin( NetworkSettings &settings ) {
@@ -89,17 +93,32 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
     InitializeWebServer();
 
+
+
 }
 
 
 void NetworkManager::InitializeWebServer() {
 
-    _server.begin(); 
+
 
     _server.onNotFound([&]() {                              // If the client requests any URI
       if( !handleFileRead(_server.uri()) )                  // send it if it exists
         _server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
     });
+
+//    _ajax.installPage(&_thepage.page, "/", (void (*)())(_thepage.update));
+_thispage.install("/this.html", &_server);
+_thispage.update();
+
+_thatpage.install("/that.html", &_server);
+_thatpage.update();
+
+    _server.begin();
+
+
+  //  updateUI(); // init displays
+
 
     SPIFFS.begin(); 
 
@@ -135,11 +154,11 @@ bool NetworkManager::handleFileRead(String shortpath) {
 
     String contentType = getContentType(path);          // Get the MIME type
     if (SPIFFS.exists(path)) {                          // If the file exists
-    File file = SPIFFS.open(path, "r");                 // Open it
-    _server.streamFile(file, contentType);              // And send it to the client
-    file.close();                                       // Then close the file again
-                                
-    return true;
+        File file = SPIFFS.open(path, "r");                 // Open it
+        _server.streamFile(file, contentType);              // And send it to the client
+        file.close();                                       // Then close the file again
+                                    
+        return true;
     }
 
     LOG(F("(Network) Web server - file not found"));
@@ -175,7 +194,9 @@ void NetworkManager::handle() {
 
     handleWiFi();
 
-    _server.handleClient();
+    _ajax.loopHook();
+
+  //  _server.handleClient();
 
 }
 
