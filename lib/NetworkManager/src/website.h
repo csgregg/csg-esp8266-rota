@@ -7,8 +7,56 @@
 
     #include "Literals.h"
 
+    void update_thispage();
+    void update_thatpage();
 
-    // Literal Manager Class
+
+    class this_webpage {
+
+        public:
+            EmbAJAXCheckButton check;
+            EmbAJAXMutableSpan check_d;
+
+            EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+            this_webpage()
+                : check("check", " This option")
+                , check_d("check_d")
+                , page(page_elements, "This")
+                {};
+
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
+
+            String URI = "/this.html";
+    };
+
+
+    class that_webpage {
+
+        public:
+            EmbAJAXCheckButton check;
+            EmbAJAXMutableSpan check_d;
+
+            EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+            that_webpage()
+                : check("check", " That option")
+                , check_d("check_d")
+                , page(page_elements, "That")
+                {};
+
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
+
+            String URI = "/that.html";
+    };
+
+    extern this_webpage thispage;
+    extern that_webpage thatpage;
+
+
+/*
+
+
     class WebsiteManager {
 
         public:
@@ -115,16 +163,19 @@
     template<typename Ttitle, typename ... Telements>
     struct DataStructure<Ttitle, Telements ...>
     {
-        DataStructure(const Ttitle& title, const Telements& ... elements)
-            : title(title)
-            , elements(elements...)
-            , page_elements{&elements...}
+        DataStructure(const Ttitle& ptitle, const Telements& ... pelements)
+            : title(ptitle)
+            , elements(pelements...)
+            , page_elements{&pelements...}
+        //  , page(page_elements, ptitle)
         {}
         
         Ttitle title;
         DataStructure<Telements ... > elements;
 
         const EmbAJAXBase* page_elements[sizeof...(Telements)];
+
+        //   EmbAJAXPage<(sizeof...(Telements)/sizeof(EmbAJAXBase*))> page;
 
         template<size_t idx>
         auto get()
@@ -156,10 +207,15 @@
 
 
 
-    DataStructure<String, newbtn, EmbAJAXMutableSpan> data("Title","check","check_d");
-    
+    DataStructure<char*, newbtn, EmbAJAXMutableSpan> data("Title","check","check_d");
+
     void datahandle() {
         data.get<2>().setValue(data.get<1>().isChecked() ? " Checked" : " Not checked");
     };
-
+*/
 #endif
+
+
+
+
+
