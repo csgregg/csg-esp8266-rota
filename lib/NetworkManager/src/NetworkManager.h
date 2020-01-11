@@ -36,6 +36,8 @@ SOFTWARE.
     #include <ESP8266WebServer.h>
     #include <EmbAJAX.h>
 
+    #include "website.h"
+
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
@@ -174,105 +176,6 @@ SOFTWARE.
 
 
 
-    class thiswebpage {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            void (*ptr)() = NULL;
-
-            thiswebpage() : 
-                check("check", " That option"),
-                check_d("check_d"),
-                page(page_elements, "This")
-                {
-                    ptr = (void(*)())(&thiswebpage::update);              // This is a bit nasty 
-                };
-
-            void update() {
-                check_d.setValue(check.isChecked() ? "checked" : "not checked");
-            };
-
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-            String URI;
-            String gzURI;
-
-            void install(const char *path, ESP8266WebServer *server) {
-                URI = path;
-                gzURI = URI + ".gz";
-                update();
-                server->on(path, [=]() {
-                    if (server->method() == HTTP_POST) {  // AJAX request
-
-                        page.handleRequest( ptr );
-
-                    } else {  // Page load
-                        if(SPIFFS.exists(gzURI)) {
-                            File file = SPIFFS.open(gzURI, "r");                 // Open it
-                            server->streamFile(file, "text/html");              // And send it to the client
-                            file.close();                                       // Then close the file again
-                        }
-                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
-                    }
-                });
-            }
-    };
-
-
-
-    class thatwebpage {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            void (*ptr)() = NULL;
-
-            thatwebpage() : 
-                check("check", " That option"),
-                check_d("check_d"),
-                page(page_elements, "That")
-                {
-                    ptr = (void(*)())(&thatwebpage::update);              // This is a bit nasty 
-                };
-
-            void update() {
-                check_d.setValue(check.isChecked() ? "checked" : "not checked");
-            };
-
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-            String URI;
-            String gzURI;
-
-            void install(const char *path, ESP8266WebServer *server) {
-                URI = path;
-                gzURI = URI + ".gz";
-                update();
-                server->on(path, [=]() {
-                    if (server->method() == HTTP_POST) {  // AJAX request
-                        page.handleRequest( ptr );
-                    } else {  // Page load
-                        if(SPIFFS.exists(gzURI)) {
-                            File file = SPIFFS.open(gzURI, "r");                 // Open it
-                            server->streamFile(file, "text/html");              // And send it to the client
-                            file.close();                                       // Then close the file again
-                        }
-                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
-                    }
-                });
-            }
-    };
-
-
-
-
     // Network Manager Class
 
     class NetworkManager {
@@ -325,8 +228,6 @@ SOFTWARE.
             EmbAJAXOutputDriverWebServerClass _server;
             WiFiClient _client;
             EmbAJAXOutputDriver _ajax;
-            thiswebpage _thispage;
-            thatwebpage _thatpage;
             
             static void updateUI();
 

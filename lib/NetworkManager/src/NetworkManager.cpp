@@ -100,25 +100,17 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
 void NetworkManager::InitializeWebServer() {
 
-
-
     _server.onNotFound([&]() {                              // If the client requests any URI
-      if( !handleFileRead(_server.uri()) )                  // send it if it exists
-        _server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+
+        if( _server.method() == HTTP_POST) {  // AJAX request}
+            if( _server.uri() == thispage.URI) update_thispage();
+            if( _server.uri() == thatpage.URI) update_thatpage();
+        }
+        else if( !handleFileRead(_server.uri()) )                  // send it if it exists
+            _server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
     });
 
-//    _ajax.installPage(&_thepage.page, "/", (void (*)())(_thepage.update));
-_thispage.install("/this.html", &_server);
-_thispage.update();
-
-_thatpage.install("/that.html", &_server);
-_thatpage.update();
-
     _server.begin();
-
-
-  //  updateUI(); // init displays
-
 
     SPIFFS.begin(); 
 
