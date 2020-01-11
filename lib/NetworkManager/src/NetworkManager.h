@@ -34,7 +34,8 @@ SOFTWARE.
     #define NETWORK_MANAGER_H
 
     #include <ESP8266WebServer.h>
-    #include "EmbAJAX.h"
+    #include <EmbAJAX.h>
+
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32

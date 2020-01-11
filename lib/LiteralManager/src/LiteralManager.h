@@ -64,6 +64,7 @@ Acknowledgements
         public:
 
             String Get(literalID ID);           // Retrieve literal by ID
+            char * pGet(literalID ID);          // Retrieve literal ptr by ID
 
 
         protected:
