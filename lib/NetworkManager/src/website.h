@@ -5,7 +5,7 @@
 
     #include <EmbAJAX.h>
 
-    #include "Literals.h"
+ //   #include "Literals.h"
 
     void update_thispage();
     void update_thatpage();
@@ -146,46 +146,45 @@
 
 // https://riptutorial.com/cplusplus/example/19276/variadic-template-data-structures
         
+*/        
 
     class newbtn : public EmbAJAXCheckButton {
         public:
             newbtn(const char* id) : EmbAJAXCheckButton(id, id) {};
     };
 
-    template<size_t idx, typename T>
-    struct GetHelper;
-
-    template<typename ... Ttitle>
+//    template<size_t idx, typename T>
+ //   struct GetHelper;
+/*
+    template<typename ... First>
     struct DataStructure
     {
     };
 
-    template<typename Ttitle, typename ... Telements>
-    struct DataStructure<Ttitle, Telements ...>
+    template<typename First, typename ... Rest>
+    struct DataStructure<First, Rest ...>
     {
-        DataStructure(const Ttitle& ptitle, const Telements& ... pelements)
-            : title(ptitle)
-            , elements(pelements...)
-            , page_elements{&pelements...}
-        //  , page(page_elements, ptitle)
+        DataStructure(const First& first, const Rest& ... rest)
+      //      : page_elements{first, rest...}
+         //   , page(page_elements,"T")
         {}
         
-        Ttitle title;
-        DataStructure<Telements ... > elements;
+        First first;
+        DataStructure<Rest ... > rest;
 
-        const EmbAJAXBase* page_elements[sizeof...(Telements)];
+     //   EmbAJAXBase* page_elements[sizeof...(Rest)];
 
-        //   EmbAJAXPage<(sizeof...(Telements)/sizeof(EmbAJAXBase*))> page;
+     //   EmbAJAXPage<sizeof...(Rest)> page;
 
         template<size_t idx>
         auto get()
         {
             return GetHelper<idx, DataStructure<Ttitle,Telements...>>::get(*this);
         }
-        
-    };
+      */  
+ //   };
 
-
+/*
     template<typename Ttitle, typename ... Telements>
     struct GetHelper<0, DataStructure<Ttitle, Telements ... >>
     {
@@ -205,14 +204,85 @@
         }
     };
 
-
-
-    DataStructure<char*, newbtn, EmbAJAXMutableSpan> data("Title","check","check_d");
-
-    void datahandle() {
-        data.get<2>().setValue(data.get<1>().isChecked() ? " Checked" : " Not checked");
-    };
 */
+
+ //   DataStructure<EmbAJAXMutableSpan,EmbAJAXMutableSpan> data("check","Check2");
+
+  //  void datahandle() {
+    //    data.get<2>().setValue(data.get<1>().isChecked() ? " Checked" : " Not checked");
+   // };
+
+
+
+
+
+
+
+
+
+template<size_t idx, typename T>
+struct GetHelper;
+
+template<typename ... T>
+class DataStructure2
+{
+};
+
+template<typename T, typename ... Rest>
+class DataStructure2<T, Rest ...>
+{
+    public:
+    DataStructure2(const T& first, const Rest& ... rest)
+        : first(first)
+        , rest(rest...)
+        , page_elements{const_cast<Rest*>(&rest)...}
+        , page(page_elements, "t","")
+    {}
+    
+    T first;
+    DataStructure2<Rest ... > rest;
+
+    EmbAJAXBase* page_elements[sizeof...(Rest)];
+    EmbAJAXPage<sizeof...(Rest)> page;
+
+
+    template<size_t idx>
+    auto get()
+    {
+        return GetHelper<idx, DataStructure2<T,Rest...>>::get(*this);
+    }
+};
+
+template<typename T, typename ... Rest>
+struct GetHelper<0, DataStructure2<T, Rest ... >>
+{
+    static T get(DataStructure2<T, Rest...>& data2)
+    {
+        return data2.first;
+    }
+};
+
+template<size_t idx, typename T, typename ... Rest>
+struct GetHelper<idx, DataStructure2<T, Rest ... >>
+{
+    static auto get(DataStructure2<T, Rest...>& data2)
+    {
+        return GetHelper<idx-1, DataStructure2<Rest ...>>::get(data2.rest);
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 
 
