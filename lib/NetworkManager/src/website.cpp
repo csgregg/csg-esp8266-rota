@@ -1,5 +1,4 @@
-#include <Arduino.h>
-#include <pgmspace.h>
+
 
 #include "website.h"
 
@@ -17,7 +16,46 @@ void update_thatpage() {
     thatpage.check_d.setValue(thatpage.check.isChecked() ? "checked" : "not checked");
 }
 
+/*
+#define MAKE_EmbAJAXPage(name, title, header_add, ...) \
+    EmbAJAXBase* name##_elements[] = {__VA_ARGS__}; \
+    EmbAJAXPage<sizeof(name##_elements)/sizeof(EmbAJAXBase*)> name(name##_elements, title, header_add);
+*/
 
+
+newbtn check("dsdsd");
+EmbAJAXMutableSpan statictext("sdsd");
+
+/*
+MAKE_EmbAJAXPage(page, "title", "",
+  &check,
+  &statictext
+)
+*/
+
+EmbAJAXBase* page_elements[] = {&check, &statictext};
+EmbAJAXPage<2> page(page_elements, "title", "");
+
+EmbAJAXSlider slider("slider", 0, 1000, 500);
+
+const char* radio_opts[] = {"Option1", "Option2", "Option3"};
+void buttonPressed(EmbAJAXPushButton*) { return; }
+
+    DataStructure2
+        < String
+        , EmbAJAXRadioGroup<3>
+        , EmbAJAXPushButton
+        , EmbAJAXSlider
+    > data2
+        ( "title"
+        ,{"boo",radio_opts}
+        ,{"button", "I can count", buttonPressed}
+        , {"slider", 0, 1000, 500}
+    );
+
+void tmp(){
+    
+}
 
 
 // Create the global config instance
