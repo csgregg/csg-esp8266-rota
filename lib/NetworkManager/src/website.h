@@ -219,55 +219,57 @@
 
 
 
-
-template<size_t idx, typename T>
+// Helper template
+template<size_t idx, typename Path>
 struct GetHelper;
 
-template<typename ... T>
-class DataStructure2
+// Primary template for AJAXWebpage class
+template<typename ... Path>
+class AJAXWebPage
 {
 };
 
-template<typename T, typename ... Rest>
-class DataStructure2<T, Rest ...>
+// AJAXWebpage class
+// Built on EmbAJAX
+template<typename Path, typename ... Elements>
+class AJAXWebPage<Path, Elements ...>
 {
     public:
-    DataStructure2(const T& first, const Rest& ... rest)
-        : first(first)
-        , rest(rest...)
-        , page_elements{const_cast<Rest*>(&rest)...}
-        , page(page_elements, "t","")
-    {}
-    
-    T first;
-    DataStructure2<Rest ... > rest;
+        AJAXWebPage(const Path& path, const Elements& ... elements)
+            : path(path)
+            , elements(elements...)
+            , page_elements{const_cast<Elements*>(&elements)...}
+            , page(page_elements,"","")
+        {}
+        
+        Path path;
+        AJAXWebPage<Elements ... > elements;
 
-    EmbAJAXBase* page_elements[sizeof...(Rest)];
-    EmbAJAXPage<sizeof...(Rest)> page;
+        EmbAJAXBase* page_elements[sizeof...(Elements)];
+        EmbAJAXPage<sizeof...(Elements)> page;
 
+        template<size_t idx>
+        auto get()
+        {
+            return GetHelper<idx, AJAXWebPage<Path,Elements...>>::get(*this);
+        }
+};
 
-    template<size_t idx>
-    auto get()
+template<typename Path, typename ... Elements>
+struct GetHelper<0, AJAXWebPage<Path, Elements ... >>
+{
+    static Path get(AJAXWebPage<Path, Elements...>& page)
     {
-        return GetHelper<idx, DataStructure2<T,Rest...>>::get(*this);
+        return page.path;
     }
 };
 
-template<typename T, typename ... Rest>
-struct GetHelper<0, DataStructure2<T, Rest ... >>
+template<size_t idx, typename Path, typename ... Elements>
+struct GetHelper<idx, AJAXWebPage<Path, Elements ... >>
 {
-    static T get(DataStructure2<T, Rest...>& data2)
+    static auto get(AJAXWebPage<Path, Elements...>& page)
     {
-        return data2.first;
-    }
-};
-
-template<size_t idx, typename T, typename ... Rest>
-struct GetHelper<idx, DataStructure2<T, Rest ... >>
-{
-    static auto get(DataStructure2<T, Rest...>& data2)
-    {
-        return GetHelper<idx-1, DataStructure2<Rest ...>>::get(data2.rest);
+        return GetHelper<idx-1, AJAXWebPage<Elements ...>>::get(page.elements);
     }
 };
 
