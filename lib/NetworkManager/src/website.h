@@ -6,7 +6,7 @@
     #include <EmbAJAX.h>
 
  //   #include "Literals.h"
-
+/*
     void update_thispage();
     void update_thatpage();
 
@@ -52,7 +52,7 @@
 
     extern this_webpage thispage;
     extern that_webpage thatpage;
-
+*/
 
 /*
 
@@ -147,12 +147,12 @@
 // https://riptutorial.com/cplusplus/example/19276/variadic-template-data-structures
         
 */        
-
+/*
     class newbtn : public EmbAJAXCheckButton {
         public:
             newbtn(const char* id) : EmbAJAXCheckButton(id, id) {};
     };
-
+*/
 //    template<size_t idx, typename T>
  //   struct GetHelper;
 /*
@@ -235,15 +235,18 @@ template<typename Path, typename ... Elements>
 class AJAXWebPage<Path, Elements ...>
 {
     public:
-        AJAXWebPage(const Path& path, const Elements& ... elements)
-            : path(path)
-            , elements(elements...)
-            , page_elements{const_cast<Elements*>(&elements)...}
+        AJAXWebPage(const Path& ppath, const Elements& ... pelements)
+            : path(ppath)
+            , elements(pelements...)
+            , page_elements{const_cast<Elements*>(&pelements)...}
             , page(page_elements,"","")
-        {}
+        {
+            
+        }
         
         Path path;
         AJAXWebPage<Elements ... > elements;
+        void (*handler)();
 
         EmbAJAXBase* page_elements[sizeof...(Elements)];
         EmbAJAXPage<sizeof...(Elements)> page;
