@@ -37,24 +37,23 @@ EmbAJAXBase* page_elements[] = {&check, &statictext};
 EmbAJAXPage<2> page(page_elements, "title", "");
 
 EmbAJAXSlider slider("slider", 0, 1000, 500);
-
 const char* radio_opts[] = {"Option1", "Option2", "Option3"};
 void buttonPressed(EmbAJAXPushButton*) { return; }
 
-    DataStructure2
-        < String
-        , EmbAJAXRadioGroup<3>
-        , EmbAJAXPushButton
-        , EmbAJAXSlider
-    > data2
-        ( "title"
-        ,{"boo",radio_opts}
-        ,{"button", "I can count", buttonPressed}
-        , {"slider", 0, 1000, 500}
-    );
+AJAXWebPage
+    < const char*
+    , EmbAJAXRadioGroup<3>
+    , EmbAJAXPushButton
+    , EmbAJAXSlider
+> page1
+    ( "/page1.html"
+    , {"radio",radio_opts}
+    , {"button", "I can count", buttonPressed}
+    , {"slider", 0, 1000, 500}
+);
 
 void tmp(){
-    
+    Serial.println(page1.get<0>());
 }
 
 
