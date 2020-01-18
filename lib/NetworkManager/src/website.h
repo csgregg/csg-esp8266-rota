@@ -1,37 +1,47 @@
+/* Website Manager Library
+
+MIT License
+
+Copyright (c) 2019 Chris Gregg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-----------------------------------------------------------------------------
+
+
+*/
+
+
 
 #ifndef WEBSITE_MANAGER_H
 
     #define WEBSITE_MANAGER_H
 
-    #include <EmbAJAX.h>
+    #include <ESP8266WebServer.h>
+    #include "EmbAJAX.h"
 
- //   #include "Literals.h"
-/*
-    void update_thispage();
-    void update_thatpage();
+    #define WEB_PORT 80
+    
 
+    
 
-    class this_webpage {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            this_webpage()
-                : check("check", " This option")
-                , check_d("check_d")
-                , page(page_elements, "This")
-                {};
-
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-            String URI = "/this.html";
-    };
-
-
-    class that_webpage {
+    class thiswebpage {
 
         public:
             EmbAJAXCheckButton check;
@@ -39,258 +49,137 @@
 
             EmbAJAXBase* page_elements[2] = {&check, &check_d};
 
-            that_webpage()
-                : check("check", " That option")
-                , check_d("check_d")
-                , page(page_elements, "That")
-                {};
+            void (*ptr)() = NULL;
+
+            thiswebpage() : 
+                check("check", " That option"),
+                check_d("check_d"),
+                page(page_elements, "This")
+                {
+                    ptr = (void(*)())(&thiswebpage::update);              // This is a bit nasty 
+                };
+
+            void update() {
+                check_d.setValue(check.isChecked() ? "checked" : "not checked");
+            };
 
             EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
 
-            String URI = "/that.html";
+            String URI;
+            String gzURI;
+
+            void install(const char *path, ESP8266WebServer *server) {
+                URI = path;
+                gzURI = URI + ".gz";
+                update();
+                server->on(path, [=]() {
+                    if (server->method() == HTTP_POST) {  // AJAX request
+
+                        page.handleRequest( ptr );
+
+                    } else {  // Page load
+
+                        page.printPage();
+                    /*
+                        if(SPIFFS.exists(gzURI)) {
+                            File file = SPIFFS.open(gzURI, "r");                 // Open it
+                            server->streamFile(file, "text/html");              // And send it to the client
+                            file.close();                                       // Then close the file again
+                        }
+                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+
+                        */
+                    }
+                });
+            }
     };
 
-    extern this_webpage thispage;
-    extern that_webpage thatpage;
-*/
 
-/*
 
+    class thatwebpage {
+
+        public:
+            EmbAJAXCheckButton check;
+            EmbAJAXMutableSpan check_d;
+
+            EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+            void (*ptr)() = NULL;
+
+            thatwebpage() : 
+                check("check", " That option"),
+                check_d("check_d"),
+                page(page_elements, "That")
+                {
+                    ptr = (void(*)())(&thatwebpage::update);              // This is a bit nasty 
+                };
+
+            void update() {
+                check_d.setValue(check.isChecked() ? "checked" : "not checked");
+            };
+
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
+
+            String URI;
+            String gzURI;
+
+            void install(const char *path, ESP8266WebServer *server) {
+                URI = path;
+                gzURI = URI + ".gz";
+                update();
+                server->on(path, [=]() {
+                    if (server->method() == HTTP_POST) {  // AJAX request
+                        page.handleRequest( ptr );
+                    } else {  // Page load
+                        if(SPIFFS.exists(gzURI)) {
+                            Serial.println(gzURI);
+                            File file = SPIFFS.open(gzURI, "r");                 // Open it
+                            server->streamFile(file, "text/html");              // And send it to the client
+                            file.close();                                       // Then close the file again
+                        }
+                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
+                    }
+                });
+            }
+    };
+
+
+    // Website Manager Class
 
     class WebsiteManager {
 
         public:
 
+            EmbAJAXOutputDriver _ajax;
+            EmbAJAXOutputDriverWebServerClass _server;
+
+            WebsiteManager()
+                : _server(WEB_PORT)
+                , _ajax(&_server)
+            {}
+
+            void InitializeWebServer();
+            ESP8266WebServer& getWebServer() { return _server; };
 
 
         protected:
 
 
-
-    };
-    
-    
-    extern WebsiteManager website;             // Declaring the global instance
-
-
-
-    class page1_elements {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            page1_elements() : 
-
-                // Initialize page elements
-                check("check", " Check Test"),
-                check_d("check_d"),
-
-                page(page_elements, "Page 1")            // Initialize page title
-                {};
-
-
-        protected:
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-
-    } page1;
-
-    void page1_ajax() {
-        page1.check_d.setValue(page1.check.isChecked() ? " Checked" : " Not checked");
-    };
-
-
-   #define MAX_PAGE_PATH_LEN 20
-
-    class page2_elements {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            page2_elements() : 
-
-                // Initialize page elements
-                check("check", "check"),
-                check_d("check_d"),
-
-                page(page_elements, "")            // Initialize page title
-                {};
-
-
-        protected:
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-
-    } page2;
-
-    void page2_ajax() {
-        page2.check_d.setValue(page2.check.isChecked() ? " Checked" : " Not checked");
-    };
-
-
-
-    typedef void(*ajax_page)();
-
-
-    ajax_page ajaxPages[] = {
-        page1_ajax,
-        page2_ajax
-    };
-
-
-// https://riptutorial.com/cplusplus/example/19276/variadic-template-data-structures
-        
-*/        
-/*
-    class newbtn : public EmbAJAXCheckButton {
-        public:
-            newbtn(const char* id) : EmbAJAXCheckButton(id, id) {};
-    };
-*/
-//    template<size_t idx, typename T>
- //   struct GetHelper;
-/*
-    template<typename ... First>
-    struct DataStructure
-    {
-    };
-
-    template<typename First, typename ... Rest>
-    struct DataStructure<First, Rest ...>
-    {
-        DataStructure(const First& first, const Rest& ... rest)
-      //      : page_elements{first, rest...}
-         //   , page(page_elements,"T")
-        {}
-        
-        First first;
-        DataStructure<Rest ... > rest;
-
-     //   EmbAJAXBase* page_elements[sizeof...(Rest)];
-
-     //   EmbAJAXPage<sizeof...(Rest)> page;
-
-        template<size_t idx>
-        auto get()
-        {
-            return GetHelper<idx, DataStructure<Ttitle,Telements...>>::get(*this);
-        }
-      */  
- //   };
-
-/*
-    template<typename Ttitle, typename ... Telements>
-    struct GetHelper<0, DataStructure<Ttitle, Telements ... >>
-    {
-        static Ttitle get(DataStructure<Ttitle, Telements...>& data)
-        {
-            return data.title;
-        }
-    };
-
-
-    template<size_t idx, typename Ttitle, typename ... Telements>
-    struct GetHelper<idx, DataStructure<Ttitle, Telements ... >>
-    {
-        static auto get(DataStructure<Ttitle, Telements...>& data)
-        {
-            return GetHelper<idx-1, DataStructure<Telements ...>>::get(data.elements);
-        }
-    };
-
-*/
-
- //   DataStructure<EmbAJAXMutableSpan,EmbAJAXMutableSpan> data("check","Check2");
-
-  //  void datahandle() {
-    //    data.get<2>().setValue(data.get<1>().isChecked() ? " Checked" : " Not checked");
-   // };
-
-
-
-
-
-
-
-
-// Helper template
-template<size_t idx, typename Path>
-struct GetHelper;
-
-// Primary template for AJAXWebpage class
-template<typename ... Path>
-class AJAXWebPage
-{
-};
-
-// AJAXWebpage class
-// Built on EmbAJAX
-template<typename Path, typename ... Elements>
-class AJAXWebPage<Path, Elements ...>
-{
-    public:
-        AJAXWebPage(const Path& ppath, const Elements& ... pelements)
-            : path(ppath)
-            , elements(pelements...)
-            , page_elements{const_cast<Elements*>(&pelements)...}
-            , page(page_elements,"","")
-        {
+            thiswebpage _thispage;
+            thatwebpage _thatpage;
             
-        }
-        
-        Path path;
-        AJAXWebPage<Elements ... > elements;
-        void (*handler)();
+            static void updateUI();
 
-        EmbAJAXBase* page_elements[sizeof...(Elements)];
-        EmbAJAXPage<sizeof...(Elements)> page;
+            String getContentType(String filename); // convert the file extension to the MIME type
+            bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
-        template<size_t idx>
-        auto get()
-        {
-            return GetHelper<idx, AJAXWebPage<Path,Elements...>>::get(*this);
-        }
-};
-
-template<typename Path, typename ... Elements>
-struct GetHelper<0, AJAXWebPage<Path, Elements ... >>
-{
-    static Path get(AJAXWebPage<Path, Elements...>& page)
-    {
-        return page.path;
-    }
-};
-
-template<size_t idx, typename Path, typename ... Elements>
-struct GetHelper<idx, AJAXWebPage<Path, Elements ... >>
-{
-    static auto get(AJAXWebPage<Path, Elements...>& page)
-    {
-        return GetHelper<idx-1, AJAXWebPage<Elements ...>>::get(page.elements);
-    }
-};
+        private:
 
 
+    };
 
 
-
-
-
-
-
-
-
+    extern WebsiteManager website;        // Declaring the global instance
 
 
 #endif
-
-
-
-
-

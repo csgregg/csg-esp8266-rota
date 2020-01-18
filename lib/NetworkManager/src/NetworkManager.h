@@ -33,11 +33,6 @@ SOFTWARE.
 
     #define NETWORK_MANAGER_H
 
-    #include <ESP8266WebServer.h>
-    #include <EmbAJAX.h>
-
-    #include "website.h"
-
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
@@ -129,9 +124,6 @@ SOFTWARE.
     #define DEFAULT_CHANNEL 11
 
 
-    #define WEB_PORT 80
-    
-
     struct NetworkSettings {
 
             void setWiFiModeDefault() { wifiMode = DEFAULT_WIFIMODE; };
@@ -182,7 +174,7 @@ SOFTWARE.
 
         public:
 
-            NetworkManager() : _server(WEB_PORT), _ajax(&_server)  {
+            NetworkManager()  {
                 _StationConnected = false;
                 _APRunning = false;
                 _ConnectedToInternet = false;
@@ -200,8 +192,6 @@ SOFTWARE.
             bool isInternetConnected( ) { return _ConnectedToInternet; };
 
             WiFiClient& getWiFiClient() { return _client; };
-            ESP8266WebServer& getWebServer() { return _server; };
-
            
 
         protected:
@@ -218,6 +208,7 @@ SOFTWARE.
             void InitializeWebServer();
 
             NetworkSettings *_networkSettings;
+            WiFiClient _client;
 
             bool _StationConnected;         // Are we connected to WiFi
             bool _APRunning;
@@ -225,14 +216,7 @@ SOFTWARE.
            
             int _disconnectedStation;       // Used to see how long disconnected in station mode
 
-            EmbAJAXOutputDriverWebServerClass _server;
-            WiFiClient _client;
-            EmbAJAXOutputDriver _ajax;
-            
-            static void updateUI();
 
-            String getContentType(String filename); // convert the file extension to the MIME type
-            bool handleFileRead(String path);       // send the right file to the client (if it exists)
    
         private:
 
@@ -240,7 +224,6 @@ SOFTWARE.
     };
 
     extern NetworkManager network;        // Declaring the global instance
-
 
 
 #endif
