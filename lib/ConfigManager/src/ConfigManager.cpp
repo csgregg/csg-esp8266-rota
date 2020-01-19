@@ -96,9 +96,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 
     // Default settings
 
-    settings.networkConfig.setWiFiModeDefault();
-    settings.networkConfig.setStationDefaults(true);
-    settings.networkConfig.setAPDefaults();
+    settings.networkConfig.setWiFiDefaults();
 
 
     // Save to flash

@@ -2,11 +2,11 @@
 
 
 // Local WiFi
-#ifndef WIFI_SSID
-    #define WIFI_SSID "WIFI_SSID"
+#ifndef DEFAULT_WIFI_SSID
+    #define DEFAULT_WIFI_SSID "WIFI_SSID"
 #endif
-#ifndef WIFI_PASSWORD
-    #define WIFI_PASSWORD "WIFI_PASSWORD"
+#ifndef DEFAULT_WIFI_PWD
+    #define DEFAULT_WIFI_PWD "WIFI_PASSWORD"
 #endif
 
 

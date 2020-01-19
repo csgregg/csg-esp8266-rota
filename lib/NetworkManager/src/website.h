@@ -150,13 +150,13 @@ SOFTWARE.
 
         public:
 
-            EmbAJAXOutputDriver _ajax;
-            EmbAJAXOutputDriverWebServerClass _server;
-
             WebsiteManager()
                 : _server(WEB_PORT)
                 , _ajax(&_server)
             {}
+
+            EmbAJAXOutputDriver _ajax;
+            EmbAJAXOutputDriverWebServerClass _server;
 
             void InitializeWebServer();
             ESP8266WebServer& getWebServer() { return _server; };
