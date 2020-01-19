@@ -33,56 +33,116 @@ SOFTWARE.
 #include "Logger.h"
 
 
+struct thiswebpage {
+
+    const char* URL;
+    void (*handler)();
+
+    EmbAJAXCheckButton check;
+    EmbAJAXMutableSpan check_d;
+
+    EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+    thiswebpage( const char* pURL, void(*phandler)() ) : 
+        check("check", ""),
+        check_d("check_d"),
+        ajax(page_elements, "")
+        {
+            URL = pURL;
+            handler = phandler;
+        };
+
+    EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+
+} _thispage("/this.html", []() { 
+        _thispage.ajax.handleRequest( []() {
+            _thispage.check_d.setValue(_thispage.check.isChecked() ? " Checked" : " Not checked");
+        } );
+    } );
+
+struct thatwebpage {
+
+    const char* URL;
+    void (*handler)();
+
+    EmbAJAXCheckButton check;
+    EmbAJAXMutableSpan check_d;
+
+    EmbAJAXBase* page_elements[2] = {&check, &check_d};
+
+    thatwebpage( const char* pURL, void(*phandler)() ) : 
+        check("check", ""),
+        check_d("check_d"),
+        ajax(page_elements, "")
+        {
+            URL = pURL;
+            handler = phandler;
+        };
+
+    EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+
+} _thatpage("/that.html", []() { 
+        _thatpage.ajax.handleRequest( []() {
+            _thatpage.check_d.setValue(_thatpage.check.isChecked() ? " Checked" : " Not checked");
+        } );
+    } );
 
 
-void WebsiteManager::InitializeWebServer() {
+
+pagesinfo pages[] = {
+    {_thispage.URL, _thispage.handler},
+    {_thatpage.URL, _thatpage.handler}
+};
 
 
+void WebsiteManager::handleAJAX( const String path ) {
 
-    _server.onNotFound([&]() {                              // If the client requests any URI
-      if( !handleFileRead(_server.uri()) )                  // send it if it exists
-        _server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
-    });
-
-//    _ajax.installPage(&_thepage.page, "/", (void (*)())(_thepage.update));
-_thispage.install("/this.html", &_server);
-_thispage.update();
-
-_thatpage.install("/that.html", &_server);
-_thatpage.update();
-
-    _server.begin();
-
-
-    //updateUI(); // init displays
-
-
-    SPIFFS.begin(); 
-
+    for( u_int i = 0; i < sizeof(pages)/sizeof(pagesinfo); i++ )
+        if( path == pages[i].URL ) (pages[i].handler)();
 }
 
 
+void WebsiteManager::begin() {
 
+     // If the client requests any URI
+    _server.onNotFound( 
+
+        [&]() {                             
+
+            // AJAX request
+            if( _server.method() == HTTP_POST ) handleAJAX( _server.uri() ); 
+
+            // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
+            else if( !handleSPIFFS( _server.uri() ) ) _server.send( 404, F("text/html"), F("404: Not Found") );
+        
+        }
+
+    );
+
+    SPIFFS.begin();
+    _server.begin(); 
+
+}
 
 
 
 String WebsiteManager::getContentType(String filename) { // convert the file extension to the MIME type
-  if (filename.endsWith(F(".html"))) return F("text/html");
-  else if (filename.endsWith(F(".html.gz"))) return F("text/html");
-  else if (filename.endsWith(F(".css"))) return F("text/css");
-  else if (filename.endsWith(F(".css.gz"))) return F("text/css");
-  else if (filename.endsWith(F(".js"))) return F("application/javascript");
-  else if (filename.endsWith(F(".js.gz"))) return F("application/javascript");
-  else if (filename.endsWith(F(".ico"))) return F("image/x-icon");
-  else if (filename.endsWith(F(".ico.gz"))) return F("image/x-icon");
-  else if (filename.endsWith(F(".woff"))) return F("application/font-woff");
-  else if (filename.endsWith(F(".woff.gz"))) return F("application/font-woff");
-  return F("text/plain");
+    if (filename.endsWith(F(".html.gz"))) return F("text/html");
+    else if (filename.endsWith(F(".html"))) return F("text/html");
+    else if (filename.endsWith(F(".css.gz"))) return F("text/css");
+    else if (filename.endsWith(F(".css"))) return F("text/css");
+    else if (filename.endsWith(F(".js.gz"))) return F("application/javascript");
+    else if (filename.endsWith(F(".js"))) return F("application/javascript");
+    else if (filename.endsWith(F(".ico.gz"))) return F("image/x-icon");
+    else if (filename.endsWith(F(".ico"))) return F("image/x-icon");
+    else if (filename.endsWith(F(".woff.gz"))) return F("application/font-woff");
+    else if (filename.endsWith(F(".woff"))) return F("application/font-woff");
+    return F("text/plain");
 }
 
 
 // send the right file to the client (if it exists)
-bool WebsiteManager::handleFileRead(String shortpath) {
+bool WebsiteManager::handleSPIFFS(String shortpath) {
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
     logger.printf("(Network) Web server - file: %s", shortpath.c_str() );
@@ -93,12 +153,11 @@ bool WebsiteManager::handleFileRead(String shortpath) {
 
     String path = shortpath + ".gz";
 
-    String contentType = getContentType(path);          // Get the MIME type
-    if (SPIFFS.exists(path)) {                          // If the file exists
-        File file = SPIFFS.open(path, "r");                 // Open it
-        _server.streamFile(file, contentType);              // And send it to the client
-        file.close();                                       // Then close the file again
-                                    
+    String contentType = getContentType(path);              // Get the MIME type
+    if( SPIFFS.exists(path) ) {                             // If the file exists then send it
+        File file = SPIFFS.open(path, "r");
+        _server.streamFile(file, contentType);
+        file.close();
         return true;
     }
 
@@ -106,6 +165,7 @@ bool WebsiteManager::handleFileRead(String shortpath) {
 
     return false;                                         // If the file doesn't exist, return false
 }
+
 
 
 // Create the global config instance
