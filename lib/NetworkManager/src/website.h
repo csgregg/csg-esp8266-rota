@@ -39,109 +39,11 @@ SOFTWARE.
     #define WEB_PORT 80
     
 
-    
-
-    class thiswebpage {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            void (*ptr)() = NULL;
-
-            thiswebpage() : 
-                check("check", " That option"),
-                check_d("check_d"),
-                page(page_elements, "This")
-                {
-                    ptr = (void(*)())(&thiswebpage::update);              // This is a bit nasty 
-                };
-
-            void update() {
-                check_d.setValue(check.isChecked() ? "checked" : "not checked");
-            };
-
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-            String URI;
-            String gzURI;
-
-            void install(const char *path, ESP8266WebServer *server) {
-                URI = path;
-                gzURI = URI + ".gz";
-                update();
-                server->on(path, [=]() {
-                    if (server->method() == HTTP_POST) {  // AJAX request
-
-                        page.handleRequest( ptr );
-
-                    } else {  // Page load
-
-                        page.printPage();
-                    /*
-                        if(SPIFFS.exists(gzURI)) {
-                            File file = SPIFFS.open(gzURI, "r");                 // Open it
-                            server->streamFile(file, "text/html");              // And send it to the client
-                            file.close();                                       // Then close the file again
-                        }
-                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
-
-                        */
-                    }
-                });
-            }
+    struct pagesinfo {
+        const char* URL;
+        void (*handler)();
     };
 
-
-
-    class thatwebpage {
-
-        public:
-            EmbAJAXCheckButton check;
-            EmbAJAXMutableSpan check_d;
-
-            EmbAJAXBase* page_elements[2] = {&check, &check_d};
-
-            void (*ptr)() = NULL;
-
-            thatwebpage() : 
-                check("check", " That option"),
-                check_d("check_d"),
-                page(page_elements, "That")
-                {
-                    ptr = (void(*)())(&thatwebpage::update);              // This is a bit nasty 
-                };
-
-            void update() {
-                check_d.setValue(check.isChecked() ? "checked" : "not checked");
-            };
-
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> page;
-
-            String URI;
-            String gzURI;
-
-            void install(const char *path, ESP8266WebServer *server) {
-                URI = path;
-                gzURI = URI + ".gz";
-                update();
-                server->on(path, [=]() {
-                    if (server->method() == HTTP_POST) {  // AJAX request
-                        page.handleRequest( ptr );
-                    } else {  // Page load
-                        if(SPIFFS.exists(gzURI)) {
-                            Serial.println(gzURI);
-                            File file = SPIFFS.open(gzURI, "r");                 // Open it
-                            server->streamFile(file, "text/html");              // And send it to the client
-                            file.close();                                       // Then close the file again
-                        }
-                        else server->send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
-                    }
-                });
-            }
-    };
 
 
     // Website Manager Class
@@ -155,23 +57,19 @@ SOFTWARE.
                 , _ajax(&_server)
             {}
 
-            EmbAJAXOutputDriver _ajax;
             EmbAJAXOutputDriverWebServerClass _server;
+            EmbAJAXOutputDriver _ajax;
 
-            void InitializeWebServer();
-            ESP8266WebServer& getWebServer() { return _server; };
+            void begin();
+            void handle() { _ajax.loopHook(); };
 
 
         protected:
 
+            String getContentType( const String filename );         // convert the file extension to the MIME type
+            bool handleSPIFFS( const String path );                 // send the right file to the client (if it exists)
+            void handleAJAX( const String path );                   // process AJAX request
 
-            thiswebpage _thispage;
-            thatwebpage _thatpage;
-            
-            static void updateUI();
-
-            String getContentType(String filename); // convert the file extension to the MIME type
-            bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
         private:
 

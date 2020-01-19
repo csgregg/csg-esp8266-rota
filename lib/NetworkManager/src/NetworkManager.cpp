@@ -95,7 +95,7 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
     InitializeWiFi();
 
-    website.InitializeWebServer();
+    website.begin();
 
 }
 
@@ -124,7 +124,7 @@ void NetworkManager::handle() {
 
     handleWiFi();
 
-    website._ajax.loopHook();
+    website.handle();
 
 }
 
@@ -157,6 +157,14 @@ void NetworkManager::handleWiFi() {
 
 
 bool NetworkManager::handleWiFiAP() {
+
+    int connections = WiFi.softAPgetStationNum();
+
+    if( connections != _APConnections ) {
+        logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
+        logger.printf("(Network) WiFi AP - Clients: %i", connections );
+        _APConnections = connections;
+    }
 
     if( _APRunning ) return true;
 
