@@ -33,7 +33,6 @@ SOFTWARE.
 
     #define NETWORK_MANAGER_H
 
-
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
     #define MAX_PASSWORD_LEN 16
@@ -42,97 +41,107 @@ SOFTWARE.
 
 
     // AP network config
-    struct APConfig {
-        char SSID[MAX_SSID_LEN];
-        char password[MAX_PASSWORD_LEN];
-        byte channel;
-        IPAddress ip;
-        IPAddress subnet;
-        IPAddress gateway;
+    class APConfig {
 
-        // Create a compare operators
+        public:
 
-        bool operator==(const APConfig& other) const {
-            return (strcmp(SSID, other.SSID)==0)
-                && (strcmp(password, other.password)==0)
-                && channel == other.channel
-                && ip == other.ip
-                && subnet == other.subnet
-                && gateway == other.gateway;
-        }
+            void setDefaults();
 
-        bool operator!=(const APConfig& other) const {
-            return (strcmp(SSID, other.SSID)!=0)
-                || (strcmp(password, other.password)!=0)
-                || channel != other.channel
-                || ip != other.ip
-                || subnet != other.subnet
-                || gateway != other.gateway;
-        }
+            char SSID[MAX_SSID_LEN];
+            char password[MAX_PASSWORD_LEN];
+            byte channel;
+            IPAddress ip;
+            IPAddress subnet;
+            IPAddress gateway;
+
+            // Create a compare operators
+
+            bool operator==(const APConfig& other) const {
+                return (strcmp(SSID, other.SSID)==0)
+                    && (strcmp(password, other.password)==0)
+                    && channel == other.channel
+                    && ip == other.ip
+                    && subnet == other.subnet
+                    && gateway == other.gateway;
+            }
+
+            bool operator!=(const APConfig& other) const {
+                return (strcmp(SSID, other.SSID)!=0)
+                    || (strcmp(password, other.password)!=0)
+                    || channel != other.channel
+                    || ip != other.ip
+                    || subnet != other.subnet
+                    || gateway != other.gateway;
+            }
 
     };
 
 
     // Client network config
-    struct StationConfig {
-        char SSID[MAX_SSID_LEN];
-        char password[MAX_PASSWORD_LEN];
-        DHCPModes DHCPMode;
-        IPAddress ip;
-        IPAddress subnet;
-        IPAddress gateway;
-        IPAddress dns1;
-        IPAddress dns2;
+    class StationConfig {
 
-        // Create a compare operators
+        public:
 
-        bool operator==(const StationConfig& other) const {
-            return (strcmp(SSID, other.SSID)==0)
-                && (strcmp(password, other.password)==0)
-                && DHCPMode == other.DHCPMode
-                && ip == other.ip
-                && subnet == other.subnet
-                && gateway == other.gateway
-                && dns1 == other.dns1
-                && dns2 == other.dns2;
-        }
+            void setDefaults();
 
-        bool operator!=(const StationConfig& other) const {
-            return (strcmp(SSID, other.SSID)!=0)
-                || (strcmp(password, other.password)!=0)
-                || DHCPMode != other.DHCPMode
-                || ip != other.ip
-                || subnet != other.subnet
-                || gateway != other.gateway
-                || dns1 != other.dns1
-                || dns2 != other.dns2;
-        }
+            char SSID[MAX_SSID_LEN];
+            char password[MAX_PASSWORD_LEN];
+            DHCPModes DHCPMode;
+            IPAddress ip;
+            IPAddress subnet;
+            IPAddress gateway;
+            IPAddress dns1;
+            IPAddress dns2;
+
+            // Create a compare operators
+
+            bool operator==(const StationConfig& other) const {
+                return (strcmp(SSID, other.SSID)==0)
+                    && (strcmp(password, other.password)==0)
+                    && DHCPMode == other.DHCPMode
+                    && ip == other.ip
+                    && subnet == other.subnet
+                    && gateway == other.gateway
+                    && dns1 == other.dns1
+                    && dns2 == other.dns2;
+            }
+
+            bool operator!=(const StationConfig& other) const {
+                return (strcmp(SSID, other.SSID)!=0)
+                    || (strcmp(password, other.password)!=0)
+                    || DHCPMode != other.DHCPMode
+                    || ip != other.ip
+                    || subnet != other.subnet
+                    || gateway != other.gateway
+                    || dns1 != other.dns1
+                    || dns2 != other.dns2;
+            }
 
     };
 
 
-    #define STATION_DISCONNECT_TIME 30000        // 30 Sec
+    #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
+    #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
+    #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
     // Defaults
-    #define DEFAULT_WIFIMODE WIFI_STA
-    #define DEFAULT_SSID "Cabin 191"
-    #define DEFAUL_PWD "TobyToes"
+    #define DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
     #define DEFAULT_STATICIP 0x0101A8C0         // 192.168.1.1
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
     #define DEFAULT_GATEWAY 0xFE01A8C0          // 192.168.1.254
     #define DEFAULT_CHANNEL 11
 
+ 
 
-    struct NetworkSettings {
+    class NetworkSettings {
 
-            void setWiFiModeDefault() { wifiMode = DEFAULT_WIFIMODE; };
-            void setStationDefaults( const int id );
-            void setStationDefaults( const bool all ) { lastStation = 0; for( int i = 0; i<MAX_SSIDS; i++ ) setStationDefaults(i); }
-            void setAPDefaults();
+        public:
 
+            void setWiFiDefaults();
+    
             // WiFi Mode
-            WiFiMode wifiMode;          // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+            WiFiMode wifiMode;          
 
             // Save multiple networks
             StationConfig stationSettings[MAX_SSIDS];
@@ -192,7 +201,7 @@ SOFTWARE.
             bool isInternetConnected( ) { return _ConnectedToInternet; };
 
             WiFiClient& getWiFiClient() { return _client; };
-           
+          
 
         protected:
 
@@ -205,10 +214,8 @@ SOFTWARE.
             bool checkInternet();
 
             void InitializeWiFi();
-            void InitializeWebServer();
 
             NetworkSettings *_networkSettings;
-            WiFiClient _client;
 
             bool _StationConnected;         // Are we connected to WiFi
             bool _APRunning;
@@ -216,6 +223,7 @@ SOFTWARE.
            
             int _disconnectedStation;       // Used to see how long disconnected in station mode
 
+            WiFiClient _client;
 
    
         private:
@@ -224,6 +232,7 @@ SOFTWARE.
     };
 
     extern NetworkManager network;        // Declaring the global instance
+
 
 
 #endif

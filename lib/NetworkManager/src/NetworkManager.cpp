@@ -31,42 +31,50 @@ SOFTWARE.
 #include <ESP8266WebServer.h>
 #include <FS.h> 
 
-
-
+#include <EmbAJAX.h>
 
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "website.h"
+#include "IOTDevice.h"
 
 
 // Network Settings 
 
-void NetworkSettings::setStationDefaults( const int id ) {
+void StationConfig::setDefaults() {
 
-    strcpy( stationSettings[id].SSID, DEFAULT_SSID );
-    strcpy( stationSettings[id].password, DEFAUL_PWD );
-    stationSettings[id].DHCPMode = DEFAULT_DHCPMODE;
-    stationSettings[id].ip = uint32_t(0x00000000);
-    stationSettings[id].subnet = uint32_t(0x00000000);
-    stationSettings[id].gateway = uint32_t(0x00000000);
-    stationSettings[id].dns1 = uint32_t(0x00000000);
-    stationSettings[id].dns2 = uint32_t(0x00000000);     
+    strcpy( SSID, DEFAULT_WIFI_SSID );
+    strcpy( password, DEFAULT_WIFI_PWD );
+    DHCPMode = DEFAULT_DHCPMODE;
+    ip = uint32_t(0x00000000);
+    subnet = uint32_t(0x00000000);
+    gateway = uint32_t(0x00000000);
+    dns1 = uint32_t(0x00000000);
+    dns2 = uint32_t(0x00000000);     
+
+}
+
+
+void APConfig::setDefaults() {
+
+    strcpy( SSID, device_getBuildFlag(flag_DEVICE_CODE).c_str() );
+    strcpy( password, device_getBuildFlag(flag_DEVICE_CODE).c_str() );        // TODO Make secure token for this
+    channel = DEFAULT_CHANNEL;
+    ip = uint32_t(DEFAULT_STATICIP);
+    subnet = uint32_t(DEFAULT_SUBNET);
+    gateway = uint32_t(DEFAULT_GATEWAY);
 
 }
 
 
-void NetworkSettings::setAPDefaults() {
+void NetworkSettings::setWiFiDefaults() {
 
-    strcpy( apSettings.SSID, device_getBuildFlag(flag_DEVICE_CODE).c_str() );
-    strcpy( apSettings.password, device_getBuildFlag(flag_DEVICE_CODE).c_str() );        // TODO Make secure token for this
-    apSettings.channel = DEFAULT_CHANNEL;
-    apSettings.ip = uint32_t(DEFAULT_STATICIP);
-    apSettings.subnet = uint32_t(DEFAULT_SUBNET);
-    apSettings.gateway = uint32_t(DEFAULT_GATEWAY);
-
+    wifiMode = DEFAULT_WIFIMODE;
+    lastStation = 0;
+    apSettings.setDefaults();
+    for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
 }
-
 
 
 // TODO - Flash cache
@@ -75,11 +83,6 @@ void NetworkSettings::setAPDefaults() {
 // Network Manager Class
 
 // Public:
-
-
-
-
-
 
 
 
@@ -94,11 +97,7 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
     website.InitializeWebServer();
 
-
-
 }
-
-
 
 
 void NetworkManager::InitializeWiFi() {
@@ -116,7 +115,7 @@ void NetworkManager::InitializeWiFi() {
     // Restart to start fresh
     WiFi.mode(WiFiMode::WIFI_OFF);
 
-    handle();   // Initial WiFi start
+    handleWiFi();   // Initial WiFi start
 
 }
 
@@ -127,8 +126,6 @@ void NetworkManager::handle() {
 
     website._ajax.loopHook();
 
-  //  _server.handleClient();
-
 }
 
 
@@ -137,6 +134,8 @@ void NetworkManager::handle() {
 
 // Handle WiFi Connectivity
 void NetworkManager::handleWiFi() {
+
+    // TODO - Mode handling for disconnects, portal, etc
 
     switch( _networkSettings->wifiMode ) {
         case WIFI_AP:
@@ -158,7 +157,10 @@ void NetworkManager::handleWiFi() {
 
 
 bool NetworkManager::handleWiFiAP() {
-    return true;
+
+    if( _APRunning ) return true;
+
+    return startWiFiAccessPoint();
 }
 
 
@@ -171,23 +173,26 @@ bool NetworkManager::handleWiFiStation() {
         return true;
     }
 
+    // Turn on AP if we have waited too long
+    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
+        LOG(F("(Network) - Cannot connect to WiFi. Starting AP"));
+        _networkSettings->wifiMode = WIFI_AP;
+        return false;
+    }
+
     // Okay, so not connected
     if( WiFi.getMode() != WIFI_OFF && _disconnectedStation == 0 ) {
         _disconnectedStation = millis();
-        LOG(F("(Network) WiFi disconnected"));
+        LOG(F("(Network) WiFi not connected"));
         return false;
     }
 
     // Are we waiting for SDK to try to retry for a period
     if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) ) return false;  
 
-    // TODO - Add multiple SSID handling. Just use slot 0 for now
- //   return startWiFiStation( _networkSettings->lastStation );
-
+    // Try each of the stored stations
     bool success = false;
-    for( int station = 0; station < MAX_SSIDS && !success; station++ ) {
-        success = startWiFiStation( (station + _networkSettings->lastStation) );
-    }
+    for( int station = 0; station < MAX_SSIDS && !success; station++ ) success = startWiFiStation( (station + _networkSettings->lastStation) % MAX_SSIDS );
 
     return success;
 
@@ -198,14 +203,35 @@ bool NetworkManager::startWiFiAccessPoint() {
     
     LOG(F("(Network) WiFi mode - Access Point"));
 
-    return true;
+    bool ret = WiFi.mode( _networkSettings->wifiMode );
+
+    if( !ret ) return false;
+
+    bool ssid = strcmp( _networkSettings->apSettings.SSID, "") != 0;
+	bool password = strcmp( _networkSettings->apSettings.password, "") != 0;
+
+    WiFi.softAPConfig( _networkSettings->apSettings.ip, _networkSettings->apSettings.gateway, _networkSettings->apSettings.subnet );
+
+	if( !ssid ) return false;
+    else if( !password ) ret = WiFi.softAP( _networkSettings->apSettings.SSID, NULL, _networkSettings->apSettings.channel );
+    else ret = WiFi.softAP( _networkSettings->apSettings.SSID,
+                            _networkSettings->apSettings.password,
+                            _networkSettings->apSettings.channel );
+
+    if( ret ) {
+        logger.setTypeTag(LOG_NORMAL,TAG_STATUS);
+        logger.printf("(Network) Acess point started with SSID: %s, IP: %s", _networkSettings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
+	}
+    else LOG("(Network) WiFi Access point not started");
+
+    return ret;
 }
 
 
 bool NetworkManager::startWiFiStation( const int id ) {
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
-    logger.printf("(Network) WiFi mode - Station %i", id);
+    logger.printf("(Network) WiFi mode - Station %i: %s", id, _networkSettings->stationSettings[id].SSID );
  
     bool ret = WiFi.mode( _networkSettings->wifiMode );
     if( !ret ) return false;
@@ -227,7 +253,7 @@ bool NetworkManager::startWiFiStation( const int id ) {
 
 	if( ret ) {
 		int i = 0;
-		while( WiFi.status() != WL_CONNECTED && i++ <= 20 ) {       // TODO - add #define
+		while( WiFi.status() != WL_CONNECTED && i++ <= STATION_TRY_TIME ) {
 			delay(500);
 			if( logger.SerialOn() ) Serial.print(".");
 		}

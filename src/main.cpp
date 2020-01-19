@@ -47,7 +47,7 @@ void ICACHE_FLASH_ATTR setup() {
     logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
     config.Initialize();
-    //config.ResetToDefaults();
+    config.ResetToDefaults();
 
     network.begin( config.settings.networkConfig );
 
