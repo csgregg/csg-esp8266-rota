@@ -39,7 +39,7 @@ SOFTWARE.
     #define WEB_PORT 80
     
 
-    struct pagesinfo {
+    struct PageHandler {
         const char* URL;
         void (*handler)();
     };
