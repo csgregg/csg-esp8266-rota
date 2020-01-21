@@ -29,9 +29,11 @@ SOFTWARE.
 
 
 #include "website.h"
-
 #include "Logger.h"
 
+
+// Webpages
+// ========
 
 struct thiswebpage {
 
@@ -41,7 +43,10 @@ struct thiswebpage {
     EmbAJAXCheckButton check;
     EmbAJAXMutableSpan check_d;
 
-    EmbAJAXBase* page_elements[2] = {&check, &check_d};
+    EmbAJAXBase* page_elements[2] = {
+        &check,
+        &check_d
+    };
 
     thiswebpage( const char* pURL, void(*phandler)() ) : 
         check("check", ""),
@@ -59,6 +64,7 @@ struct thiswebpage {
             _thispage.check_d.setValue(_thispage.check.isChecked() ? " Checked" : " Not checked");
         } );
     } );
+    
 
 struct thatwebpage {
 
@@ -68,7 +74,10 @@ struct thatwebpage {
     EmbAJAXCheckButton check;
     EmbAJAXMutableSpan check_d;
 
-    EmbAJAXBase* page_elements[2] = {&check, &check_d};
+    EmbAJAXBase* page_elements[2] = {
+        &check, 
+        &check_d
+    };
 
     thatwebpage( const char* pURL, void(*phandler)() ) : 
         check("check", ""),
@@ -88,20 +97,22 @@ struct thatwebpage {
     } );
 
 
-
-pagesinfo pages[] = {
+// Page handlers
+PageHandler pagehandlers[] = {
     {_thispage.URL, _thispage.handler},
-    {_thatpage.URL, _thatpage.handler}
+    {_thatpage.URL, _thatpage.handler},
 };
 
 
+// Call appropriate page handler
 void WebsiteManager::handleAJAX( const String path ) {
 
-    for( u_int i = 0; i < sizeof(pages)/sizeof(pagesinfo); i++ )
-        if( path == pages[i].URL ) (pages[i].handler)();
+    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ )
+        if( path == pagehandlers[i].URL ) (pagehandlers[i].handler)();
 }
 
 
+// Initialize web manaber
 void WebsiteManager::begin() {
 
      // If the client requests any URI
@@ -119,14 +130,15 @@ void WebsiteManager::begin() {
 
     );
 
-    SPIFFS.begin();
-    _server.begin(); 
+    // Start SPIFFS and webserver
+    SPIFFS.begin(); 
+    _server.begin();
 
 }
 
 
-
-String WebsiteManager::getContentType(String filename) { // convert the file extension to the MIME type
+// convert the file extension to the MIME type
+String WebsiteManager::getContentType(String filename) { 
     if (filename.endsWith(F(".html.gz"))) return F("text/html");
     else if (filename.endsWith(F(".html"))) return F("text/html");
     else if (filename.endsWith(F(".css.gz"))) return F("text/css");
@@ -141,7 +153,7 @@ String WebsiteManager::getContentType(String filename) { // convert the file ext
 }
 
 
-// send the right file to the client (if it exists)
+// Send the right file to the client (if it exists)
 bool WebsiteManager::handleSPIFFS(String shortpath) {
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
