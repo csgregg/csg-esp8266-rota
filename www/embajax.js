@@ -1,3 +1,7 @@
+/*
+ From EmbAJAX Library - https://github.com/tfry-git/EmbAJAX
+*/
+
 var serverrevision = 0;
 function doRequest(id='', value='') {
     var req = new XMLHttpRequest();
