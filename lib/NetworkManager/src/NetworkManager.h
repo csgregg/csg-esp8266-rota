@@ -125,7 +125,7 @@ SOFTWARE.
     #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
     // Defaults
-    #define DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+    #define DEFAULT_WIFIMODE WIFI_STA           // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
     #define DEFAULT_STATICIP 0x0101A8C0         // 192.168.1.1
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0

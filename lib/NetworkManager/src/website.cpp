@@ -42,15 +42,18 @@ struct thiswebpage {
 
     EmbAJAXCheckButton check;
     EmbAJAXMutableSpan check_d;
+    EmbAJAXHideableContainer<0> wifi1_static_show;
 
-    EmbAJAXBase* page_elements[2] = {
+    EmbAJAXBase* page_elements[3] = {
         &check,
-        &check_d
+        &check_d,
+        &wifi1_static_show
     };
 
     thiswebpage( const char* pURL, void(*phandler)() ) : 
         check("check", ""),
         check_d("check_d"),
+        wifi1_static_show("wifi1_static_show",NULL),
         ajax(page_elements, "")
         {
             URL = pURL;
@@ -61,7 +64,8 @@ struct thiswebpage {
 
 } _thispage("/this.html", []() { 
         _thispage.ajax.handleRequest( []() {
-            _thispage.check_d.setValue(_thispage.check.isChecked() ? " Checked" : " Not checked");
+            _thispage.check_d.setValue(_thispage.check.isChecked() ? "Static IP" : "Dynamic IP");
+            _thispage.wifi1_static_show.setVisible(_thispage.check.isChecked());
         } );
     } );
     
@@ -133,6 +137,8 @@ void WebsiteManager::begin() {
     // Start SPIFFS and webserver
     SPIFFS.begin(); 
     _server.begin();
+
+    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ ) (pagehandlers[i].handler)();
 
 }
 
