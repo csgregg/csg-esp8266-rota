@@ -42,6 +42,7 @@ SOFTWARE.
     struct PageHandler {
         const char* URL;
         void (*handler)();
+        void (*init)();
     };
 
 
@@ -69,6 +70,7 @@ SOFTWARE.
             String getContentType( const String filename );         // convert the file extension to the MIME type
             bool handleSPIFFS( const String path );                 // send the right file to the client (if it exists)
             void handleAJAX( const String path );                   // process AJAX request
+            void handleInit( const String path );                   // process page initialization
 
 
         private:
