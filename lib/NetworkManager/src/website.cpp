@@ -30,50 +30,74 @@ SOFTWARE.
 
 #include "website.h"
 #include "Logger.h"
+#include "ConfigManager.h"
 
 
 // Webpages
 // ========
 
-struct thiswebpage {
+struct page_settings_wifi {
 
     const char* URL;
     void (*handler)();
+    void (*init)();
 
-    EmbAJAXCheckButton check;
-    EmbAJAXMutableSpan check_d;
+    EmbAJAXCheckButton wifi1_dhcp_mode;
+    EmbAJAXMutableSpan wifi1_dhcp_mode_label;
     EmbAJAXHideableContainer<0> wifi1_static_show;
 
     EmbAJAXBase* page_elements[3] = {
-        &check,
-        &check_d,
+        &wifi1_dhcp_mode,
+        &wifi1_dhcp_mode_label,
         &wifi1_static_show
     };
 
-    thiswebpage( const char* pURL, void(*phandler)() ) : 
-        check("check", ""),
-        check_d("check_d"),
+    page_settings_wifi( const char* pURL, void(*phandler)(), void(*pinit)() ) : 
+        wifi1_dhcp_mode("wifi1_dhcp_mode", ""),
+        wifi1_dhcp_mode_label("wifi1_dhcp_mode_label"),
         wifi1_static_show("wifi1_static_show",NULL),
         ajax(page_elements, "")
         {
             URL = pURL;
             handler = phandler;
+            init = pinit;
         };
 
     EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-} _thispage("/this.html", []() { 
-        _thispage.ajax.handleRequest( []() {
-            _thispage.check_d.setValue(_thispage.check.isChecked() ? "Static IP" : "Dynamic IP");
-            _thispage.wifi1_static_show.setVisible(_thispage.check.isChecked());
+} page_settings_wifi("/settings_wifi.html",
+    []() {  // Handler
+        page_settings_wifi.ajax.handleRequest( []() {
+
+            // WiFi 1
+
+            // DHCP Mode
+            bool dhcp1 = page_settings_wifi.wifi1_dhcp_mode.isChecked();
+            config.settings.networkConfig.stationSettings->DHCPMode = (dhcp1 ? DHCP : STATIC);
+            page_settings_wifi.wifi1_dhcp_mode_label.setValue(dhcp1 ? "Dynamic IP" : "Static IP");
+            page_settings_wifi.wifi1_static_show.setVisible(!dhcp1);
+
         } );
-    } );
+    },
+    []() {  // Initializer
+
+        // WiFi 1
+
+        // DHCP Mode
+        bool dhcp1 = (config.settings.networkConfig.stationSettings->DHCPMode == DHCP);
+        page_settings_wifi.wifi1_dhcp_mode.setChecked(dhcp1);
+        page_settings_wifi.wifi1_dhcp_mode_label.setValue(dhcp1 ? "Dynamic IP" : "Static IP");
+        page_settings_wifi.wifi1_static_show.setVisible(!dhcp1);
+
+    }
+);
     
 
 struct thatwebpage {
 
     const char* URL;
     void (*handler)();
+    void (*init)();
 
     EmbAJAXCheckButton check;
     EmbAJAXMutableSpan check_d;
@@ -83,28 +107,34 @@ struct thatwebpage {
         &check_d
     };
 
-    thatwebpage( const char* pURL, void(*phandler)() ) : 
+    thatwebpage( const char* pURL, void(*phandler)(), void(*pinit)() ) : 
         check("check", ""),
         check_d("check_d"),
         ajax(page_elements, "")
         {
             URL = pURL;
             handler = phandler;
+            init = pinit;
         };
 
     EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-} _thatpage("/that.html", []() { 
+} _thatpage("/that.html",
+    []() {  // Hanlder
         _thatpage.ajax.handleRequest( []() {
             _thatpage.check_d.setValue(_thatpage.check.isChecked() ? " Checked" : " Not checked");
         } );
-    } );
+    },
+    []() {  // Initializer
+
+    }
+);
 
 
 // Page handlers
 PageHandler pagehandlers[] = {
-    {_thispage.URL, _thispage.handler},
-    {_thatpage.URL, _thatpage.handler},
+    {page_settings_wifi.URL, page_settings_wifi.handler, page_settings_wifi.init},
+    {_thatpage.URL, _thatpage.handler, _thatpage.init},
 };
 
 
@@ -112,7 +142,21 @@ PageHandler pagehandlers[] = {
 void WebsiteManager::handleAJAX( const String path ) {
 
     for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ )
-        if( path == pagehandlers[i].URL ) (pagehandlers[i].handler)();
+        if( path == pagehandlers[i].URL ) {
+            (pagehandlers[i].handler)();
+            return;
+        }
+}
+
+
+// Call appropriate page initializer
+void WebsiteManager::handleInit( const String path ) {
+
+    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ )
+        if( path == pagehandlers[i].URL ) {
+            (pagehandlers[i].init)();
+            return;
+        }
 }
 
 
@@ -176,6 +220,10 @@ bool WebsiteManager::handleSPIFFS(String shortpath) {
         File file = SPIFFS.open(path, "r");
         _server.streamFile(file, contentType);
         file.close();
+
+        // Check to see if the page needs to be initialized
+        handleInit(shortpath);
+
         return true;
     }
 
