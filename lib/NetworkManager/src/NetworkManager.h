@@ -120,7 +120,7 @@ SOFTWARE.
     };
 
 
-    #define STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
+    #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
     #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
     #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
