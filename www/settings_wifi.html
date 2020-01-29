@@ -58,18 +58,15 @@
 
         <!-- Header -->
         <header class="w3-container" style="padding-top:22px">
-            <h5><b><i class="fa fa-dashboard"></i> My Dashboard</b></h5>
+            <h5><b><i class="fa fa-dashboard"></i>WiFi Settings</b></h5>
         </header>
 
         <div class="w3-row-padding w3-margin-bottom">
             <div class="w3-half ">
-                <div class="w3-container w3-white w3-padding-8 w3-round-large" style="min-width:200px">
-                    <div class="w3-left"><i class="fa fa-comment w3-xxxlarge"></i></div>
-                    <div class="w3-right">
-                        <h3>52</h3>
+                <div class="w3-container w3-white w3-padding-8 w3-round" style="min-width:200px">
+                    <div class="w3-col w3-padding">
+                        <b>WiFi Networks</b>
                     </div>
-                    <div class="w3-clear"></div>
-
                     <div class="w3-border">
                         <div class="w3-bar w3-border-bottom w3-light-grey intronav">
                             <a class="w3-bar-item w3-button testbtn" onclick="selectWiFiStation(event, 'WiFiStn1')" id="WiFiStnStart">WiFi 1</a>
@@ -85,7 +82,7 @@
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
                                     <div class="w3-cell w3-cell-middle">
-                                        <input id="wifi1_ssid" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                                        <input id="wifi1_ssid" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" size="15"  placeholder="Enter SSID">
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +93,7 @@
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
                                     <div class="w3-cell w3-cell-middle">
-                                        <input id="wifi1_password" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" size="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$">
+                                        <input id="wifi1_password" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" size="15" placeholder="Enter password">
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +108,7 @@
                                 <div class="w3-cell w3-cell-middle w3-padding-small"><b><span id="wifi1_dhcp_mode_label"></span></b></div>
                             </div>
 
-                            <div id="wifi1_static_show" class="w3-container w3-animate-opacity" style="padding:0!important; display: block;animation-duration: 1.5s!important;">
+                            <div id="wifi1_static_show" class="w3-container w3-animate-opacity" style="padding:0!important; display: block;">
 
                                 <div class="w3-row w3-padding-small">
                                     <div class="w3-col w3-padding-small" style="line-height: 35px;width:95px;">
@@ -184,6 +181,17 @@
                             <p>It is the center of the Greater Tokyo Area, and the most populous metropolitan area in the world.</p>
                         </div>
                     </div>
+                    <div class="w3-row w3-padding-8">
+
+                    <div class="w3-cell w3-center w3-padding-8">
+                            <button class="w3-button w3-green w3-round w3-hover-teal">Save</button>
+                        </div>
+                      
+                        <div class="w3-cell w3-center w3-padding-8">
+                            <button class="w3-button w3-red w3-round w3-hover-teal">Reset</button>
+                        </div>                      
+                    </div>
+
                 </div>
             </div>
             <div class="w3-half">
