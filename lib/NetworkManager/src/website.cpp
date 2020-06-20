@@ -28,9 +28,12 @@ SOFTWARE.
 */
 
 
+#include <cstring>
+
 #include "website.h"
 #include "Logger.h"
 #include "ConfigManager.h"
+
 
 
 // Webpages
@@ -42,20 +45,42 @@ struct page_settings_wifi {
     void (*handler)();
     void (*init)();
 
+    EmbAJAXTextInput<32> wifi1_ssid;
+    EmbAJAXTextInput<16> wifi1_password;
     EmbAJAXCheckButton wifi1_dhcp_mode;
     EmbAJAXMutableSpan wifi1_dhcp_mode_label;
     EmbAJAXHideableContainer<0> wifi1_static_show;
+    EmbAJAXTextInput<15> wifi1_ip;
+    EmbAJAXTextInput<15> wifi1_subnet;
+    EmbAJAXTextInput<15> wifi1_gateway;
+    EmbAJAXTextInput<15> wifi1_dns1;
+    EmbAJAXTextInput<15> wifi1_dns2;
 
-    EmbAJAXBase* page_elements[3] = {
+
+    EmbAJAXBase* page_elements[10] = {
+        &wifi1_ssid,
+        &wifi1_password,
         &wifi1_dhcp_mode,
         &wifi1_dhcp_mode_label,
-        &wifi1_static_show
+        &wifi1_static_show,
+        &wifi1_ip,
+        &wifi1_subnet,
+        &wifi1_gateway,
+        &wifi1_dns1,
+        &wifi1_dns2
     };
 
     page_settings_wifi( const char* pURL, void(*phandler)(), void(*pinit)() ) : 
+        wifi1_ssid("wifi1_ssid"),
+        wifi1_password("wifi1_password"),
         wifi1_dhcp_mode("wifi1_dhcp_mode", ""),
         wifi1_dhcp_mode_label("wifi1_dhcp_mode_label"),
         wifi1_static_show("wifi1_static_show",NULL),
+        wifi1_ip("wifi1_ip"),
+        wifi1_subnet("wifi1_subnet"),
+        wifi1_gateway("wifi1_gateway"),
+        wifi1_dns1("wifi1_dns1"),
+        wifi1_dns2("wifi1_dns2"),
         ajax(page_elements, "")
         {
             URL = pURL;
@@ -69,22 +94,60 @@ struct page_settings_wifi {
     []() {  // Handler
         page_settings_wifi.ajax.handleRequest( []() {
 
+            DEBUG("Handle AJAX");
+
             // WiFi 1
+
+            strncpy(config.settings.networkConfig.stationSettings[0].SSID, page_settings_wifi.wifi1_ssid.value(), 32);
+            strncpy(config.settings.networkConfig.stationSettings[0].password, page_settings_wifi.wifi1_password.value(), 16);
+            
+            config.settings.networkConfig.stationSettings[0].ip.fromString(page_settings_wifi.wifi1_ip.value());
+
+            char ip[15];
+            sprintf(ip,"%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].ip[0], config.settings.networkConfig.stationSettings[0].ip[1], config.settings.networkConfig.stationSettings[0].ip[2], config.settings.networkConfig.stationSettings[0].ip[3] );
+            DEBUG(ip);
+            DEBUG(page_settings_wifi.wifi1_ip.value());
+
+            config.settings.networkConfig.stationSettings[0].subnet.fromString(page_settings_wifi.wifi1_subnet.value());
+            config.settings.networkConfig.stationSettings[0].gateway.fromString(page_settings_wifi.wifi1_gateway.value());
+            config.settings.networkConfig.stationSettings[0].dns1.fromString(page_settings_wifi.wifi1_dns2.value());
+            config.settings.networkConfig.stationSettings[0].dns2.fromString(page_settings_wifi.wifi1_dns2.value());
 
             // DHCP Mode
             bool dhcp1 = page_settings_wifi.wifi1_dhcp_mode.isChecked();
-            config.settings.networkConfig.stationSettings->DHCPMode = (dhcp1 ? DHCP : STATIC);
-            page_settings_wifi.wifi1_dhcp_mode_label.setValue(dhcp1 ? "Dynamic IP" : "Static IP");
-            page_settings_wifi.wifi1_static_show.setVisible(!dhcp1);
+            config.settings.networkConfig.stationSettings[0].DHCPMode = (dhcp1 ? DHCP : STATIC);
 
         } );
     },
     []() {  // Initializer
 
+        DEBUG("Initialize AJAX");
+
         // WiFi 1
 
+        page_settings_wifi.wifi1_ssid.setValue(config.settings.networkConfig.stationSettings[0].SSID);
+        page_settings_wifi.wifi1_password.setValue(config.settings.networkConfig.stationSettings[0].password);
+
+        // IP Addresses
+        char ipbuffer[15];
+
+        sprintf(ipbuffer, "%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].ip[0], config.settings.networkConfig.stationSettings[0].ip[1], config.settings.networkConfig.stationSettings[0].ip[2], config.settings.networkConfig.stationSettings[0].ip[3] );
+        page_settings_wifi.wifi1_ip.setValue(ipbuffer);
+
+        sprintf(ipbuffer, "%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].subnet[0], config.settings.networkConfig.stationSettings[0].subnet[1], config.settings.networkConfig.stationSettings[0].subnet[2], config.settings.networkConfig.stationSettings[0].subnet[3] );
+        page_settings_wifi.wifi1_subnet.setValue(ipbuffer);
+
+        sprintf(ipbuffer, "%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].gateway[0], config.settings.networkConfig.stationSettings[0].gateway[1], config.settings.networkConfig.stationSettings[0].gateway[2], config.settings.networkConfig.stationSettings[0].gateway[3] );
+        page_settings_wifi.wifi1_gateway.setValue(ipbuffer);
+
+        sprintf(ipbuffer, "%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].dns1[0], config.settings.networkConfig.stationSettings[0].dns1[1], config.settings.networkConfig.stationSettings[0].dns1[2], config.settings.networkConfig.stationSettings[0].dns1[3] );
+        page_settings_wifi.wifi1_dns1.setValue(ipbuffer);
+
+        sprintf(ipbuffer, "%i.%i.%i.%i", config.settings.networkConfig.stationSettings[0].dns2[0], config.settings.networkConfig.stationSettings[0].dns2[1], config.settings.networkConfig.stationSettings[0].dns2[2], config.settings.networkConfig.stationSettings[0].dns2[3] );
+        page_settings_wifi.wifi1_dns2.setValue(ipbuffer);
+
         // DHCP Mode
-        bool dhcp1 = (config.settings.networkConfig.stationSettings->DHCPMode == DHCP);
+        bool dhcp1 = (config.settings.networkConfig.stationSettings[0].DHCPMode == DHCP);
         page_settings_wifi.wifi1_dhcp_mode.setChecked(dhcp1);
         page_settings_wifi.wifi1_dhcp_mode_label.setValue(dhcp1 ? "Dynamic IP" : "Static IP");
         page_settings_wifi.wifi1_static_show.setVisible(!dhcp1);
@@ -93,48 +156,9 @@ struct page_settings_wifi {
 );
     
 
-struct thatwebpage {
-
-    const char* URL;
-    void (*handler)();
-    void (*init)();
-
-    EmbAJAXCheckButton check;
-    EmbAJAXMutableSpan check_d;
-
-    EmbAJAXBase* page_elements[2] = {
-        &check, 
-        &check_d
-    };
-
-    thatwebpage( const char* pURL, void(*phandler)(), void(*pinit)() ) : 
-        check("check", ""),
-        check_d("check_d"),
-        ajax(page_elements, "")
-        {
-            URL = pURL;
-            handler = phandler;
-            init = pinit;
-        };
-
-    EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
-
-} _thatpage("/that.html",
-    []() {  // Hanlder
-        _thatpage.ajax.handleRequest( []() {
-            _thatpage.check_d.setValue(_thatpage.check.isChecked() ? " Checked" : " Not checked");
-        } );
-    },
-    []() {  // Initializer
-
-    }
-);
-
-
 // Page handlers
 PageHandler pagehandlers[] = {
-    {page_settings_wifi.URL, page_settings_wifi.handler, page_settings_wifi.init},
-    {_thatpage.URL, _thatpage.handler, _thatpage.init},
+    {page_settings_wifi.URL, page_settings_wifi.handler, page_settings_wifi.init}
 };
 
 
