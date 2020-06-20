@@ -3,6 +3,7 @@
 */
 
 var serverrevision = 0;
+
 function doRequest(id='', value='') {
     var req = new XMLHttpRequest();
     req.timeout = 10000;
@@ -16,10 +17,12 @@ function doRequest(id='', value='') {
           serverrevision = 0;
        }
     }
+    console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
 }
+
 function doUpdates(response) {
     serverrevision = response.revision;
     var updates = response.updates;
@@ -36,7 +39,10 @@ function doUpdates(response) {
        }
     }
 }
+
 function doPoll() {
     doRequest();
 }
-setInterval(doPoll,1000);
+
+doRequest();
+//setInterval(doPoll,1000);

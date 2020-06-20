@@ -36,5 +36,27 @@ function selectWiFiStation(evt, wifiName) {
     evt.currentTarget.className += " w3-dark-grey";
 }
 
-var mybtn = document.getElementById("WiFiStnStart");
+function visiblePwd(wifiPwd) {
+    var x = document.getElementById(wifiPwd);
+    if (x.type === "password") {
+      x.type = "text";
+    } else {
+      x.type = "password";
+    }
+}
+
+function visibleIPs(show,label) {
+    var dhcpshow = document.getElementById(show);
+    var dhcplabel = document.getElementById(label);
+    if(dhcpshow.style.display === "block") {
+        dhcpshow.style.display = "none";
+        dhcplabel.innerHTML = "Dynamic IP";
+    }
+    else {
+        dhcpshow.style.display = "block";
+        dhcplabel.innerHTML = "Static IP";
+    }
+}
+
+var mybtn = document.getElementById("wifi1_ssid");
 mybtn.click();
