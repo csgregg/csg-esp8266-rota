@@ -24,62 +24,50 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
+Describes the Network Settings web page
 
 */
 
 
+#ifndef NETWORK_SETTINGS_PAGE_H
 
-#ifndef WEBSITE_MANAGER_H
-
-    #define WEBSITE_MANAGER_H
+    #define NETWORK_SETTINGS_PAGE_H
 
     #include "EmbAJAX.h"
+    #include "NetworkManager.h"
 
-    #define WEB_PORT 80
-    
-
-
-    struct PageHandler {
-        const char* URL;
-        void (*handler)();
-        void (*init)();
-    };
+void initAjax();
+void handleAjax();
 
 
 
-    // Website Manager Class
 
-    class WebsiteManager {
+
+/*
+    class NetworkSettingsPage {
 
         public:
 
-            WebsiteManager()
-                : _server(WEB_PORT)
-                , _ajax(&_server)
-            {}
-
-            EmbAJAXOutputDriverWebServerClass _server;
-            EmbAJAXOutputDriver _ajax;
-
-            void begin();
-            void handle() { _ajax.loopHook(); };
+            void initAjax();
+            void handleAjax();
 
 
         protected:
 
-            String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handleSPIFFS( const String path );                 // send the right file to the client (if it exists)
-            void handleAJAX( const String path );                   // process AJAX request
-            void handleInit( const String path );                   // process page initialization
-
 
         private:
 
+            bool initialized = false;
+            NetworkSettings pageSettings;
 
     };
+*/
 
+    //extern NetworkSettingsPage networksettingspage;
 
-    extern WebsiteManager website;        // Declaring the global instance
+    //extern NetworkSettingsAjax networksettingsajax;
+
+    
 
 
 #endif

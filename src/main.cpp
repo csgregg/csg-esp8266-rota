@@ -65,7 +65,7 @@ void ICACHE_FLASH_ATTR setup() {
 
 void loop() {
 
-  updater.handle();
+  //updater.handle();
   network.handle();
 
   

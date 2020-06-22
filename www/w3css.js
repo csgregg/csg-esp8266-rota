@@ -45,18 +45,5 @@ function visiblePwd(wifiPwd) {
     }
 }
 
-function visibleIPs(show,label) {
-    var dhcpshow = document.getElementById(show);
-    var dhcplabel = document.getElementById(label);
-    if(dhcpshow.style.display === "block") {
-        dhcpshow.style.display = "none";
-        dhcplabel.innerHTML = "Dynamic IP";
-    }
-    else {
-        dhcpshow.style.display = "block";
-        dhcplabel.innerHTML = "Static IP";
-    }
-}
-
 var mybtn = document.getElementById("wifi1_ssid");
 mybtn.click();
