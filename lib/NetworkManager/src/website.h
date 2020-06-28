@@ -37,15 +37,11 @@ SOFTWARE.
 
     #define WEB_PORT 80
     
-
-
     struct PageHandler {
         const char* URL;
         void (*handler)();
         void (*init)();
     };
-
-
 
     // Website Manager Class
 
@@ -63,14 +59,18 @@ SOFTWARE.
 
             void begin();
             void handle() { _ajax.loopHook(); };
+ 
+            String URL;
+            String AjaxID;
+            String AjaxValue;
 
 
         protected:
 
             String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handleSPIFFS( const String path );                 // send the right file to the client (if it exists)
-            void handleAJAX( const String path );                   // process AJAX request
-            void handleInit( const String path );                   // process page initialization
+            bool handleSPIFFS();                                    // send the right file to the client (if it exists)
+            void handleAJAX();                                      // process AJAX request
+            void InitAJAX();                                        // process page initialization
 
 
         private:
@@ -78,8 +78,6 @@ SOFTWARE.
 
     };
 
-
     extern WebsiteManager website;        // Declaring the global instance
-
 
 #endif
