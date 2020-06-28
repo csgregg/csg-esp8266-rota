@@ -38,7 +38,7 @@
                 </div>
                 <div class="w3-cell w3-right w3-padding-vert">
                     <div class="w3-cell">
-                        <button id="save_button" class="w3-button w3-padding-small w3-grey w3-round w3-hover-green">Save</button>
+                        <button id="save_button" disabled class="w3-button w3-padding-small w3-grey w3-round w3-hover-green" onclick="doRequest(this.id, 'p');">Save</button>
                     </div>        
                 </div>
             </div>
@@ -55,17 +55,17 @@
                         <div class="w3-bar w3-border-bottom">
                             <div class="w3-bar-item w3-button w3-no-padding">
                                 <div class="w3-col">
-                                    <input id="wifi1_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 1" onclick="selectWiFiStation(event, 'WiFiStn1')">
+                                    <input id="wifi1_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 1" onclick="selectWiFiStation(event, 'WiFiStn1')" onchange="doRequest(this.id, this.value);">
                                 </div>
                             </div>
                             <div class="w3-bar-item w3-button w3-no-padding">
                                 <div class="w3-col">
-                                    <input id="wifi2_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 2" onclick="selectWiFiStation(event, 'WiFiStn2')">
+                                    <input id="wifi2_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 2" onclick="selectWiFiStation(event, 'WiFiStn2')" onchange="doRequest(this.id, this.value);">
                                 </div>
                             </div>
                             <div class="w3-bar-item w3-button w3-no-padding">
                                 <div class="w3-col">
-                                    <input id="wifi3_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 3" onclick="selectWiFiStation(event, 'WiFiStn3')">
+                                    <input id="wifi3_ssid" class="w3-input w3-border-0 w3-light-grey testbtn" type="text" minlength="7" maxlength="15" size="11"  placeholder="Network 3" onclick="selectWiFiStation(event, 'WiFiStn3')" onchange="doRequest(this.id, this.value);">
                                 </div>
                             </div>
                         </div>
@@ -80,7 +80,7 @@
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:200px">
                                     <div class="w3-cell">
-                                        <input id="wifi1_password" class="w3-input w3-border w3-padding-small" type="password" minlength="7" maxlength="15">
+                                        <input id="wifi1_password" class="w3-input w3-border w3-padding-small" type="password" minlength="7" maxlength="15" onchange="doRequest(this.id, this.value);">
                                     </div>
                                     <div class="w3-cell w3-padding-small">
                                         <img src="eyes_visible-16.png"  onclick="visiblePwd('wifi1_password')">
@@ -106,7 +106,7 @@
                                     </div>
                                     <div class="w3-col w3-padding-small" style="width:160px">
                                         <div class="w3-cell">
-                                            <input id="wifi1_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                            <input id="wifi1_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
                                         </div>
                                     </div>
                                 </div>
@@ -117,7 +117,7 @@
                                     </div>
                                     <div class="w3-col w3-padding-small" style="width:160px">
                                         <div class="w3-cell">
-                                            <input id="wifi1_subnet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                            <input id="wifi1_subnet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                                     </div>
                                     <div class="w3-col w3-padding-small" style="width:160px">
                                         <div class="w3-cell">
-                                            <input id="wifi1_gateway" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                            <input id="wifi1_gateway" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
                                         </div>
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="w3-col w3-padding-small" style="width:160px">
                                         <div class="w3-cell">
-                                            <input id="wifi1_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                            <input id="wifi1_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +150,7 @@
                                     </div>
                                     <div class="w3-col w3-padding-small" style="width:160px">
                                         <div class="w3-cell">
-                                            <input id="wifi1_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                            <input id="wifi1_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
                                         </div>
                                     </div>
                                 </div>

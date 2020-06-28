@@ -35,154 +35,42 @@ SOFTWARE.
 #include "ConfigManager.h"
 #include "NetworkSetttingsPage.h"
 
-    // WiFi 1
-    EmbAJAXTextInput<MAX_SSID_LEN> wifi1_ssid("wifi1_ssid");
-    EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi1_password("wifi1_password");
-    EmbAJAXCheckButton wifi1_dhcp_mode("wifi1_dhcp_mode","");
-    EmbAJAXMutableSpan wifi1_dhcp_mode_label("wifi1_dhcp_mode_label");
-    EmbAJAXHideableContainer<0> wifi1_static_show("wifi1_static_show",NULL);
-    EmbAJAXTextInput<15> wifi1_ip("wifi1_ip");
-    EmbAJAXTextInput<15> wifi1_subnet("wifi1_subnet");
-    EmbAJAXTextInput<15> wifi1_gateway("wifi1_gateway");
-    EmbAJAXTextInput<15> wifi1_dns1("wifi1_dns1");
-    EmbAJAXTextInput<15> wifi1_dns2("wifi1_dns2");
-
-
-    MAKE_EmbAJAXPage( ajax, "", "",
-
-        // WiFi 1
-        &wifi1_ssid,
-        &wifi1_password,
-        &wifi1_dhcp_mode,
-        &wifi1_dhcp_mode_label,
-        &wifi1_static_show,
-        &wifi1_ip,
-        &wifi1_subnet,
-        &wifi1_gateway,
-        &wifi1_dns1,
-        &wifi1_dns2
-
-    )
-
-
-
     
-void initAjax() {
-
-  //  if( initialized ) return;
-  //  initialized = true;
-
-    StationConfig wifiStation;
-    char ipbuffer[15];
-    bool dhcp;
-
-    DEBUG("Initialize AJAX elements");
-
-
-    // WiFi 1
-    // ======
-
-    wifiStation = config.settings.networkConfig.stationSettings[0];
-
-    wifi1_ssid.setValue(wifiStation.SSID);
-    wifi1_password.setValue(wifiStation.password);
-
-    // IP Addresses
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
-    wifi1_ip.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
-    wifi1_subnet.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
-    wifi1_gateway.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
-    wifi1_dns1.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
-    wifi1_dns2.setValue(ipbuffer);
-
-    // DHCP Mode
-    dhcp = (wifiStation.DHCPMode == DHCP);
-    wifi1_dhcp_mode.setChecked(dhcp);
-    wifi1_dhcp_mode_label.setValue(dhcp ? "Dynamic IP" : "Static IP");
-    wifi1_static_show.setVisible(!dhcp);
-
-
-
-}
-
-void handleAjax() {
-
-    StationConfig wifiStation;
-    bool dhcp;
-
-    DEBUG("Handle AJAX");
-
-
-    // WiFi 1
-    // ======
-
-    wifiStation = config.settings.networkConfig.stationSettings[0];
-
-    strncpy(wifiStation.SSID, wifi1_ssid.value(), MAX_SSID_LEN);
-    strncpy(wifiStation.password, wifi1_password.value(), MAX_PASSWORD_LEN);
-    
-    wifiStation.ip.fromString(wifi1_ip.value());
-
-    wifiStation.subnet.fromString(wifi1_subnet.value());
-    wifiStation.gateway.fromString(wifi1_gateway.value());
-    wifiStation.dns1.fromString(wifi1_dns2.value());
-    wifiStation.dns2.fromString(wifi1_dns2.value());
-
-    // DHCP Mode
-    dhcp = wifi1_dhcp_mode.isChecked();
-    wifiStation.DHCPMode = (dhcp ? DHCP : STATIC);
-    wifi1_dhcp_mode_label.setValue(dhcp ? "Dynamic IP" : "Static IP");
-    wifi1_static_show.setVisible(!dhcp);
-
-
-}
-
-
-
 // Webpages
 // ========
-/*
+
 // Page handlers
-PageHandler pagehandlers[] = {
-    {networksettingsajax.URL, networksettingsajax.handler, networksettingsajax.init}
+PageHandler webpages[] = {
+    {networksettingspage.URL, networksettingspage.handler, networksettingspage.init}
 };
 
-*/
 
 // Website Manager
 // ===============
-/*
+
+
+void WebsiteManager::InitAJAX() {
+
+    for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+        if( lastURL == webpages[i].URL ) {
+            (webpages[i].init)();
+            return;
+        }
+
+}
+
+
 // Call appropriate page handler
-void WebsiteManager::handleAJAX( const String path ) {
+void WebsiteManager::handleAJAX() {
 
-    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ )
-        if( path == pagehandlers[i].URL ) {
-            (pagehandlers[i].handler)();
+    for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+        if( lastURL == webpages[i].URL ) {
+            (webpages[i].handler)();
             return;
         }
 
-
 }
-*/
-/*
-// Call appropriate page initializer
-void WebsiteManager::handleInit( const String path ) {
 
-    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ )
-        if( path == pagehandlers[i].URL ) {
-            (pagehandlers[i].init)();
-            return;
-        }
-}
-*/
 
 // Initialize web manaber
 void WebsiteManager::begin() {
@@ -190,39 +78,26 @@ void WebsiteManager::begin() {
      // If the client requests any URI
     _server.onNotFound( 
 
-        [&]() {                             
+        [&]() { 
+
+            URL = _server.uri();   
+            AjaxID = _server.arg("id");
+            AjaxValue = _server.arg("value");                 
 
             // AJAX request
-            if( _server.method() == HTTP_POST ) 
-                // handleAJAX( _server.uri() ); 
-                ajax.handleRequest( handleAjax );
+            if( _server.method() == HTTP_POST ) handleAJAX(); 
 
             // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
-            else if( !handleSPIFFS( _server.uri() ) ) _server.send( 404, F("text/html"), F("404: Not Found") );
+            else if( !handleSPIFFS() ) _server.send( 404, F("text/html"), F("404: Not Found") );
         
         }
 
-        
-
     );
-
 
     // Start SPIFFS and webserver
     SPIFFS.begin(); 
     _server.begin();
-/*
-    for( u_int i = 0; i < sizeof(pagehandlers)/sizeof(PageHandler); i++ ) {
-        (pagehandlers[i].handler)();
 
-    }
-*/
-
- /*               ajax.handleRequest( []() {
-                    handleAjax();
-                    } );
-
-
-*/
 }
 
 
@@ -243,7 +118,9 @@ String WebsiteManager::getContentType(String filename) {
 
 
 // Send the right file to the client (if it exists)
-bool WebsiteManager::handleSPIFFS(String shortpath) {
+bool WebsiteManager::handleSPIFFS() {
+
+    String shortpath = lastURL;
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
     logger.printf("(Network) Web server - file: %s", shortpath.c_str() );
@@ -260,9 +137,7 @@ bool WebsiteManager::handleSPIFFS(String shortpath) {
         _server.streamFile(file, contentType);
         file.close();
 
-        // Check to see if the page needs to be initialized
-    //    handleInit(shortpath);
-    initAjax();
+        InitAJAX();
 
         return true;
     }

@@ -35,39 +35,73 @@ Describes the Network Settings web page
 
     #include "EmbAJAX.h"
     #include "NetworkManager.h"
+    #include "ConfigManager.h"
+    #include "Logger.h"
 
-void initAjax();
-void handleAjax();
+    struct NetworkSettingsPage {
 
+        const char* URL;
+        void (*handler)();
+        void (*init)();
 
+        bool isInitialized = false;   
+        bool isChanged = false; 
+        StationConfig wifiStation;
 
+        EmbAJAXMutableSpan save_button;
 
+        EmbAJAXTextInput<32> wifi1_ssid;
+        EmbAJAXTextInput<16> wifi1_password;
+        EmbAJAXCheckButton wifi1_dhcp_mode;
+        EmbAJAXMutableSpan wifi1_dhcp_mode_label;
+        EmbAJAXHideableContainer<0> wifi1_static_show;
+        EmbAJAXTextInput<15> wifi1_ip;
+        EmbAJAXTextInput<15> wifi1_subnet;
+        EmbAJAXTextInput<15> wifi1_gateway;
+        EmbAJAXTextInput<15> wifi1_dns1;
+        EmbAJAXTextInput<15> wifi1_dns2;
 
-/*
-    class NetworkSettingsPage {
+        EmbAJAXBase* page_elements[11] = {
+            &save_button,
+            &wifi1_ssid,
+            &wifi1_password,
+            &wifi1_dhcp_mode,
+            &wifi1_dhcp_mode_label,
+            &wifi1_static_show,
+            &wifi1_ip,
+            &wifi1_subnet,
+            &wifi1_gateway,
+            &wifi1_dns1,
+            &wifi1_dns2
+        };
 
-        public:
+        NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
+            save_button("save_button"),
+            wifi1_ssid("wifi1_ssid"),
+            wifi1_password("wifi1_password"),
+            wifi1_dhcp_mode("wifi1_dhcp_mode", ""),
+            wifi1_dhcp_mode_label("wifi1_dhcp_mode_label"),
+            wifi1_static_show("wifi1_static_show",NULL),
+            wifi1_ip("wifi1_ip"),
+            wifi1_subnet("wifi1_subnet"),
+            wifi1_gateway("wifi1_gateway"),
+            wifi1_dns1("wifi1_dns1"),
+            wifi1_dns2("wifi1_dns2"),
+            ajax(page_elements, "")
+            {
+                URL = "/settings_wifi.html";
+                handler = phandler;
+                init = pinit;
+            };
 
-            void initAjax();
-            void handleAjax();
+        EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
+        void handleAjax();
 
-        protected:
-
-
-        private:
-
-            bool initialized = false;
-            NetworkSettings pageSettings;
+        void initializeAjax();
 
     };
-*/
-
-    //extern NetworkSettingsPage networksettingspage;
-
-    //extern NetworkSettingsAjax networksettingsajax;
-
     
-
+    extern NetworkSettingsPage networksettingspage;
 
 #endif
