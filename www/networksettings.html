@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<title>Settings</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="style.css">
+<script src="embajax.js"></script>
+
+<body class="w3-light-grey">
+
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">Menu</button>
+        <span class="w3-bar-item w3-right">Device Name</span>
+    </div>
+
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+        <div class="w3-bar-block">
+            <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu">Close Menu</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding">Home</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding w3-blue">Network Settings</a>
+        </div>
+    </nav>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+        <!-- Header -->
+        <header class="w3-container w3-light-grey">
+            <div class="w3-row">
+                <div class="w3-cell w3-left">
+                    <h4>Network Settings</h4>
+                </div>
+            </div>
+        </header>
+
+        <div class="w3-margin-bottom">
+            <!-- Wifi Networks -->
+            <div class="w3-half">
+                <div class="w3-container w3-white w3-padding-16 w3-round" style="min-width:200px">
+
+                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
+                        <div class="w3-row">
+                            <b>Saved Networks</b>
+                        </div>
+                        <div class="w3-row w3-padding-8">
+                            <button id="wifi_station_1" onclick="loadWifiDialog(this.id,0)" class="w3-button w3-blue w3-padding-small">Network 1</button>
+                        </div>
+                        <div class="w3-row w3-padding-8">
+                            <button id="wifi_station_2" onclick="loadWifiDialog(this.id,1)" class="w3-button w3-blue w3-padding-small">Network 2</button>
+                        </div>
+                        <div class="w3-row w3-padding-8">
+                            <button id="wifi_station_3" onclick="loadWifiDialog(this.id,2)" class="w3-button w3-blue w3-padding-small">Network 3</button>
+                        </div>
+                    </div>
+
+                    <!-- Wifi Network Modal -->
+                    <div class=" w3-padding-16">
+                        <div id="wifi_station" class="w3-modal">
+                            <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:400px">
+                                <span onclick="document.getElementById('wifi_station').style.display='none'" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright" title="Close">&times;</span>
+                                <div class="w3-container w3-center w3-padding-8">
+                                    <b>Wifi Network</b>
+                                </div>
+    
+                                <form class="w3-container">
+                                    <div class="w3-section">
+                                        <input id="wifi_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required onchange="doRequest(this.id, this.value);">
+
+                                        <div class="w3-display-container">
+                                            <input id="wifi_password" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" onchange="doRequest(this.id, this.value);">
+                                            <img class="w3-display-right w3-padding-small" src="eyes_visible-16.png"  onclick="visiblePwd('wifi_password')">
+                                        </div>
+
+                                        <!-- DHCP Mode -->
+                                        <div class="w3-row w3-padding-vert">
+                                            <div class="w3-cell w3-padding-vert">
+                                                <label class="switch">
+                                                    <input id="wifi_dhcp_mode" type="checkbox" value="t" onchange="showStaticFields();doRequest(this.id, this.checked ? 't' : 'f')">
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </div>
+                                        <div class="w3-cell w3-padding-small">Dynamic IP</div>
+                                    </div>
+        
+                                    <!-- DHCP Detais -->
+                                    <div id="wifi_static_show" class="w3-container w3-animate-opacity" style="padding:0!important; display: block;">
+        
+                                        <div class="w3-row w3-left">
+                                            <div class="w3-col" style="line-height: 35px;width:90px;">
+                                                IP Address
+                                            </div>
+                                            <div class="w3-col w3-padding-small" style="width:160px">
+                                                <div class="w3-cell">
+                                                    <input id="wifi_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <div class="w3-row w3-left">
+                                            <div class="w3-col" style="line-height: 35px;width:90px;">
+                                                Subnet
+                                            </div>
+                                            <div class="w3-col w3-padding-small" style="width:160px">
+                                                <div class="w3-cell">
+                                                    <input id="wifi_subnet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <div class="w3-row w3-left">
+                                            <div class="w3-col" style="line-height: 35px;width:90px;">
+                                                Gateway
+                                            </div>
+                                            <div class="w3-col w3-padding-small" style="width:160px">
+                                                <div class="w3-cell">
+                                                    <input id="wifi_gateway" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <div class="w3-row w3-left">
+                                            <div class="w3-col" style="line-height: 35px;width:90px;">
+                                                DNS 1
+                                            </div>
+                                            <div class="w3-col w3-padding-small" style="width:160px">
+                                                <div class="w3-cell">
+                                                    <input id="wifi_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <div class="w3-row w3-left">
+                                            <div class="w3-col" style="line-height: 35px;width:90px;">
+                                                DNS 2
+                                            </div>
+                                            <div class="w3-col w3-padding-small" style="width:160px">
+                                                <div class="w3-cell">
+                                                    <input id="wifi_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="doRequest(this.id, this.value);">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                      
+                            <!-- Save / Cancel -->
+                            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                                <button id="save_button" onclick="sureAction=this.id;document.getElementById('wifi_station_sure').style.display='block'" type="button" class="w3-button w3-green">Save</button>
+                                <button id="cancel_button" onclick="document.getElementById('wifi_station').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
+                                <button id="forget_button" onclick="sureAction=this.id;document.getElementById('wifi_station_sure').style.display='block'" type="button" class="w3-button w3-blue w3-right">Forget</button>
+                            </div>
+
+                            <div id="wifi_station_sure" class="w3-modal">
+                                <div class="w3-modal-content w3-card-4" style="max-width:200px">
+                                    <div class="w3-container w3-center w3-padding-8">
+                                        <b>Are you sure?</b>
+                                    </div>
+                                    <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                                        <button onclick="wifiSureYes()" type="button" class="w3-button w3-green" style="width:70px">Yes</button>
+                                        <button onclick="document.getElementById('wifi_station_sure').style.display='none'" type="button" class="w3-button w3-red w3-right" style="width:70px">No</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="w3-container w3-padding-16 w3-light-grey">
+ 
+        </footer>
+
+        <!-- End page content -->
+    </div>
+
+    <script src="w3css.js"></script>
+    
+</body>
+
+</html>
+

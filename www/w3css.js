@@ -4,6 +4,12 @@ var mySidebar = document.getElementById("mySidebar");
 // Get the DIV with overlay effect
 var overlayBg = document.getElementById("myOverlay");
 
+// Are you sure? Action
+var sureAction;
+
+// Wifi Station Dialog
+var wifiStationID;
+
 // Toggle between showing and hiding the sidebar, and add overlay effect
 function w3_open() {
     if (mySidebar.style.display === 'block') {
@@ -36,8 +42,8 @@ function selectWiFiStation(evt, wifiName) {
     evt.currentTarget.className += " w3-dark-grey";
 }
 
-function visiblePwd(wifiPwd) {
-    var x = document.getElementById(wifiPwd);
+function visiblePwd(element) {
+    var x = document.getElementById(element);
     if (x.type === "password") {
       x.type = "text";
     } else {
@@ -45,5 +51,27 @@ function visiblePwd(wifiPwd) {
     }
 }
 
-var mybtn = document.getElementById("wifi1_ssid");
-mybtn.click();
+function showStaticFields() {
+    console.log("show");
+    var x = document.getElementById("wifi_static_show");
+    var y = document.getElementById("wifi_dhcp_mode");
+    if( y.checked ) x.style.display = "none";
+    else x.style.display = "block";
+}
+
+function loadWifiDialog(wifi_id,id) {
+    wifiStationID = id;
+    console.log('Load');
+    doRequest(wifi_id,id,showStaticFields);
+    document.getElementById('wifi_station').style.display='block';}
+
+function wifiSureYes() {
+    console.log('Sure');
+    console.log(sureAction);
+    doRequest(sureAction,wifiStationID);
+    document.getElementById('wifi_station_sure').style.display='none';
+    document.getElementById('wifi_station').style.display='none';
+}
+
+// var mybtn = document.getElementById("wifi1_ssid");
+// mybtn.click();

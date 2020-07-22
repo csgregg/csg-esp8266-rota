@@ -35,84 +35,91 @@ SOFTWARE.
 #include "website.h"
 
 void NetworkSettingsPage::initializeAjax(){
-    
+
+    // TODO - is this needed?
     if( isInitialized ) return;
     isInitialized = true;
 
     DEBUG("Initialize Network Settings AJAX");
 
-    char ipbuffer[15];
+    String stationConnected = network.stationConnected[0] ? " - Connected" : "Not connected";
 
-    // WiFi 1
-    // ======
+    DEBUG(stationConnected);
 
-    wifiStation = config.settings.networkConfig.stationSettings[0];
-
-    wifi1_ssid.setValue(wifiStation.SSID);
-    wifi1_password.setValue(wifiStation.password);
-
-    // IP Addresses
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
-    wifi1_ip.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
-    wifi1_subnet.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
-    wifi1_gateway.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
-    wifi1_dns1.setValue(ipbuffer);
-
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
-    wifi1_dns2.setValue(ipbuffer);
-
-    // DHCP Mode
-    bool dhcp = (wifiStation.DHCPMode == DHCP);
-    wifi1_dhcp_mode.setChecked(dhcp);
-    wifi1_dhcp_mode_label.setValue(dhcp ? "Dynamic IP" : "Static IP");
-    wifi1_static_show.setVisible(!dhcp);
-
-    save_button.setEnabled(isChanged);
+    wifi_station_1.setValue(config.settings.networkConfig.stationSettings[0].SSID);
+    wifi_station_2.setValue(config.settings.networkConfig.stationSettings[1].SSID);
+    wifi_station_3.setValue(config.settings.networkConfig.stationSettings[2].SSID);
 
 }
 
 void NetworkSettingsPage::handleAjax(){
 
-        DEBUG("Handle Network Settings AJAX");
+    DEBUG("Handle Network Settings AJAX");
 
-        DEBUG(website.URL);
-        DEBUG(website.AjaxID);
-        DEBUG(website.AjaxValue);
+    DEBUG(website.URL);
+    DEBUG(website.AjaxID);
+    DEBUG(website.AjaxValue);
 
-        isChanged = true;
+    if( website.AjaxID == "wifi_station_1" ||
+        website.AjaxID == "wifi_station_2" ||
+        website.AjaxID == "wifi_station_3" )
+        loadWifiStation(website.AjaxValue.toInt());
 
-        // WiFi 1
-        // ======
+    if( website.AjaxID == "save_button" ) saveWifiStation(website.AjaxValue.toInt());
+    
+}
 
-        wifiStation = config.settings.networkConfig.stationSettings[0];
+void NetworkSettingsPage::loadWifiStation(uint id) {
 
-        strncpy(wifiStation.SSID, wifi1_ssid.value(), MAX_SSID_LEN);
-        strncpy(wifiStation.password, wifi1_password.value(), MAX_PASSWORD_LEN);
-        
-        wifiStation.ip.fromString(wifi1_ip.value());
+    DEBUG("Load");
+    char ipbuffer[15];
 
-        wifiStation.subnet.fromString(wifi1_subnet.value());
-        wifiStation.gateway.fromString(wifi1_gateway.value());
-        wifiStation.dns1.fromString(wifi1_dns2.value());
-        wifiStation.dns2.fromString(wifi1_dns2.value());
+    wifiStation = config.settings.networkConfig.stationSettings[id];
 
-        // DHCP Mode
-        bool dhcp = wifi1_dhcp_mode.isChecked();
-        wifiStation.DHCPMode = (dhcp ? DHCP : STATIC);
-        wifi1_dhcp_mode_label.setValue(dhcp ? "Dynamic IP" : "Static IP");
-        wifi1_static_show.setVisible(!dhcp);
+    wifi_ssid.setValue(wifiStation.SSID);
+    wifi_password.setValue(wifiStation.password);
 
-        save_button.setEnabled(isChanged);
+    // IP Addresses
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
+    wifi_ip.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
+    wifi_subnet.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
+    wifi_gateway.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
+    wifi_dns1.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
+    wifi_dns2.setValue(ipbuffer);
+
+    wifi_dhcp_mode.setChecked(wifiStation.DHCPMode == DHCP);
 
 }
 
 
+void NetworkSettingsPage::saveWifiStation(uint id) {
+
+    DEBUG("Saving");
+
+    strncpy(wifiStation.SSID, wifi_ssid.value(), MAX_SSID_LEN);
+    strncpy(wifiStation.password, wifi_password.value(), MAX_PASSWORD_LEN);
+    
+    wifiStation.ip.fromString(wifi_ip.value());
+
+    wifiStation.subnet.fromString(wifi_subnet.value());
+    wifiStation.gateway.fromString(wifi_gateway.value());
+    wifiStation.dns1.fromString(wifi_dns2.value());
+    wifiStation.dns2.fromString(wifi_dns2.value());
+
+    wifiStation.DHCPMode = (wifi_dhcp_mode.isChecked() ? DHCP : STATIC);
+
+    config.settings.networkConfig.stationSettings[id] = wifiStation;
+    config.Save();
+
+}
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_NETWORKSETTINGSPAGE)
 

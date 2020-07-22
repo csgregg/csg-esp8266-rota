@@ -188,6 +188,8 @@ SOFTWARE.
                 _APRunning = false;
                 _APConnections = 0;
                 _ConnectedToInternet = false;
+
+                for( int i; i<MAX_SSIDS; i++ ) stationConnected[i] = false;
             }
 
             void begin( NetworkSettings &settings );
@@ -203,6 +205,7 @@ SOFTWARE.
 
             WiFiClient& getWiFiClient() { return _client; };
           
+            bool stationConnected[MAX_SSIDS];
 
         protected:
 

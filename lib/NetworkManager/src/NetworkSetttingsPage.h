@@ -44,52 +44,66 @@ Describes the Network Settings web page
         void (*handler)();
         void (*init)();
 
-        bool isInitialized = false;   
-        bool isChanged = false; 
+        bool isInitialized = false; 
         StationConfig wifiStation;
 
         EmbAJAXMutableSpan save_button;
+        EmbAJAXMutableSpan forget_button;
 
-        EmbAJAXTextInput<32> wifi1_ssid;
-        EmbAJAXTextInput<16> wifi1_password;
-        EmbAJAXCheckButton wifi1_dhcp_mode;
-        EmbAJAXMutableSpan wifi1_dhcp_mode_label;
-        EmbAJAXHideableContainer<0> wifi1_static_show;
-        EmbAJAXTextInput<15> wifi1_ip;
-        EmbAJAXTextInput<15> wifi1_subnet;
-        EmbAJAXTextInput<15> wifi1_gateway;
-        EmbAJAXTextInput<15> wifi1_dns1;
-        EmbAJAXTextInput<15> wifi1_dns2;
+        EmbAJAXMutableSpan wifi_station_1;
+        EmbAJAXMutableSpan wifi_station_2;
+        EmbAJAXMutableSpan wifi_station_3;
 
-        EmbAJAXBase* page_elements[11] = {
+        EmbAJAXTextInput<32> wifi_ssid;
+        EmbAJAXTextInput<16> wifi_password;
+        EmbAJAXCheckButton wifi_dhcp_mode;
+        EmbAJAXTextInput<15> wifi_ip;
+        EmbAJAXTextInput<15> wifi_subnet;
+        EmbAJAXTextInput<15> wifi_gateway;
+        EmbAJAXTextInput<15> wifi_dns1;
+        EmbAJAXTextInput<15> wifi_dns2;
+
+        EmbAJAXBase* page_elements[13] = {
+
             &save_button,
-            &wifi1_ssid,
-            &wifi1_password,
-            &wifi1_dhcp_mode,
-            &wifi1_dhcp_mode_label,
-            &wifi1_static_show,
-            &wifi1_ip,
-            &wifi1_subnet,
-            &wifi1_gateway,
-            &wifi1_dns1,
-            &wifi1_dns2
+            &forget_button,
+
+            &wifi_station_1,
+            &wifi_station_2,
+            &wifi_station_3,
+
+            &wifi_ssid,
+            &wifi_password,
+            &wifi_dhcp_mode,
+            &wifi_ip,
+            &wifi_subnet,
+            &wifi_gateway,
+            &wifi_dns1,
+            &wifi_dns2
+
         };
 
         NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
+
             save_button("save_button"),
-            wifi1_ssid("wifi1_ssid"),
-            wifi1_password("wifi1_password"),
-            wifi1_dhcp_mode("wifi1_dhcp_mode", ""),
-            wifi1_dhcp_mode_label("wifi1_dhcp_mode_label"),
-            wifi1_static_show("wifi1_static_show",NULL),
-            wifi1_ip("wifi1_ip"),
-            wifi1_subnet("wifi1_subnet"),
-            wifi1_gateway("wifi1_gateway"),
-            wifi1_dns1("wifi1_dns1"),
-            wifi1_dns2("wifi1_dns2"),
+            forget_button("forget_button"),
+
+            wifi_station_1("wifi_station_1"),
+            wifi_station_2("wifi_station_2"),
+            wifi_station_3("wifi_station_3"),
+
+            wifi_ssid("wifi_ssid"),
+            wifi_password("wifi_password"),
+            wifi_dhcp_mode("wifi_dhcp_mode", ""),
+            wifi_ip("wifi_ip"),
+            wifi_subnet("wifi_subnet"),
+            wifi_gateway("wifi_gateway"),
+            wifi_dns1("wifi_dns1"),
+            wifi_dns2("wifi_dns2"),
+
             ajax(page_elements, "")
             {
-                URL = "/settings_wifi.html";
+                URL = "/networksettings.html";
                 handler = phandler;
                 init = pinit;
             };
@@ -99,6 +113,10 @@ Describes the Network Settings web page
         void handleAjax();
 
         void initializeAjax();
+
+        void loadWifiStation(uint id);
+
+        void saveWifiStation(uint id);
 
     };
     

@@ -38,8 +38,14 @@
                 </div>
                 <div class="w3-cell w3-right w3-padding-vert">
                     <div class="w3-cell">
-                        <button id="save_button" disabled class="w3-button w3-padding-small w3-grey w3-round w3-hover-green" onclick="doRequest(this.id, 'p');">Save</button>
+                        <button id="save_button" disabled class="w3-button w3-padding-small w3-grey w3-round w3-hover-green" onclick="doRequest(this.id, this.value);">Save</button>
                     </div>        
+                    <div class="w3-cell">
+                        <button id="discard_button" disabled class="w3-button w3-padding-small w3-grey w3-round w3-hover-red" onclick="doRequest(this.id, this.value);">Discard</button>
+                    </div>
+                    <div class="w3-cell">
+                        <button id="defaults_button"  class="w3-button w3-padding-small w3-grey w3-round w3-hover-blue" onclick="doRequest(this.id, this.value);">Defaults</button>
+                    </div> 
                 </div>
             </div>
 
