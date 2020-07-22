@@ -51,11 +51,7 @@ PageHandler webpages[] = {
 
 void WebsiteManager::InitAJAX() {
 
-    for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
-        if( lastURL == webpages[i].URL ) {
-            (webpages[i].init)();
-            return;
-        }
+
 
 }
 
@@ -63,11 +59,7 @@ void WebsiteManager::InitAJAX() {
 // Call appropriate page handler
 void WebsiteManager::handleAJAX() {
 
-    for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
-        if( lastURL == webpages[i].URL ) {
-            (webpages[i].handler)();
-            return;
-        }
+
 
 }
 
@@ -85,7 +77,13 @@ void WebsiteManager::begin() {
             AjaxValue = _server.arg("value");                 
 
             // AJAX request
-            if( _server.method() == HTTP_POST ) handleAJAX(); 
+            if( _server.method() == HTTP_POST ) {
+                for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+                    if( URL == webpages[i].URL ) {
+                        (webpages[i].handler)();
+                        break;
+                    }    
+            }
 
             // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
             else if( !handleSPIFFS() ) _server.send( 404, F("text/html"), F("404: Not Found") );
@@ -120,7 +118,7 @@ String WebsiteManager::getContentType(String filename) {
 // Send the right file to the client (if it exists)
 bool WebsiteManager::handleSPIFFS() {
 
-    String shortpath = lastURL;
+    String shortpath = URL;
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
     logger.printf("(Network) Web server - file: %s", shortpath.c_str() );
@@ -137,7 +135,11 @@ bool WebsiteManager::handleSPIFFS() {
         _server.streamFile(file, contentType);
         file.close();
 
-        InitAJAX();
+        for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+            if( URL == webpages[i].URL ) {
+                (webpages[i].init)();
+                break;
+            }
 
         return true;
     }

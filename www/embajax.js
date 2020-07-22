@@ -4,13 +4,15 @@
 
 var serverrevision = 0;
 
-function doRequest(id='', value='') {
+function doRequest(id='', value='', callback='') {
+   console.log('doRequest');
     var req = new XMLHttpRequest();
     req.timeout = 10000;
     if(window.ardujaxsh) window.ardujaxsh.out();
     req.onload = function() {
        doUpdates(JSON.parse(req.responseText));
        if(window.ardujaxsh) window.ardujaxsh.in();
+       if(callback) callback();
     }
     if(id) {
        req.onerror = req.ontimeout = function() {
@@ -24,6 +26,7 @@ function doRequest(id='', value='') {
 }
 
 function doUpdates(response) {
+   console.log('doUpdates');
     serverrevision = response.revision;
     var updates = response.updates;
     for(i = 0; i < updates.length; i++) {

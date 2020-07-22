@@ -200,7 +200,10 @@ bool NetworkManager::handleWiFiStation() {
 
     // Try each of the stored stations
     bool success = false;
-    for( int station = 0; station < MAX_SSIDS && !success; station++ ) success = startWiFiStation( (station + _networkSettings->lastStation) % MAX_SSIDS );
+    for( int station = 0; station < MAX_SSIDS && !success; station++ ) {
+        success = startWiFiStation( (station + _networkSettings->lastStation) % MAX_SSIDS );
+        stationConnected[station] = success;
+    }
 
     return success;
 
