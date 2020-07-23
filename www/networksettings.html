@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="w3.css">
 <link rel="stylesheet" href="style.css">
-<script src="embajax.js"></script>
+
 
 <body class="w3-light-grey">
 
@@ -48,13 +48,19 @@
                         <div class="w3-row">
                             <b>Saved Networks</b>
                         </div>
-                        <div class="w3-row w3-padding-8">
+                        <div class="w3-row w3-padding-horz">
+                            <span id="wifi_stn1_icon" hidden></span>
+                            <img id="wifi_icon1" class="w3-padding-8" style="opacity: 0.20;" src="signal32-4.png">
                             <button id="wifi_station_1" onclick="loadWifiDialog(this.id,0)" class="w3-button w3-blue w3-padding-small">Network 1</button>
                         </div>
-                        <div class="w3-row w3-padding-8">
+                        <div class="w3-row w3-padding-horz">
+                            <span id="wifi_stn2_icon" hidden></span>
+                            <img id="wifi_icon2" class="w3-padding-8" style="opacity: 0.20;" src="signal32-4.png">
                             <button id="wifi_station_2" onclick="loadWifiDialog(this.id,1)" class="w3-button w3-blue w3-padding-small">Network 2</button>
                         </div>
-                        <div class="w3-row w3-padding-8">
+                        <div class="w3-row w3-padding-horz">
+                            <span id="wifi_stn3_icon" hidden></span>
+                            <img id="wifi_icon3" class="w3-padding-8" style="opacity: 0.20;" src="signal32-4.png">
                             <button id="wifi_station_3" onclick="loadWifiDialog(this.id,2)" class="w3-button w3-blue w3-padding-small">Network 3</button>
                         </div>
                     </div>
@@ -70,10 +76,10 @@
     
                                 <form class="w3-container">
                                     <div class="w3-section">
-                                        <input id="wifi_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required onchange="doRequest(this.id, this.value);">
+                                        <input id="wifi_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required onchange="doRequest(this.id, this.value);" autocomplete="current-password">
 
                                         <div class="w3-display-container">
-                                            <input id="wifi_password" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" onchange="doRequest(this.id, this.value);">
+                                            <input id="wifi_password" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" onchange="doRequest(this.id, this.value);" autocomplete="current-password">
                                             <img class="w3-display-right w3-padding-small" src="eyes_visible-16.png"  onclick="visiblePwd('wifi_password')">
                                         </div>
 
@@ -183,6 +189,7 @@
     </div>
 
     <script src="w3css.js"></script>
+    <script src="embajax.js"></script>
     
 </body>
 

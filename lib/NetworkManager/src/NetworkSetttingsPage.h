@@ -54,6 +54,10 @@ Describes the Network Settings web page
         EmbAJAXMutableSpan wifi_station_2;
         EmbAJAXMutableSpan wifi_station_3;
 
+        EmbAJAXMutableSpan wifi_stn1_icon;
+        EmbAJAXMutableSpan wifi_stn2_icon;
+        EmbAJAXMutableSpan wifi_stn3_icon;
+
         EmbAJAXTextInput<32> wifi_ssid;
         EmbAJAXTextInput<16> wifi_password;
         EmbAJAXCheckButton wifi_dhcp_mode;
@@ -63,7 +67,7 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_dns1;
         EmbAJAXTextInput<15> wifi_dns2;
 
-        EmbAJAXBase* page_elements[13] = {
+        EmbAJAXBase* page_elements[16] = {
 
             &save_button,
             &forget_button,
@@ -71,6 +75,10 @@ Describes the Network Settings web page
             &wifi_station_1,
             &wifi_station_2,
             &wifi_station_3,
+
+            &wifi_stn1_icon,
+            &wifi_stn2_icon,
+            &wifi_stn3_icon,
 
             &wifi_ssid,
             &wifi_password,
@@ -91,6 +99,10 @@ Describes the Network Settings web page
             wifi_station_1("wifi_station_1"),
             wifi_station_2("wifi_station_2"),
             wifi_station_3("wifi_station_3"),
+
+            wifi_stn1_icon("wifi_stn1_icon"),
+            wifi_stn2_icon("wifi_stn2_icon"),
+            wifi_stn3_icon("wifi_stn3_icon"),
 
             wifi_ssid("wifi_ssid"),
             wifi_password("wifi_password"),
