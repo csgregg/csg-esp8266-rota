@@ -42,13 +42,13 @@ void NetworkSettingsPage::initializeAjax(){
 
     DEBUG("Initialize Network Settings AJAX");
 
-    String stationConnected = network.stationConnected[0] ? " - Connected" : "Not connected";
-
-    DEBUG(stationConnected);
-
     wifi_station_1.setValue(config.settings.networkConfig.stationSettings[0].SSID);
     wifi_station_2.setValue(config.settings.networkConfig.stationSettings[1].SSID);
     wifi_station_3.setValue(config.settings.networkConfig.stationSettings[2].SSID);
+
+    wifi_stn1_icon.setValue(network.stationConnected[0]?"On":"Off");
+    wifi_stn2_icon.setValue(network.stationConnected[1]?"On":"Off");
+    wifi_stn3_icon.setValue(network.stationConnected[2]?"On":"Off");
 
 }
 
