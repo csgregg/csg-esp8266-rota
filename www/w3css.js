@@ -40,7 +40,7 @@ function visiblePwd(element) {
 }
 
 function updateCSS() {
-    console.log("Update CSS");
+    console.log("Status - Update CSS");
 
     // DHCP Mode
     var x = document.getElementById("wifi_stn_statics");
@@ -85,15 +85,14 @@ function setWifiIcon(id,state) {
 
 function loadWifiDialog(wifi_id,id) {
     wifiStationID = id;
-    console.log('Load');
+    console.log('Status - Load');
     var x = document.getElementById("wifi_stn_pwd");
     doRequest(wifi_id,id,updateCSS);
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
 
 function wifiSureYes() {
-    console.log('Sure');
-    console.log(sureAction);
+    console.log('Status - Sure');
     doRequest(sureAction,wifiStationID);
     document.getElementById('wifi_stn_sure').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='none';
