@@ -49,4 +49,4 @@ function doPoll() {
 }
 
 doPoll();
-//setInterval(doPoll,1000);
+setInterval(doPoll,1000);

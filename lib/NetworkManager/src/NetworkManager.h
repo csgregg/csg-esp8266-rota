@@ -188,14 +188,13 @@ SOFTWARE.
                 _APRunning = false;
                 _APConnections = 0;
                 _ConnectedToInternet = false;
-
-                for( int i; i<MAX_SSIDS; i++ ) stationConnected[i] = false;
             }
 
             void begin( NetworkSettings &settings );
 
             bool setWiFiStation();
             bool setWiFiAP();
+            void reconnectWifi();
 
             void handle();
 
@@ -205,16 +204,19 @@ SOFTWARE.
 
             WiFiClient& getWiFiClient() { return _client; };
           
+            // TODO - is there a better way?
             bool stationConnected[MAX_SSIDS];
 
         protected:
 
-            void handleWiFi();
-            bool handleWiFiStation();
-            bool handleWiFiAP();
+            void handleWiFi(const bool reconnect = false);
 
+            bool handleWiFiStation(const bool reconnect = false);
             bool startWiFiAccessPoint();
+
+            bool handleWiFiAP(const bool reconnect = false);
             bool startWiFiStation( const int id = 0 );
+
             bool checkInternet();
 
             void InitializeWiFi();

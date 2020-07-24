@@ -5,6 +5,13 @@ html,body,h1,h2,h3,h4,h5 {font-family: sans-serif}
 .w3-padding-vert{padding:8px 0px!important} 
 .w3-padding-horz{padding:0px 8ps!important}
 
+.mydot{
+  border-radius: 50%;
+  display: inline-block;
+  height: 15px;
+  width: 15px;
+}   
+
 .switch {
   position: relative;
   display: inline-block;
