@@ -196,7 +196,7 @@ void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
 		yield();
 	}
 
-    LOG(F("\n(Config) Flash erased"));
+    LOG(F("(Config) Flash erased"));
 
 }
 

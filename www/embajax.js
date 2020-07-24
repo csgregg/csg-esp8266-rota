@@ -5,7 +5,7 @@
 var serverrevision = 0;
 
 function doRequest(id='', value='', callback='') {
-   console.log('doRequest');
+   console.log('Status - doRequest');
     var req = new XMLHttpRequest();
     req.timeout = 10000;
     if(window.ardujaxsh) window.ardujaxsh.out();
@@ -26,7 +26,7 @@ function doRequest(id='', value='', callback='') {
 }
 
 function doUpdates(response) {
-   console.log('doUpdates');
+   console.log('Status - doUpdates');
     serverrevision = response.revision;
     var updates = response.updates;
     for(i = 0; i < updates.length; i++) {
