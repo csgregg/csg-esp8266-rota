@@ -43,24 +43,39 @@ function updateCSS() {
     console.log("Update CSS");
 
     // DHCP Mode
-    var x = document.getElementById("wifi_static_show");
-    var y = document.getElementById("wifi_dhcp_mode");
+    var x = document.getElementById("wifi_stn_statics");
+    var y = document.getElementById("wifi_stn_dhcp");
     if( y.checked ) x.style.display = "none";
     else x.style.display = "block";
 
     // Wifi Icons
-    x = document.getElementById("wifi_stn1_icon");
-    y = document.getElementById("wifi_icon1");
+    x = document.getElementById("wifi_stn1_ctrl");
+    y = document.getElementById("wifi_stn1_icon");
     setWifiIcon(y,(x.innerText=="On"));
 
-    x = document.getElementById("wifi_stn2_icon");
-    y = document.getElementById("wifi_icon2");
+    x = document.getElementById("wifi_stn2_ctrl");
+    y = document.getElementById("wifi_stn2_icon");
     setWifiIcon(y,x.innerText=="On");
 
-    x = document.getElementById("wifi_stn3_icon");
-    y = document.getElementById("wifi_icon3");
+    x = document.getElementById("wifi_stn3_ctrl");
+    y = document.getElementById("wifi_stn3_icon");
     setWifiIcon(y,x.innerText=="On");
 
+    // Wifi visibility
+    x = document.getElementById("wifi_stn1_btn");
+    y = document.getElementById("wifi_stn1_icon");
+    x.style.display = ( x.innerHTML == "" ) ? "none" : "";
+    y.style.display = ( x.innerHTML == "" ) ? "none" : "";
+
+    x = document.getElementById("wifi_stn2_btn");
+    y = document.getElementById("wifi_stn2_icon");
+    x.style.display = ( x.innerHTML == "" ) ? "none" : "";
+    y.style.display = ( x.innerHTML == "" ) ? "none" : "";
+
+    x = document.getElementById("wifi_stn3_btn");
+    y = document.getElementById("wifi_stn3_icon");
+    x.style.display = ( x.innerHTML == "" ) ? "none" : "";
+    y.style.display = ( x.innerHTML == "" ) ? "none" : "";
 }
 
 function setWifiIcon(id,state) {
@@ -71,13 +86,35 @@ function setWifiIcon(id,state) {
 function loadWifiDialog(wifi_id,id) {
     wifiStationID = id;
     console.log('Load');
+    var x = document.getElementById("wifi_stn_pwd");
     doRequest(wifi_id,id,updateCSS);
-    document.getElementById('wifi_station').style.display='block';}
+    document.getElementById('wifi_stn_dlg').style.display='block';
+}
 
 function wifiSureYes() {
     console.log('Sure');
     console.log(sureAction);
     doRequest(sureAction,wifiStationID);
-    document.getElementById('wifi_station_sure').style.display='none';
-    document.getElementById('wifi_station').style.display='none';
+    document.getElementById('wifi_stn_sure').style.display='none';
+    document.getElementById('wifi_stn_dlg').style.display='none';
 }
+
+
+class ardujaxshc {
+    constructor(div) {
+        this.misses = 0;
+        this.div = div;
+    }
+    out() {
+        if( this.misses < 5 ) if(++(this.misses) >= 5) this.div.style.background = "red";
+    }
+    in() {
+        if( this.misses > 4 ) this.div.style.background = "green";
+        this.misses=0;
+    }
+} 
+
+ardujaxsh = new ardujaxshc(document.getElementById('EmbAjaxStatus'));
+
+
+

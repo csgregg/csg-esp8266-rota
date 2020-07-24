@@ -47,71 +47,71 @@ Describes the Network Settings web page
         bool isInitialized = false; 
         StationConfig wifiStation;
 
-        EmbAJAXMutableSpan save_button;
-        EmbAJAXMutableSpan forget_button;
+        EmbAJAXMutableSpan wifi_stn_save;
+        EmbAJAXMutableSpan wifi_stn_forget;
 
-        EmbAJAXMutableSpan wifi_station_1;
-        EmbAJAXMutableSpan wifi_station_2;
-        EmbAJAXMutableSpan wifi_station_3;
+        EmbAJAXMutableSpan wifi_stn1_btn;
+        EmbAJAXMutableSpan wifi_stn2_btn;
+        EmbAJAXMutableSpan wifi_stn3_btn;
 
-        EmbAJAXMutableSpan wifi_stn1_icon;
-        EmbAJAXMutableSpan wifi_stn2_icon;
-        EmbAJAXMutableSpan wifi_stn3_icon;
+        EmbAJAXMutableSpan wifi_stn1_ctrl;
+        EmbAJAXMutableSpan wifi_stn2_ctrl;
+        EmbAJAXMutableSpan wifi_stn3_ctrl;
 
-        EmbAJAXTextInput<32> wifi_ssid;
-        EmbAJAXTextInput<16> wifi_password;
-        EmbAJAXCheckButton wifi_dhcp_mode;
-        EmbAJAXTextInput<15> wifi_ip;
-        EmbAJAXTextInput<15> wifi_subnet;
-        EmbAJAXTextInput<15> wifi_gateway;
-        EmbAJAXTextInput<15> wifi_dns1;
-        EmbAJAXTextInput<15> wifi_dns2;
+        EmbAJAXTextInput<32> wifi_stn_ssid;
+        EmbAJAXTextInput<16> wifi_stn_pwd;
+        EmbAJAXCheckButton wifi_stn_dhcp;
+        EmbAJAXTextInput<15> wifi_stn_ip;
+        EmbAJAXTextInput<15> wifi_stn_subnet;
+        EmbAJAXTextInput<15> wifi_stn_gateway;
+        EmbAJAXTextInput<15> wifi_stn_dns1;
+        EmbAJAXTextInput<15> wifi_stn_dns2;
 
         EmbAJAXBase* page_elements[16] = {
 
-            &save_button,
-            &forget_button,
+        &wifi_stn_save,
+        &wifi_stn_forget,
 
-            &wifi_station_1,
-            &wifi_station_2,
-            &wifi_station_3,
+        &wifi_stn1_btn,
+        &wifi_stn2_btn,
+        &wifi_stn3_btn,
 
-            &wifi_stn1_icon,
-            &wifi_stn2_icon,
-            &wifi_stn3_icon,
+        &wifi_stn1_ctrl,
+        &wifi_stn2_ctrl,
+        &wifi_stn3_ctrl,
 
-            &wifi_ssid,
-            &wifi_password,
-            &wifi_dhcp_mode,
-            &wifi_ip,
-            &wifi_subnet,
-            &wifi_gateway,
-            &wifi_dns1,
-            &wifi_dns2
+        &wifi_stn_ssid,
+        &wifi_stn_pwd,
+        &wifi_stn_dhcp,
+        &wifi_stn_ip,
+        &wifi_stn_subnet,
+        &wifi_stn_gateway,
+        &wifi_stn_dns1,
+        &wifi_stn_dns2
 
         };
 
         NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
 
-            save_button("save_button"),
-            forget_button("forget_button"),
+            wifi_stn_save("wifi_stn_save"),
+            wifi_stn_forget("wifi_stn_forget"),
 
-            wifi_station_1("wifi_station_1"),
-            wifi_station_2("wifi_station_2"),
-            wifi_station_3("wifi_station_3"),
+            wifi_stn1_btn("wifi_stn1_btn"),
+            wifi_stn2_btn("wifi_stn2_btn"),
+            wifi_stn3_btn("wifi_stn3_btn"),
 
-            wifi_stn1_icon("wifi_stn1_icon"),
-            wifi_stn2_icon("wifi_stn2_icon"),
-            wifi_stn3_icon("wifi_stn3_icon"),
+            wifi_stn1_ctrl("wifi_stn1_ctrl"),
+            wifi_stn2_ctrl("wifi_stn2_ctrl"),
+            wifi_stn3_ctrl("wifi_stn3_ctrl"),
 
-            wifi_ssid("wifi_ssid"),
-            wifi_password("wifi_password"),
-            wifi_dhcp_mode("wifi_dhcp_mode", ""),
-            wifi_ip("wifi_ip"),
-            wifi_subnet("wifi_subnet"),
-            wifi_gateway("wifi_gateway"),
-            wifi_dns1("wifi_dns1"),
-            wifi_dns2("wifi_dns2"),
+            wifi_stn_ssid("wifi_stn_ssid"),
+            wifi_stn_pwd("wifi_stn_pwd"),
+            wifi_stn_dhcp("wifi_stn_dhcp",""),
+            wifi_stn_ip("wifi_stn_ip"),
+            wifi_stn_subnet("wifi_stn_subnet"),
+            wifi_stn_gateway("wifi_stn_gateway"),
+            wifi_stn_dns1("wifi_stn_dns1"),
+            wifi_stn_dns2("wifi_stn_dns2"),
 
             ajax(page_elements, "")
             {
@@ -129,6 +129,8 @@ Describes the Network Settings web page
         void loadWifiStation(uint id);
 
         void saveWifiStation(uint id);
+
+        void forgetWifiStation(uint id);
 
     };
     
