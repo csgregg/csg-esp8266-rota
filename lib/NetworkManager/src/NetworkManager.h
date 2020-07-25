@@ -206,6 +206,7 @@ SOFTWARE.
           
             // TODO - is there a better way?
             bool stationConnected[MAX_SSIDS];
+            uint ConnectedStation;
 
         protected:
 
@@ -225,11 +226,11 @@ SOFTWARE.
 
             bool _StationConnected;         // Are we connected to WiFi
             bool _APRunning;                // Is the AP running
-            int _APConnections;            // How many clients are connected
+            uint _APConnections;            // How many clients are connected
 
             bool _ConnectedToInternet;      // Is there a route to the internet
            
-            int _disconnectedStation;       // Used to see how long disconnected in station mode
+            uint _disconnectedStation;       // Used to see how long disconnected in station mode
 
             WiFiClient _client;
 

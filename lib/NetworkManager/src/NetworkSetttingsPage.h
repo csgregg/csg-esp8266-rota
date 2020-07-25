@@ -44,7 +44,6 @@ Describes the Network Settings web page
         void (*handler)();
         void (*init)();
 
-        bool isInitialized = false; 
         StationConfig wifiStation;
 
         EmbAJAXMutableSpan wifi_stn_save;
