@@ -36,10 +36,6 @@ SOFTWARE.
 
 void NetworkSettingsPage::initializeAjax(){
 
-    // TODO - is this needed?
-    if( isInitialized ) return;
-    isInitialized = true;
-
     LOG("Initialize Network Settings AJAX");
 
     wifi_stn1_btn.setValue(config.settings.networkConfig.stationSettings[0].SSID);
@@ -61,7 +57,7 @@ void NetworkSettingsPage::handleAjax(){
         website.AjaxID == "wifi_stn3_btn" )
         loadWifiStation(website.AjaxValue.toInt());
 
-    if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
+    if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
 }
 
@@ -100,6 +96,7 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
     
+    // TODO - Add error checking
     wifiStation.ip.fromString(wifi_stn_ip.value());
 
     wifiStation.subnet.fromString(wifi_stn_subnet.value());
@@ -112,8 +109,9 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
     config.settings.networkConfig.stationSettings[id] = wifiStation;
     config.Save();
 
-    network.reconnectWifi();
+    if( network.ConnectedStation == id ) network.reconnectWifi();
 
+    initializeAjax();
 }
 
 

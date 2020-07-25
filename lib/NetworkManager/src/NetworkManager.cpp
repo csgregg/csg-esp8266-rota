@@ -213,6 +213,7 @@ bool NetworkManager::handleWiFiStation(const bool reconnect) {
         int trystation = (station + _networkSettings->lastStation) % MAX_SSIDS;
         success = startWiFiStation( trystation );
         stationConnected[trystation] = success;
+        if( success ) ConnectedStation = trystation;
     }
 
     return success;
