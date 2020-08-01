@@ -26,22 +26,34 @@ function doRequest(id='', value='', callback='') {
 }
 
 function doUpdates(response) {
-   console.log('Status - doUpdates');
+    console.log('Status - doUpdates');
     serverrevision = response.revision;
     var updates = response.updates;
     for(i = 0; i < updates.length; i++) {
        element = document.getElementById(updates[i].id);
        changes = updates[i].changes;
-//       console.log(changes);
-       for(j = 0; j < changes.length; ++j) {
-          var spec = changes[j][0].split('.');
-          var prop = element;
-          for(k = 0; k < (spec.length-1); ++k) {
-              prop = prop[spec[k]];
-          }
-          prop[spec[spec.length-1]] = changes[j][1];
-       }
-    }
+
+       // is this a var?
+       var isVar = false;
+       for(j = 0; j < changes.length && !isVar; ++j) {
+         var spec = changes[j][0].split('.');
+         if(spec[0]=="window") {
+            window[spec[1]] = changes[j][1];
+            isVar = true;
+         }
+      }
+
+      if( !isVar && element ) {
+         for(j = 0; j < changes.length; ++j) {
+            var spec = changes[j][0].split('.');
+            var prop = element;
+            for(k = 0; k < (spec.length-1); ++k) {
+               prop = prop[spec[k]];
+            }
+            prop[spec[spec.length-1]] = changes[j][1];
+         }
+      }
+   }
 }
 
 function doPoll() {

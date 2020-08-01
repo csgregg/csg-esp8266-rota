@@ -43,6 +43,72 @@ SOFTWARE.
         void (*init)();
     };
 
+
+
+    /** @brief A global char variable that can be updated from the server (not the client) */
+    class EmbAJAXVarString : public EmbAJAXElement {
+    public:
+        EmbAJAXVarString(const char* id, const char* varname) : EmbAJAXElement(id) {
+            _value = 0;
+            _varname = varname;
+        }
+        void print() const override { return; } 
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
+        void updateFromDriverArg(const char* argname) override;
+        void setValue(const char* value, bool allowHTML = false);
+        bool valueNeedsEscaping(uint8_t which=EmbAJAXBase::Value) const override;
+        String strValue() const {
+            return _value;
+        }
+    private:
+        const char* _value;
+        const char* _varname;
+    };
+
+    /** @brief A global int variable that can be updated from the server (not the client) */
+    class EmbAJAXVarInt : public EmbAJAXElement {
+    public:
+        EmbAJAXVarInt(const char* id, const char* varname) : EmbAJAXElement(id) {
+            _value = 0;
+            _varname = varname;
+            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
+        }
+        void print() const override { return; } 
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
+        void updateFromDriverArg(const char* argname) override;
+        void setValue(const int value);
+        int intValue() const { 
+            return _value;
+        }
+
+    private:
+        int _value;
+        const char* _varname;
+    };
+
+    /** @brief An HTML span element with content that can be updated from the server (not the client) */
+    class EmbAJAXStyle : public EmbAJAXMutableSpan {
+    public:
+        EmbAJAXStyle(const char* id) : EmbAJAXMutableSpan(id) {
+            _style = 0;
+            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
+        }
+
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
+        void setStyle(const char* style);
+        enum Property {
+            Style = EmbAJAXBase::FirstElementSpecificProperty
+        };
+    private:
+        const char* _style;
+    };
+
+
+
+
     // Website Manager Class
 
     class WebsiteManager {

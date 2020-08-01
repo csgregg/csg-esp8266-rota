@@ -49,19 +49,85 @@ PageHandler webpages[] = {
 // ===============
 
 
-void WebsiteManager::InitAJAX() {
+//////////////////////// EmbAJAXVarString /////////////////////////////
 
 
+const char* EmbAJAXVarString::value(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) return _value;
+    return EmbAJAXElement::value(which);
+}
 
+// TODO - check use of this
+bool EmbAJAXVarString::valueNeedsEscaping(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) return !basicProperty(EmbAJAXBase::HTMLAllowed);
+    return EmbAJAXElement::valueNeedsEscaping(which);
+}
+
+const char* EmbAJAXVarString::valueProperty(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) return _varname;
+    return EmbAJAXElement::valueProperty(which);
+}
+
+void EmbAJAXVarString::setValue(const char* value, bool allowHTML) {
+    _value = value;
+    setBasicProperty(EmbAJAXBase::HTMLAllowed, allowHTML);
+    setChanged();
+}
+
+void EmbAJAXVarString::updateFromDriverArg(const char* argname) {
+    _value = _driver->getArg(argname, itoa_buf, sizeof(itoa_buf));
+}
+
+//////////////////////// EmbAJAXVarInt /////////////////////////////
+
+
+const char* EmbAJAXVarInt::value(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) {
+        itoa(_value,itoa_buf,10);
+        return itoa_buf;
+    }
+    return EmbAJAXElement::value(which);
+}
+
+const char* EmbAJAXVarInt::valueProperty(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) return _varname;
+    return EmbAJAXElement::valueProperty(which);
+}
+
+void EmbAJAXVarInt::setValue(int value) {
+    _value = value;
+    setChanged();
+}
+
+void EmbAJAXVarInt::updateFromDriverArg(const char* argname) {
+    _value = atoi(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)));
 }
 
 
-// Call appropriate page handler
-void WebsiteManager::handleAJAX() {
 
 
 
+
+
+//////////////////////// EmbAJAXStyle /////////////////////////////
+
+
+const char* EmbAJAXStyle::value(uint8_t which) const {
+    if (which == EmbAJAXStyle::Style) return _style;
+    return EmbAJAXMutableSpan::value(which);
 }
+
+
+const char* EmbAJAXStyle::valueProperty(uint8_t which) const {
+    if (which == EmbAJAXStyle::Style) return "style";
+    return EmbAJAXMutableSpan::valueProperty(which);
+}
+
+void EmbAJAXStyle::setStyle(const char* style) {
+    _style = style;
+    setChanged();
+}
+
 
 
 // Initialize web manaber
