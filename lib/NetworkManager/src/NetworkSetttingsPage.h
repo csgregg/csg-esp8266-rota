@@ -37,6 +37,7 @@ Describes the Network Settings web page
     #include "NetworkManager.h"
     #include "ConfigManager.h"
     #include "Logger.h"
+    #include "website.h"
 
     struct NetworkSettingsPage {
 
@@ -48,6 +49,8 @@ Describes the Network Settings web page
 
         EmbAJAXMutableSpan wifi_stn_save;
         EmbAJAXMutableSpan wifi_stn_forget;
+
+        EmbAJAXVarString wifi_var_test;
 
         EmbAJAXMutableSpan wifi_stn1_btn;
         EmbAJAXMutableSpan wifi_stn2_btn;
@@ -66,10 +69,12 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[16] = {
+        EmbAJAXBase* page_elements[17] = {
 
         &wifi_stn_save,
         &wifi_stn_forget,
+
+        &wifi_var_test,
 
         &wifi_stn1_btn,
         &wifi_stn2_btn,
@@ -94,6 +99,8 @@ Describes the Network Settings web page
 
             wifi_stn_save("wifi_stn_save"),
             wifi_stn_forget("wifi_stn_forget"),
+            
+            wifi_var_test("wifi_var_test", "window.wifi_var_test"),
 
             wifi_stn1_btn("wifi_stn1_btn"),
             wifi_stn2_btn("wifi_stn2_btn"),

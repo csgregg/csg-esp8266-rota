@@ -158,7 +158,7 @@ void NetworkManager::handleWiFi(const bool reconnect) {
 
 bool NetworkManager::handleWiFiAP(const bool reconnect) {
 
-    int connections = WiFi.softAPgetStationNum();
+    uint connections = WiFi.softAPgetStationNum();
 
     if( connections != _APConnections ) {
         logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
