@@ -50,7 +50,7 @@ Describes the Network Settings web page
         EmbAJAXMutableSpan wifi_stn_save;
         EmbAJAXMutableSpan wifi_stn_forget;
 
-        EmbAJAXVarString wifi_var_test;
+        EmbAJAXVariable<char*> wifi_var_test;
 
         EmbAJAXMutableSpan wifi_stn1_btn;
         EmbAJAXMutableSpan wifi_stn2_btn;
@@ -100,7 +100,7 @@ Describes the Network Settings web page
             wifi_stn_save("wifi_stn_save"),
             wifi_stn_forget("wifi_stn_forget"),
             
-            wifi_var_test("wifi_var_test", "window.wifi_var_test"),
+            wifi_var_test("wifi_var_test", "embajax_var"),
 
             wifi_stn1_btn("wifi_stn1_btn"),
             wifi_stn2_btn("wifi_stn2_btn"),
@@ -137,6 +137,8 @@ Describes the Network Settings web page
         void saveWifiStation(uint id);
 
         void forgetWifiStation(uint id);
+
+        char buff[32];
 
     };
     

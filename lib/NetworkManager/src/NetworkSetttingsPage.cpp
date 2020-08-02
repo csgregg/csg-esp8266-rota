@@ -46,7 +46,9 @@ void NetworkSettingsPage::initializeAjax(){
     wifi_stn2_ctrl.setValue(network.stationConnected[1]?"On":"Off");
     wifi_stn3_ctrl.setValue(network.stationConnected[2]?"On":"Off");
 
-    wifi_var_test.setValue("Hello world");
+    strcpy(buff,"hello");
+
+    wifi_var_test.setValue(buff);
 
 }
 
@@ -61,7 +63,7 @@ void NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
-    DEBUG(wifi_var_test.strValue());
+    DEBUG(wifi_var_test.getValue());
 }
 
 void NetworkSettingsPage::loadWifiStation(uint id) {

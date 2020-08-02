@@ -44,51 +44,32 @@ SOFTWARE.
     };
 
 
-
     /** @brief A global char variable that can be updated from the server (not the client) */
-    class EmbAJAXVarString : public EmbAJAXElement {
+    template <typename T> class EmbAJAXVariable : public EmbAJAXElement {
     public:
-        EmbAJAXVarString(const char* id, const char* varname) : EmbAJAXElement(id) {
+        EmbAJAXVariable(const char* id, const char* varname) : EmbAJAXElement(id) {
             _value = 0;
             _varname = varname;
         }
         void print() const override { return; } 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
-        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
+            if (which == EmbAJAXBase::Value) return _varname;
+            return EmbAJAXElement::valueProperty(which);
+        }
         void updateFromDriverArg(const char* argname) override;
-        void setValue(const char* value, bool allowHTML = false);
-        bool valueNeedsEscaping(uint8_t which=EmbAJAXBase::Value) const override;
-        String strValue() const {
+        void setValue(T value, bool allowHTML = false);
+        T getValue() const {
             return _value;
         }
     private:
-        const char* _value;
+        T _value;
         const char* _varname;
     };
 
-    /** @brief A global int variable that can be updated from the server (not the client) */
-    class EmbAJAXVarInt : public EmbAJAXElement {
-    public:
-        EmbAJAXVarInt(const char* id, const char* varname) : EmbAJAXElement(id) {
-            _value = 0;
-            _varname = varname;
-            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
-        }
-        void print() const override { return; } 
-        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
-        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
-        void updateFromDriverArg(const char* argname) override;
-        void setValue(const int value);
-        int intValue() const { 
-            return _value;
-        }
 
-    private:
-        int _value;
-        const char* _varname;
-    };
 
-    /** @brief An HTML span element with content that can be updated from the server (not the client) */
+    /** @brief An HTML span element with properties that can be updated from the server (not the client) */
     class EmbAJAXStyle : public EmbAJAXMutableSpan {
     public:
         EmbAJAXStyle(const char* id) : EmbAJAXMutableSpan(id) {

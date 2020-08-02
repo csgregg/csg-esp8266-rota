@@ -49,39 +49,21 @@ PageHandler webpages[] = {
 // ===============
 
 
-//////////////////////// EmbAJAXVarString /////////////////////////////
 
 
-const char* EmbAJAXVarString::value(uint8_t which) const {
+
+
+
+
+
+//////////////////////// EmbAJAXVariable /////////////////////////////
+
+template <> const char* EmbAJAXVariable<char*>::value(uint8_t which) const {
     if (which == EmbAJAXBase::Value) return _value;
     return EmbAJAXElement::value(which);
 }
 
-// TODO - check use of this
-bool EmbAJAXVarString::valueNeedsEscaping(uint8_t which) const {
-    if (which == EmbAJAXBase::Value) return !basicProperty(EmbAJAXBase::HTMLAllowed);
-    return EmbAJAXElement::valueNeedsEscaping(which);
-}
-
-const char* EmbAJAXVarString::valueProperty(uint8_t which) const {
-    if (which == EmbAJAXBase::Value) return _varname;
-    return EmbAJAXElement::valueProperty(which);
-}
-
-void EmbAJAXVarString::setValue(const char* value, bool allowHTML) {
-    _value = value;
-    setBasicProperty(EmbAJAXBase::HTMLAllowed, allowHTML);
-    setChanged();
-}
-
-void EmbAJAXVarString::updateFromDriverArg(const char* argname) {
-    _value = _driver->getArg(argname, itoa_buf, sizeof(itoa_buf));
-}
-
-//////////////////////// EmbAJAXVarInt /////////////////////////////
-
-
-const char* EmbAJAXVarInt::value(uint8_t which) const {
+template <> const char* EmbAJAXVariable<int>::value(uint8_t which) const {
     if (which == EmbAJAXBase::Value) {
         itoa(_value,itoa_buf,10);
         return itoa_buf;
@@ -89,20 +71,25 @@ const char* EmbAJAXVarInt::value(uint8_t which) const {
     return EmbAJAXElement::value(which);
 }
 
-const char* EmbAJAXVarInt::valueProperty(uint8_t which) const {
-    if (which == EmbAJAXBase::Value) return _varname;
-    return EmbAJAXElement::valueProperty(which);
+template <> void EmbAJAXVariable<char*>::setValue(char* value, bool allowHTML) {
+    _value = value;
+    DEBUG(_value);
+    setBasicProperty(EmbAJAXBase::HTMLAllowed, allowHTML);
+    setChanged();
 }
 
-void EmbAJAXVarInt::setValue(int value) {
+template <> void EmbAJAXVariable<int>::setValue(int value, bool allowHTML) {
     _value = value;
     setChanged();
 }
 
-void EmbAJAXVarInt::updateFromDriverArg(const char* argname) {
-    _value = atoi(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)));
+template <> void EmbAJAXVariable<char*>::updateFromDriverArg(const char* argname) {
+    _driver->getArg(argname, _value, sizeof(itoa_buf));
 }
 
+template <> void EmbAJAXVariable<int>::updateFromDriverArg(const char* argname) {
+    _value = atoi(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)));
+}
 
 
 
