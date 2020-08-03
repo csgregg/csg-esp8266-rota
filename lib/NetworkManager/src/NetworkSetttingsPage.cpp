@@ -49,6 +49,7 @@ void NetworkSettingsPage::initializeAjax(){
     strcpy(buff,"hello");
 
     wifi_var_test.setValue(buff);
+    wifi_var_count.setValue(0);
 
 }
 
@@ -64,6 +65,13 @@ void NetworkSettingsPage::handleAjax(){
     if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
     DEBUG(wifi_var_test.getValue());
+
+    int i = wifi_var_count.getValue();
+    char buff[8];
+    itoa(i,buff,10);
+    DEBUG(buff);
+
+    wifi_test_console.call("Hi there");
 }
 
 void NetworkSettingsPage::loadWifiStation(uint id) {

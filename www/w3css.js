@@ -22,6 +22,9 @@ function w3_open() {
         mySidebar.style.display = 'block';
         overlayBg.style.display = "block";
     }
+
+    console.log(++window.wifi_var_count);
+    doRequest("wifi_var_count", window.wifi_var_count);
 }
 
 // Close the sidebar with the close button
@@ -31,6 +34,9 @@ function w3_close() {
 }
 
 
+function wifi_test_console(msg) {
+    console.log(msg);
+}
 
 
 function visiblePwd(element) {
