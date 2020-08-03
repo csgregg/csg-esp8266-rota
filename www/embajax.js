@@ -32,6 +32,7 @@ function doUpdates(response) {
    for(i = 0; i < updates.length; i++) {
       element = document.getElementById(updates[i].id);
       changes = updates[i].changes;
+      console.log(changes);
 
       for(j = 0; j < changes.length; ++j) {
          var spec = changes[j][0].split('.');
@@ -45,6 +46,9 @@ function doUpdates(response) {
          }
          else if( spec[0]=="embajax_var" ) {      // Handle variable
             window[updates[i].id] = changes[j][1];
+         }
+         else if( spec[0]=="embajax_func" ) {     // Handle function call
+            window[updates[i].id](changes[j][1]);
          }
       }
    }

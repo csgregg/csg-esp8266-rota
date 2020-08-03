@@ -51,6 +51,8 @@ Describes the Network Settings web page
         EmbAJAXMutableSpan wifi_stn_forget;
 
         EmbAJAXVariable<char*> wifi_var_test;
+        EmbAJAXVariable<int> wifi_var_count;
+        EmbAJAXFunction<char*> wifi_test_console;
 
         EmbAJAXMutableSpan wifi_stn1_btn;
         EmbAJAXMutableSpan wifi_stn2_btn;
@@ -69,12 +71,14 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[17] = {
+        EmbAJAXBase* page_elements[19] = {
 
         &wifi_stn_save,
         &wifi_stn_forget,
 
         &wifi_var_test,
+        &wifi_var_count,
+        &wifi_test_console,
 
         &wifi_stn1_btn,
         &wifi_stn2_btn,
@@ -99,8 +103,10 @@ Describes the Network Settings web page
 
             wifi_stn_save("wifi_stn_save"),
             wifi_stn_forget("wifi_stn_forget"),
-            
-            wifi_var_test("wifi_var_test", "embajax_var"),
+                   
+            wifi_var_test("wifi_var_test"),
+            wifi_var_count("wifi_var_count"),
+            wifi_test_console("wifi_test_console"),
 
             wifi_stn1_btn("wifi_stn1_btn"),
             wifi_stn2_btn("wifi_stn2_btn"),

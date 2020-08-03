@@ -50,10 +50,21 @@ PageHandler webpages[] = {
 
 
 
+//////////////////////// EmbAJAXFunction /////////////////////////////
 
 
+template <> const char* EmbAJAXFunction<int>::value(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) {
+        itoa(_arg,itoa_buf,10);
+        return itoa_buf;
+    }
+    return EmbAJAXElement::value(which);
+}
 
-
+template <> const char* EmbAJAXFunction<char*>::value(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) return _arg;
+    return EmbAJAXElement::value(which);
+}
 
 
 //////////////////////// EmbAJAXVariable /////////////////////////////

@@ -44,17 +44,49 @@ SOFTWARE.
     };
 
 
+    /** @brief A global function that can be called from the server (not the client) */
+    template <typename T> class EmbAJAXFunction : public EmbAJAXElement {
+    public:
+        EmbAJAXFunction(const char* id) : EmbAJAXElement(id) {
+            _call = false;
+            _arg = 0;
+        };
+        void print() const override { return; } 
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
+            if (which == EmbAJAXBase::Value) 
+                if( _call ) return "embajax_func";
+                else return "";
+            return EmbAJAXElement::valueProperty(which);
+        }
+        void call(const T arg) {
+            _call = true;
+            _arg = arg;
+            setChanged();
+        };
+        bool sendUpdates(uint16_t since, bool first) {
+            bool res = EmbAJAXElement::sendUpdates(since, first);
+            _call = false;
+            return res;
+        }
+
+    private:
+        bool _call;
+        T _arg;
+    };
+
+
+
     /** @brief A global char variable that can be updated from the server (not the client) */
     template <typename T> class EmbAJAXVariable : public EmbAJAXElement {
     public:
-        EmbAJAXVariable(const char* id, const char* varname) : EmbAJAXElement(id) {
+        EmbAJAXVariable(const char* id) : EmbAJAXElement(id) {
             _value = 0;
-            _varname = varname;
         }
         void print() const override { return; } 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
-            if (which == EmbAJAXBase::Value) return _varname;
+            if (which == EmbAJAXBase::Value) return "embajax_var";
             return EmbAJAXElement::valueProperty(which);
         }
         void updateFromDriverArg(const char* argname) override;
@@ -64,7 +96,6 @@ SOFTWARE.
         }
     private:
         T _value;
-        const char* _varname;
     };
 
 
