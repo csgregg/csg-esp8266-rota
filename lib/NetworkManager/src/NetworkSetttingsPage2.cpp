@@ -53,11 +53,13 @@ void NetworkSettingsPage2::handleAjax(){
     if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
     if( website.AjaxID == "wifi_stn_id" ) {
-        DEBUG(config.settings.networkConfig.stationSettings[atoi(wifi_stn_id.value())].SSID);
-        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[atoi(wifi_stn_id.value())].SSID);
-        wifi_stn_on.setValue(network.stationConnected[atoi(wifi_stn_id.value())]?1:0);
+        DEBUG(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
+        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
+        wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]?1:0);
 
     }
+
+    if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
 
 }
 
