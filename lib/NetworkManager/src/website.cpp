@@ -33,15 +33,16 @@ SOFTWARE.
 #include "website.h"
 #include "Logger.h"
 #include "ConfigManager.h"
-#include "NetworkSetttingsPage.h"
-
+//#include "NetworkSetttingsPage.h"
+#include "NetworkSetttingsPage2.h"
     
 // Webpages
 // ========
 
 // Page handlers
 PageHandler webpages[] = {
-    {networksettingspage.URL, networksettingspage.handler, networksettingspage.init}
+//    {networksettingspage.URL, networksettingspage.handler, networksettingspage.init},
+    {networksettingspage2.URL, networksettingspage2.handler, networksettingspage2.init}
 };
 
 
@@ -98,7 +99,13 @@ template <> void EmbAJAXVariable<int>::updateFromDriverArg(const char* argname) 
     _value = atoi(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)));
 }
 
+template <> int EmbAJAXVariable<int>::intValue() const {
+    return _value;
+}
 
+template <> int EmbAJAXVariable<char*>::intValue() const {
+    return 0;
+}
 
 
 

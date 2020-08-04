@@ -29,49 +29,39 @@ SOFTWARE.
 
 
 
-#include "NetworkSetttingsPage.h"
+#include "NetworkSetttingsPage2.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "website.h"
 
 
-// TODO - better way
-char NSPconversion_buf[ARDUJAX_MAX_ID_LEN];
+char NSP2conversion_buf[ARDUJAX_MAX_ID_LEN];
 
 
-void NetworkSettingsPage::initializeAjax(){
+void NetworkSettingsPage2::initializeAjax(){
 
     LOG("Initialize Network Settings AJAX");
 
-    wifi_stn1_btn.setValue(config.settings.networkConfig.stationSettings[0].SSID);
-    wifi_stn2_btn.setValue(config.settings.networkConfig.stationSettings[1].SSID);
-    wifi_stn3_btn.setValue(config.settings.networkConfig.stationSettings[2].SSID);
-
-    wifi_stn1_ctrl.setValue(network.stationConnected[0]?"On":"Off");
-    wifi_stn2_ctrl.setValue(network.stationConnected[1]?"On":"Off");
-    wifi_stn3_ctrl.setValue(network.stationConnected[2]?"On":"Off");
-
+    wifi_stn_count.setValue(MAX_SSIDS);
 
 }
 
-void NetworkSettingsPage::handleAjax(){
+void NetworkSettingsPage2::handleAjax(){
 
     LOG("Handle Network Settings AJAX");
 
-    if( website.AjaxID == "wifi_stn1_btn" ||
-        website.AjaxID == "wifi_stn2_btn" ||
-        website.AjaxID == "wifi_stn3_btn" )
-        loadWifiStation(website.AjaxValue.toInt());
-
     if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
-    if( website.AjaxID == "wifi_test_act") {
-        website.AjaxValue.toCharArray(NSPconversion_buf,sizeof(NSPconversion_buf));
-        wifi_test_act.setValue(test_action(NSPconversion_buf));
+    if( website.AjaxID == "wifi_stn_id" ) {
+        DEBUG(config.settings.networkConfig.stationSettings[atoi(wifi_stn_id.value())].SSID);
+        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[atoi(wifi_stn_id.value())].SSID);
+        wifi_stn_on.setValue(network.stationConnected[atoi(wifi_stn_id.value())]?1:0);
+
     }
+
 }
 
-void NetworkSettingsPage::loadWifiStation(uint id) {
+void NetworkSettingsPage2::loadWifiStation(uint id) {
 
     char ipbuffer[15];
 
@@ -101,7 +91,7 @@ void NetworkSettingsPage::loadWifiStation(uint id) {
 }
 
 
-void NetworkSettingsPage::saveWifiStation(uint id) {
+void NetworkSettingsPage2::saveWifiStation(uint id) {
 
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
@@ -126,25 +116,18 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 
 
-char* NetworkSettingsPage::test_action(char* arg) {
-    DEBUG(arg);
-    return "Return val";
-}
-
-
-
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_NETWORKSETTINGSPAGE)
 
-    NetworkSettingsPage networksettingspage(
+    NetworkSettingsPage2 networksettingspage2(
         []() { 
-            networksettingspage.ajax.handleRequest( 
+            networksettingspage2.ajax.handleRequest( 
                 []() {
-                    networksettingspage.handleAjax();
+                    networksettingspage2.handleAjax();
                 }
             ); 
         },
         []() { 
-            networksettingspage.initializeAjax();
+            networksettingspage2.initializeAjax();
         }
     );
 

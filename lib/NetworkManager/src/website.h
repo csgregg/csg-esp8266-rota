@@ -78,48 +78,44 @@ SOFTWARE.
     };
 
 
-
-    /** @brief Calls a lcoal function from the client (not the server) */
-    class EmbAJAXServerFunction : public EmbAJAXElement {
+      /** @brief A global char variable that can be updated from the server (not the client) */
+    template <size_t SIZE> class EmbAJAXVarChar : public EmbAJAXElement {
     public:
-        EmbAJAXServerFunction(const char* id ) : EmbAJAXElement(id) {
+        EmbAJAXVarChar(const char* id, const char* initial) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
-            _response = 0;
-            _arg = 0;
+            strcpy(_value, initial);
         }
         void print() const override {} 
-        const char* value(uint8_t which = EmbAJAXBase::Value) const override
-        {
-            if (which == EmbAJAXBase::Value) return _response;
+
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override {
+            if (which == EmbAJAXBase::Value) return _value;
             return EmbAJAXElement::value(which);
         }
+
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return "embajax_var";
             return EmbAJAXElement::valueProperty(which);
         }
-        void updateFromDriverArg(const char* argname) override {
-            _driver->getArg(argname, _arg, sizeof(itoa_buf));
+
+        void setValue(const char* value) {
+            strncpy(_value, value, SIZE);
+            setChanged();
         }
-        void setReturn(char* res) {
-            _response = res;
+        void updateFromDriverArg(const char* argname) override {
+            _driver->getArg(argname, _value, SIZE);
         }
 
     private:
-        char* _response;
-        char* _arg;
-
+        char _value[SIZE];
     };
-
-
-
-
+  
 
     /** @brief A global char variable that can be updated from the server (not the client) */
     template <typename T> class EmbAJAXVariable : public EmbAJAXElement {
     public:
-        EmbAJAXVariable(const char* id) : EmbAJAXElement(id) {
+        EmbAJAXVariable(const char* id, T initial = 0) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
-            _value = 0;
+            _value = initial;
         }
         void print() const override {} 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
@@ -129,15 +125,16 @@ SOFTWARE.
         }
         void updateFromDriverArg(const char* argname) override;
         void setValue(T value) {
-            _value = value;
+            _value = value;     // TODO - used strcpy
             setChanged();
         }
-        T getValue() const {
-            return _value;
-        }
+        int intValue() const;
+
     private:
         T _value;
     };
+
+    typedef class EmbAJAXVariable<char*> EmbAJAXServerFunction;
 
 
 
