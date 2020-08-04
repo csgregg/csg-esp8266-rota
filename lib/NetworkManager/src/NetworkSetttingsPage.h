@@ -39,6 +39,7 @@ Describes the Network Settings web page
     #include "Logger.h"
     #include "website.h"
 
+
     struct NetworkSettingsPage {
 
         const char* URL;
@@ -52,7 +53,9 @@ Describes the Network Settings web page
 
         EmbAJAXVariable<char*> wifi_var_test;
         EmbAJAXVariable<int> wifi_var_count;
-        EmbAJAXFunction<char*> wifi_test_console;
+        EmbAJAXClientFunction<char*> wifi_test_console;
+
+        EmbAJAXVariable<char*> wifi_test_act;
 
         EmbAJAXMutableSpan wifi_stn1_btn;
         EmbAJAXMutableSpan wifi_stn2_btn;
@@ -71,7 +74,7 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[19] = {
+        EmbAJAXBase* page_elements[20] = {
 
         &wifi_stn_save,
         &wifi_stn_forget,
@@ -79,6 +82,7 @@ Describes the Network Settings web page
         &wifi_var_test,
         &wifi_var_count,
         &wifi_test_console,
+        &wifi_test_act,
 
         &wifi_stn1_btn,
         &wifi_stn2_btn,
@@ -107,6 +111,7 @@ Describes the Network Settings web page
             wifi_var_test("wifi_var_test"),
             wifi_var_count("wifi_var_count"),
             wifi_test_console("wifi_test_console"),
+            wifi_test_act("wifi_test_act"),
 
             wifi_stn1_btn("wifi_stn1_btn"),
             wifi_stn2_btn("wifi_stn2_btn"),
@@ -142,10 +147,9 @@ Describes the Network Settings web page
 
         void saveWifiStation(uint id);
 
-        void forgetWifiStation(uint id);
-
         char buff[32];
 
+        char* test_action(char* arg);
     };
     
     extern NetworkSettingsPage networksettingspage;
