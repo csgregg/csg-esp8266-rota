@@ -40,7 +40,8 @@ Describes the Network Settings web page
     #include "website.h"
 
 
-    struct NetworkSettingsPage {
+    class NetworkSettingsPage {
+    public:
 
         const char* URL;
         void (*handler)();

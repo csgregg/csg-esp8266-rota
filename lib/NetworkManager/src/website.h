@@ -87,7 +87,7 @@ SOFTWARE.
             _response = 0;
             _arg = 0;
         }
-        void print() const override { return; } 
+        void print() const override {} 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override
         {
             if (which == EmbAJAXBase::Value) return _response;
@@ -121,7 +121,7 @@ SOFTWARE.
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             _value = 0;
         }
-        void print() const override { return; } 
+        void print() const override {} 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return "embajax_var";
