@@ -50,10 +50,18 @@ PageHandler webpages[] = {
 
 
 
-//////////////////////// EmbAJAXFunction /////////////////////////////
+//////////////////////// EmbAJAXServerFunction /////////////////////////////
 
 
-template <> const char* EmbAJAXFunction<int>::value(uint8_t which) const {
+
+
+
+
+
+//////////////////////// EmbAJAXClientFunction /////////////////////////////
+
+
+template <> const char* EmbAJAXClientFunction<int>::value(uint8_t which) const {
     if (which == EmbAJAXBase::Value) {
         itoa(_arg,itoa_buf,10);
         return itoa_buf;
@@ -61,7 +69,7 @@ template <> const char* EmbAJAXFunction<int>::value(uint8_t which) const {
     return EmbAJAXElement::value(which);
 }
 
-template <> const char* EmbAJAXFunction<char*>::value(uint8_t which) const {
+template <> const char* EmbAJAXClientFunction<char*>::value(uint8_t which) const {
     if (which == EmbAJAXBase::Value) return _arg;
     return EmbAJAXElement::value(which);
 }
@@ -80,18 +88,6 @@ template <> const char* EmbAJAXVariable<int>::value(uint8_t which) const {
         return itoa_buf;
     }
     return EmbAJAXElement::value(which);
-}
-
-template <> void EmbAJAXVariable<char*>::setValue(char* value, bool allowHTML) {
-    _value = value;
-    DEBUG(_value);
-    setBasicProperty(EmbAJAXBase::HTMLAllowed, allowHTML);
-    setChanged();
-}
-
-template <> void EmbAJAXVariable<int>::setValue(int value, bool allowHTML) {
-    _value = value;
-    setChanged();
 }
 
 template <> void EmbAJAXVariable<char*>::updateFromDriverArg(const char* argname) {

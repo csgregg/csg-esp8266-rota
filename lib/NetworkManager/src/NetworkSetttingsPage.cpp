@@ -34,6 +34,10 @@ SOFTWARE.
 #include "ConfigManager.h"
 #include "website.h"
 
+
+char conversion_buf[ARDUJAX_MAX_ID_LEN];
+
+
 void NetworkSettingsPage::initializeAjax(){
 
     LOG("Initialize Network Settings AJAX");
@@ -46,10 +50,6 @@ void NetworkSettingsPage::initializeAjax(){
     wifi_stn2_ctrl.setValue(network.stationConnected[1]?"On":"Off");
     wifi_stn3_ctrl.setValue(network.stationConnected[2]?"On":"Off");
 
-    strcpy(buff,"hello");
-
-    wifi_var_test.setValue(buff);
-    wifi_var_count.setValue(0);
 
 }
 
@@ -64,14 +64,10 @@ void NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
     
-    DEBUG(wifi_var_test.getValue());
-
-    int i = wifi_var_count.getValue();
-    char buff[8];
-    itoa(i,buff,10);
-    DEBUG(buff);
-
-    wifi_test_console.call("Hi there");
+    if( website.AjaxID == "wifi_test_act") {
+        website.AjaxValue.toCharArray(conversion_buf,sizeof(conversion_buf));
+        wifi_test_act.setValue(test_action(conversion_buf));
+    }
 }
 
 void NetworkSettingsPage::loadWifiStation(uint id) {
@@ -129,8 +125,9 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 
 
-void NetworkSettingsPage::forgetWifiStation(uint id) {
-
+char* NetworkSettingsPage::test_action(char* arg) {
+    DEBUG(arg);
+    return "Return val";
 }
 
 

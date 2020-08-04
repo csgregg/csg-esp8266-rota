@@ -44,26 +44,28 @@ SOFTWARE.
     };
 
 
-    /** @brief A global function that can be called from the server (not the client) */
-    template <typename T> class EmbAJAXFunction : public EmbAJAXElement {
+    /** @brief A global javasript function that can be called from the server (not the client) */
+    template <typename T> class EmbAJAXClientFunction : public EmbAJAXElement {
     public:
-        EmbAJAXFunction(const char* id) : EmbAJAXElement(id) {
+        EmbAJAXClientFunction(const char* id) : EmbAJAXElement(id) {
+            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             _call = false;
             _arg = 0;
-        };
+        }
         void print() const override { return; } 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
-            if (which == EmbAJAXBase::Value) 
+            if (which == EmbAJAXBase::Value) {
                 if( _call ) return "embajax_func";
                 else return "";
+            }
             return EmbAJAXElement::valueProperty(which);
         }
         void call(const T arg) {
             _call = true;
             _arg = arg;
             setChanged();
-        };
+        }
         bool sendUpdates(uint16_t since, bool first) {
             bool res = EmbAJAXElement::sendUpdates(since, first);
             _call = false;
@@ -77,10 +79,46 @@ SOFTWARE.
 
 
 
+    /** @brief Calls a lcoal function from the client (not the server) */
+    class EmbAJAXServerFunction : public EmbAJAXElement {
+    public:
+        EmbAJAXServerFunction(const char* id ) : EmbAJAXElement(id) {
+            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
+            _response = 0;
+            _arg = 0;
+        }
+        void print() const override { return; } 
+        const char* value(uint8_t which = EmbAJAXBase::Value) const override
+        {
+            if (which == EmbAJAXBase::Value) return _response;
+            return EmbAJAXElement::value(which);
+        }
+        const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
+            if (which == EmbAJAXBase::Value) return "embajax_var";
+            return EmbAJAXElement::valueProperty(which);
+        }
+        void updateFromDriverArg(const char* argname) override {
+            _driver->getArg(argname, _arg, sizeof(itoa_buf));
+        }
+        void setReturn(char* res) {
+            _response = res;
+        }
+
+    private:
+        char* _response;
+        char* _arg;
+
+    };
+
+
+
+
+
     /** @brief A global char variable that can be updated from the server (not the client) */
     template <typename T> class EmbAJAXVariable : public EmbAJAXElement {
     public:
         EmbAJAXVariable(const char* id) : EmbAJAXElement(id) {
+            setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             _value = 0;
         }
         void print() const override { return; } 
@@ -90,7 +128,10 @@ SOFTWARE.
             return EmbAJAXElement::valueProperty(which);
         }
         void updateFromDriverArg(const char* argname) override;
-        void setValue(T value, bool allowHTML = false);
+        void setValue(T value) {
+            _value = value;
+            setChanged();
+        }
         T getValue() const {
             return _value;
         }

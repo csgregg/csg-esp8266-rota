@@ -23,8 +23,10 @@ function w3_open() {
         overlayBg.style.display = "block";
     }
 
-    console.log(++window.wifi_var_count);
-    doRequest("wifi_var_count", window.wifi_var_count);
+//    console.log(++window.wifi_var_count);
+//    doRequest("wifi_var_count", window.wifi_var_count);
+
+    doRequest("wifi_test_act","hi",wifi_test_action_msg);
 }
 
 // Close the sidebar with the close button
@@ -33,6 +35,11 @@ function w3_close() {
     overlayBg.style.display = "none";
 }
 
+function wifi_test_action_msg()
+{
+    console.log("msg");
+    console.log(window.wifi_test_act);
+}
 
 function wifi_test_console(msg) {
     console.log(msg);

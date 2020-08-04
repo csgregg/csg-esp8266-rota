@@ -14,7 +14,7 @@ function doRequest(id='', value='', callback='') {
        if(window.ardujaxsh) window.ardujaxsh.in();
        if(callback) callback();
     }
-    if(id) {
+    if(id) {         // Why?
        req.onerror = req.ontimeout = function() {
           if(callback) callback();
        }
@@ -32,8 +32,6 @@ function doUpdates(response) {
    for(i = 0; i < updates.length; i++) {
       element = document.getElementById(updates[i].id);
       changes = updates[i].changes;
-      console.log(changes);
-
       for(j = 0; j < changes.length; ++j) {
          var spec = changes[j][0].split('.');
          var prop = element;
