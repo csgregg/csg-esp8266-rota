@@ -56,6 +56,6 @@ function doPoll() {
     doRequest('','',updateCSS);
 }
 
-updateCSS();
-doPoll();
-setInterval(doPoll,1000);
+
+doRequest('','',initPage);
+//setInterval(doPoll,1000);
