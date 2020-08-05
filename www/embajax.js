@@ -19,7 +19,7 @@ function doRequest(id='', value='', callback='') {
           if(callback) callback();
        }
     }
-    console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
+//    console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
@@ -58,4 +58,4 @@ function doPoll() {
 
 
 doRequest('','',initPage);
-//setInterval(doPoll,1000);
+setInterval(doPoll,1000);

@@ -52,12 +52,13 @@ Describes the Network Settings web page
         EmbAJAXServerFunction wifi_stn_save;
         EmbAJAXServerFunction wifi_stn_id;
         EmbAJAXServerFunction wifi_stn_btn;
+        EmbAJAXServerFunction wifi_stn_cnct;
 
         EmbAJAXVarInt wifi_stn_count;
         EmbAJAXVarInt wifi_stn_max;
         EmbAJAXVarChar<32> wifi_stn_name;
-        EmbAJAXVariable<int> wifi_stn_on;
-        EmbAJAXVariable<int> wifi_stn_reld;
+        EmbAJAXVarBool wifi_stn_on;
+        EmbAJAXVarBool wifi_stn_reld;
 
         EmbAJAXTextInput<32> wifi_stn_ssid;
         EmbAJAXTextInput<16> wifi_stn_pwd;
@@ -68,16 +69,17 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[16] = {
+        EmbAJAXBase* page_elements[17] = {
 
         &wifi_stn_save,
+        &wifi_stn_id,
+        &wifi_stn_btn,
+        &wifi_stn_cnct,
 
         &wifi_stn_count,
         &wifi_stn_max,
         &wifi_stn_name,
         &wifi_stn_on,
-        &wifi_stn_id,
-        &wifi_stn_btn,
         &wifi_stn_reld,
 
         &wifi_stn_ssid,
@@ -96,12 +98,13 @@ Describes the Network Settings web page
             wifi_stn_save("wifi_stn_save"),
             wifi_stn_id("wifi_stn_id"),
             wifi_stn_btn("wifi_stn_btn"),
+            wifi_stn_cnct("wifi_stn_cnct"),
                    
             wifi_stn_count("wifi_stn_count",0),
             wifi_stn_max("wifi_stn_max",MAX_SSIDS),
             wifi_stn_name("wifi_stn_name",""),
-            wifi_stn_on("wifi_stn_on",0),
-            wifi_stn_reld("wifi_stn_reld",0),
+            wifi_stn_on("wifi_stn_on",false),
+            wifi_stn_reld("wifi_stn_reld",false),
 
             wifi_stn_ssid("wifi_stn_ssid"),
             wifi_stn_pwd("wifi_stn_pwd"),
@@ -129,7 +132,7 @@ Describes the Network Settings web page
 
         void saveWifiStation(uint id);
 
-        char buff[32];
+        char buff[32];      // TODO: Fix this
 
     };
     

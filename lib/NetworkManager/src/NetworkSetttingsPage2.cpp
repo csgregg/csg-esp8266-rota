@@ -43,7 +43,7 @@ void NetworkSettingsPage2::initializeAjax(){
     LOG("Initialize Network Settings AJAX");
 
     wifi_stn_count.setValue(MAX_SSIDS);
-    wifi_stn_reld.setValue(0);
+    wifi_stn_reld.setValue(false);
 
 }
 
@@ -55,10 +55,17 @@ void NetworkSettingsPage2::handleAjax(){
     
     if( website.AjaxID == "wifi_stn_id" ) {
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
-        wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]?1:0);
+        wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]);
     }
 
     if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
+
+    if( website.AjaxID == "wifi_stn_cnct") {
+        int trystn = wifi_stn_cnct.intValue();
+        bool res = network.connectWifi(trystn);
+        if( !res ) network.reconnectWifi();
+        wifi_stn_cnct.setValue( res ? 1 : 0);       // TODO - handle response on client side
+    }
 
 }
 
@@ -112,7 +119,8 @@ void NetworkSettingsPage2::saveWifiStation(uint id) {
 
     if( network.ConnectedStation == id ) network.reconnectWifi();
 
-    wifi_stn_reld.setValue(1);
+    // Force reload of wifi list
+    wifi_stn_reld.setValue(true);
 }
 
 
