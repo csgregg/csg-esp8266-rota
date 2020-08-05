@@ -54,7 +54,6 @@ void NetworkSettingsPage2::handleAjax(){
     if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     
     if( website.AjaxID == "wifi_stn_id" ) {
-        DEBUG(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]?1:0);
     }

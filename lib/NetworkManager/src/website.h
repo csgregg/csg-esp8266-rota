@@ -129,13 +129,15 @@ SOFTWARE.
             setChanged();
         }
         int intValue() const;
+        bool boolValue() const;
 
     private:
         T _value;
     };
 
-    typedef class EmbAJAXVariable<char*> EmbAJAXServerFunction;
-
+    typedef class EmbAJAXVariable<int> EmbAJAXServerFunction;
+    typedef class EmbAJAXVariable<int> EmbAJAXVarInt;
+    typedef class EmbAJAXVariable<bool> EmbAJAXVarBool;
 
 
     /** @brief An HTML span element with properties that can be updated from the server (not the client) */
