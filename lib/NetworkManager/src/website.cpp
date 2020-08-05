@@ -51,10 +51,6 @@ PageHandler webpages[] = {
 
 
 
-//////////////////////// EmbAJAXServerFunction /////////////////////////////
-
-
-
 
 
 
@@ -91,6 +87,13 @@ template <> const char* EmbAJAXVariable<int>::value(uint8_t which) const {
     return EmbAJAXElement::value(which);
 }
 
+template <> const char* EmbAJAXVariable<bool>::value(uint8_t which) const {
+    if (which == EmbAJAXBase::Value) {
+        return _value ? "t" : "f";
+    }
+    return EmbAJAXElement::value(which);
+}
+
 template <> void EmbAJAXVariable<char*>::updateFromDriverArg(const char* argname) {
     _driver->getArg(argname, _value, sizeof(itoa_buf));
 }
@@ -99,16 +102,33 @@ template <> void EmbAJAXVariable<int>::updateFromDriverArg(const char* argname) 
     _value = atoi(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)));
 }
 
+template <> void EmbAJAXVariable<bool>::updateFromDriverArg(const char* argname) {
+    _value = strcmp(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)),"t") == 0;  
+}
+
 template <> int EmbAJAXVariable<int>::intValue() const {
     return _value;
 }
 
 template <> int EmbAJAXVariable<char*>::intValue() const {
-    return 0;
+    return atoi(_value);
 }
 
+template <> int EmbAJAXVariable<bool>::intValue() const {
+    return _value;
+}
 
+template <> bool EmbAJAXVariable<int>::boolValue() const {
+    return _value == 1;
+}
 
+template <> bool EmbAJAXVariable<char*>::boolValue() const {
+    return strcmp(_value,"t");
+}
+
+template <> bool EmbAJAXVariable<bool>::boolValue() const {
+    return _value;
+}
 
 //////////////////////// EmbAJAXStyle /////////////////////////////
 

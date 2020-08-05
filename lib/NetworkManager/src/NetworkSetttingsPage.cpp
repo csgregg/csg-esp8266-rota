@@ -126,13 +126,6 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 
 
-char* NetworkSettingsPage::test_action(char* arg) {
-    DEBUG(arg);
-    return "Return val";
-}
-
-
-
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_NETWORKSETTINGSPAGE)
 
     NetworkSettingsPage networksettingspage(

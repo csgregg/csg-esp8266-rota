@@ -25,6 +25,8 @@ function w3_close() {
 
 
 
+// TODO - Classify this 
+
 // Are you sure? Action
 var sureAction;
 
@@ -146,6 +148,8 @@ function addWifiDialog() {
 }
 
 function wifiSureYes() {
+
+    document.getElementById('loader').style.display='block';
 
     // Send updates data
 

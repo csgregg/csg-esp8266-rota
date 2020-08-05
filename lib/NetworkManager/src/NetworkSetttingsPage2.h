@@ -49,14 +49,14 @@ Describes the Network Settings web page
 
         StationConfig wifiStation;
 
-        EmbAJAXMutableSpan wifi_stn_save;
+        EmbAJAXServerFunction wifi_stn_save;
+        EmbAJAXServerFunction wifi_stn_id;
+        EmbAJAXServerFunction wifi_stn_btn;
 
-        EmbAJAXVariable<int> wifi_stn_count;
-        EmbAJAXVariable<int> wifi_stn_max;
+        EmbAJAXVarInt wifi_stn_count;
+        EmbAJAXVarInt wifi_stn_max;
         EmbAJAXVarChar<32> wifi_stn_name;
         EmbAJAXVariable<int> wifi_stn_on;
-        EmbAJAXVariable<int> wifi_stn_id;
-        EmbAJAXVariable<int> wifi_stn_btn;
         EmbAJAXVariable<int> wifi_stn_reld;
 
         EmbAJAXTextInput<32> wifi_stn_ssid;
@@ -94,13 +94,13 @@ Describes the Network Settings web page
         NetworkSettingsPage2( void(*phandler)(), void(*pinit)() ) : 
 
             wifi_stn_save("wifi_stn_save"),
+            wifi_stn_id("wifi_stn_id"),
+            wifi_stn_btn("wifi_stn_btn"),
                    
             wifi_stn_count("wifi_stn_count",0),
             wifi_stn_max("wifi_stn_max",MAX_SSIDS),
             wifi_stn_name("wifi_stn_name",""),
             wifi_stn_on("wifi_stn_on",0),
-            wifi_stn_id("wifi_stn_id",0),
-            wifi_stn_btn("wifi_stn_btn",0),
             wifi_stn_reld("wifi_stn_reld",0),
 
             wifi_stn_ssid("wifi_stn_ssid"),
