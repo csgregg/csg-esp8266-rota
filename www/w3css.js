@@ -4,14 +4,6 @@ var mySidebar = document.getElementById("mySidebar");
 // Get the DIV with overlay effect
 var overlayBg = document.getElementById("myOverlay");
 
-// Are you sure? Action
-var sureAction;
-
-// Wifi Station Dialog
-var wifiStationID;
-
-// Available station
-var availWifiStn;
 
 // Toggle between showing and hiding the sidebar, and add overlay effect
 function w3_open() {
@@ -23,7 +15,6 @@ function w3_open() {
         overlayBg.style.display = "block";
     }
     doPoll();
-    
 }
 
 // Close the sidebar with the close button
@@ -33,22 +24,36 @@ function w3_close() {
 }
 
 
+
+// Are you sure? Action
+var sureAction;
+
+// Wifi Station Dialog
+var wifiStationID;
+
+// Available station
+var availWifiStn;
+
+
 function addWifiStationEntry() {
+
+    // If there are any emtpy, then allow add
     if( window.wifi_stn_name == "" ) {
-        document.getElementById("wifi_add_stn_btn").style.display = "";
-        document.getElementById("wifi_add_stn_icon").style.display = "";
+        document.getElementById("wifi_stn_add").hidden = false;
+        availWifiStn = window.wifi_stn_id;
         return;
     }
 
     var wifistnelement = document.getElementById("wifi_stn_entry");
     var newwifistn = wifistnelement.cloneNode(true);
-    var id = window.wifi_stn_id
+    var id = window.wifi_stn_id;
     newwifistn.id = wifistnelement.id + id.toString();
     newwifistn.hidden = false;
     
     for (var i = 0; i < newwifistn.children.length; i++) {
-        if(newwifistn.children[i].nodeName == "IMG")
-            newwifistn.children[i].style = (window.wifi_stn_on=="1") ? "opacity: 1.0" : "opacity: 0.2";
+        if(newwifistn.children[i].nodeName == "IMG") {
+            newwifistn.children[i].style = (window.wifi_stn_on=="1") ? "opacity: 1.0; cursor: auto" : "opacity: 0.2; cursor: pointer";
+        }
         if(newwifistn.children[i].nodeName == "BUTTON") {
             newwifistn.children[i].textContent = window.wifi_stn_name;
             newwifistn.children[i].setAttribute("onclick","loadWifiDialog("+id.toString()+")");
@@ -57,21 +62,26 @@ function addWifiStationEntry() {
 
     wifistnelement.parentElement.appendChild(newwifistn);
 
+    // Remove loader
+    if( window.wifi_stn_id == window.wifi_stn_count-1 ) document.getElementById('loader').style.display='none';
 
 }
-
 
 function initPage() {
     console.log("Init Page");
-
     loadWifiList();
+    document.getElementById('loader').style.display='block';
 }
 
-
 function loadWifiList() {
+
+    // Show loader
+    document.getElementById('loader').style.display='block';
+
     for( var i = 0; i < window.wifi_stn_count; i++) {
         doRequest("wifi_stn_id",i.toString(),addWifiStationEntry);
     }
+    window.wifi_stn_reld = 0;
 }
 
 function clearWifiList() {
@@ -79,8 +89,7 @@ function clearWifiList() {
         var wifistn = document.getElementById("wifi_stn_entry" + i.toString());
         if(wifistn ) wifistn.remove();
     }
-    document.getElementById("wifi_add_stn_btn").style.display = "none";
-    document.getElementById("wifi_add_stn_icon").style.display = "none";
+    document.getElementById("wifi_stn_add").hidden = true;
 }
 
 
@@ -94,64 +103,28 @@ function visiblePwd(element) {
     }
 }
 
-function updateCSS() {
-    console.log("Status - Update CSS");
+function updatePage() {
+    console.log("Status - Update Page");
+    console.log(window.wifi_stn_reld);
 
     // DHCP Mode
     var x = document.getElementById("wifi_stn_statics");
     var y = document.getElementById("wifi_stn_dhcp");
     if( y.checked ) x.style.display = "none";
     else x.style.display = "block";
-
-    var spare = 0;
-    var isspare = false;
-
-    // Wifi visibility
-    x = document.getElementById("wifi_stn1_btn");
-    y = document.getElementById("wifi_stn1_icon");
-    isspare = (x.innerHTML == "");
-    x.style.display = isspare ? "none" : "";
-    y.style.display = isspare ? "none" : "";
-    if( isspare ) {
-        spare++;
-        availWifiStn = 0;
+   
+    if( window.wifi_stn_reld == 1 ) {
+        doRequest("wifi_stn_reld",0);
+        clearWifiList();
+        loadWifiList();
     }
-
-    x = document.getElementById("wifi_stn2_btn");
-    y = document.getElementById("wifi_stn2_icon");
-    isspare = (x.innerHTML == "");
-    x.style.display = isspare ? "none" : "";
-    y.style.display = isspare ? "none" : "";
-    if( isspare ) {
-        spare++;
-        availWifiStn = 1;
-    }
-
-    x = document.getElementById("wifi_stn3_btn");
-    y = document.getElementById("wifi_stn3_icon");
-    isspare = (x.innerHTML == "");
-    x.style.display = isspare ? "none" : "";
-    y.style.display = isspare ? "none" : "";
-    if( isspare ) {
-        spare++;
-        availWifiStn = 2;
-    }
-
-    // Do we show the add button
-
-    
-}
-
-function setWifiIcon(id,state) {
-    if( state ) id.style = "opacity: 1.0"
-    else id.style = "opacity: 0.2"
 }
 
 function loadWifiDialog(value) {
     console.log('Status - Load Wifi Station');
     console.log(value);
     wifiStationID = value;
-    doRequest("wifi_stn_btn",value,updateCSS);
+    doRequest("wifi_stn_btn",value,updatePage);
     document.getElementById('wifi_stn_forget').style.display='block';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
@@ -162,12 +135,12 @@ function addWifiDialog() {
     document.getElementById('wifi_stn_pwd').value = '';
     document.getElementById('wifi_stn_dhcp').checked = true;
     document.getElementById('wifi_stn_ip').value = '';
-    document.getElementById('wifi_stn_subnet').value = '';
-    document.getElementById('wifi_stn_gateway').value = '';
+    document.getElementById('wifi_stn_snet').value = '';
+    document.getElementById('wifi_stn_gtwy').value = '';
     document.getElementById('wifi_stn_dns1').value = '';
     document.getElementById('wifi_stn_dns2').value = '';
     wifiStationID = availWifiStn;
-    updateCSS();
+    updatePage();
     document.getElementById('wifi_stn_forget').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
@@ -178,7 +151,11 @@ function wifiSureYes() {
 
     var x = document.getElementById('wifi_stn_ssid');
     // Are we forgetting this one?
-    if( sureAction == "wifi_stn_forget" ) x.value = "";
+    if( sureAction == "wifi_stn_forget" ) {
+        x.value = "";
+        sureAction = "wifi_stn_save";
+    }
+
     doRequest(x.id, x.value);
 
     x = document.getElementById('wifi_stn_pwd');
@@ -187,9 +164,9 @@ function wifiSureYes() {
     doRequest(x.id, x.checked ? 't' : 'f');
     x = document.getElementById('wifi_stn_ip');
     doRequest(x.id, x.value);
-    x = document.getElementById('wifi_stn_subnet');
+    x = document.getElementById('wifi_stn_snet');
     doRequest(x.id, x.value);
-    x = document.getElementById('wifi_stn_gateway');
+    x = document.getElementById('wifi_stn_gtwy');
     doRequest(x.id, x.value);
     x = document.getElementById('wifi_stn_dns1');
     doRequest(x.id, x.value);

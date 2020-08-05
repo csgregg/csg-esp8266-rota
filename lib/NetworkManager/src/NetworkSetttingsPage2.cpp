@@ -43,6 +43,7 @@ void NetworkSettingsPage2::initializeAjax(){
     LOG("Initialize Network Settings AJAX");
 
     wifi_stn_count.setValue(MAX_SSIDS);
+    wifi_stn_reld.setValue(0);
 
 }
 
@@ -50,13 +51,12 @@ void NetworkSettingsPage2::handleAjax(){
 
     LOG("Handle Network Settings AJAX");
 
-    if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
+    if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     
     if( website.AjaxID == "wifi_stn_id" ) {
         DEBUG(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]?1:0);
-
     }
 
     if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
@@ -77,10 +77,10 @@ void NetworkSettingsPage2::loadWifiStation(uint id) {
     wifi_stn_ip.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
-    wifi_stn_subnet.setValue(ipbuffer);
+    wifi_stn_snet.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
-    wifi_stn_gateway.setValue(ipbuffer);
+    wifi_stn_gtwy.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
     wifi_stn_dns1.setValue(ipbuffer);
@@ -101,8 +101,8 @@ void NetworkSettingsPage2::saveWifiStation(uint id) {
     // TODO - Add error checking
     wifiStation.ip.fromString(wifi_stn_ip.value());
 
-    wifiStation.subnet.fromString(wifi_stn_subnet.value());
-    wifiStation.gateway.fromString(wifi_stn_gateway.value());
+    wifiStation.subnet.fromString(wifi_stn_snet.value());
+    wifiStation.gateway.fromString(wifi_stn_gtwy.value());
     wifiStation.dns1.fromString(wifi_stn_dns2.value());
     wifiStation.dns2.fromString(wifi_stn_dns2.value());
 
@@ -113,7 +113,7 @@ void NetworkSettingsPage2::saveWifiStation(uint id) {
 
     if( network.ConnectedStation == id ) network.reconnectWifi();
 
-    initializeAjax();
+    wifi_stn_reld.setValue(1);
 }
 
 

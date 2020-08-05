@@ -70,8 +70,8 @@ Describes the Network Settings web page
         EmbAJAXTextInput<16> wifi_stn_pwd;
         EmbAJAXCheckButton wifi_stn_dhcp;
         EmbAJAXTextInput<15> wifi_stn_ip;
-        EmbAJAXTextInput<15> wifi_stn_subnet;
-        EmbAJAXTextInput<15> wifi_stn_gateway;
+        EmbAJAXTextInput<15> wifi_stn_snet;
+        EmbAJAXTextInput<15> wifi_stn_gtwy;
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
@@ -97,8 +97,8 @@ Describes the Network Settings web page
         &wifi_stn_pwd,
         &wifi_stn_dhcp,
         &wifi_stn_ip,
-        &wifi_stn_subnet,
-        &wifi_stn_gateway,
+        &wifi_stn_snet,
+        &wifi_stn_gtwy,
         &wifi_stn_dns1,
         &wifi_stn_dns2
 
@@ -126,8 +126,8 @@ Describes the Network Settings web page
             wifi_stn_pwd("wifi_stn_pwd"),
             wifi_stn_dhcp("wifi_stn_dhcp",""),
             wifi_stn_ip("wifi_stn_ip"),
-            wifi_stn_subnet("wifi_stn_subnet"),
-            wifi_stn_gateway("wifi_stn_gateway"),
+            wifi_stn_snet("wifi_stn_snet"),
+            wifi_stn_gtwy("wifi_stn_gtwy"),
             wifi_stn_dns1("wifi_stn_dns1"),
             wifi_stn_dns2("wifi_stn_dns2"),
 
