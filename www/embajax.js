@@ -53,7 +53,7 @@ function doUpdates(response) {
 }
 
 function doPoll() {
-    doRequest('','');
+    doRequest('','',updatePage);
 }
 
 

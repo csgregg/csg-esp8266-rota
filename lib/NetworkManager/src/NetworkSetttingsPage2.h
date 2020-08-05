@@ -57,17 +57,18 @@ Describes the Network Settings web page
         EmbAJAXVariable<int> wifi_stn_on;
         EmbAJAXVariable<int> wifi_stn_id;
         EmbAJAXVariable<int> wifi_stn_btn;
+        EmbAJAXVariable<int> wifi_stn_reld;
 
         EmbAJAXTextInput<32> wifi_stn_ssid;
         EmbAJAXTextInput<16> wifi_stn_pwd;
         EmbAJAXCheckButton wifi_stn_dhcp;
         EmbAJAXTextInput<15> wifi_stn_ip;
-        EmbAJAXTextInput<15> wifi_stn_subnet;
-        EmbAJAXTextInput<15> wifi_stn_gateway;
+        EmbAJAXTextInput<15> wifi_stn_snet;
+        EmbAJAXTextInput<15> wifi_stn_gtwy;
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[15] = {
+        EmbAJAXBase* page_elements[16] = {
 
         &wifi_stn_save,
 
@@ -77,13 +78,14 @@ Describes the Network Settings web page
         &wifi_stn_on,
         &wifi_stn_id,
         &wifi_stn_btn,
+        &wifi_stn_reld,
 
         &wifi_stn_ssid,
         &wifi_stn_pwd,
         &wifi_stn_dhcp,
         &wifi_stn_ip,
-        &wifi_stn_subnet,
-        &wifi_stn_gateway,
+        &wifi_stn_snet,
+        &wifi_stn_gtwy,
         &wifi_stn_dns1,
         &wifi_stn_dns2
 
@@ -99,13 +101,14 @@ Describes the Network Settings web page
             wifi_stn_on("wifi_stn_on",0),
             wifi_stn_id("wifi_stn_id",0),
             wifi_stn_btn("wifi_stn_btn",0),
+            wifi_stn_reld("wifi_stn_reld",0),
 
             wifi_stn_ssid("wifi_stn_ssid"),
             wifi_stn_pwd("wifi_stn_pwd"),
             wifi_stn_dhcp("wifi_stn_dhcp",""),
             wifi_stn_ip("wifi_stn_ip"),
-            wifi_stn_subnet("wifi_stn_subnet"),
-            wifi_stn_gateway("wifi_stn_gateway"),
+            wifi_stn_snet("wifi_stn_snet"),
+            wifi_stn_gtwy("wifi_stn_gtwy"),
             wifi_stn_dns1("wifi_stn_dns1"),
             wifi_stn_dns2("wifi_stn_dns2"),
 

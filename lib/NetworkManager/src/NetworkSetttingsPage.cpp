@@ -85,10 +85,10 @@ void NetworkSettingsPage::loadWifiStation(uint id) {
     wifi_stn_ip.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
-    wifi_stn_subnet.setValue(ipbuffer);
+    wifi_stn_snet.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
-    wifi_stn_gateway.setValue(ipbuffer);
+    wifi_stn_gtwy.setValue(ipbuffer);
 
     sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
     wifi_stn_dns1.setValue(ipbuffer);
@@ -109,8 +109,8 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
     // TODO - Add error checking
     wifiStation.ip.fromString(wifi_stn_ip.value());
 
-    wifiStation.subnet.fromString(wifi_stn_subnet.value());
-    wifiStation.gateway.fromString(wifi_stn_gateway.value());
+    wifiStation.subnet.fromString(wifi_stn_snet.value());
+    wifiStation.gateway.fromString(wifi_stn_gtwy.value());
     wifiStation.dns1.fromString(wifi_stn_dns2.value());
     wifiStation.dns2.fromString(wifi_stn_dns2.value());
 
