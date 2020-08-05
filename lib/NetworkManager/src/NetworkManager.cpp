@@ -133,20 +133,20 @@ void NetworkManager::handle() {
 // Protected:
 
 // Handle WiFi Connectivity
-void NetworkManager::handleWiFi(const bool reconnect) {
+void NetworkManager::handleWiFi() {
 
     // TODO - Mode handling for disconnects, portal, etc
 
     switch( _networkSettings->wifiMode ) {
         case WIFI_AP:
-            _APRunning = handleWiFiAP(reconnect);
+            _APRunning = handleWiFiAP();
             break;
         case WIFI_AP_STA:
-            _APRunning = handleWiFiAP(reconnect);
-            _StationConnected = handleWiFiStation(reconnect);
+            _APRunning = handleWiFiAP();
+            _StationConnected = handleWiFiStation();
             break;
         case WIFI_STA:
-            _StationConnected = handleWiFiStation(reconnect);
+            _StationConnected = handleWiFiStation();
             break;
         default:
             _StationConnected = false;
@@ -156,7 +156,7 @@ void NetworkManager::handleWiFi(const bool reconnect) {
 }
 
 
-bool NetworkManager::handleWiFiAP(const bool reconnect) {
+bool NetworkManager::handleWiFiAP(const bool force) {
 
     uint connections = WiFi.softAPgetStationNum();
 
@@ -166,7 +166,8 @@ bool NetworkManager::handleWiFiAP(const bool reconnect) {
         _APConnections = connections;
     }
 
-    if( _APRunning && !reconnect ) return true;
+    // TODO - check use of 'force'
+    if( _APRunning && !force ) return true;
 
     return startWiFiAccessPoint();
 }
@@ -176,15 +177,20 @@ void NetworkManager::reconnectWifi() {
     LOG("(Network) Reconnecting Wifi");
     WiFi.setAutoReconnect(false);
     WiFi.disconnect(false);
-    handleWiFi(true);       // Force reconnect
+    handleWiFiStation(true);       // Force reconnect
+}
+
+bool NetworkManager::connectWifi(const int station) {
+    LOG("(Network) Connecting Wifi Station");
+    return startWiFiStation(station);
 }
 
 
-bool NetworkManager::handleWiFiStation(const bool reconnect) {
+bool NetworkManager::handleWiFiStation(const bool force) {
 
     bool connected = (WiFi.status() == WL_CONNECTED);
 
-    if( connected && !reconnect ) {
+    if( connected && !force ) {
         _disconnectedStation = 0;
         return true;
     }
@@ -197,23 +203,22 @@ bool NetworkManager::handleWiFiStation(const bool reconnect) {
     }
 
     // Okay, so not connected
-    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation == 0 && !reconnect ) {
+    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation == 0 && !force ) {
         _disconnectedStation = millis();
         LOG(F("(Network) WiFi not connected"));
         return false;
     }
 
     // Are we waiting for SDK to try to retry for a period
-    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !reconnect ) return false;  
+    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) return false;  
 
+    // TODO - need to think through lastStation, connected station, etc and how it is saved
     // Try each of the stored stations
     bool success = false;
-    for( int station = 0; station < MAX_SSIDS; station++ ) stationConnected[station] = false;
-    for( int station = 0; station < MAX_SSIDS && !success; station++ ) {
-        int trystation = (station + _networkSettings->lastStation) % MAX_SSIDS;
+    
+    for( int i = 0; i < MAX_SSIDS && !success; i++ ) {
+        int trystation = (i + _networkSettings->lastStation) % MAX_SSIDS;
         success = startWiFiStation( trystation );
-        stationConnected[trystation] = success;
-        if( success ) ConnectedStation = trystation;
     }
 
     return success;
@@ -293,7 +298,11 @@ bool NetworkManager::startWiFiStation( const int id ) {
 
 		ret = (WiFi.status() == WL_CONNECTED);
 
+        for( int i = 0; i < MAX_SSIDS; i++ ) stationConnected[i] = false;
+        stationConnected[id] = ret;
+
         if( ret ) {
+            network.ConnectedStation = id;
             _networkSettings->lastStation = id;
             _networkSettings->stationSettings[id].ip = WiFi.localIP();
             _networkSettings->stationSettings[id].subnet = WiFi.subnetMask();
@@ -319,6 +328,7 @@ bool NetworkManager::startWiFiStation( const int id ) {
             }
         }
         else LOG("(Network) WiFi Station not connected");
+
     }
 
     WiFi.setAutoReconnect(ret);

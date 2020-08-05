@@ -195,6 +195,7 @@ SOFTWARE.
             bool setWiFiStation();
             bool setWiFiAP();
             void reconnectWifi();
+            bool connectWifi(const int station);
 
             void handle();
 
@@ -210,13 +211,13 @@ SOFTWARE.
 
         protected:
 
-            void handleWiFi(const bool reconnect = false);
+            void handleWiFi();
 
-            bool handleWiFiStation(const bool reconnect = false);
+            bool handleWiFiStation(const bool force = false);
             bool startWiFiAccessPoint();
-
-            bool handleWiFiAP(const bool reconnect = false);
             bool startWiFiStation( const int id = 0 );
+
+            bool handleWiFiAP(const bool force = false);
 
             bool checkInternet();
 
