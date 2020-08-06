@@ -29,9 +29,9 @@ Describes the Network Settings web page
 */
 
 
-#ifndef NETWORK_SETTINGS_PAGE_H
+#ifndef NETWORK_SETTINGS_PAGE2_H
 
-    #define NETWORK_SETTINGS_PAGE_H
+    #define NETWORK_SETTINGS_PAGE2_H
 
     #include "EmbAJAX.h"
     #include "NetworkManager.h"
@@ -49,22 +49,15 @@ Describes the Network Settings web page
 
         StationConfig wifiStation;
 
-        EmbAJAXMutableSpan wifi_stn_save;
-        EmbAJAXMutableSpan wifi_stn_forget;
+        EmbAJAXServerFunction wifi_stn_save;
+        EmbAJAXServerFunction wifi_stn_id;
+        EmbAJAXServerFunction wifi_stn_btn;
+        EmbAJAXServerFunction wifi_stn_cnct;
 
-        EmbAJAXVariable<char*> wifi_var_test;
-        EmbAJAXVariable<int> wifi_var_count;
-        EmbAJAXClientFunction<char*> wifi_test_console;
-
-        EmbAJAXVariable<char*> wifi_test_act;
-
-        EmbAJAXMutableSpan wifi_stn1_btn;
-        EmbAJAXMutableSpan wifi_stn2_btn;
-        EmbAJAXMutableSpan wifi_stn3_btn;
-
-        EmbAJAXMutableSpan wifi_stn1_ctrl;
-        EmbAJAXMutableSpan wifi_stn2_ctrl;
-        EmbAJAXMutableSpan wifi_stn3_ctrl;
+        EmbAJAXVarInt wifi_stn_count;
+        EmbAJAXVarChar<32> wifi_stn_name;
+        EmbAJAXVarBool wifi_stn_on;
+        EmbAJAXClientFunction<int> loadWifiList;
 
         EmbAJAXTextInput<32> wifi_stn_ssid;
         EmbAJAXTextInput<16> wifi_stn_pwd;
@@ -75,23 +68,17 @@ Describes the Network Settings web page
         EmbAJAXTextInput<15> wifi_stn_dns1;
         EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[20] = {
+        EmbAJAXBase* page_elements[16] = {
 
         &wifi_stn_save,
-        &wifi_stn_forget,
+        &wifi_stn_id,
+        &wifi_stn_btn,
+        &wifi_stn_cnct,
 
-        &wifi_var_test,
-        &wifi_var_count,
-        &wifi_test_console,
-        &wifi_test_act,
-
-        &wifi_stn1_btn,
-        &wifi_stn2_btn,
-        &wifi_stn3_btn,
-
-        &wifi_stn1_ctrl,
-        &wifi_stn2_ctrl,
-        &wifi_stn3_ctrl,
+        &wifi_stn_count,
+        &wifi_stn_name,
+        &wifi_stn_on,
+        &loadWifiList,
 
         &wifi_stn_ssid,
         &wifi_stn_pwd,
@@ -107,20 +94,14 @@ Describes the Network Settings web page
         NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
 
             wifi_stn_save("wifi_stn_save"),
-            wifi_stn_forget("wifi_stn_forget"),
+            wifi_stn_id("wifi_stn_id"),
+            wifi_stn_btn("wifi_stn_btn"),
+            wifi_stn_cnct("wifi_stn_cnct"),
                    
-            wifi_var_test("wifi_var_test"),
-            wifi_var_count("wifi_var_count"),
-            wifi_test_console("wifi_test_console"),
-            wifi_test_act("wifi_test_act"),
-
-            wifi_stn1_btn("wifi_stn1_btn"),
-            wifi_stn2_btn("wifi_stn2_btn"),
-            wifi_stn3_btn("wifi_stn3_btn"),
-
-            wifi_stn1_ctrl("wifi_stn1_ctrl"),
-            wifi_stn2_ctrl("wifi_stn2_ctrl"),
-            wifi_stn3_ctrl("wifi_stn3_ctrl"),
+            wifi_stn_count("wifi_stn_count",MAX_SSIDS),
+            wifi_stn_name("wifi_stn_name",""),
+            wifi_stn_on("wifi_stn_on",false),
+            loadWifiList("loadWifiList"),
 
             wifi_stn_ssid("wifi_stn_ssid"),
             wifi_stn_pwd("wifi_stn_pwd"),
@@ -148,9 +129,8 @@ Describes the Network Settings web page
 
         void saveWifiStation(uint id);
 
-        char buff[32];
+        char buff[32];      // TODO: Fix this
 
-        char* test_action(char* arg);
     };
     
     extern NetworkSettingsPage networksettingspage;
