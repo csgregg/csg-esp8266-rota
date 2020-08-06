@@ -36,17 +36,11 @@ var wifiStationID;
 // Available station
 var availWifiStn;
 
-var maxWifiStns = 0;
-var wifiListInit = false;
-
-var wifiListLoaded = false;
+// Last revision the list was loaded on
 var wifiListRevision = 0;
 
 
 function addWifiStationEntry() {
-
-    console.log("Adder");
-    console.log(serverrevision);
 
     // If there are any emtpy, then allow add
     if( window.wifi_stn_name == "" ) {
@@ -74,24 +68,15 @@ function addWifiStationEntry() {
 
     wifistnelement.parentElement.appendChild(newwifistn);
 
-    
- //   console.log(window.wifi_stn_id);
- //   console.log(maxWifiStns);
-
     // Remove loader
-    if( window.wifi_stn_id == window.wifi_stn_count-1 ) {
+    if( window.wifi_stn_id == window.wifi_stn_count-1 ) document.getElementById('loader').style.display='none';
 
-     //   doRequest("wifi_stn_count",maxWifiStns);
-        
-        document.getElementById('loader').style.display='none';
-    }
 }
 
 function initPage() {
-    console.log("Init Page");
+    console.log("Status - Initialize Page");
 
     document.getElementById('loader').style.display='block';
-
     doRequest("","",loadWifiList);
 
 }
@@ -99,35 +84,22 @@ function initPage() {
 function loadWifiList(arg) {
 
     console.log("Status - Load WiFi list");
-    console.log(serverrevision);
-    console.log(wifiListRevision);
-    console.log(arg);
 
     if( wifiListRevision == serverrevision ) return;
 
-    clearWifiList(window.wifi_stn_count);
-
-    // Show loader
-    document.getElementById('loader').style.display='block';
-
-    console.log(window.wifi_stn_count);
-    for( var i = 0; i < window.wifi_stn_count; i++) {
-        console.log(window.wifi_stn_count);
-        console.log(i);
-        doRequest("wifi_stn_id",i.toString(),addWifiStationEntry);
-    }
-    wifiListLoaded = true;
-    wifiListRevision = serverrevision;
-}
-
-function clearWifiList(number) {
-    for( var i = 0; i < number; i++) { // Change to dynamic calc of number
+    for( var i = 0; i < window.wifi_stn_count; i++) {       // TODO: Change to dynamic calc of number
         var wifistn = document.getElementById("wifi_stn_entry" + i.toString());
         if( wifistn ) wifistn.remove();
     }
     document.getElementById("wifi_stn_add").hidden = true;
-}
 
+    // Show loader
+    document.getElementById('loader').style.display='block';
+
+    for( var i = 0; i < window.wifi_stn_count; i++) doRequest("wifi_stn_id",i.toString(),addWifiStationEntry);
+
+    wifiListRevision = serverrevision;
+}
 
 
 function visiblePwd(element) {
@@ -215,10 +187,6 @@ function wifiSureYes() {
     }
 
     // Send Save command then reload list
-    //reloadWifiList = true;
-    //doRequest("wifi_stn_reld", "t");
-    console.log("save");
-    //doRequest(sureAction,wifiStationID,loadWifiList);
     doRequest(sureAction,wifiStationID);
 
     // Hide dialog
