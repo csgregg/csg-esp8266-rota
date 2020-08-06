@@ -6,8 +6,8 @@ var serverrevision = 0;
 
 function doRequest(id='', value='', callback='') {
    console.log('Status - doRequest');
-
-    var req = new XMLHttpRequest();
+   
+   var req = new XMLHttpRequest();
     req.timeout = 10000;
     if(window.ardujaxsh) window.ardujaxsh.out();
     req.onload = function() {
@@ -24,6 +24,8 @@ function doRequest(id='', value='', callback='') {
     req.open('POST', document.URL, true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
+
+
 }
 
 function doUpdates(response) {

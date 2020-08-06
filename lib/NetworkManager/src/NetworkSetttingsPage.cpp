@@ -59,12 +59,7 @@ void NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
 
-    if( website.AjaxID == "wifi_stn_cnct") {
-        int trystn = wifi_stn_cnct.intValue();
-        bool res = network.connectWifi(trystn);
-        if( !res ) network.reconnectWifi();
-        wifi_stn_cnct.setValue( res ? 1 : 0);       // TODO - handle response on client side
-    }
+    if( website.AjaxID == "wifi_stn_cnct") connectWifiStation(wifi_stn_cnct.intValue());       
 
 }
 
@@ -118,10 +113,16 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
     if( network.ConnectedStation == id ) network.reconnectWifi();
 
-
     loadWifiList.call();
 }
 
+void NetworkSettingsPage::connectWifiStation(uint id) {
+    
+    if( !network.connectWifi(id) ) network.reconnectWifi();
+
+    loadWifiList.call();
+
+}
 
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_NETWORKSETTINGSPAGE)
