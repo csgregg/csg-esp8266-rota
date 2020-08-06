@@ -33,30 +33,19 @@ SOFTWARE.
 #include "website.h"
 #include "Logger.h"
 #include "ConfigManager.h"
-//#include "NetworkSetttingsPage.h"
-#include "NetworkSetttingsPage2.h"
+#include "NetworkSetttingsPage.h"
     
 // Webpages
 // ========
 
 // Page handlers
 PageHandler webpages[] = {
-//    {networksettingspage.URL, networksettingspage.handler, networksettingspage.init},
-    {networksettingspage2.URL, networksettingspage2.handler, networksettingspage2.init}
+    {networksettingspage.URL, networksettingspage.handler, networksettingspage.init},
 };
-
-
-// Website Manager
-// ===============
-
-
-
-
 
 
 
 //////////////////////// EmbAJAXClientFunction /////////////////////////////
-
 
 template <> const char* EmbAJAXClientFunction<int>::value(uint8_t which) const {
     if (which == EmbAJAXBase::Value) {
@@ -103,7 +92,8 @@ template <> void EmbAJAXVariable<int>::updateFromDriverArg(const char* argname) 
 }
 
 template <> void EmbAJAXVariable<bool>::updateFromDriverArg(const char* argname) {
-    _value = strcmp(_driver->getArg(argname, itoa_buf, sizeof(itoa_buf)),"t") == 0;  
+    _driver->getArg(argname, itoa_buf, sizeof(itoa_buf));
+    _value = (strcmp(itoa_buf,"t") == 0);
 }
 
 template <> int EmbAJAXVariable<int>::intValue() const {
@@ -130,14 +120,13 @@ template <> bool EmbAJAXVariable<bool>::boolValue() const {
     return _value;
 }
 
-//////////////////////// EmbAJAXStyle /////////////////////////////
 
+//////////////////////// EmbAJAXStyle /////////////////////////////
 
 const char* EmbAJAXStyle::value(uint8_t which) const {
     if (which == EmbAJAXStyle::Style) return _style;
     return EmbAJAXMutableSpan::value(which);
 }
-
 
 const char* EmbAJAXStyle::valueProperty(uint8_t which) const {
     if (which == EmbAJAXStyle::Style) return "style";
@@ -151,6 +140,9 @@ void EmbAJAXStyle::setStyle(const char* style) {
 
 
 
+//////////////////////// Website Manager /////////////////////////////
+
+
 // Initialize web manaber
 void WebsiteManager::begin() {
 
@@ -161,7 +153,7 @@ void WebsiteManager::begin() {
 
             URL = _server.uri();   
             AjaxID = _server.arg("id");
-            AjaxValue = _server.arg("value");                 
+            AjaxValue = _server.arg("value");    
 
             // AJAX request
             if( _server.method() == HTTP_POST ) {

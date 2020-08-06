@@ -61,14 +61,14 @@ SOFTWARE.
             }
             return EmbAJAXElement::valueProperty(which);
         }
-        void call(const T arg) {
+        void call() {
             _call = true;
-            _arg = arg;
+            _arg = _driver->revision();
             setChanged();
         }
         bool sendUpdates(uint16_t since, bool first) {
             bool res = EmbAJAXElement::sendUpdates(since, first);
-            _call = false;
+            //_call = false;
             return res;
         }
 

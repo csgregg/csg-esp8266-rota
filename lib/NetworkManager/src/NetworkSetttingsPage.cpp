@@ -35,22 +35,14 @@ SOFTWARE.
 #include "website.h"
 
 
-// TODO - better way
-char NSPconversion_buf[ARDUJAX_MAX_ID_LEN];
+char NSP2conversion_buf[ARDUJAX_MAX_ID_LEN];
 
 
 void NetworkSettingsPage::initializeAjax(){
 
     LOG("Initialize Network Settings AJAX");
 
-    wifi_stn1_btn.setValue(config.settings.networkConfig.stationSettings[0].SSID);
-    wifi_stn2_btn.setValue(config.settings.networkConfig.stationSettings[1].SSID);
-    wifi_stn3_btn.setValue(config.settings.networkConfig.stationSettings[2].SSID);
-
-    wifi_stn1_ctrl.setValue(network.stationConnected[0]?"On":"Off");
-    wifi_stn2_ctrl.setValue(network.stationConnected[1]?"On":"Off");
-    wifi_stn3_ctrl.setValue(network.stationConnected[2]?"On":"Off");
-
+    //wifi_stn_count.setValue(MAX_SSIDS);
 
 }
 
@@ -58,17 +50,22 @@ void NetworkSettingsPage::handleAjax(){
 
     LOG("Handle Network Settings AJAX");
 
-    if( website.AjaxID == "wifi_stn1_btn" ||
-        website.AjaxID == "wifi_stn2_btn" ||
-        website.AjaxID == "wifi_stn3_btn" )
-        loadWifiStation(website.AjaxValue.toInt());
-
-    if( website.AjaxID == "wifi_stn_save" || website.AjaxID == "wifi_stn_forget" ) saveWifiStation(website.AjaxValue.toInt());
+    if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     
-    if( website.AjaxID == "wifi_test_act") {
-        website.AjaxValue.toCharArray(NSPconversion_buf,sizeof(NSPconversion_buf));
-        wifi_test_act.setValue(test_action(NSPconversion_buf));
+    if( website.AjaxID == "wifi_stn_id" ) {
+        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
+        wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]);
     }
+
+    if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
+
+    if( website.AjaxID == "wifi_stn_cnct") {
+        int trystn = wifi_stn_cnct.intValue();
+        bool res = network.connectWifi(trystn);
+        if( !res ) network.reconnectWifi();
+        wifi_stn_cnct.setValue( res ? 1 : 0);       // TODO - handle response on client side
+    }
+
 }
 
 void NetworkSettingsPage::loadWifiStation(uint id) {
@@ -121,7 +118,8 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
     if( network.ConnectedStation == id ) network.reconnectWifi();
 
-    initializeAjax();
+
+    loadWifiList.call();
 }
 
 
