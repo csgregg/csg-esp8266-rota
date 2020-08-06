@@ -37,7 +37,7 @@ var wifiStationID;
 var availWifiStn;
 
 // Last revision the list was loaded on
-var wifiListRevision = 0;
+var wifiListRevision=0;
 
 
 function addWifiStationEntry() {
@@ -85,8 +85,7 @@ function loadWifiList(arg) {
 
     console.log("Status - Load WiFi list");
 
-    if( wifiListRevision == serverrevision ) return;
-
+    // Clear entries
     for( var i = 0; i < window.wifi_stn_count; i++) {       // TODO: Change to dynamic calc of number
         var wifistn = document.getElementById("wifi_stn_entry" + i.toString());
         if( wifistn ) wifistn.remove();
@@ -96,9 +95,10 @@ function loadWifiList(arg) {
     // Show loader
     document.getElementById('loader').style.display='block';
 
+    if( wifiListRevision == serverrevision ) return;
     for( var i = 0; i < window.wifi_stn_count; i++) doRequest("wifi_stn_id",i.toString(),addWifiStationEntry);
-
     wifiListRevision = serverrevision;
+
 }
 
 

@@ -129,6 +129,8 @@ Describes the Network Settings web page
 
         void saveWifiStation(uint id);
 
+        void connectWifiStation(uint id);
+
         char buff[32];      // TODO: Fix this
 
     };
