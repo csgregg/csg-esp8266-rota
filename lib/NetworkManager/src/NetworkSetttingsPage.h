@@ -51,7 +51,7 @@ Describes the Network Settings web page
 
         EmbAJAXServerFunction wifi_stn_save;
         EmbAJAXServerFunction wifi_stn_id;
-        EmbAJAXServerFunction wifi_stn_btn;
+        EmbAJAXServerFunction wifi_stn_btn;     // Are these really functions or are they varilables
         EmbAJAXServerFunction wifi_stn_cnct;
 
         EmbAJAXVarInt wifi_stn_count;
