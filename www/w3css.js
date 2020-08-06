@@ -49,9 +49,14 @@ function addWifiStationEntry() {
         return;
     }
 
+    var id = window.wifi_stn_id;
+    var already = document.getElementById("wifi_stn_entry" + id.toString());
+
+    if( already) return;
+
     var wifistnelement = document.getElementById("wifi_stn_entry");
     var newwifistn = wifistnelement.cloneNode(true);
-    var id = window.wifi_stn_id;
+    
     newwifistn.id = wifistnelement.id + id.toString();
     newwifistn.hidden = false;
     
