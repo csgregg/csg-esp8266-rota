@@ -176,7 +176,7 @@ SOFTWARE.
         protected:
 
             String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handleSPIFFS();                                    // send the right file to the client (if it exists)
+            bool handlelittleFS();                                    // send the right file to the client (if it exists)
             void handleAJAX();                                      // process AJAX request
             void InitAJAX();                                        // process page initialization
 

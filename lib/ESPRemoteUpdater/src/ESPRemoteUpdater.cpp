@@ -183,13 +183,13 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
 HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
 
-    // Update SPIFFS file system
-    String spiffsFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
+    // Update file system
+    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
 
     LOG(F("(Updater) Updating File System"));
     logger.setTypeTag(LOG_DETAIL,TAG_STATUS);
     PGM_P format1 = PSTR("(Updater) File system image request: %s");
-    logger.printf( format1, spiffsFileRequest.c_str() );
+    logger.printf( format1, littleFSFileRequest.c_str() );
 
     HTTPUpdateResult ret;
 
@@ -199,7 +199,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
-    else ret = ESPhttpUpdate.updateSpiffs( *_client, spiffsFileRequest );
+    else ret = ESPhttpUpdate.updateFS( *_client, littleFSFileRequest );
 
     switch(ret) {
 

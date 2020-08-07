@@ -34,6 +34,7 @@ SOFTWARE.
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkSetttingsPage.h"
+#include <LittleFS.h>
     
 // Webpages
 // ========
@@ -165,14 +166,14 @@ void WebsiteManager::begin() {
             }
 
             // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
-            else if( !handleSPIFFS() ) _server.send( 404, F("text/html"), F("404: Not Found") );
+            else if( !handlelittleFS() ) _server.send( 404, F("text/html"), F("404: Not Found") );
         
         }
 
     );
 
-    // Start SPIFFS and webserver
-    SPIFFS.begin(); 
+    // Start LittleFS and webserver
+    LittleFS.begin(); 
     _server.begin();
 
 }
@@ -195,7 +196,7 @@ String WebsiteManager::getContentType(String filename) {
 
 
 // Send the right file to the client (if it exists)
-bool WebsiteManager::handleSPIFFS() {
+bool WebsiteManager::handlelittleFS() {
 
     String shortpath = URL;
 
@@ -209,8 +210,8 @@ bool WebsiteManager::handleSPIFFS() {
     String path = shortpath + ".gz";
 
     String contentType = getContentType(path);              // Get the MIME type
-    if( SPIFFS.exists(path) ) {                             // If the file exists then send it
-        File file = SPIFFS.open(path, "r");
+    if( LittleFS.exists(path) ) {                             // If the file exists then send it
+        File file = LittleFS.open(path, "r");
         _server.streamFile(file, contentType);
         file.close();
 
