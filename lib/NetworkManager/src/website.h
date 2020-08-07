@@ -43,37 +43,30 @@ SOFTWARE.
         void (*init)();
     };
 
+    ////////// Additional Element Types //////////
 
     /** @brief A global javasript function that can be called from the server (not the client) */
     template <typename T> class EmbAJAXClientFunction : public EmbAJAXElement {
     public:
         EmbAJAXClientFunction(const char* id) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
-            _call = false;
             _arg = 0;
         }
         void print() const override { return; } 
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
-            if (which == EmbAJAXBase::Value) {
-                if( _call ) return "embajax_func";
-                else return "";
-            }
+            if (which == EmbAJAXBase::Value) return "embajax_func";
             return EmbAJAXElement::valueProperty(which);
         }
-        void call() {
-            _call = true;
-            _arg = _driver->revision();
+        void call(T arg) {
+            _arg = arg;
             setChanged();
         }
         bool sendUpdates(uint16_t since, bool first) {
-            bool res = EmbAJAXElement::sendUpdates(since, first);
-            //_call = false;
-            return res;
+            return EmbAJAXElement::sendUpdates(since, first);
         }
 
     private:
-        bool _call;
         T _arg;
     };
 
@@ -86,17 +79,14 @@ SOFTWARE.
             strcpy(_value, initial);
         }
         void print() const override {} 
-
         const char* value(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return _value;
             return EmbAJAXElement::value(which);
         }
-
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return "embajax_var";
             return EmbAJAXElement::valueProperty(which);
         }
-
         void setValue(const char* value) {
             strncpy(_value, value, SIZE);
             setChanged();
@@ -161,7 +151,7 @@ SOFTWARE.
 
 
 
-    // Website Manager Class
+    ////////// Website Manager Class ///////////
 
     class WebsiteManager {
 

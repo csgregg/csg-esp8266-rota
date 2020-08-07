@@ -41,7 +41,7 @@ var wifiListRevision=0;
 
 
 function addWifiStationEntry() {
-
+    
     // If there are any emtpy, then allow add
     if( window.wifi_stn_name == "" ) {
         document.getElementById("wifi_stn_add").hidden = false;
@@ -79,16 +79,16 @@ function addWifiStationEntry() {
 }
 
 function initPage() {
-    console.log("Status - Initialize Page");
+    // console.log("Status - Initialize Page");
 
     document.getElementById('loader').style.display='block';
     doRequest("","",loadWifiList);
 
 }
 
-function loadWifiList(arg) {
+function loadWifiList() {
 
-    console.log("Status - Load WiFi list");
+    // console.log("Status - Load WiFi list");
 
     // Clear entries
     for( var i = 0; i < window.wifi_stn_count; i++) {       // TODO: Change to dynamic calc of number
@@ -117,7 +117,7 @@ function visiblePwd(element) {
 }
 
 function updatePage() {
-    console.log("Status - Update Page");
+    // console.log("Status - Update Page");
 
     // DHCP Mode
     var x = document.getElementById("wifi_stn_statics");
@@ -128,7 +128,8 @@ function updatePage() {
 }
 
 function loadWifiDialog(value) {
-    console.log('Status - Load Wifi Station');
+    // console.log('Status - Load Wifi Station');
+
     wifiStationID = value;
     doRequest("wifi_stn_btn",value,updatePage);
     document.getElementById('wifi_stn_forget').style.display='block';
@@ -136,7 +137,7 @@ function loadWifiDialog(value) {
 }
 
 function connectWifi(value) {
-    console.log('Status - Connect Wifi Station');
+    // console.log('Status - Connect Wifi Station');
 
     wifiStationID = value;
     sureAction="wifi_stn_cnct";
@@ -198,23 +199,4 @@ function wifiSureYes() {
     document.getElementById('wifi_stn_sure').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='none';
 }
-
-
-class ardujaxshc {
-    constructor(div) {
-        this.misses = 0;
-        this.div = div;
-    }
-    out() {
-        if( this.misses < 5 ) if(++(this.misses) >= 5) this.div.style.background = "red";
-    }
-    in() {
-        if( this.misses > 4 ) this.div.style.background = "green";
-        this.misses=0;
-    }
-} 
-
-ardujaxsh = new ardujaxshc(document.getElementById('EmbAjaxStatus'));
-
-
 

@@ -1,18 +1,21 @@
 /*
- From EmbAJAX Library - https://github.com/tfry-git/EmbAJAX
+ Based on EmbAJAX Library - https://github.com/tfry-git/EmbAJAX
 */
+
+
+///// Ajax Handlers /////
 
 var serverrevision = 0;
 
 function doRequest(id='', value='', callback='') {
-   console.log('Status - doRequest');
+   // console.log('Status - doRequest');
    
    var req = new XMLHttpRequest();
     req.timeout = 10000;
-    if(window.ardujaxsh) window.ardujaxsh.out();
+    if(window.ajaxstatus) window.ajaxstatus.out();
     req.onload = function() {
        doUpdates(JSON.parse(req.responseText));
-       if(window.ardujaxsh) window.ardujaxsh.in();
+       if(window.ajaxstatus) window.ajaxstatus.in();
        if(callback) callback();
     }
     if(id) {         // Why?
@@ -20,7 +23,7 @@ function doRequest(id='', value='', callback='') {
           if(callback) callback();
        }
     }
-    console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
+    // console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
@@ -29,7 +32,7 @@ function doRequest(id='', value='', callback='') {
 }
 
 function doUpdates(response) {
-   console.log('Status - doUpdates');
+   // console.log('Status - doUpdates');
 
    serverrevision = response.revision;
    var updates = response.updates;
@@ -57,11 +60,34 @@ function doUpdates(response) {
    }
 }
 
+///// Status Indicator /////
+
+class embajaxstatus {
+   constructor(div) {
+       this.misses = 0;
+       this.div = div;
+   }
+   out() {
+       if( this.misses < 5 ) if(++(this.misses) >= 5) this.div.style.background = "red";
+   }
+   in() {
+       if( this.misses > 4 ) this.div.style.background = "green";
+       this.misses=0;
+   }
+} 
+
+ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
+
+
+
+///// Page initialization and update /////
+
+// Each page should have updatePage and initPage JS functions
+
 function doPoll() {
-   console.log("Status - Poll");
+   // console.log("Status - Poll");
    doRequest('','',updatePage);
 }
-
 
 initPage();
 setInterval(doPoll,1000);
