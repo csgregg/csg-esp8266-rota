@@ -15,7 +15,7 @@ install:
 - pip install -U platformio
 - platformio lib install ArduinoJson
 - wget https://github.com/tfry-git/EmbAJAX/archive/master.zip
-- tar -xzvf master.zip
+- tar -xvf master.zip
 script:
 - platformio run -e csg-esp8266-rota-travis
 - platformio run -t buildfs -e csg-esp8266-rota-travis
