@@ -113,7 +113,7 @@ template <> bool EmbAJAXVariable<int>::boolValue() const {
 }
 
 template <> bool EmbAJAXVariable<char*>::boolValue() const {
-    return strcmp(_value,"t");
+    return strcmp(_value,"t") == 0;
 }
 
 template <> bool EmbAJAXVariable<bool>::boolValue() const {

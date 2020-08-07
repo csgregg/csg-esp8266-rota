@@ -41,97 +41,97 @@ Describes the Network Settings web page
 
 
     class NetworkSettingsPage {
-    public:
+        public:
 
-        const char* URL;
-        void (*handler)();
-        void (*init)();
+            const char* URL;
+            void (*handler)();
+            void (*init)();
 
-        StationConfig wifiStation;
+            StationConfig wifiStation;
 
-        EmbAJAXServerFunction wifi_stn_save;
-        EmbAJAXServerFunction wifi_stn_id;
-        EmbAJAXServerFunction wifi_stn_btn;     // Are these really functions or are they varilables
-        EmbAJAXServerFunction wifi_stn_cnct;
+            EmbAJAXServerFunction wifi_stn_save;
+            EmbAJAXServerFunction wifi_stn_id;
+            EmbAJAXServerFunction wifi_stn_btn;     // Are these really functions or are they varilables
+            EmbAJAXServerFunction wifi_stn_cnct;
 
-        EmbAJAXVarInt wifi_stn_count;
-        EmbAJAXVarChar<32> wifi_stn_name;
-        EmbAJAXVarBool wifi_stn_on;
-        EmbAJAXClientFunction<int> loadWifiList;
+            EmbAJAXVarInt wifi_stn_count;
+            EmbAJAXVarChar<32> wifi_stn_name;
+            EmbAJAXVarBool wifi_stn_on;
+            EmbAJAXClientFunction<int> loadWifiList;
 
-        EmbAJAXTextInput<32> wifi_stn_ssid;
-        EmbAJAXTextInput<16> wifi_stn_pwd;
-        EmbAJAXCheckButton wifi_stn_dhcp;
-        EmbAJAXTextInput<15> wifi_stn_ip;
-        EmbAJAXTextInput<15> wifi_stn_snet;
-        EmbAJAXTextInput<15> wifi_stn_gtwy;
-        EmbAJAXTextInput<15> wifi_stn_dns1;
-        EmbAJAXTextInput<15> wifi_stn_dns2;
+            EmbAJAXTextInput<32> wifi_stn_ssid;
+            EmbAJAXTextInput<16> wifi_stn_pwd;
+            EmbAJAXCheckButton wifi_stn_dhcp;
+            EmbAJAXTextInput<15> wifi_stn_ip;
+            EmbAJAXTextInput<15> wifi_stn_snet;
+            EmbAJAXTextInput<15> wifi_stn_gtwy;
+            EmbAJAXTextInput<15> wifi_stn_dns1;
+            EmbAJAXTextInput<15> wifi_stn_dns2;
 
-        EmbAJAXBase* page_elements[16] = {
+            EmbAJAXBase* page_elements[16] = {
 
-        &wifi_stn_save,
-        &wifi_stn_id,
-        &wifi_stn_btn,
-        &wifi_stn_cnct,
+            &wifi_stn_save,
+            &wifi_stn_id,
+            &wifi_stn_btn,
+            &wifi_stn_cnct,
 
-        &wifi_stn_count,
-        &wifi_stn_name,
-        &wifi_stn_on,
-        &loadWifiList,
+            &wifi_stn_count,
+            &wifi_stn_name,
+            &wifi_stn_on,
+            &loadWifiList,
 
-        &wifi_stn_ssid,
-        &wifi_stn_pwd,
-        &wifi_stn_dhcp,
-        &wifi_stn_ip,
-        &wifi_stn_snet,
-        &wifi_stn_gtwy,
-        &wifi_stn_dns1,
-        &wifi_stn_dns2
+            &wifi_stn_ssid,
+            &wifi_stn_pwd,
+            &wifi_stn_dhcp,
+            &wifi_stn_ip,
+            &wifi_stn_snet,
+            &wifi_stn_gtwy,
+            &wifi_stn_dns1,
+            &wifi_stn_dns2
 
-        };
-
-        NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
-
-            wifi_stn_save("wifi_stn_save"),
-            wifi_stn_id("wifi_stn_id"),
-            wifi_stn_btn("wifi_stn_btn"),
-            wifi_stn_cnct("wifi_stn_cnct"),
-                   
-            wifi_stn_count("wifi_stn_count",MAX_SSIDS),
-            wifi_stn_name("wifi_stn_name",""),
-            wifi_stn_on("wifi_stn_on",false),
-            loadWifiList("loadWifiList"),
-
-            wifi_stn_ssid("wifi_stn_ssid"),
-            wifi_stn_pwd("wifi_stn_pwd"),
-            wifi_stn_dhcp("wifi_stn_dhcp",""),
-            wifi_stn_ip("wifi_stn_ip"),
-            wifi_stn_snet("wifi_stn_snet"),
-            wifi_stn_gtwy("wifi_stn_gtwy"),
-            wifi_stn_dns1("wifi_stn_dns1"),
-            wifi_stn_dns2("wifi_stn_dns2"),
-
-            ajax(page_elements, "")
-            {
-                URL = "/networksettings.html";
-                handler = phandler;
-                init = pinit;
             };
 
-        EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+            NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
 
-        void handleAjax();
+                wifi_stn_save("wifi_stn_save"),
+                wifi_stn_id("wifi_stn_id"),
+                wifi_stn_btn("wifi_stn_btn"),
+                wifi_stn_cnct("wifi_stn_cnct"),
+                    
+                wifi_stn_count("wifi_stn_count",MAX_SSIDS),
+                wifi_stn_name("wifi_stn_name",""),
+                wifi_stn_on("wifi_stn_on",false),
+                loadWifiList("loadWifiList"),
 
-        void initializeAjax();
+                wifi_stn_ssid("wifi_stn_ssid"),
+                wifi_stn_pwd("wifi_stn_pwd"),
+                wifi_stn_dhcp("wifi_stn_dhcp",""),
+                wifi_stn_ip("wifi_stn_ip"),
+                wifi_stn_snet("wifi_stn_snet"),
+                wifi_stn_gtwy("wifi_stn_gtwy"),
+                wifi_stn_dns1("wifi_stn_dns1"),
+                wifi_stn_dns2("wifi_stn_dns2"),
 
-        void loadWifiStation(uint id);
+                ajax(page_elements, "")
+                {
+                    URL = "/networksettings.html";
+                    handler = phandler;
+                    init = pinit;
+                };
 
-        void saveWifiStation(uint id);
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-        void connectWifiStation(uint id);
+            void handleAjax();
 
-        char buff[32];      // TODO: Fix this
+            void initializeAjax();
+
+            void loadWifiStation(uint id);
+
+            void saveWifiStation(uint id);
+
+            void connectWifiStation(uint id);
+
+            //char buff[32];      // TODO: Fix this
 
     };
     

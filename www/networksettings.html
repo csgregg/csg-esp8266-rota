@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <title>Network Settings</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
         <button class="w3-bar-item w3-margin-left w3-button w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">Menu</button>
         <span class="w3-bar-item w3-display-right">Device Name</span>
         <div class="w3-display-left w3-padding-small">
-            <span id="EmbAjaxStatus" class="statusdot" style="background:green"></span>
+            <span id="EmbAjaxStatusInd" class="statusdot" style="background:green"></span>
         </div>
     </div>
 
@@ -43,7 +43,8 @@
         </header>
 
         <div class="w3-row w3-margin-bottom">
-            <!-- Wifi Networks -->
+
+            <!-- Current Wifi Networks -->
             <div class="w3-half">
                 <div class="w3-container w3-white w3-padding-8">
                     <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
@@ -51,13 +52,14 @@
                             <b>Saved Networks</b>
                         </div>
                         <div id="wifi_stn_entry" hidden class="w3-row">
-                            <img class="w3-padding-8" style="opacity: 0.20;" src="signal32-4.png">
+                            <img class="w3-padding-8" alt="" style="opacity: 0.20;" src="signal32-4.png">
                             <button style="width:150px;" class="w3-button w3-blue w3-padding-small">Network</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- New Wifi Networks -->
             <div class="w3-half">
                 <div class="w3-container w3-white w3-padding-8">
                     <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
@@ -65,7 +67,7 @@
                             <b>New Networks</b>
                         </div>
                         <div id="wifi_stn_add" hidden class="w3-row">
-                            <img class="w3-padding-8" style="opacity: 1.0;" src="signal32-4.png">
+                            <img class="w3-padding-8" alt="" style="opacity: 1.0;" src="signal32-4.png">
                             <button style="width:150px;" onclick="addWifiDialog()" class="w3-button w3-blue w3-padding-small">Add network</button>
                         </div>
 
@@ -74,6 +76,8 @@
             </div>
         </div>
 
+        <!-- Dialogs -->
+    
         <!-- Wifi Network Dialog -->
 
         <div id="wifi_stn_dlg" class="w3-modal">
@@ -85,11 +89,13 @@
                 <form class="w3-container w3-no-padding">
                     <div class="w3-container">
                         <div class="w3-section">
+
+                            <!-- WiFi Details -->
                             <input id="wifi_stn_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-password">
                     
                             <div class="w3-display-container">
                                 <input id="wifi_stn_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password">
-                                <img class="w3-display-right w3-padding-small" src="eyes_visible-16.png"  onclick="visiblePwd('wifi_stn_pwd')">
+                                <img class="w3-display-right w3-padding-small" alt="" src="eyes_visible-16.png"  onclick="visiblePwd('wifi_stn_pwd')">
                             </div>
                     
                             <!-- DHCP Mode -->

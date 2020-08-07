@@ -35,14 +35,10 @@ SOFTWARE.
 #include "website.h"
 
 
-char NSP2conversion_buf[ARDUJAX_MAX_ID_LEN];
-
 
 void NetworkSettingsPage::initializeAjax(){
 
     LOG("Initialize Network Settings AJAX");
-
-    //wifi_stn_count.setValue(MAX_SSIDS);
 
 }
 
@@ -52,6 +48,7 @@ void NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     
+    // Used to send back basic details of a specific wifi station
     if( website.AjaxID == "wifi_stn_id" ) {
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.stationConnected[wifi_stn_id.intValue()]);
@@ -113,14 +110,19 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
     if( network.ConnectedStation == id ) network.reconnectWifi();
 
-    loadWifiList.call();
+    // Make the client reload the wifi list
+    loadWifiList.call(1);
+
 }
 
 void NetworkSettingsPage::connectWifiStation(uint id) {
     
     if( !network.connectWifi(id) ) network.reconnectWifi();
 
-    loadWifiList.call();
+    // TODO - need to deal with saving the settings for which station is connected
+
+    // Make the client reload the wifi list
+    loadWifiList.call(1);
 
 }
 
