@@ -40,7 +40,7 @@ Build flags are loaded from platformio.ini
     #include "Credentials.h"            // Contains private definitions (excluded from repo)
 
     #ifndef TRAVIS_BUILD_NUMBER
-        #include "Version.h"                // Defines local build number
+    //    #include "Version.h"                // Defines local build number
     #endif
 
 
