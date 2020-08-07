@@ -17,7 +17,7 @@ install:
 - wget https://github.com/tfry-git/EmbAJAX/archive/master.zip
 - tar -xzvf master.zip
 script:
-- platformio run -v -e csg-esp8266-rota-travis
+- platformio run -e csg-esp8266-rota-travis
 - platformio run -t buildfs -e csg-esp8266-rota-travis
 deploy:
   provider: releases
