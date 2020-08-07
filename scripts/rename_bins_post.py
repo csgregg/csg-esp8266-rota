@@ -13,7 +13,7 @@ def get_build_flag_value(flag_name):
 
 
 # Change file system image name
-def change_spiffs_name(*args, **kwargs):
+def change_littleFS_name(*args, **kwargs):
     target = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
@@ -23,4 +23,4 @@ def change_spiffs_name(*args, **kwargs):
 
     os.rename(target, os.path.join(target_path, new_target))
 
-env.AddPostAction("$BUILD_DIR/spiffs.bin", change_spiffs_name) 
+env.AddPostAction("$BUILD_DIR/littlefs.bin", change_littleFS_name) 

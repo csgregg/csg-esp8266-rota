@@ -25,7 +25,7 @@ SOFTWARE.
 -----------------------------------------------------------------------------
 
 Manages saving a configuration set to the EEPROM section of the flash (First
-sector before SPIFFS). Settings are read and write on block and accessed
+sector before file system). Settings are read and write on block and accessed
 through the settings member.
 
 */
