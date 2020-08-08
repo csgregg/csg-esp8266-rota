@@ -114,6 +114,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
     http.setUserAgent(F("ESP8266-http-Update"));
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+    http.addHeader("Cookie", "__test=8c2a699df869da64962c3bca4c185d40; expires=Thu, 31-Dec-37 23:55:55 GMT; path=/");
 
     int httperror = http.GET();
     String httppayload = http.getString();
@@ -143,7 +144,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
         DynamicJsonDocument responseJSON(capacity);
         
         DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
-
+DEBUG(httppayload);
         if (jsonerror) LOG(jsonerror.c_str());          // TODO better error handling
 
         String repoName = responseJSON[F("repo")];
