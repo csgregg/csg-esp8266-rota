@@ -33,11 +33,15 @@ Useful videos - [https://www.youtube.com/watch?v=I7WfxhF2wEg](https://www.youtub
  - Seed the encrypted OAuth token in the [travis.yml](.travis.yml) file using `travis setup releases` from the local repo folder
  - Update the rest of the YML file
 
+**Notes**
+ - Ensure Travis EmbAjax library is right version 
+
 
 Useful links -
 
  - [http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/](http://blog.code4hire.com/2016/06/adding-github-token-to-travis-ci-configuration/)
  - [https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html](https://prof.bagneris.net/posts/2017/github-releases-travis-ci-en.html)
+ - [https://blog.openenergymonitor.org/2016/06/esp8266-ota-update/]https://blog.openenergymonitor.org/2016/06/esp8266-ota-update/
 
 **Host Redirect**
 
