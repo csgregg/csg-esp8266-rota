@@ -7,7 +7,7 @@
 
     // Get GitHub OAuth token
     include 'githuboauthtoken.php';
-    // NEED TO DESCRIBE FORMAT OF THIS
+    // TODO: NEED TO DESCRIBE FORMAT OF THIS
 
     // Get parameters
     if( !empty($_GET["debug"]) ) $DEBUG = ($_GET["debug"] == "true");
@@ -30,7 +30,7 @@
 
     // Which release do we want?
     if( empty($requestedTag) || $requestedTag == "Latest" ) $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/latest";
-    else $githubApiUrl  "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
+    else $githubApiUrl = "https://api.github.com/repos/${repoName}/releases/tags/${requestedTag}";
 
     if( $DEBUG ) echo nl2br("Repo API URL: $githubApiUrl\r\n");
 
