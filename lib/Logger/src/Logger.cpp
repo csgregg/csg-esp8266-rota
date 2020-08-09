@@ -342,15 +342,16 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("platform")] = device_getBuildFlag(flag_PLATFORM);
-        Device_Hardware[F("board")] = device_getBuildFlag(flag_BUILD_TAG);
-        Device_Hardware[F("framework")] = device_getBuildFlag(flag_FRAMEWORK);
+        Device_Hardware[F("Platform")] = device_getBuildFlag(flag_PLATFORM);
+        Device_Hardware[F("Board")] = device_getBuildFlag(flag_BOARD);
+        Device_Hardware[F("Framework")] = device_getBuildFlag(flag_FRAMEWORK);
         String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
         Device_Env[F("Name")] = device_getBuildFlag(flag_DEVICE_NAME);
         Device_Env[F("Code")] = device_getBuildFlag(flag_DEVICE_CODE);
         Device_Env[F("Build")] = device_getBuildFlag(flag_BUILD_ENV);
+        Device_Env[F("Tag")] = device_getBuildFlag(flag_BUILD_TAG);
         Device_Env[F("Heap")] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject(F("Network"));
