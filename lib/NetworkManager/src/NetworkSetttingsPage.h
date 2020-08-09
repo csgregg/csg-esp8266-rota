@@ -131,8 +131,6 @@ Describes the Network Settings web page
 
             void connectWifiStation(uint id);
 
-            //char buff[32];      // TODO: Fix this
-
     };
     
     extern NetworkSettingsPage networksettingspage;

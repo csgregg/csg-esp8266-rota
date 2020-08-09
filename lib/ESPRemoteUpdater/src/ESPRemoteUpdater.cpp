@@ -143,7 +143,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
         DynamicJsonDocument responseJSON(capacity);
         
         DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
-DEBUG(httppayload);
+
         if (jsonerror) LOG(jsonerror.c_str());          // TODO better error handling
 
         String repoName = responseJSON[F("repo")];
