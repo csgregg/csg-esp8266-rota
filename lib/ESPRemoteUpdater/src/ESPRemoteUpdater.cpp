@@ -118,7 +118,6 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
     int httperror = http.GET();
     String httppayload = http.getString();
     http.end();
-    DEBUG(httppayload);
 
     if( httperror != HTTP_CODE_OK ) {
 
