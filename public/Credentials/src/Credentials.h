@@ -16,12 +16,12 @@
 // RUN: travis encrypt LOGGER_SERVICE_KEY=<<Secret>> --add env.global
 // PLATFORMIO.INI: -DLOGGER_SERVICE_KEY=${sysenv.LOGGER_SERVICE_KEY}
 #ifndef LOGGER_SERVICE_KEY
-    #define LOGGER_SERVICE_KEY "KEY"
+    #define LOGGER_SERVICE_KEY
 #endif
 
 // Remote Update
 // RUN: travis encrypt UPDATER_TOKEN=<<Secret>> --add env.global
 // PLATFORMIO.INI: -DUPDATER_TOKEN=${sysenv.UPDATE_TOKEN}
 #ifndef UPDATER_TOKEN
-    #define UPDATER_TOKEN "TOKEN"
+    #define UPDATER_TOKEN
 #endif
