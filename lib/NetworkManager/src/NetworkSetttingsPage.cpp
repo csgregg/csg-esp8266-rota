@@ -34,17 +34,19 @@ SOFTWARE.
 #include "ConfigManager.h"
 #include "website.h"
 
-
+// TODO: Flashstrings
+// TODO: AP mode
+// TODO: Mode control
 
 void NetworkSettingsPage::initializeAjax(){
 
-    LOG("Initialize Network Settings AJAX");
+    LOG("(Page) Network Settings - Initialize AJAX");
 
 }
 
 void NetworkSettingsPage::handleAjax(){
 
-    LOG("Handle Network Settings AJAX");
+    LOG("(Page) Network Settings - Handle AJAX");
 
     if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     

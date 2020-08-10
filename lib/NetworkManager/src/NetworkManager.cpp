@@ -213,7 +213,8 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) return false;  
 
     // TODO - need to think through lastStation, connected station, etc and how it is saved
-    // Try each of the stored stations
+
+    // Try each of the stored stations, starting with last
     bool success = false;
     
     for( int i = 0; i < MAX_SSIDS && !success; i++ ) {
@@ -312,7 +313,7 @@ bool NetworkManager::startWiFiStation( const int id ) {
 
     		logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
 
-            if( logger.SerialOn() || logger.SerialOn() ) {
+            if( logger.SerialOn() ) {
                 IPAddress ip;
                 
                 ip =  _networkSettings->stationSettings[id].ip;

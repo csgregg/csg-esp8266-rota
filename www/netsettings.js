@@ -1,28 +1,3 @@
-// Get the Sidebar
-var mySidebar = document.getElementById("mySidebar");
-
-// Get the DIV with overlay effect
-var overlayBg = document.getElementById("myOverlay");
-
-
-// Toggle between showing and hiding the sidebar, and add overlay effect
-function w3_open() {
-    if (mySidebar.style.display == 'block') {
-        mySidebar.style.display = 'none';
-        overlayBg.style.display = "none";
-    } else {
-        mySidebar.style.display = 'block';
-        overlayBg.style.display = "block";
-    }
-    doPoll();
-}
-
-// Close the sidebar with the close button
-function w3_close() {
-    mySidebar.style.display = "none";
-    overlayBg.style.display = "none";
-}
-
 
 
 // TODO - Classify this 
@@ -37,7 +12,7 @@ var wifiStationID;
 var availWifiStn;
 
 // Last revision the list was loaded on
-var wifiListRevision=0;
+var wifiListRevision = 0;
 
 
 function addWifiStationEntry() {
@@ -81,6 +56,7 @@ function addWifiStationEntry() {
 function initPage() {
     // console.log("Status - Initialize Page");
 
+    wifiListRevision = 0;
     document.getElementById('loader').style.display='block';
     doRequest("","",loadWifiList);
 
