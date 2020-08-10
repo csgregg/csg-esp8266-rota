@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>Network Settings</title>
+<meta http-equiv="Content-Type" content="text/html;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="device.css">
+
+
+<body class="w3-light-grey">
+
+    <!-- !HEADER! -->
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <button class="w3-bar-item w3-margin-left w3-button w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">Menu</button>
+        <span class="w3-bar-item w3-display-right">
+            <span class="bs-replace">DEVICE_NAME</span>
+        </span>
+        <div class="w3-display-left w3-padding-small">
+            <span id="EmbAjaxStatusInd" class="statusdot" style="background:green"></span>
+        </div>
+    </div>
+
+    <!-- !MENU! -->
+    <div w3-include-html="menu.html"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+        <!-- Header -->
+        <header class="w3-container w3-light-grey">
+            <div class="w3-row">
+                <div class="w3-cell w3-left">
+                    <h4>Home</h4>
+                </div>
+            </div>
+        </header>
+
+        <div class="w3-row w3-margin-bottom">
+
+            <!-- Current Wifi Networks -->
+            <div class="w3-half">
+                <div class="w3-container w3-white w3-padding-8">
+                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
+                        <div class="w3-row">
+                            <b>Content</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- !FOOTER! -->
+        <div w3-include-html="footer.html"></div>
+
+        <!-- End page content -->
+    </div>
+
+    <script src="netsettings.js"></script>
+    <script src="menu.js"></script>
+    <script src="device.js"></script>
+    
+</body>
+
+</html>
+

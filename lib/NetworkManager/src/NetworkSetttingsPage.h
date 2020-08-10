@@ -114,7 +114,7 @@ Describes the Network Settings web page
 
                 ajax(page_elements, "")
                 {
-                    URL = "/networksettings.html";
+                    URL = "/netsettings.html";
                     handler = phandler;
                     init = pinit;
                 };
