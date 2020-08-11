@@ -1,6 +1,7 @@
 import gzip
 import shutil
 import os
+import subprocess
 
 Import("env", "projenv")
 
@@ -20,11 +21,14 @@ def compressFirmware(source):
 
     if not os.path.exists(source +'.bak'):
         print("Compressing firmware: " + source)
-        shutil.move(source, source + '.bak')
+        shutil.copy(source, source + '.bak')
 
-        with open(source + '.bak', 'rb') as f_in:
-            with gzip.open(source + '.gz', 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
+   #     with open(source + '.bak', 'rb') as f_in:
+   #         with gzip.open(source + '.gz', 'wb') as f_out:
+   #             shutil.copyfileobj(f_in, f_out)
+
+    output = subprocess.check_output(["gzip","-9 " + source])
+    print(output)
 
     if os.path.exists(source +'.bak'):
         ORG_FIRMWARE_SIZE = os.stat(source + '.bak').st_size
