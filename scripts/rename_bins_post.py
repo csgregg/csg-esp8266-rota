@@ -15,9 +15,10 @@ def get_build_flag_value(flag_name):
 
 
 
-
+# Compress ESP8266 firmware using gzip for 'compressed OTA upload'
 def compressFirmware(source):
-    """ Compress ESP8266 firmware using gzip for 'compressed OTA upload' """
+
+    print(source)
     if not os.path.exists(source +'.bak'):
         print("Compressing firmware for upload...")
         shutil.move(source, source + '.bak')
@@ -39,7 +40,7 @@ def change_littleFS_name(*args, **kwargs):
     target = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
 
-    compressFirmware(os.path.join(target_path, target))
+    compressFirmware(target)
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
 
