@@ -187,7 +187,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
     String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
 
     LOG(F("(Updater) Updating File System"));
-    logger.setTypeTag(LOG_DETAIL,TAG_STATUS);
+    logger.setTypeTag(LOG_HIGH,TAG_STATUS);
     PGM_P format1 = PSTR("(Updater) File system image request: %s");
     logger.printf( format1, littleFSFileRequest.c_str() );
 
@@ -231,7 +231,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( bool restart = 
     String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag;
 
     LOG(F("(Updater) Updating Program"));
-    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
+    logger.setTypeTag(LOG_HIGH, TAG_STATUS);
     PGM_P format1 = PSTR("(Updater) Program image request: %s");
     logger.printf( format1, imageFileRequest.c_str() );
 
