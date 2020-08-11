@@ -30,5 +30,9 @@ deploy:
     secure: mz3mvlIOR0kjYIeqRDCCC/JgG9tfJHEs06YrkE/3O7OftcsF777atkiLAesTRb3s+NuGHV29Q115jkzrj+kqgeyUvYs/wOsEZAW0Aq2B8I1mr9nFkccpA5r9DofG0PUbtxGoLFxYmizHBPguQD2lKgZpEIFVbOS81gOlzraJLbmv3hXtvlJhPHShaKYfx4Y+jN4RD6rgU1T301T/kQltBDd5zyCImte0dLp1NXn+No0fcFmvjawDEJt/JZf0yQCU94u8WPTUEwml5t5B46lPtvE+YBz73/WeCT6f+ubnicBlcv73CYtlg5QQjmZCdjJMCDKb2ZQy9cEaq9KA2qERg0ShUxVBQM9G9c0rdvUy0M5QbkUWZHmJU+hX9890ZDDvxL4pkyvlRcpVQ8DFyIuZuAsFFmhlPFaKwES1oy512wDb/J/0CsErogPmdQZDGKn8xn2p8UF6c3HZx5c5y5BDPNaTAa/8Dtd8AhlAamy+R6fj4YD+dQBB9gtoGLM6XUWiew9wCQ2P7w1FtcM7TerQ4KmL9QoCRGjtKopC/tHuPUJ2BhyXTEeRqQ9EckNvQGmUNDe9DjdJXS4xcHlA7Sf1e4NfLUqy2KfwsLya73ezjMruKqIEBbWWEqCq5Ru7SaFec5MWKtwiMLs8lJ+F8gr88WbPFhwqETKWLkoSWQ9utxI=
   file_glob: true
   file:
-    - ".pio/build/csg-esp8266-rota-travis/*.bin"
-    - ".pio/build/csg-esp8266-rota-travis/*.bin.gz"
+  - ".pio/build/csg-esp8266-rota-travis/*.bin"
+  - ".pio/build/csg-esp8266-rota-travis/*.bin.gz"
+  after_success:
+  - set -e
+  - sudo apt-get install -y lftp
+  - lftp -c "set ftps:initial-prot ''; set ftp:ss-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate false; open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST:21; mirror -eRv $FTP_DIR .; quit;"
