@@ -18,7 +18,6 @@ def get_build_flag_value(flag_name):
 # Compress firmware using gzip for 'compressed OTA upload'
 def compressFirmware(source):
 
-    print(source)
     if not os.path.exists(source +'.bak'):
         print("Compressing firmware")
         shutil.move(source, source + '.bak')
@@ -36,18 +35,22 @@ def compressFirmware(source):
 
 # Change file system image name
 def change_littleFS_name(*args, **kwargs):
-    target = str(kwargs['target'][0])
-    target_path = os.path.dirname(os.path.abspath(target))
+    target_path = str(kwargs['target'][0])
 
+    fstargat = os.path.join(target_path, "littlefs.bin")
     progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
+
+    print("Dir:")
+    for dirfiles in os.listdir(target_path):
+        print(dirfiles)
 
     print("Compress prog")
     print(progtarget)
     compressFirmware(progtarget)
 
     print("Compress FS")
-    print(target)
-    compressFirmware(target)
+    print(fstarget)
+    compressFirmware(fstarget)
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
 
@@ -58,4 +61,4 @@ def change_littleFS_name(*args, **kwargs):
 
 
 
-env.AddPostAction("$BUILD_DIR/littlefs.bin", change_littleFS_name) 
+env.AddPostAction("$BUILD_DIR", change_littleFS_name) 
