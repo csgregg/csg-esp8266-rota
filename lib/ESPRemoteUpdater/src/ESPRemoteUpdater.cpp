@@ -32,12 +32,20 @@ SOFTWARE.
         "date": "2019-12-08T20:58:02Z",
         "assets": [{
             "name": "12345678901234567890-Fvxx.xx.xx.bin",
-            "size": 0000000,
-            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+            "size": 1234567,
+            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin.gz"
         }, {
             "name": "12345678901234567890-Fvxx.xx.xx.bin",
-            "size": 0000000,
-            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin"
+            "size": 1234567,
+            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin.gz"
+        }, {
+            "name": "12345678901234567890-Fvxx.xx.xx.bin.gz",
+            "size": 1234567,
+            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin.gz"
+        }, {
+            "name": "12345678901234567890-Fvxx.xx.xx.bin.gz",
+            "size": 1234567,
+            "URL": "https:\/\/github.com\/1234567890\/123456789012345678901234567890\/releases\/download\/1.9.15\/12345678901234567890-Fvxx.xx.xx.bin.gz"
         }]
     }]
 }
@@ -138,13 +146,17 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
         // Expecting JSON back with latest release details
 
-
-        const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(2) + 3*JSON_OBJECT_SIZE(3) + 435; 
+        const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
         DynamicJsonDocument responseJSON(capacity);
-        
+
         DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
 
-        if (jsonerror) LOG(jsonerror.c_str());          // TODO better error handling
+        // TODO - Improve JSON error checking
+        if (jsonerror) {
+            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
+            PGM_P format4a = PSTR("(Updater) JSON Error: %s");
+            logger.printf( format4a, jsonerror.c_str() );
+        }
 
         String repoName = responseJSON[F("repo")];
 
@@ -165,7 +177,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
         _latestTag = latestTag;
         String str = releaseDate;
-        
+
         logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
         PGM_P format5 = PSTR("(Updater) Latest version: %s");
         logger.printf( format5, _latestTag.c_str() );
@@ -303,6 +315,7 @@ void ESPRemoteUpdater::handle() {
             return;
         }
         
+        // Compressed only works for program, not file system
         if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );
         
     }
