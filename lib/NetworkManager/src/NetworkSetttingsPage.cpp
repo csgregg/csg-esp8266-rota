@@ -40,13 +40,13 @@ SOFTWARE.
 
 void NetworkSettingsPage::initializeAjax(){
 
-    LOG("(Page) Network Settings - Initialize AJAX");
+    LOG_HIGH("(Page) Network Settings - Initialize AJAX");
 
 }
 
 void NetworkSettingsPage::handleAjax(){
 
-    LOG("(Page) Network Settings - Handle AJAX");
+    LOG_HIGH("(Page) Network Settings - Handle AJAX");
 
     if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     

@@ -200,12 +200,10 @@ bool WebsiteManager::handlelittleFS() {
 
     String shortpath = URL;
 
-    logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
-    logger.printf("(Network) Web server - file: %s", shortpath.c_str() );
+    logger.setTypeTag( LOG_HIGH, TAG_STATUS );
+    logger.printf("(Website) Web server - file: %s", shortpath.c_str() );
 
     if (shortpath.endsWith("/")) shortpath += F("index.html");         // If a folder is requested, send the index file
-
-    shortpath.replace(F("fonts/glyphicons-halflings-regular"), F("font"));      // Deal with std bootstrap naming
 
     String path = shortpath + ".gz";
 
@@ -224,7 +222,7 @@ bool WebsiteManager::handlelittleFS() {
         return true;
     }
 
-    LOG(F("(Network) Web server - file not found"));
+    LOG(F("(Website) Web server - file not found"));
 
     return false;                                         // If the file doesn't exist, return false
 }

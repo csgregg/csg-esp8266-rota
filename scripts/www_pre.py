@@ -63,7 +63,7 @@ def parse_replace(sourceFolder,destFolder):
 
 # Empty folder
 def deletecontents(folder):
-    for root, dirs, files in os.walk("data/tmp"):
+    for root, dirs, files in os.walk(folder):
         for file in files:
             os.remove(os.path.join(root, file))
 
@@ -89,14 +89,15 @@ def deflate_www(sourceFolder,destFolder):
 print("Device Code: %s" % get_build_flag_value("DEVICE_CODE"))
 print("Build tag: %s" % get_build_flag_value("BUILD_TAG"))
 
+# Clean up
+deletecontents("data/tmp")
+deletecontents("data")
+
 # Parse and replace 
 parse_replace("www","data/tmp")
 
 # Deflate www into data
 deflate_www("data/tmp","data")
-
-# Clean up
-deletecontents("data/tmp")
 
 # Change build file name
 new_name = "%s-Pv%s" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
