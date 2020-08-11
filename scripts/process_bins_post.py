@@ -1,7 +1,4 @@
-import gzip
-import shutil
 import os
-import subprocess
 
 Import("env", "projenv")
 
@@ -17,10 +14,10 @@ def get_build_flag_value(flag_name):
 
 # Change file system image name and compress
 def prepareBINs(*args, **kwargs):
-    print("Extra Script (Post): rename_bins_post.py")
+    print("Extra Script (Post): process_bins_post.py")
 
-    fstarget = str(kwargs['fstarget'][0])
-    target_path = os.path.dirname(os.path.abspath(target))
+    fstarget = str(kwargs['target'][0])
+    target_path = os.path.dirname(os.path.abspath(fstarget))
     progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
     new_fstarget = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
