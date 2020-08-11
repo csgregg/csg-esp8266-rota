@@ -24,14 +24,11 @@ def compressFirmware(source):
 
         with open(source + '.bak', 'rb') as f_in:
             with gzip.open(source + '.gz', 'wb') as f_out:
-                print(f_in.name)
-                print(f_out.name)
                 shutil.copyfileobj(f_in, f_out)
-                print("here")
 
     if os.path.exists(source +'.bak'):
         ORG_FIRMWARE_SIZE = os.stat(source + '.bak').st_size
-        GZ_FIRMWARE_SIZE = os.stat(source).st_size
+        GZ_FIRMWARE_SIZE = os.stat(source + '.gz').st_size
 
         print("Compression reduced firmware size by {:.0f}% (was {} bytes, now {} bytes)".format((GZ_FIRMWARE_SIZE / ORG_FIRMWARE_SIZE) * 100, ORG_FIRMWARE_SIZE, GZ_FIRMWARE_SIZE))
 
