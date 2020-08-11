@@ -45,19 +45,10 @@ def change_littleFS_name(*args, **kwargs):
 
     progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
-    print("Compress prog")
-    print(progtarget)
     compressFirmware(progtarget)
-
-    print("Compress FS")
-    print(target)
     compressFirmware(target)
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
-
-    print("Target : %s" % target)
-    print("New image file: %s" % new_target)
-
     os.rename(target + '.gz', os.path.join(target_path, new_target + '.gz'))
 
 
