@@ -15,12 +15,12 @@ def get_build_flag_value(flag_name):
 
 
 
-# Compress ESP8266 firmware using gzip for 'compressed OTA upload'
+# Compress firmware using gzip for 'compressed OTA upload'
 def compressFirmware(source):
 
     print(source)
     if not os.path.exists(source +'.bak'):
-        print("Compressing firmware for upload...")
+        print("Compressing firmware")
         shutil.move(source, source + '.bak')
         with open(source + '.bak', 'rb') as f_in:
             with gzip.open(source, 'wb') as f_out:
