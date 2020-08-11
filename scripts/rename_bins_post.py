@@ -23,7 +23,7 @@ def compressFirmware(source):
         print("Compressing firmware")
         shutil.move(source, source + '.bak')
         with open(source + '.bak', 'rb') as f_in:
-            with gzip.open(source, 'wb') as f_out:
+            with gzip.open(source + '.gz', 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
     if os.path.exists(source+'.bak'):
