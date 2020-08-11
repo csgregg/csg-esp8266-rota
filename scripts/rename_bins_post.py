@@ -35,30 +35,30 @@ def compressFirmware(source):
 
 # Change file system image name
 def change_littleFS_name(*args, **kwargs):
-    target_path = str(kwargs['target'][0])
-
-    fstarget = os.path.join(target_path, "littlefs.bin")
-    progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
+    target = str(kwargs['target'][0])
+    target_path = os.path.dirname(os.path.abspath(target))
 
     print("Dir:")
     for dirfiles in os.listdir(target_path):
         print(dirfiles)
+
+    progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
     print("Compress prog")
     print(progtarget)
     compressFirmware(progtarget)
 
     print("Compress FS")
-    print(fstarget)
-    compressFirmware(fstarget)
+    print(target)
+    compressFirmware(target)
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
 
-    print("Target : %s" % fstarget)
+    print("Target : %s" % target)
     print("New image file: %s" % new_target)
 
-    os.rename(fstarget, os.path.join(target_path, new_target))
+    os.rename(target, os.path.join(target_path, new_target))
 
 
 
-env.AddPostAction("$BUILD_DIR", change_littleFS_name) 
+env.AddPostAction("$BUILD_DIR/littlefs.bin", change_littleFS_name) 
