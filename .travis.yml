@@ -37,6 +37,5 @@ deploy:
 after_success:
 - set -e
 - sudo apt-get install -y lftp
-- lftp -c "set ftps:initial-prot ''; set ftp:ss-force true; set ftp:ssl-protect-data
-  true; set ssl:verify-certificate false; open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST:21;
+- lftp -c "open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST:21;
   mirror -eRv .pio/build/csg-esp8266-rota-travis/hosted/ /public_html/tools/; quit;"
