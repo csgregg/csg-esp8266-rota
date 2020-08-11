@@ -1,3 +1,5 @@
+import gzip
+import shutil
 import os
 
 Import("env", "projenv")
