@@ -5,7 +5,6 @@ import subprocess
 
 Import("env", "projenv")
 
-print("Extra Script (Post): rename_bins_post.py")
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
@@ -19,15 +18,13 @@ def get_build_flag_value(flag_name):
 # Compress firmware using gzip for 'compressed OTA upload'
 def compressFirmware(source):
 
-    if not os.path.exists(source +'.bak'):
-        print("Compressing firmware: " + source)
-        shutil.copy(source, source + '.bak')
+    print("Compressing firmware: " + source)
+    os.system("gzip -9 -k " + source)
 
-   #     with open(source + '.bak', 'rb') as f_in:
-   #         with gzip.open(source + '.gz', 'wb') as f_out:
-   #             shutil.copyfileobj(f_in, f_out)
-
-    os.system("gzip -9 " + source)
+    target_path = os.path.dirname(os.path.abspath(source))
+    print("Dir: " + target_path )
+    for dirfiles in os.listdir(target_path):
+        print(dirfiles)
 
     if os.path.exists(source +'.bak'):
         ORG_FIRMWARE_SIZE = os.stat(source + '.bak').st_size
@@ -37,23 +34,21 @@ def compressFirmware(source):
 
 
 
-# Change file system image name
-def change_littleFS_name(*args, **kwargs):
-    target = str(kwargs['target'][0])
+# Change file system image name and compress
+def prepareBINs(*args, **kwargs):
+    print("Extra Script (Post): rename_bins_post.py")
+
+    fstarget = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
-
-    print("Dir: " + target_path )
-    for dirfiles in os.listdir(target_path):
-        print(dirfiles)
-
     progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
+    new_fstarget = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
+    os.rename(fstarget, os.path.join(target_path, new_fstarget))
+
     compressFirmware(progtarget)
-    compressFirmware(target)
-
-    new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
-    os.rename(target + '.gz', os.path.join(target_path, new_target + '.gz'))
+    compressFirmware(new_fstarget)
 
 
 
-env.AddPostAction("$BUILD_DIR/littlefs.bin", change_littleFS_name) 
+# Set up call after FS bin has been created
+env.AddPostAction("$BUILD_DIR/littlefs.bin", prepareBINs) 
