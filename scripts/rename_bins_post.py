@@ -23,8 +23,8 @@ def compressFirmware(source):
         shutil.move(source, source + '.bak')
 
         with open(source + '.bak', 'rb') as f_in:
-            print("here")
             with gzip.open(source + '.gz', 'wb') as f_out:
+                print("here")
                 shutil.copyfileobj(f_in, f_out)
 
     if os.path.exists(source +'.bak'):
