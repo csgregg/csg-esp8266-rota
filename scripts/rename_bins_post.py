@@ -27,8 +27,7 @@ def compressFirmware(source):
    #         with gzip.open(source + '.gz', 'wb') as f_out:
    #             shutil.copyfileobj(f_in, f_out)
 
-    output = subprocess.check_output(["gzip","-9 " + source])
-    print(output)
+    os.system(["gzip -9 " + source])
 
     if os.path.exists(source +'.bak'):
         ORG_FIRMWARE_SIZE = os.stat(source + '.bak').st_size
