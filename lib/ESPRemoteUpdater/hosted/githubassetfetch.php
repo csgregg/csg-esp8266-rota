@@ -71,6 +71,7 @@ Mode 4 - Serve specific release
     if( !empty($_GET["max"]) ) $maxReleases = $_GET["max"];
     if( !empty($_GET["token"]) ) $token = $_GET["token"];
     if( !empty($_GET["user"]) ) $user = $_GET["user"];
+    if( !empty($_GET["type"]) ) $type = $_GET["type"];
 
     if( $DEBUG ) echo nl2br("ESP8266 Remote Updater - GitHub Asset Fetch Service\r\n");
 
@@ -107,6 +108,10 @@ Mode 4 - Serve specific release
     // Check for token 
     if( $DEBUG && empty($token) ) echo nl2br("Public repo only\r\n");
     elseif( $DEBUG ) echo nl2br("Token: $token\r\n");
+
+    // Check for type 
+    if( $DEBUG && empty($type) ) echo nl2br("Uncompressed\r\n");
+    elseif( $DEBUG ) echo nl2br("Type: $type\r\n");
 
     // Default max releases to 30
     if( empty($maxReleases) ) $maxReleases = 30;
@@ -189,9 +194,14 @@ Mode 4 - Serve specific release
 
         if( $count == 1 ) $latestTag = $release->tag_name;
      
+        if( !empty($type) && $type == 'gz' ) $extsn = ".bin.gz";
+        else $extsn = ".bin";
+
         // Check to see if this is the release we want
-        if( $mode == 3 ) $assetName = "$imageFilePre$release->tag_name.bin";
-        if( $mode == 4 ) $assetName = "$imageFilePre$requestedTag.bin";
+        if( $mode == 3 ) $assetName = "$imageFilePre$release->tag_name$extsn";
+        if( $mode == 4 ) $assetName = "$imageFilePre$requestedTag$extsn";
+
+        if( $DEBUG ) echo "Asset name: $assetName\r\n";
 
         $assets = array();
 

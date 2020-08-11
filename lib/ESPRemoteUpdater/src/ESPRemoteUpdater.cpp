@@ -181,10 +181,10 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
  
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
+HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
-    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag;
+    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
 
     LOG(F("(Updater) Updating File System"));
     logger.setTypeTag(LOG_HIGH,TAG_STATUS);
@@ -225,10 +225,10 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS() {
 
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( bool restart = false ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
-    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag;
+    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
 
     LOG(F("(Updater) Updating Program"));
     logger.setTypeTag(LOG_HIGH, TAG_STATUS);
@@ -303,7 +303,7 @@ void ESPRemoteUpdater::handle() {
             return;
         }
         
-        if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
+        if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );
         
     }
 }

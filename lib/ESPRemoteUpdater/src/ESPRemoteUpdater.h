@@ -61,6 +61,11 @@ binaries built by Travis-CI.
             int getLastError();
             String getLastErrorString();
 
+            enum bin_type {
+                RAW,                        // Uncompressed BIN file (.bin)
+                GZ                          // Compressed BIN file (.bin.gz)
+            };
+
         protected:
 
             const char* _progSuffix = "-Pv";
@@ -84,8 +89,8 @@ binaries built by Travis-CI.
 
             int _lastError;
 
-            HTTPUpdateResult UpdateFS();
-            HTTPUpdateResult UpdateProg( bool restart );
+            HTTPUpdateResult UpdateFS( const bin_type type );
+            HTTPUpdateResult UpdateProg( const bin_type type, const bool restart = false );
 
         private:
         
