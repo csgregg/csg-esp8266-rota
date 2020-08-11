@@ -58,7 +58,7 @@ def change_littleFS_name(*args, **kwargs):
     print("Target : %s" % target)
     print("New image file: %s" % new_target)
 
-    os.rename(target, os.path.join(target_path, new_target))
+    os.rename(target, os.path.join(target_path + '.gz', new_target+ '.gz'))
 
 
 
