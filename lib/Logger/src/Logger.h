@@ -173,7 +173,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             logType _lasttype;
             logTag _lasttag;
 
-            const char * const c_log_type_descript[3] = {"CRITICAL","Normal","Verbose"};
+            const char * const c_log_type_descript[4] = {"CRITICAL","Normal","High","Verbose"};
             const char * const c_log_tag_descript[2] = {"DEBUG","STATUS"};
 
         private:

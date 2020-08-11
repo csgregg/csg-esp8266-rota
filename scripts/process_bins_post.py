@@ -27,10 +27,6 @@ def prepareBINs(*args, **kwargs):
     os.system("gzip -9 -k " + progtarget)
     os.system("gzip -9 -k " + new_fstarget)
 
-    print("Dir: " + target_path )
-    for dirfiles in os.listdir(target_path):
-        print(dirfiles)
-
 
 
 # Set up call after FS bin has been created
