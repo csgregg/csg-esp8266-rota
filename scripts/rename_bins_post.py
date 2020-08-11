@@ -39,7 +39,7 @@ def change_littleFS_name(*args, **kwargs):
     target = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
 
-    progtarget = os.path.join(target_path, env['PROGNAME'])
+    progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
     print("Compress prog")
     print(progtarget)
