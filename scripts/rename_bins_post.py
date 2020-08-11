@@ -19,7 +19,7 @@ def get_build_flag_value(flag_name):
 def compressFirmware(source):
 
     if not os.path.exists(source +'.bak'):
-        print("Compressing firmware")
+        print("Compressing firmware: " + source)
         shutil.move(source, source + '.bak')
         with open(source + '.bak', 'rb') as f_in:
             with gzip.open(source + '.gz', 'wb') as f_out:
