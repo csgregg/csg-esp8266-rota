@@ -73,7 +73,7 @@ TODO - Add function to check in and regsiter
 // Public:
 
 // Sets up logger - needs to be followed by setMode() to actually start
-void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags ) {
+void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags, const bool modeSerial  ) {
 
 #ifndef NO_LOGGING
 
@@ -81,9 +81,10 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, const long baud, co
 
     _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
 
-    Serial.begin(baud);             // TODO - only do this if serial on
-
-    Serial.println(F("\n\nLOG: (Logger) Starting Logging\n"));
+    if( modeSerial ) {
+        Serial.begin(baud);             
+        Serial.println(F("\n\nLOG: (Logger) Starting Logging"));
+    }
 
 #endif
     
@@ -99,12 +100,12 @@ void ICACHE_FLASH_ATTR LogClient::setMode( const bool modeSerial, const bool mod
     _serviceOn = modeService;
     _logginglevel = level;
 
-    setTypeTag(LOG_NORMAL, TAG_STATUS);
+    setTypeTag(LOG_HIGH, TAG_STATUS);
     PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
     logger.printf( format1, _logginglevel );
 
-    if(_serviceOn) LOG(F("(Logger) Logging Service: ON"));
-    else LOG(F("(Logger) Logging Service: OFF"));
+    if(_serviceOn) LOG_HIGH(F("(Logger) Logging Service: ON"));
+    else LOG_HIGH(F("(Logger) Logging Service: OFF"));
 
 #endif
 
@@ -122,10 +123,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
     // TODO - since this is build specific might move this logic to the preprocessor to save memory.
     // Need to consider if we want to be able to change log level at runtime
 
-    if( _logginglevel == LOGGING_OFF ) return;
-    if( _logginglevel == LOGGING_LEVEL_CRITICAL && type != LOG_CRITICAL ) return;
-    if( _logginglevel == LOGGING_LEVEL_NORMAL && type == LOG_DETAIL ) return;
-    
+    if( type >= _logginglevel ) return;
+   
     if( _serialOn ) LogToSerial(type, tag, message);
     if( _serviceOn ) LogToService(type, tag, message);
 

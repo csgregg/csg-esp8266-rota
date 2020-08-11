@@ -311,13 +311,14 @@ bool NetworkManager::startWiFiStation( const int id ) {
             _networkSettings->stationSettings[id].dns1 = WiFi.dnsIP(0);
             _networkSettings->stationSettings[id].dns2 = WiFi.dnsIP(1);
 
-    		logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
-
-            if( logger.SerialOn() ) {
+    		if( logger.SerialOn() ) {
                 IPAddress ip;
-                
+
+                logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
                 ip =  _networkSettings->stationSettings[id].ip;
                 logger.printf("(Network) WiFi station connected - IP: %s", ip.toString().c_str());
+
+                logger.setTypeTag(LOG_HIGH, TAG_STATUS);
                 ip =  _networkSettings->stationSettings[id].subnet;           
                 logger.printf("(Network) WiFi station connected - Subnet: %s", ip.toString().c_str());
                 ip =  _networkSettings->stationSettings[id].gateway;           

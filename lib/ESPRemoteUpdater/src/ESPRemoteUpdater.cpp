@@ -100,7 +100,7 @@ void ESPRemoteUpdater::TriggerUpdateCheck() {
 
 String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
 
-    LOG(F("(Updater) Checking latest build..."));
+    LOG_HIGH(F("(Updater) Checking latest build..."));
 
     HTTPClient http;
 
@@ -293,13 +293,15 @@ void ESPRemoteUpdater::handle() {
         // Check for update
 
         String checkTag = getLatestBuild();
+        if( checkTag == "" ) return;
+
+        format1 = PSTR("(Updater) Latest version: %s");
+        logger.printf( format1, checkTag.c_str() );
 
         if( checkTag == _buildTag ) {
             LOG(F("(Updater) No new update"));  
             return;
         }
-
-        if( checkTag == "" ) return;
         
         if( UpdateFS() == HTTP_UPDATE_OK ) UpdateProg( true );
         

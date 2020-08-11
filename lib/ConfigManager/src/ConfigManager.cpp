@@ -76,7 +76,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Initialize( const bool forceInit ) {
     else {
 
         // Flash is already set up and ready to use
-        LOG(F("(Config) Flash ready"));
+        LOG_HIGH(F("(Config) Flash ready"));
 
         Read();         // Get the settings for the first time
     }
@@ -107,7 +107,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 // Read settings from flash 
 void ICACHE_FLASH_ATTR ConfigManager::Read() {
 
-    LOG(F("(Config) Reading settings"));
+    LOG_HIGH(F("(Config) Reading settings"));
 
     // Don't do anything unless ready to use
     if( !_IsInitialized ) {

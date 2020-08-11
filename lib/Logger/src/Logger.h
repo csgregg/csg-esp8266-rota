@@ -53,10 +53,10 @@ debug of code. Macros are defined for to simplifiy common usage.
 
       #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
       #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define DEBUG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
-
+      
       #define LOG_DETAIL(text) logger.println(LOG_DETAIL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG_HIGH(text) logger.println(LOG_HIGH, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
 
       #define DEBUG_STOP() Serial.printf("(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
@@ -94,21 +94,24 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define JSON_SIZE_IP 15
     #define JSON_SIZE_SSID 32
 
+    // TODO - move enums into class
 
     // Logging level to filter logs 
     enum loggingLevel {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_CRITICAL = 1,     // Critical only
-        LOGGING_LEVEL_NORMAL = 2,       // Normal and critical
-        LOGGING_LEVEL_VERBOSE = 3       // All (Detail, Normal, Critical)
+        LOGGING_LEVEL_NORMAL = 2,       // Normal and Critical
+        LOGGING_LEVEL_HIGH = 3,         // Normal, Critial and High
+        LOGGING_LEVEL_VERBOSE = 4       // All (Detail, Normal, High and Critical)
     };
 
 
     // Type of log - used in the filter of log level and added to message
     enum logType {
-        LOG_CRITICAL,
-        LOG_NORMAL,
-        LOG_DETAIL
+        LOG_CRITICAL = 0,
+        LOG_NORMAL = 1,
+        LOG_HIGH = 2, 
+        LOG_DETAIL = 3
     } ;
 
 
@@ -126,7 +129,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             /// To set up logging
 
-            void begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags );
+            void begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags, const bool modeSerial  );
             void setMode( const bool modeSerial = false, const bool modeService = false, const loggingLevel level = LOGGING_OFF );
 
             // Log messages (with overloads)
