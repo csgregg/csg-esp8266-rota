@@ -37,7 +37,7 @@ def compressFirmware(source):
 def change_littleFS_name(*args, **kwargs):
     target_path = str(kwargs['target'][0])
 
-    fstargat = os.path.join(target_path, "littlefs.bin")
+    fstarget = os.path.join(target_path, "littlefs.bin")
     progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
 
     print("Dir:")
@@ -54,10 +54,10 @@ def change_littleFS_name(*args, **kwargs):
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
 
-    print("Target : %s" % target)
+    print("Target : %s" % fstarget)
     print("New image file: %s" % new_target)
 
-    os.rename(target, os.path.join(target_path, new_target))
+    os.rename(fstarget, os.path.join(target_path, new_target))
 
 
 
