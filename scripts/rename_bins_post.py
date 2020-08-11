@@ -38,7 +38,7 @@ def change_littleFS_name(*args, **kwargs):
     target = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
 
-    print("Dir:")
+    print("Dir: " + target_path )
     for dirfiles in os.listdir(target_path):
         print(dirfiles)
 
