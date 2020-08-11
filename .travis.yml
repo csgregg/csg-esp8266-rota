@@ -10,6 +10,8 @@ env:
   - PLATFORMIO_CI_SRC=src/
   global:
   - secure: hvHgU6zwYZvHSd42N7byYMzSGBAjmD/QhTZn49E/OCK7agVK++gBNuR3sRVgy87rk6TCzq5eZFThInQokKhcicvClRi56PpyxeZGXQ5Dx/RasImVufp9Gp+RmNzqM/DmNNCR6LUl95K64KXvyNQ48Q0svkhJ3kwTNlcscjpjXB3iZfRrOO1SO6tlsDBhk94HG2+QzejJDRlfnXtu2qVt56PpkiiF7IT75k5IQUDnu8jghdCKnZR8z2EhyqPUACw5+clAJT1V7KCXLj9RMzwu8H7GGjs97hezBD4n+O2iqsSdKQVuZky1OyGOSFUSWolrtaJy8/IRk6Xmi/JKuB9EVtbFJ2pFM2EmLevJSFZTHpc8wAeqSQkScewwLAaKNGNBdkjTfwMzEjsD86Nzb5FKzgo86fc2cqdRqDAtRX41lijorX/08i87jmv3FFtcM7sM5m5IwFubrj4RUTAwUbci1w6FQPvcK4ybeX6cYqQWVk5MZHJbtoZmydKOWxK4vOBPhWn2XlhT2xKjii2Eice5cxJY0YNgqyM18VxCSXbj7mRfMWK0v+yEn5Tk0a1EszpZYGv1iuaZ5FDDonkj/tgcdJXNTRtWZrKH3+c0EDU098MLufCiTOVMliHNFQ93XFpX3sF7npBC29LQJ8Jzp1v8M8PuYXWKShoYBaeEvQc8Z20=
+  - secure: KRrRWQcOVhvp5ghB33CWcrGb4Ijgx8bqZpcr07dxRwJD2Dt7Tw/LX2TkKY9iVT7AyjSELmvCmNgcCFk04KHLoX2Bsy/jD0dk4BkmnaPUBkQT/OPQXR3rM0+7UyzBSdiHc0aEqAwq4A7n9fzWAtQczOIEI/cU3s4gvN3NSQDK5/9iPePysXWBR4eP2b7UGhde9VrfauCsaItEA0QqF9wCbkhw1o2/A/0eg8m4Yn7M9aCunEIA+EVw+Szb/0T+TwqepD3ShDkQjltLM/avpnC/vmpR8SzA12mzM9KdlfQY1w6lbqxCwCQ1NCrcZHBOKEPel0Lm+TehHXoKQ5UGh5ufDXh/PyIZLt1gOqTPXsHlQs6vFs4SoLT4NlwR0jpVLr0LjwEqoBlT/wNcMRdWk8t/6ynaKT6l6eacgh8349k3RSxakfGDJ+EbXuDG0b5mf83OMPnhhdzAK87OW4xDcN5KPHjRK86Eof7ABGnnF0qR5r3A4SFnhv8KreqgPLsxP2B/sleyIO/KVB5RZ+fCBf5WVXJ6RjOyxauo0Z3/Mv2YoQVT7UGXZlVpQAnKN6PxLTi150kkjFo63FdItB3FAC9T39NeKYGS05byvJYUzR+Icig3/yIFh7FBpTZkB/sDKw9TGCtBOTUScfpt+wbJZlUB2mKIHgaWaNRWd/GsAL1FxMI=
+  - secure: abBh2o9DsY6EuElIRRC52+ngD1GGuxmeCIMQp6QmRfDnEtU/AsQuuFk9QeDO99D+BZMJmBiOlormihD/P29aCIk2bSjGkGvFjG3/rM9zIF5VQ3vjM03G83Y/rVmLtE5pOkQhAdxpqIhpSDaWZjreHN4IRkGo/vNsqVfehoaXNDh+50kRe4oyvDliHwfXhSQfZOREbjeh2/RfivuY7Vhat7Kv8UkZywGp9h1/Jhcjl6/No9792fdP4qxeMAMToLbs2YT0oMsLmGZg6xrxerx4EX2ut9q0xYYJHYO4OXSkaDGoe3MaKbdu2UT3z6miYRSmj9pjIGZdATntyR+SDvrxuM7ZwBVV5kDuF715nkkgV6PxkQ2NpW8JXgHaNGHpFlaYbCaBtVgjCi73c5vztbWiPviyd/IPY5q+P4UIQcJBuywfgyIDu26bvkK9itOlYV2cZt0UJjIS257DfbBvZr/1XEizMkTu1U6yJllhBT39E8HYIlwyPHto0EQw4dq11GVh1kJyVEOMoLDaIjdcFLz6leMoiwFLPSipXbG7dC5jkG08kxtMmGKCIlIYLVavJ7P8yjgkRYmZc+iJKWiAzzLyTKiIh/QQTWnNppEondNvxohZSFNzMDyyZIa9/dojmb89FXNwQG5NxfhbaNOncjto3xK5hIpNGSjENfgb9SEpObQ=
 install:
 - pip install -U platformio
 - platformio platform install espressif8266@2.6.2
@@ -35,4 +37,6 @@ deploy:
 after_success:
 - set -e
 - sudo apt-get install -y lftp
-- lftp -c "set ftps:initial-prot ''; set ftp:ss-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate false; open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST:21; mirror -eRv $FTP_DIR .; quit;"
+- lftp -c "set ftps:initial-prot ''; set ftp:ss-force true; set ftp:ssl-protect-data
+  true; set ssl:verify-certificate false; open ftp://$FTP_USER:$FTP_PASS@$FTP_HOST:21;
+  mirror -eRv .pio/build/csg-esp8266-rota-travis/hosted/ /public_html/tools/; quit;"
