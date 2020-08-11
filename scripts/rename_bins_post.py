@@ -33,16 +33,20 @@ def compressFirmware(source):
         print("Compression reduced firmware size by {:.0f}% (was {} bytes, now {} bytes)".format((GZ_FIRMWARE_SIZE / ORG_FIRMWARE_SIZE) * 100, ORG_FIRMWARE_SIZE, GZ_FIRMWARE_SIZE))
 
 
-def compressProg():
-    print("prog")
-    print(env['PROGNAME'])
 
 # Change file system image name
 def change_littleFS_name(*args, **kwargs):
     target = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(target))
 
-    compressFirmware(os.path.join(target_path, env['PROGNAME']))
+    progtarget = os.path.join(target_path, env['PROGNAME'])
+
+    print("Compress prog")
+    print(progtarget)
+    compressFirmware(progtarget)
+
+    print("Compress FS")
+    print(target)
     compressFirmware(target)
 
     new_target = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
