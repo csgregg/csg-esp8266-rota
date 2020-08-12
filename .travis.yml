@@ -22,7 +22,7 @@ script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted deploy@iot.greggs.org:tools
+  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted ib7vjwf2zalm@iot.greggs.org:tools
   on:
     branch: master
 addons:
