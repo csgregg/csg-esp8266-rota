@@ -39,6 +39,7 @@ after_success:
 - sudo apt-get install -y lftp
 - lftp -c "
           set ftp:ssl-allow false;
+          set net:timeout 30;
           open ftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org:21;
           mirror -eR --verbose=3 $TRAVIS_BUILD_DIR/hosted tools;
           quit;"
