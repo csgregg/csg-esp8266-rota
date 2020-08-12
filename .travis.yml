@@ -28,11 +28,9 @@ deploy:
 addons:
   ssh_known_hosts: iot.greggs.org
 before_deploy:
-- openssl aes-256-cbc -K $encrypted_0ddd2445e49f_key -iv $encrypted_0ddd2445e49f_iv
-  -in travis_rsa.enc -out travis_rsa -d
-- eval "$(ssh-agent -s)"
-- chmod 600 /tmp/travis_rsa
-- ssh-add /tmp/travis_rsa
-before_install:
 - openssl aes-256-cbc -K $encrypted_c79cb383f093_key -iv $encrypted_c79cb383f093_iv
-  -in travis-godaddy_rsa.enc -out travis-godaddy_rsa -d
+  -in travis-godaddy_rsa.enc -out /tmp/travis-godaddy_rsa -d
+- eval "$(ssh-agent -s)"
+- chmod 600 /tmp/travis-godaddy_rsa
+- ssh-add /tmp/travis-godaddy_rsa
+
