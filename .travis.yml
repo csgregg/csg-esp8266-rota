@@ -37,5 +37,5 @@ deploy:
 after_success:
 - set -e
 - sudo apt-get install -y lftp
-- lftp -c " open ftp://$FTP_USER:$FTP_PASS@files.000webhost.com:21; mirror -eRv $TRAVIS_BUILD_DIR/hosted/
+- lftp -c " open ftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org:21; mirror -eRv $TRAVIS_BUILD_DIR/hosted/
   /public_html/tools/; quit;"
