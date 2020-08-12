@@ -34,11 +34,17 @@ deploy:
   file:
   - ".pio/build/csg-esp8266-rota-travis/*.bin"
   - ".pio/build/csg-esp8266-rota-travis/*.bin.gz"
-after_success:
-- curl --ftp-create-dirs
-       -T $TRAVIS_BUILD_DIR/hosted/*
-       --key travis_rsa
-       sftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org/public_html/tools/
-env.global:
+addons:
+  ssh_known_hosts: iot.greggs.org
+before_deploy:
 - openssl aes-256-cbc -K $encrypted_0ddd2445e49f_key -iv $encrypted_0ddd2445e49f_iv
-  -in travis_rsa.enc -out travis_rsa -d
+  -in travis_rsa.enc -out /tmp/travis_rsa -d
+- eval "$(ssh-agent -s)"
+- chmod 600 /tmp/travis_rsa
+- ssh-add /tmp/travis_rsa
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted deploy@iot.greggs.org:tools
+  on:
+    branch: master
