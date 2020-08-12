@@ -40,5 +40,5 @@ after_success:
 - lftp -c "
           set ftp:ssl-allow false;
           open ftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org:21;
-          mirror -eRv $TRAVIS_BUILD_DIR/hosted tools;
+          mirror -eR --verbose=3 $TRAVIS_BUILD_DIR/hosted tools;
           quit;"
