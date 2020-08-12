@@ -43,5 +43,5 @@ after_success:
           set ftp:ssl-protect-data true;
           set ssl:verify-certificate false;
           open ftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org:21;
-          mirror -eRv $TRAVIS_BUILD_DIR/hosted /tools/;
+          mirror -eRv $TRAVIS_BUILD_DIR/hosted tools;
           quit;"
