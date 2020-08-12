@@ -38,7 +38,10 @@ after_success:
 - set -e
 - sudo apt-get install -y lftp
 - lftp -c "
+          set ftps:initial-prot '';
+          set ftp:ssl-force true;
+          set ftp:ssl-protect-data true;
           set ssl:verify-certificate false;
           open ftp://$FTP_USER:$FTP_PASS@ftp.iot.greggs.org:21;
-          mirror -eRv $TRAVIS_BUILD_DIR/hosted/ /public_html/tools/;
+          mirror -eRv $TRAVIS_BUILD_DIR/hosted /tools/;
           quit;"
