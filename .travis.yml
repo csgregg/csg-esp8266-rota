@@ -22,7 +22,7 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    - rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted $SSH_USER@iot.greggs.org:public_html/tools
+    - rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted/ $SSH_USER@iot.greggs.org:public_html/tools
     - chmod 600 /public_html/tools/*
   on:
     branch: master
