@@ -9,7 +9,9 @@ env:
   matrix:
   - PLATFORMIO_CI_SRC=src/
   global:
+  # Logger Key
   - secure: hvHgU6zwYZvHSd42N7byYMzSGBAjmD/QhTZn49E/OCK7agVK++gBNuR3sRVgy87rk6TCzq5eZFThInQokKhcicvClRi56PpyxeZGXQ5Dx/RasImVufp9Gp+RmNzqM/DmNNCR6LUl95K64KXvyNQ48Q0svkhJ3kwTNlcscjpjXB3iZfRrOO1SO6tlsDBhk94HG2+QzejJDRlfnXtu2qVt56PpkiiF7IT75k5IQUDnu8jghdCKnZR8z2EhyqPUACw5+clAJT1V7KCXLj9RMzwu8H7GGjs97hezBD4n+O2iqsSdKQVuZky1OyGOSFUSWolrtaJy8/IRk6Xmi/JKuB9EVtbFJ2pFM2EmLevJSFZTHpc8wAeqSQkScewwLAaKNGNBdkjTfwMzEjsD86Nzb5FKzgo86fc2cqdRqDAtRX41lijorX/08i87jmv3FFtcM7sM5m5IwFubrj4RUTAwUbci1w6FQPvcK4ybeX6cYqQWVk5MZHJbtoZmydKOWxK4vOBPhWn2XlhT2xKjii2Eice5cxJY0YNgqyM18VxCSXbj7mRfMWK0v+yEn5Tk0a1EszpZYGv1iuaZ5FDDonkj/tgcdJXNTRtWZrKH3+c0EDU098MLufCiTOVMliHNFQ93XFpX3sF7npBC29LQJ8Jzp1v8M8PuYXWKShoYBaeEvQc8Z20=
+  # GoDaddy Key
   - secure: eH/05bke8IHGNSSRK/H9ioAXIhIhf3o2Guk7V0mU7rBTeftS/nzPVMG9Kg7L+Qz+i1Z6aXG4LHeMn8KCX8rLZ/2Xw5x5Enq18cW0X9kysLmXE2k/rm0WBnJpxr5DJIvHyYOHxqbi86GzuGQ7196ps8CXQzD0kbxoKnNFowXREMrMUWfjY4SwaMgFYyTUIsn7OtRhcO9slzUwl/26hMbYgn4uGTwoNiwOYrn35IxlJnByamQKUTSAo/LVLBaa5vDCfjgNOR5K+7j92aPdmpXuwsQELWLfT8nzYRpSd3bK5NMQidyYmmWu6DeJ3WhNIAtdwqq0l5fD6T/H/5Io3S3hXC4s9Cg27a6WVr+5UoaJ9YHate1vxvGfj2lmaMwk7m7GPZMJRIRxug/bBcaa8ijauSTasPNTd/iubNgff98djhbooELX95mX178oC2hoZNeIigVv6zi/Y+XMMIyLwmDu56f3KceerDEIPR/S7Hzeqg8ul67OUj2fwqSOceeH+gHxBpunp9yRmgr8d23vxkzhKiLhd8+eggmxzIa/tQATbGp8itMryLUxH5pjUXURXyPnpE2zHJUUs59kN1qmimQXf0P7fbKXNOnOABae7MXjfYTYmO4OZAwmniphJ0SRFX3e1pUeYYsHvQQTkIDWt6Xbq9GhPg1azTTiRxfEQqleNWY=
 install:
 - pip install -U platformio
@@ -17,15 +19,8 @@ install:
 - platformio lib install ArduinoJson
 - platformio lib install https://github.com/tfry-git/EmbAJAX#master
 script:
+- platformio run -e csg-esp8266-rota-travis
 - platformio run -t buildfs -e csg-esp8266-rota-travis
-deploy:
-  provider: script
-  skip_cleanup: true
-  script:
-    - rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
-    - chmod 600 /public_html/tools/*
-  on:
-    branch: master
 addons:
   ssh_known_hosts: iot.greggs.org
 before_deploy:
@@ -34,3 +29,30 @@ before_deploy:
 - eval "$(ssh-agent -s)"
 - chmod 600 travis-godaddy_rsa
 - ssh-add travis-godaddy_rsa
+
+# Deploy binaries
+deploy:
+  - provider: releases
+    overwrite: true
+    skip_cleanup: true
+    on:
+      repo: csgregg/csg-esp8266-rota
+      branch: master
+      condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    api_key:
+      secure: mz3mvlIOR0kjYIeqRDCCC/JgG9tfJHEs06YrkE/3O7OftcsF777atkiLAesTRb3s+NuGHV29Q115jkzrj+kqgeyUvYs/wOsEZAW0Aq2B8I1mr9nFkccpA5r9DofG0PUbtxGoLFxYmizHBPguQD2lKgZpEIFVbOS81gOlzraJLbmv3hXtvlJhPHShaKYfx4Y+jN4RD6rgU1T301T/kQltBDd5zyCImte0dLp1NXn+No0fcFmvjawDEJt/JZf0yQCU94u8WPTUEwml5t5B46lPtvE+YBz73/WeCT6f+ubnicBlcv73CYtlg5QQjmZCdjJMCDKb2ZQy9cEaq9KA2qERg0ShUxVBQM9G9c0rdvUy0M5QbkUWZHmJU+hX9890ZDDvxL4pkyvlRcpVQ8DFyIuZuAsFFmhlPFaKwES1oy512wDb/J/0CsErogPmdQZDGKn8xn2p8UF6c3HZx5c5y5BDPNaTAa/8Dtd8AhlAamy+R6fj4YD+dQBB9gtoGLM6XUWiew9wCQ2P7w1FtcM7TerQ4KmL9QoCRGjtKopC/tHuPUJ2BhyXTEeRqQ9EckNvQGmUNDe9DjdJXS4xcHlA7Sf1e4NfLUqy2KfwsLya73ezjMruKqIEBbWWEqCq5Ru7SaFec5MWKtwiMLs8lJ+F8gr88WbPFhwqETKWLkoSWQ9utxI=
+    file_glob: true
+    file:
+      - ".pio/build/csg-esp8266-rota-travis/*.bin"
+      - ".pio/build/csg-esp8266-rota-travis/*.bin.gz"
+
+  # Deploy hosted files
+  - provider: script
+      skip_cleanup: true
+      script:
+        - rsync -r --delete-after $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
+        - chmod 600 /public_html/tools/*
+      on:
+        branch: master
+        condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
