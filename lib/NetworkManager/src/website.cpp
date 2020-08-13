@@ -206,7 +206,7 @@ bool WebsiteManager::handlelittleFS() {
     if (shortpath.endsWith("/")) shortpath += F("index.html");         // If a folder is requested, send the index file
 
     String path = shortpath + ".gz";
-
+DEBUG(path);
     String contentType = getContentType(path);              // Get the MIME type
     if( LittleFS.exists(path) ) {                             // If the file exists then send it
         File file = LittleFS.open(path, "r");
