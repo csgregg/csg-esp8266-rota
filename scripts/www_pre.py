@@ -1,4 +1,3 @@
-#!
 import os
 import gzip
 import shutil
@@ -10,7 +9,7 @@ from bs4 import BeautifulSoup
 
 Import("env")
 
-print("Extra Script (Pre): deflate_www_pre.py")
+print("Extra Script (Pre): www_pre.py")
 
 # Create folders
 try:
@@ -26,6 +25,7 @@ except OSError:
     print ("<data/tmp> folder exists")
 else:
     print ("Created <data/tmp> folder")
+
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
@@ -85,10 +85,6 @@ def deflate_www(sourceFolder,destFolder):
                     shutil.copyfileobj(f_in, f_out)
 
 
-# Current details
-print("Device Code: %s" % get_build_flag_value("DEVICE_CODE"))
-print("Build tag: %s" % get_build_flag_value("BUILD_TAG"))
-
 # Clean up
 deletecontents("data/tmp")
 deletecontents("data")
@@ -98,8 +94,3 @@ parse_replace("www","data/tmp")
 
 # Deflate www into data
 deflate_www("data/tmp","data")
-
-# Change build file name
-new_name = "%s-Pv%s" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
-print("Changing build file name to: %s" % new_name)
-env.Replace(PROGNAME=new_name)
