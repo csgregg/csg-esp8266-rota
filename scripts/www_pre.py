@@ -26,6 +26,13 @@ except OSError:
 else:
     print ("Created <data/tmp> folder")
 
+try:
+    os.mkdir("data/www")
+except OSError:
+    print ("<data/www> folder exists")
+else:
+    print ("Created <data/www> folder")
+
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
@@ -93,4 +100,7 @@ deletecontents("data")
 parse_replace("www","data/tmp")
 
 # Deflate www into data
-deflate_www("data/tmp","data")
+deflate_www("data/tmp","data/www")
+
+# Clean up
+shutil.rmtree("data/tmp")
