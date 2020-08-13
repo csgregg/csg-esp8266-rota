@@ -79,6 +79,8 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 
     #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
+    #define MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
+    #define MAX_TAG_TYPES 2
 
     // Define max JSON key sizes
     #define JSON_SIZE_LOCALTIME 10
@@ -163,7 +165,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             bool _serialOn = false;
             bool _serviceOn = false;
 
-            loggingLevel _logginglevel = LOGGING_OFF;
+            uint _logginglevel = LOGGING_OFF;
 
             void inline LogPrefix(const logType type, const logTag tag);
 
@@ -173,8 +175,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             logType _lasttype;
             logTag _lasttag;
 
-            const char * const c_log_type_descript[4] = {"CRITICAL","Normal","High","Verbose"};
-            const char * const c_log_tag_descript[2] = {"DEBUG","STATUS"};
+            const char * const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};
+            const char * const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
 
         private:
 
