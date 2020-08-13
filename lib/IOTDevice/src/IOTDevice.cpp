@@ -90,6 +90,7 @@ long ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, co
     return flag;
 }
 
+// TODO - look at all the 'described'
 
 // Return type long build flag with description string
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
@@ -103,13 +104,17 @@ String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const long 
 
 
 // Get unique chip ID and return as string or with desription string
-String ICACHE_FLASH_ATTR IOTDevice::getChipId(bool described){
-    
-    uint32_t id = EspClass::getChipId();
-    char buffer [sizeof("(Device) Chip ID: ") + sizeof(uint32_t)*2];
-    sprintf(buffer, PSTR("(Device) Chip ID: %0X10"), id);
+char* ICACHE_FLASH_ATTR IOTDevice::getChipId(bool described) {
 
-    return String(buffer);
+    uint32_t id = EspClass::getChipId();
+
+    static char buffer[sizeof("(Device) Chip ID: ") + 6 + 1];
+    
+    if( described ) sprintf(buffer, PSTR("(Device) Chip ID: %0X"), id);
+    else sprintf(buffer, "%0X", id);
+
+    return buffer;
+
 }
 
 
