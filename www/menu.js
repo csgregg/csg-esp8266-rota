@@ -6,6 +6,7 @@ function w3_open() {
     // Highlight menu item
     var url = window.location.pathname;
     var hrefname = "a[href='" + url.substring(url.lastIndexOf('/')+1) + "']";   
+    if( hrefname == "a[href='']" ) hrefname = "a[href='index.html']";     // Catch error if / 
     var menuitem = mySidebar.querySelectorAll(hrefname);
     menuitem[0].classList.add("w3-blue");
 
