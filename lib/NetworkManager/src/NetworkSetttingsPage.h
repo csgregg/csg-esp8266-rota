@@ -29,15 +29,13 @@ Describes the Network Settings web page
 */
 
 
-#ifndef NETWORK_SETTINGS_PAGE2_H
+#ifndef NETWORK_SETTINGS_PAGE_H
 
-    #define NETWORK_SETTINGS_PAGE2_H
+    #define NETWORK_SETTINGS_PAGE_H
 
     #include "EmbAJAX.h"
-    #include "NetworkManager.h"
-    #include "ConfigManager.h"
-    #include "Logger.h"
     #include "website.h"
+    #include "NetworkManager.h"
 
 
     class NetworkSettingsPage {

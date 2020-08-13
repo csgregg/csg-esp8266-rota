@@ -83,17 +83,17 @@ Build flags are loaded from platformio.ini
 
     // General build details
     static const char flag_BUILD_TAG [] PROGMEM = ESCAPEQUOTE(BUILD_TAG);                       // Build tag - when used in Travis-CI comes from the GitHub Release
-    static const char flag_BUILD_ENV [] PROGMEM = ESCAPEQUOTE(BUILD_ENV);                       // Build environmoent - Local or Travis-CI
+    static const char flag_BUILD_ENV [] = ESCAPEQUOTE(BUILD_ENV);                       // Build environmoent - Local or Travis-CI
     static const char flag_DEVICE_CODE [] PROGMEM = ESCAPEQUOTE(DEVICE_CODE);                   // Short code name for the device
     static const char flag_DEVICE_NAME [] PROGMEM = ESCAPEQUOTE(DEVICE_NAME);                   // Full device name
 
     #ifndef BUILD_NUMBER
         #define BUILD_NUMBER 0
     #endif
-    static const char flag_BUILD_NO [] PROGMEM = ESCAPEQUOTE(BUILD_NUMBER);               // Get build number
+    static const char flag_BUILD_NO [] = ESCAPEQUOTE(BUILD_NUMBER);               // Get build number
 
     // Set build date and time
-    static const char flag_BUILD_TIMESTAMP [] PROGMEM = __TIME__  " " __DATE__;
+    static const char flag_BUILD_TIMESTAMP [] = __TIME__  " " __DATE__;
     
     // Used by CI_Remote_OTA library
     static const char flag_UPDATER_REPO [] PROGMEM = ESCAPEQUOTE(UPDATER_REPO);                 // GitHub reprositary holding this code
@@ -128,7 +128,7 @@ Build flags are loaded from platformio.ini
             long getBuildFlag( const char * name, const long flag );
 
             // Get unique chip ID
-            String getChipId(bool described);
+            char* getChipId(bool described = false);
 
     };
 
