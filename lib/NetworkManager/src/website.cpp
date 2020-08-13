@@ -203,10 +203,11 @@ bool WebsiteManager::handlelittleFS() {
     logger.setTypeTag( LOG_HIGH, TAG_STATUS );
     logger.printf("(Website) Web server - file: %s", shortpath.c_str() );
 
-    if (shortpath.endsWith("/")) shortpath += F("index.html");         // If a folder is requested, send the index file
+    if( shortpath.endsWith("/") ) shortpath += F("index.html");         // If a folder is requested, send the index file
+    if( !shortpath.startsWith("/") ) shortpath =+ "/";
 
-    String path = shortpath + ".gz";
-DEBUG(path);
+    String path = "/www" + shortpath + ".gz";
+
     String contentType = getContentType(path);              // Get the MIME type
     if( LittleFS.exists(path) ) {                             // If the file exists then send it
         File file = LittleFS.open(path, "r");
