@@ -70,6 +70,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
       #define LOG_DETAIL(text)
       #define LOG(text)
+      #define LOG_HIGH(text)
       #define LOG_CRITICAL(text)
 
       #define DEBUG_STOP()
