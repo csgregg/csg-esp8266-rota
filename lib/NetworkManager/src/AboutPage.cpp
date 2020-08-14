@@ -45,7 +45,7 @@ void AboutPage::initializeAjax(){
     device_id.setValue(device.getChipId());
     build_env.setValue(flag_BUILD_ENV);
     build_no.setValue(device.getBuildNo());
-    build_time.setValue(flag_BUILD_TIMESTAMP);
+    build_time.setValue(device.getBuildTime());
 
 }
 

@@ -1,5 +1,6 @@
 Import("env")
 import platform
+import time
 
 
 print("Extra Script (Pre): build_number_pre.py")
@@ -18,11 +19,14 @@ with open(FILENAME_BUILDNO, 'w+') as f:
     f.write(str(build_no))
     print('Build number: {}'.format(build_no))
 
+
+timeStr = time.ctime()
+print('Current Timestamp : ', timeStr)
+
 hf = """
-#ifndef BUILD_NUMBER
-  #define BUILD_NUMBER {}
-#endif
-""".format(build_no)
+#define BUILD_NUMBER {}
+#define BUILD_TIMESTAMP {}
+""".format(build_no, timeStr)
 with open(FILENAME_VERSION_H, 'w+') as f:
     f.write(hf)
 

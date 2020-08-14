@@ -87,6 +87,18 @@ String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const uint 
 
 
 
+char* ICACHE_FLASH_ATTR IOTDevice::getBuildTime( bool described ) {
+
+    static char buffer[ (sizeof("(Build) Build Timestamp: %s") - 2 ) + 24 + 1 ];
+    
+    if( described ) sprintf(buffer, PSTR("(Build) Build Timestamp: %s"), _build_time.c_str());
+    else sprintf(buffer, PSTR("%s"), _build_time.c_str());
+
+    return buffer;
+
+}
+
+
 
 
 char* ICACHE_FLASH_ATTR IOTDevice::getBuildNo( bool described ) {
