@@ -85,12 +85,27 @@ String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const uint 
 }
 
 
+
+
+
+
+char* ICACHE_FLASH_ATTR IOTDevice::getBuildNo( bool described ) {
+
+    static char buffer[ (sizeof("(Build) Build Number: %i") - 2 ) + sizeof(uint)*8 ];
+    
+    if( described ) sprintf(buffer, PSTR("(Build) Build Number: %i"), _build_no);
+    else sprintf(buffer, PSTR("%i"), _build_no);
+
+    return buffer;
+
+}
+
+
 // Return type long build flag
 long ICACHE_FLASH_ATTR IOTDevice::IOTDevice::getBuildFlag( const char * name, const long flag ) {
     return flag;
 }
 
-// TODO - look at all the 'described'
 
 // Return type long build flag with description string
 String ICACHE_FLASH_ATTR IOTDevice::getBuildFlag( const char * name, const long flag, const bool decribed ) {
