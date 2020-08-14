@@ -44,7 +44,6 @@ def get_build_flag_value(flag_name):
 
 # Replace build codes and move to new folder
 def parse_replace(sourceFolder,destFolder):
-
     p_sourceFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + sourceFolder)
     p_destFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + destFolder)
 
@@ -52,7 +51,6 @@ def parse_replace(sourceFolder,destFolder):
 
     for folder, subfolders, files in os.walk(p_sourceFolder):
         for file in files:
-            print(os.path.join(folder, file))
             if file.endswith('html'):
                 with open(os.path.join(folder, file), 'rb') as f_in:
                     content = f_in.read()
@@ -60,7 +58,7 @@ def parse_replace(sourceFolder,destFolder):
                     for item in soup.find_all(class_='bs-replace'):
                         if str(item) != 'None':
                             flag = item.string
-                            print('Replacing ' + flag + ' with ' + get_build_flag_value(flag))
+                            print('Replacing ' + flag + ' with ' + get_build_flag_value(flag)) + ' in ' + os.path.join(folder, file)
                             item.string = get_build_flag_value(flag) 
                 with open(os.path.join(p_destFolder,file),'w') as f_out:
                     f_out.write(str(soup))

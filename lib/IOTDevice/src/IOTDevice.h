@@ -93,7 +93,7 @@ Build flags are loaded from platformio.ini
     static const uint flag_BUILD_NO = atoi(ESCAPEQUOTE(BUILD_NUMBER));               // Get build number
 
     // Set build date and time
-    static const char flag_BUILD_TIMESTAMP [] = __TIME__  " " __DATE__;
+    static const char flag_BUILD_TIMESTAMP [] = ESCAPEQUOTE(BUILD_TIMESTAMP);
     
     // Used by CI_Remote_OTA library
     static const char flag_UPDATER_REPO [] PROGMEM = ESCAPEQUOTE(UPDATER_REPO);                 // GitHub reprositary holding this code
@@ -118,7 +118,10 @@ Build flags are loaded from platformio.ini
 
         public:
 
-            void begin(const long build_no){ _build_no = build_no; };
+            void begin(const long build_no, const String build_time) {
+                _build_no = build_no;
+                _build_time = build_time;
+            };
 
             // Get build flags + overloads
             String getBuildFlag( const char * name, const char * flag, bool described = false );
@@ -132,9 +135,13 @@ Build flags are loaded from platformio.ini
             // Get unique chip ID and build number
             char* getChipId(bool described = false);
             char* getBuildNo(bool described = false);
+            char* getBuildTime(bool described = false);
 
         protected:
             long _build_no;
+            String _build_time;
+
+            
     };
 
     extern IOTDevice device;

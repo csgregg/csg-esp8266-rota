@@ -20,7 +20,7 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
     LOG_HIGH(device_getBuildFlag(flag_BUILD_TAG,true));
     LOG_HIGH(device_getBuildFlag(flag_BUILD_ENV,true));
     LOG_HIGH(device.getBuildNo(true));
-    LOG_HIGH(device_getBuildFlag(flag_BUILD_TIMESTAMP,true));
+    LOG_HIGH(device.getBuildTime(true));
 
     LOG_HIGH(device_getBuildFlag(flag_UPDATER_REPO,true));
     LOG_HIGH(device_getBuildFlag(flag_UPDATER_USER,true));
@@ -42,9 +42,9 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
 void ICACHE_FLASH_ATTR setup() {
 
-    device.begin(device_getBuildFlag(flag_BUILD_NO));
     logger.begin( network.getWiFiClient(), device_getBuildFlag(flag_MONITOR_SPEED), device_getBuildFlag(flag_LOGGER_SERVICE), device_getBuildFlag(flag_LOGGER_SERVICE_KEY), device_getBuildFlag(flag_LOGGER_GLOBAL_TAGS), device_getBuildFlag(flag_LOGGER_AS_SERIAL) );    
     logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), false, loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
+    device.begin(device_getBuildFlag(flag_BUILD_NO),device_getBuildFlag(flag_BUILD_TIMESTAMP).c_str());
 
     config.Initialize();
     //config.ResetToDefaults();
