@@ -13,7 +13,7 @@ function doRequest(id='', value='', callback='') {
     req.timeout = 10000;
     if(window.ajaxstatus) window.ajaxstatus.out();
     req.onload = function() {
-       console.log(req.responseText);
+       // console.log(req.responseText);
        doUpdates(JSON.parse(req.responseText));
        if(window.ajaxstatus) window.ajaxstatus.in();
        if(callback) callback();
@@ -83,6 +83,7 @@ class embajaxstatus {
 
 function doPoll() {
    // console.log("Status - Poll");
+   highlight_menu();
    doRequest('','',updatePage);
 }
 

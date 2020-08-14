@@ -58,7 +58,7 @@ def parse_replace(sourceFolder,destFolder):
                     for item in soup.find_all(class_='bs-replace'):
                         if str(item) != 'None':
                             flag = item.string
-                            print('Replacing ' + flag + ' with ' + get_build_flag_value(flag)) + ' in ' + os.path.join(folder, file)
+                            print('Replacing ' + flag + ' with \'' + get_build_flag_value(flag) + '\' in ' + file )
                             item.string = get_build_flag_value(flag) 
                 with open(os.path.join(p_destFolder,file),'w') as f_out:
                     f_out.write(str(soup))
@@ -84,7 +84,6 @@ def deflate_www(sourceFolder,destFolder):
 
     for folder, subfolders, files in os.walk(p_sourceFolder):
         for file in files:
-            print(os.path.join(folder, file))
             with open(os.path.join(folder, file), 'rb') as f_in:
                 with gzip.open(os.path.join(p_destFolder, file) + '.gz', 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
