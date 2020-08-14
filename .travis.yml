@@ -19,8 +19,8 @@ install:
 - platformio lib install ArduinoJson
 - platformio lib install https://github.com/tfry-git/EmbAJAX#master
 script:
-- platformio run -e csg-esp8266-rota-travis
-- platformio run -t buildfs -e csg-esp8266-rota-travis
+- platformio run -e travis
+- platformio run -t buildfs -e travis
 addons:
   ssh_known_hosts: iot.greggs.org
 # Setup ssh to goDaddy with key
@@ -45,8 +45,8 @@ deploy:
     file_glob: true
     file:
     # Upload assets to GitHub
-      - ".pio/build/csg-esp8266-rota-travis/*.bin"
-      - ".pio/build/csg-esp8266-rota-travis/*.bin.gz"
+      - ".pio/build/travis/*.bin"
+      - ".pio/build/travis/*.bin.gz"
 
   # Deploy hosted files
   - provider: script
