@@ -205,7 +205,6 @@ SOFTWARE.
 
             WiFiClient& getWiFiClient() { return _client; };
           
-            // TODO - is there a better way?
             bool stationConnected[MAX_SSIDS];
             uint ConnectedStation;
 

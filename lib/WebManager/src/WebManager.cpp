@@ -30,11 +30,12 @@ SOFTWARE.
 
 #include <cstring>
 
-#include "website.h"
+#include "Webmanager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkSetttingsPage.h"
 #include "AboutPage.h"
+#include "IndexPage.h"
 #include <LittleFS.h>
     
 // Webpages
@@ -44,6 +45,7 @@ SOFTWARE.
 PageHandler webpages[] = {
     {networksettingspage.URL, networksettingspage.handler, networksettingspage.init},
     {aboutpage.URL, aboutpage.handler, aboutpage.init},
+    {indexpage.URL, indexpage.handler, indexpage.init},
 };
 
 
@@ -158,6 +160,9 @@ void WebsiteManager::begin() {
             AjaxID = _server.arg("id");
             AjaxValue = _server.arg("value");    
 
+            if( URL.endsWith("/") ) URL += F("index.html");         // If a folder is requested, send the index file
+            if( !URL.startsWith("/") ) URL =+ "/";
+
             // AJAX request
             if( _server.method() == HTTP_POST ) {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
@@ -204,9 +209,6 @@ bool WebsiteManager::handlelittleFS() {
 
     logger.setTypeTag( LOG_HIGH, TAG_STATUS );
     logger.printf("(Website) Web server - file: %s", shortpath.c_str() );
-
-    if( shortpath.endsWith("/") ) shortpath += F("index.html");         // If a folder is requested, send the index file
-    if( !shortpath.startsWith("/") ) shortpath =+ "/";
 
     String path = "/www" + shortpath + ".gz";
 

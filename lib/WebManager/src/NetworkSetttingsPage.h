@@ -34,7 +34,7 @@ Describes the Network Settings web page
     #define NETWORK_SETTINGS_PAGE_H
 
     #include "EmbAJAX.h"
-    #include "website.h"
+    #include "WebManager.h"
     #include "NetworkManager.h"
 
 

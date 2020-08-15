@@ -57,7 +57,7 @@ function initPage() {
     // console.log("Status - Initialize Page");
 
     wifiListRevision = 0;
-    document.getElementById('loader').style.display='block';
+//    document.getElementById('loader').style.display='block';
     doRequest("","",loadWifiList);
 
 }

@@ -36,7 +36,7 @@ SOFTWARE.
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
-#include "website.h"
+#include "WebManager.h"
 #include "IOTDevice.h"
 
 
@@ -211,8 +211,6 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
     // Are we waiting for SDK to try to retry for a period
     if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) return false;  
-
-    // TODO - need to think through lastStation, connected station, etc and how it is saved
 
     // Try each of the stored stations, starting with last
     bool success = false;
