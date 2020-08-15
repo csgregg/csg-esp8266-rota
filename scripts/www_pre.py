@@ -1,6 +1,9 @@
 import os
 import gzip
 import shutil
+import requests
+
+import html
 
 # Install packages
 os.system("python -m pip install --upgrade pip")
@@ -42,6 +45,16 @@ def get_build_flag_value(flag_name):
     return defines.get(flag_name)
 
 
+def minify_file(file,url):
+    print("Minifying: " + str(file))
+    data = {'input': open(file, 'rb').read()}
+    response = requests.post(url, data=data)
+    minified = response.content
+    with open(file, 'wb') as f_out:
+        f_out.write(minified)
+
+            
+
 # Replace build codes and move to new folder
 def parse_replace(sourceFolder,destFolder):
     p_sourceFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + sourceFolder)
@@ -51,7 +64,7 @@ def parse_replace(sourceFolder,destFolder):
 
     for folder, subfolders, files in os.walk(p_sourceFolder):
         for file in files:
-            if file.endswith('html'):
+            if file.endswith('.html'):
                 with open(os.path.join(folder, file), 'rb') as f_in:
                     content = f_in.read()
                     soup = BeautifulSoup(content, 'html')
@@ -62,6 +75,13 @@ def parse_replace(sourceFolder,destFolder):
                             item.string = get_build_flag_value(flag) 
                 with open(os.path.join(p_destFolder,file),'w') as f_out:
                     f_out.write(str(soup))
+                minify_file(os.path.join(p_destFolder,file),'https://html-minifier.com/raw')
+            elif file.endswith('.js'):
+                shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
+                minify_file(os.path.join(p_destFolder,file),'https://javascript-minifier.com/raw')
+            elif file.endswith('.css'):
+                shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
+                minify_file(os.path.join(p_destFolder,file),'https://cssminifier.com/raw')
             else:
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
 
@@ -89,6 +109,7 @@ def deflate_www(sourceFolder,destFolder):
                     shutil.copyfileobj(f_in, f_out)
 
 
+
 # Clean up
 deletecontents("data/tmp")
 deletecontents("data")
@@ -100,4 +121,4 @@ parse_replace("www","data/tmp")
 deflate_www("data/tmp","data/www")
 
 # Clean up
-shutil.rmtree("data/tmp")
+#shutil.rmtree("data/tmp")
