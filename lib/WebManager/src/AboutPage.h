@@ -34,7 +34,7 @@ Describes the About web page
     #define ABOUT_H
 
     #include "EmbAJAX.h"
-    #include "website.h"
+    #include "WebManager.h"
 
 
     class AboutPage {

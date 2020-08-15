@@ -29,44 +29,38 @@ SOFTWARE.
 
 
 
-#include "AboutPage.h"
+#include "IndexPage.h"
 #include "Logger.h"
-#include "website.h"
+#include "WebManager.h"
 #include "IOTDevice.h"
 
 // TODO: Flashstrings
-// TODO: AP mode
-// TODO: Mode control
 
-void AboutPage::initializeAjax(){
 
-    LOG_HIGH("(Page) About - Initialize AJAX");
+void IndexPage::initializeAjax(){
 
-    device_id.setValue(device.getChipId());
-    build_env.setValue(flag_BUILD_ENV);
-    build_no.setValue(device.getBuildNo());
-    build_time.setValue(device.getBuildTime());
+    LOG_HIGH("(Page) Index - Initialize AJAX");
 
 }
 
-void AboutPage::handleAjax(){
+void IndexPage::handleAjax(){
 
-    LOG_HIGH("(Page) About - Handle AJAX");     
+    LOG_HIGH("(Page) Index - Handle AJAX");     
 
 }
 
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_ABOUTSPAGE)
+#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_INDEXPAGE)
 
-    AboutPage aboutpage(
+    IndexPage indexpage(
         []() { 
-            aboutpage.ajax.handleRequest( 
+            indexpage.ajax.handleRequest( 
                 []() {
-                    aboutpage.handleAjax();
+                    indexpage.handleAjax();
                 }
             ); 
         },
         []() { 
-            aboutpage.initializeAjax();
+            indexpage.initializeAjax();
         }
     );
 

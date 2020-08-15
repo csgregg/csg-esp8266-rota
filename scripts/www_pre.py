@@ -121,4 +121,4 @@ parse_replace("www","data/tmp")
 deflate_www("data/tmp","data/www")
 
 # Clean up
-#shutil.rmtree("data/tmp")
+shutil.rmtree("data/tmp")

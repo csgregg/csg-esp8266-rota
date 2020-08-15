@@ -32,7 +32,7 @@ SOFTWARE.
 #include "NetworkSetttingsPage.h"
 #include "Logger.h"
 #include "ConfigManager.h"
-#include "website.h"
+#include "WebManager.h"
 
 // TODO: Flashstrings
 // TODO: AP mode
@@ -119,9 +119,8 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 void NetworkSettingsPage::connectWifiStation(uint id) {
     
-    if( !network.connectWifi(id) ) network.reconnectWifi();
-
-    // TODO - need to deal with saving the settings for which station is connected
+    if( network.connectWifi(id) ) config.Save();
+    else network.reconnectWifi();
 
     // Make the client reload the wifi list
     loadWifiList.call(1);
