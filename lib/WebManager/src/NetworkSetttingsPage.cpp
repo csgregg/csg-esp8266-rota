@@ -42,6 +42,28 @@ void NetworkSettingsPage::initializeAjax(){
 
     LOG_HIGH("(Page) Network Settings - Initialize AJAX");
 
+    char ipbuffer[15];
+//TODO - change to pass settings to class like elsewhere
+    wifiAP = config.settings.networkConfig.apSettings;
+
+    wifi_ap_ssid.setValue(wifiAP.SSID);
+    wifi_ap_pwd.setValue(wifiAP.password);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
+    wifi_ap_ip.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
+    wifi_ap_snet.setValue(ipbuffer);
+
+    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
+    wifi_ap_gtwy.setValue(ipbuffer);
+
+    wifi_ap_ch.selectOption(wifiAP.channel);
+
+    WiFiMode mode =  config.settings.networkConfig.wifiMode;
+    wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
+    wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
+
 }
 
 void NetworkSettingsPage::handleAjax(){

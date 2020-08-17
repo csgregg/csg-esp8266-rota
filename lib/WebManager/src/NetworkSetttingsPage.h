@@ -45,7 +45,25 @@ Describes the Network Settings web page
             void (*handler)();
             void (*init)();
 
+
             StationConfig wifiStation;
+            APConfig wifiAP;
+
+            // Wifi AP Elements
+
+            EmbAJAXCheckButton wifi_mode_ap;
+            EmbAJAXCheckButton wifi_mode_stn;
+
+            EmbAJAXTextInput<32> wifi_ap_ssid;
+            EmbAJAXTextInput<16> wifi_ap_pwd;
+            EmbAJAXTextInput<15> wifi_ap_ip;
+            EmbAJAXTextInput<15> wifi_ap_snet;
+            EmbAJAXTextInput<15> wifi_ap_gtwy;
+            EmbAJAXOptionSelect<13> wifi_ap_ch;
+            const char* wifi_chs[13] = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
+            
+
+            // Wifi Station Elements
 
             EmbAJAXServerFunction wifi_stn_save;
             EmbAJAXServerFunction wifi_stn_id;
@@ -66,7 +84,17 @@ Describes the Network Settings web page
             EmbAJAXTextInput<15> wifi_stn_dns1;
             EmbAJAXTextInput<15> wifi_stn_dns2;
 
-            EmbAJAXBase* page_elements[16] = {
+            EmbAJAXBase* page_elements[24] = {
+
+            &wifi_mode_ap,
+            &wifi_mode_stn,
+
+            &wifi_ap_ssid,
+            &wifi_ap_pwd,
+            &wifi_ap_ip,
+            &wifi_ap_snet,
+            &wifi_ap_gtwy,
+            &wifi_ap_ch,
 
             &wifi_stn_save,
             &wifi_stn_id,
@@ -90,6 +118,16 @@ Describes the Network Settings web page
             };
 
             NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
+
+                wifi_mode_ap("wifi_mode_ap",""),
+                wifi_mode_stn("wifi_mode_stn",""),
+            
+                wifi_ap_ssid("wifi_ap_ssid"),
+                wifi_ap_pwd("wifi_ap_pwd"),
+                wifi_ap_ip("wifi_ap_ip"),
+                wifi_ap_snet("wifi_ap_snet"),
+                wifi_ap_gtwy("wifi_ap_gtwy"),
+                wifi_ap_ch("wifi_ap_ch",wifi_chs),
 
                 wifi_stn_save("wifi_stn_save"),
                 wifi_stn_id("wifi_stn_id"),

@@ -41,12 +41,32 @@
         <!-- Wifi Mode -->
             <div class="w3-container w3-white w3-padding-8">
                 <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
-                    <div class="w3-row">
+                    <div class="w3-row w3-padding-vert">
                         <b>WiFi Mode</b>
                     </div>
+
+                    <div class="w3-row">
+                        <div class="w3-cell">
+                            <label class="switch">
+                                <input id="wifi_mode_stn" type="checkbox" value="t">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="w3-cell w3-padding-small">Connect to WiFi</div>
+                    </div>  
+
+                    <div class="w3-row">
+                        <div class="w3-cell">
+                            <label class="switch">
+                                <input id="wifi_mode_ap" type="checkbox" value="t">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="w3-cell w3-padding-small">Access Point</div>
+                    </div>  
+                    
                 </div>
             </div>
-
         </div>
 
         <div class="w3-row w3-margin-bottom">
@@ -92,7 +112,7 @@
                     
                             <div class="w3-display-container">
                                 <input id="wifi_ap_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password">
-                                <img class="w3-display-right w3-padding-small" alt="" src="eye-16.png"  onclick="visiblePwd('wifi_stn_pwd')">
+                                <img class="w3-display-right w3-padding-small" alt="" src="eye-16.png"  onclick="visiblePwd('wifi_ap_pwd')">
                             </div>
 
                             <div class="w3-container w3-no-padding">
@@ -100,20 +120,16 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
-                            </div>
-                    
+                            </div>        
+
                             <div class="w3-container w3-no-padding">
                                 <div class="w3-col" style="line-height: 35px;width:80px;">
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
                     
@@ -122,12 +138,34 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
-        
+
+                            <div class="w3-container w3-no-padding">
+                                <div class="w3-col" style="line-height: 35px;width:80px;">
+                                    Channel
+                                </div>
+                                <div class="w3-col w3-padding-small" style="width:150px">
+                                    <select id="wifi_ap_ch" class="w3-select w3-border w3-padding-small">
+                                        <option value="" disabled selected>Select</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <!-- Save / Cancel -->
                             <div class="w3-container w3-padding-vert">
                                 <button id="wifi_ap_save" onclick="sureAction=this.id;document.getElementById('wifi_ap_sure').style.display='block'" type="button" class="w3-button w3-green">Save</button>
@@ -180,9 +218,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
                     
@@ -191,9 +227,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
                     
@@ -202,9 +236,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
                     
@@ -213,9 +245,7 @@
                                     DNS 1
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                    </div>
+                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
                                 </div>
                             </div>
                     
@@ -224,10 +254,7 @@
                                     DNS 2
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <div class="w3-cell">
-                                        <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
-                                        <br>
-                                    </div>
+                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx"><br>
                                 </div>
                             </div>
                         </div>

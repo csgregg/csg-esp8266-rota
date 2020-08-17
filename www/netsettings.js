@@ -16,7 +16,12 @@ var wifiListRevision = 0;
 
 
 function addWifiStationEntry() {
-    
+    console.log("Add station")
+
+    // Remove loader
+    if( window.wifi_stn_id == window.wifi_stn_count-1 ) document.getElementById('loader').style.display='none';
+
+
     // If there are any emtpy, then allow add
     if( window.wifi_stn_name == "" ) {
         document.getElementById("wifi_stn_add").hidden = false;
@@ -27,7 +32,7 @@ function addWifiStationEntry() {
     var id = window.wifi_stn_id;
     var already = document.getElementById("wifi_stn_entry" + id.toString());
 
-    if( already) return;
+    if( already ) return;
 
     var wifistnelement = document.getElementById("wifi_stn_entry");
     var newwifistn = wifistnelement.cloneNode(true);
@@ -48,16 +53,13 @@ function addWifiStationEntry() {
 
     wifistnelement.parentElement.appendChild(newwifistn);
 
-    // Remove loader
-    if( window.wifi_stn_id == window.wifi_stn_count-1 ) document.getElementById('loader').style.display='none';
-
 }
 
 function initPage() {
     // console.log("Status - Initialize Page");
 
     wifiListRevision = 0;
-//    document.getElementById('loader').style.display='block';
+    document.getElementById('loader').style.display='block';
     doRequest("","",loadWifiList);
 
 }
