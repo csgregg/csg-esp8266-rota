@@ -39,7 +39,7 @@ Describes the Network Settings web page
 
 
     class NetworkSettingsPage {
-        public:
+        public:                             // TODO - sort out public and protected
 
             const char* URL;
             void (*handler)();
@@ -53,7 +53,9 @@ Describes the Network Settings web page
 
             EmbAJAXCheckButton wifi_mode_ap;
             EmbAJAXCheckButton wifi_mode_stn;
+            EmbAJAXServerFunction wifi_mode_save;
 
+            EmbAJAXServerFunction wifi_ap_save;
             EmbAJAXTextInput<32> wifi_ap_ssid;
             EmbAJAXTextInput<16> wifi_ap_pwd;
             EmbAJAXTextInput<15> wifi_ap_ip;
@@ -84,11 +86,15 @@ Describes the Network Settings web page
             EmbAJAXTextInput<15> wifi_stn_dns1;
             EmbAJAXTextInput<15> wifi_stn_dns2;
 
-            EmbAJAXBase* page_elements[24] = {
+            EmbAJAXClientFunction<int> clearLoader;
+
+            EmbAJAXBase* page_elements[27] = {
 
             &wifi_mode_ap,
             &wifi_mode_stn,
+            &wifi_mode_save,
 
+            &wifi_ap_save,
             &wifi_ap_ssid,
             &wifi_ap_pwd,
             &wifi_ap_ip,
@@ -113,7 +119,9 @@ Describes the Network Settings web page
             &wifi_stn_snet,
             &wifi_stn_gtwy,
             &wifi_stn_dns1,
-            &wifi_stn_dns2
+            &wifi_stn_dns2,
+
+            &clearLoader,
 
             };
 
@@ -121,7 +129,9 @@ Describes the Network Settings web page
 
                 wifi_mode_ap("wifi_mode_ap",""),
                 wifi_mode_stn("wifi_mode_stn",""),
+                wifi_mode_save("wifi_mode_save"),
             
+                wifi_ap_save("wifi_ap_save"),
                 wifi_ap_ssid("wifi_ap_ssid"),
                 wifi_ap_pwd("wifi_ap_pwd"),
                 wifi_ap_ip("wifi_ap_ip"),
@@ -148,6 +158,8 @@ Describes the Network Settings web page
                 wifi_stn_dns1("wifi_stn_dns1"),
                 wifi_stn_dns2("wifi_stn_dns2"),
 
+                clearLoader("clearLoader"),
+
                 ajax(page_elements, "")
                 {
                     URL = "/netsettings.html";
@@ -166,6 +178,10 @@ Describes the Network Settings web page
             void saveWifiStation(uint id);
 
             void connectWifiStation(uint id);
+
+            void setWifiMode(WiFiMode mode);
+
+            void saveAP();
 
     };
     

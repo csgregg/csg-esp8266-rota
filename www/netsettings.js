@@ -16,7 +16,7 @@ var wifiListRevision = 0;
 
 
 function addWifiStationEntry() {
-    console.log("Add station")
+    //console.log("Add station")
 
     // Remove loader
     if( window.wifi_stn_id == window.wifi_stn_count-1 ) document.getElementById('loader').style.display='none';
@@ -102,6 +102,11 @@ function updatePage() {
     var y = document.getElementById("wifi_stn_dhcp");
     if( y.checked ) x.style.display = "none";
     else x.style.display = "block";
+
+    // Update AP icon
+    document.getElementById("wifi_mode_ap").checked ? 
+        document.getElementById("wifi_ap_icon").style = "opacity: 1.0;"
+        : document.getElementById("wifi_ap_icon").style = "opacity: 0.2;"
    
 }
 
@@ -120,7 +125,7 @@ function connectWifi(value) {
     wifiStationID = value;
     sureAction="wifi_stn_cnct";
 
-    document.getElementById('wifi_stn_sure').style.display='block';
+    document.getElementById('wifi_sure').style.display='block';
 }
 
 function addWifiDialog() {
@@ -139,11 +144,21 @@ function addWifiDialog() {
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
 
+function wifiSureNo() {
+    document.getElementById('wifi_sure').style.display='none';
+
+    if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
+        document.getElementById(sureAction).checked = !document.getElementById(sureAction).checked;
+        clearLoader();
+    }
+}
+
 function wifiSureYes() {
 
     document.getElementById('loader').style.display='block';
 
     var x = document.getElementById('wifi_stn_ssid');
+
     // Are we forgetting this one?
     if( sureAction == "wifi_stn_forget" ) {
         x.value = "";
@@ -168,13 +183,56 @@ function wifiSureYes() {
         doRequest(x.id, x.value);
         x = document.getElementById('wifi_stn_dns2');
         doRequest(x.id, x.value);
+
+        // Send Save command then reload list
+        doRequest(sureAction,wifiStationID);
     }
 
-    // Send Save command then reload list
-    doRequest(sureAction,wifiStationID);
+    if( sureAction == "wifi_ap_save" ) {
+        // Send updates data
+        x = document.getElementById('wifi_ap_ssid');
+        doRequest(x.id, x.value);
+        x = document.getElementById('wifi_ap_pwd');
+        doRequest(x.id, x.value);
+        x = document.getElementById('wifi_ap_ip');
+        doRequest(x.id, x.value);
+        x = document.getElementById('wifi_ap_snet');
+        doRequest(x.id, x.value);
+        x = document.getElementById('wifi_ap_gtwy');
+        doRequest(x.id, x.value);
+        x = document.getElementById('wifi_ap_ch');
+        doRequest(x.id, x.value);
+
+        // Send Save command and update AP
+        doRequest(sureAction,1);
+    }
+
+    if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
+
+        var stn = document.getElementById('wifi_mode_stn').checked;
+        var ap = document.getElementById('wifi_mode_ap').checked;
+
+        var mode = 0;                   // WIFI_OFF
+        if( stn && ap ) mode = 3;       // WIFI_AP_STA
+        else if( ap ) mode = 2;         // WIFI_AP
+        else if( stn ) mode = 1;        // WIFI_STN
+
+        if( mode == 0 ) if( !confirm('This will disable network access. Are you really sure?') ) {
+
+            wifiSureNo();
+            return;
+        }
+  
+        doRequest('wifi_mode_save',mode);
+    }
 
     // Hide dialog
-    document.getElementById('wifi_stn_sure').style.display='none';
+    document.getElementById('wifi_sure').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='none';
 }
 
+function clearLoader(value) {
+    // console.log('Status - Clear loader');
+
+    document.getElementById('loader').style.display='none';
+}
