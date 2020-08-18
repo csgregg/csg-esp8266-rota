@@ -184,6 +184,10 @@ void WebsiteManager::begin() {
     LittleFS.begin(); 
     _server.begin();
 
+    // Initialize all page Ajax
+    for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+        (webpages[i].init)();
+
 }
 
 
@@ -220,6 +224,7 @@ bool WebsiteManager::handlelittleFS() {
         _server.streamFile(file, contentType);
         file.close();
 
+        // Re-initialize Ajax on page load
         for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
             if( URL == webpages[i].URL ) {
                 (webpages[i].init)();
