@@ -51,7 +51,7 @@ function addWifiStationEntry() {
         }
     }
 
-    wifistnelement.parentElement.appendChild(newwifistn);
+    wifistnelement.parentNode.insertBefore(newwifistn, wifistnelement.nextSibling);
 
 }
 

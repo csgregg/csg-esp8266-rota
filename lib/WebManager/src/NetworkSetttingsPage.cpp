@@ -60,11 +60,15 @@ void NetworkSettingsPage::initializeAjax(){
 
     wifi_ap_ch.selectOption(wifiAP.channel);
 
+    wifi_stn_asip.setValue(getAssignedIP());
+
     WiFiMode mode =  config.settings.networkConfig.wifiMode;
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
 
 }
+
+
 
 void NetworkSettingsPage::handleAjax(){
 
@@ -95,6 +99,7 @@ void NetworkSettingsPage::setWifiMode(WiFiMode mode) {
     network.setWiFiMode(mode);
     config.Save();
 
+    wifi_stn_asip.setValue(getAssignedIP());
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
     clearLoader.call(1);
@@ -174,6 +179,7 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
     if( network.getConnectedStation() == id ) network.reconnectWifi();
 
     // Make the client reload the wifi list
+    wifi_stn_asip.setValue(getAssignedIP());
     loadWifiList.call(1);
 
 }
@@ -184,6 +190,7 @@ void NetworkSettingsPage::connectWifiStation(uint id) {
     else network.reconnectWifi();
 
     // Make the client reload the wifi list
+    wifi_stn_asip.setValue(getAssignedIP());
     loadWifiList.call(1);
 
 }

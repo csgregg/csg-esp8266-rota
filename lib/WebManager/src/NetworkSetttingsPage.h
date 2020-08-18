@@ -85,10 +85,11 @@ Describes the Network Settings web page
             EmbAJAXTextInput<15> wifi_stn_gtwy;
             EmbAJAXTextInput<15> wifi_stn_dns1;
             EmbAJAXTextInput<15> wifi_stn_dns2;
+            EmbAJAXMutableSpan wifi_stn_asip;
 
             EmbAJAXClientFunction<int> clearLoader;
 
-            EmbAJAXBase* page_elements[27] = {
+            EmbAJAXBase* page_elements[28] = {
 
             &wifi_mode_ap,
             &wifi_mode_stn,
@@ -120,6 +121,7 @@ Describes the Network Settings web page
             &wifi_stn_gtwy,
             &wifi_stn_dns1,
             &wifi_stn_dns2,
+            &wifi_stn_asip,
 
             &clearLoader,
 
@@ -157,6 +159,7 @@ Describes the Network Settings web page
                 wifi_stn_gtwy("wifi_stn_gtwy"),
                 wifi_stn_dns1("wifi_stn_dns1"),
                 wifi_stn_dns2("wifi_stn_dns2"),
+                wifi_stn_asip("wifi_stn_asip"),
 
                 clearLoader("clearLoader"),
 
@@ -182,6 +185,12 @@ Describes the Network Settings web page
             void setWifiMode(WiFiMode mode);
 
             void saveAP();
+
+            char* getAssignedIP() {
+                static char ip[15];
+                sprintf(ip, "%i.%i.%i.%i", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3] );
+                return ip;
+            }
 
     };
     
