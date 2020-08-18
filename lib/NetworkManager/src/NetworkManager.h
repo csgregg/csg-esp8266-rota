@@ -127,9 +127,9 @@ SOFTWARE.
     // Defaults
     #define DEFAULT_WIFIMODE WIFI_STA           // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
-    #define DEFAULT_STATICIP 0x0101A8C0         // 192.168.1.1
+    #define DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
-    #define DEFAULT_GATEWAY 0xFE01A8C0          // 192.168.1.254
+    #define DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
     #define DEFAULT_CHANNEL 11
 
  
@@ -184,7 +184,6 @@ SOFTWARE.
         public:
 
             NetworkManager()  {
-                _StationConnected = false;
                 _APRunning = false;
                 _APConnections = 0;
                 _ConnectedToInternet = false;
@@ -195,26 +194,41 @@ SOFTWARE.
             bool setWiFiStation();
             bool setWiFiAP();
             void reconnectWifi();
-            bool connectWifi(const int station);
+            bool connectWiFiStation( const int id = 0 );
+            void setWiFiMode( WiFiMode mode ) {
+                _networkSettings->wifiMode = mode;
+                handleWiFi(true);
+            };            
 
             void handle();
 
-            bool isStationConnected( ) { return _StationConnected; };
             bool isAPRunning( ) { return _APRunning; };
             bool isInternetConnected( ) { return _ConnectedToInternet; };
 
             WiFiClient& getWiFiClient() { return _client; };
           
-            bool stationConnected[MAX_SSIDS];
-            uint ConnectedStation;
+            uint getConnectedStation() {
+                for( int i = 0; i < MAX_SSIDS; i++ ) {
+                    if( _stationConnected[i] ) return i;
+                }
+                return 0;
+            };
+            bool isStationConnected(uint id) { return _stationConnected[id]; };
+            bool isStationConnected() {
+                for( int i = 0; i < MAX_SSIDS; i++ ) {
+                    if( _stationConnected[i] ) return true;
+                }
+                return false;
+            };
+
+         //   uint ConnectedStation;
 
         protected:
 
-            void handleWiFi();
+            void handleWiFi(const bool force = false);
 
             bool handleWiFiStation(const bool force = false);
             bool startWiFiAccessPoint();
-            bool startWiFiStation( const int id = 0 );
 
             bool handleWiFiAP(const bool force = false);
 
@@ -222,9 +236,13 @@ SOFTWARE.
 
             void InitializeWiFi();
 
+            void ResetConnectedStatus() {
+                for( int i = 0; i < MAX_SSIDS; i++ ) _stationConnected[i] = false;
+            };
+
             NetworkSettings *_networkSettings;
 
-            bool _StationConnected;         // Are we connected to WiFi
+            //bool _StationConnected;         // Are we connected to WiFi
             bool _APRunning;                // Is the AP running
             uint _APConnections;            // How many clients are connected
 
@@ -233,6 +251,8 @@ SOFTWARE.
             uint _disconnectedStation;       // Used to see how long disconnected in station mode
 
             WiFiClient _client;
+
+            bool _stationConnected[MAX_SSIDS];   
 
    
         private:

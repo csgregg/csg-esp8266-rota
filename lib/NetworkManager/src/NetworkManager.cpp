@@ -71,6 +71,8 @@ void APConfig::setDefaults() {
 void NetworkSettings::setWiFiDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
+    DEBUG("Reset");
+    DEBUG(wifiMode);
     lastStation = 0;
     apSettings.setDefaults();
     for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
@@ -100,6 +102,7 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 }
 
 
+
 void NetworkManager::InitializeWiFi() {
 
     LOG(F("(Network) Starting WiFi"));
@@ -115,7 +118,7 @@ void NetworkManager::InitializeWiFi() {
     // Restart to start fresh
     WiFi.mode(WiFiMode::WIFI_OFF);
 
-    handleWiFi();   // Initial WiFi start
+    handleWiFi(true);   // Initial WiFi start
 
 }
 
@@ -133,23 +136,24 @@ void NetworkManager::handle() {
 // Protected:
 
 // Handle WiFi Connectivity
-void NetworkManager::handleWiFi() {
+void NetworkManager::handleWiFi(const bool force) {
 
     // TODO - Mode handling for disconnects, portal, etc
 
+    if( force ) ResetConnectedStatus();
+
     switch( _networkSettings->wifiMode ) {
         case WIFI_AP:
-            _APRunning = handleWiFiAP();
+            _APRunning = handleWiFiAP(force);
             break;
         case WIFI_AP_STA:
-            _APRunning = handleWiFiAP();
-            _StationConnected = handleWiFiStation();
+            _APRunning = handleWiFiAP(force);
+            handleWiFiStation(force);
             break;
         case WIFI_STA:
-            _StationConnected = handleWiFiStation();
+            handleWiFiStation(force);
             break;
         default:
-            _StationConnected = false;
             _APRunning = false;
             break;
     }
@@ -177,12 +181,7 @@ void NetworkManager::reconnectWifi() {
     LOG("(Network) Reconnecting Wifi");
     WiFi.setAutoReconnect(false);
     WiFi.disconnect(false);
-    handleWiFiStation(true);       // Force reconnect
-}
-
-bool NetworkManager::connectWifi(const int station) {
-    LOG("(Network) Connecting Wifi Station");
-    return startWiFiStation(station);
+    handleWiFi(true);       // Force reconnect
 }
 
 
@@ -195,29 +194,42 @@ bool NetworkManager::handleWiFiStation(const bool force) {
         return true;
     }
 
-    // Turn on AP if we have waited too long
-    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
-        LOG(F("(Network) - Cannot connect to WiFi. Starting AP"));
+    bool anystns = false;
+    for( int i = 0; i < MAX_SSIDS && !anystns; i++ ) {
+        if( strcmp( _networkSettings->stationSettings[i].SSID, "" ) != 0 ) anystns = true;
+    }
+    if( !anystns ) {
+        LOG(F("(Network) No saved WiFi Stations"));
         _networkSettings->wifiMode = WIFI_AP;
         return false;
     }
 
     // Okay, so not connected
-    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation == 0 && !force ) {
+    if( _disconnectedStation == 0 && !force ) {
         _disconnectedStation = millis();
         LOG(F("(Network) WiFi not connected"));
         return false;
     }
 
     // Are we waiting for SDK to try to retry for a period
-    if( WiFi.getMode() != WIFI_OFF && _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) return false;  
+    if( _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) {
+        DEBUG("(Network) Waiting for SDK to retry connection");
+        return false;  
+    }
+
+    // Turn on AP if we have waited too long
+    if(_disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
+        LOG(F("(Network) - Cannot connect to WiFi. Starting AP"));
+        _networkSettings->wifiMode = WIFI_AP;
+        return false;
+    }
 
     // Try each of the stored stations, starting with last
     bool success = false;
     
     for( int i = 0; i < MAX_SSIDS && !success; i++ ) {
         int trystation = (i + _networkSettings->lastStation) % MAX_SSIDS;
-        success = startWiFiStation( trystation );
+        success = connectWiFiStation( trystation );
     }
 
     return success;
@@ -226,7 +238,6 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
 
 bool NetworkManager::startWiFiAccessPoint() {
-    
     LOG(F("(Network) WiFi mode - Access Point"));
 
     bool ret = WiFi.mode( _networkSettings->wifiMode );
@@ -248,13 +259,21 @@ bool NetworkManager::startWiFiAccessPoint() {
         logger.setTypeTag(LOG_NORMAL,TAG_STATUS);
         logger.printf("(Network) Acess point started with SSID: %s, IP: %s", _networkSettings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
 	}
-    else LOG("(Network) WiFi Access point not started");
+    else LOG(F("(Network) WiFi Access point not started"));
 
     return ret;
 }
 
 
-bool NetworkManager::startWiFiStation( const int id ) {
+bool NetworkManager::connectWiFiStation( const int id ) {
+    LOG(F("(Network) Connecting Wifi Station"));
+
+    ResetConnectedStatus();
+
+    if( _networkSettings->wifiMode != WIFI_STA &&_networkSettings->wifiMode != WIFI_AP_STA ) {
+        LOG(F("Not in station mode"));
+        return false;
+    }
 
     logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
     logger.printf("(Network) WiFi mode - Station %i: %s", id, _networkSettings->stationSettings[id].SSID );
@@ -263,16 +282,11 @@ bool NetworkManager::startWiFiStation( const int id ) {
 	bool password = strcmp( _networkSettings->stationSettings[id].password, "") != 0;
 
 	if( !ssid ) {
-        LOG("(Network) Station has no SSID");
+        LOG(F("(Network) Station has no SSID"));
         return false;
     }
 
-    // TODO - what is this?
     bool ret = WiFi.mode( _networkSettings->wifiMode );
-    if( !ret ) {
-        DEBUG(_networkSettings->wifiMode);
-        return false;
-    }
 
     if( _networkSettings->stationSettings[id].DHCPMode == STATIC ) 
         ret = WiFi.config( _networkSettings->stationSettings[id].ip,
@@ -297,11 +311,9 @@ bool NetworkManager::startWiFiStation( const int id ) {
 
 		ret = (WiFi.status() == WL_CONNECTED);
 
-        for( int i = 0; i < MAX_SSIDS; i++ ) stationConnected[i] = false;
-        stationConnected[id] = ret;
+        _stationConnected[id] = ret;
 
         if( ret ) {
-            network.ConnectedStation = id;
             _networkSettings->lastStation = id;
             _networkSettings->stationSettings[id].ip = WiFi.localIP();
             _networkSettings->stationSettings[id].subnet = WiFi.subnetMask();
@@ -327,7 +339,7 @@ bool NetworkManager::startWiFiStation( const int id ) {
                 logger.printf("(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
             }
         }
-        else LOG("(Network) WiFi Station not connected");
+        else LOG(F("(Network) WiFi Station not connected"));
 
     }
 

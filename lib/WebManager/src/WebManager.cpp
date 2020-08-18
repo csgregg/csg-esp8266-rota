@@ -148,6 +148,7 @@ void EmbAJAXStyle::setStyle(const char* style) {
 //////////////////////// Website Manager /////////////////////////////
 
 
+
 // Initialize web manaber
 void WebsiteManager::begin() {
 
@@ -200,6 +201,7 @@ String WebsiteManager::getContentType(String filename) {
     else if (filename.endsWith(F(".woff"))) return F("application/font-woff");
     return F("text/plain");
 }
+
 
 
 // Send the right file to the client (if it exists)
