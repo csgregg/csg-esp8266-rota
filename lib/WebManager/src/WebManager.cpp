@@ -30,7 +30,7 @@ SOFTWARE.
 
 #include <cstring>
 
-#include "Webmanager.h"
+#include "WebManager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkSetttingsPage.h"
