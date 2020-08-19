@@ -71,8 +71,6 @@ void APConfig::setDefaults() {
 void NetworkSettings::setWiFiDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
-    DEBUG("Reset");
-    DEBUG(wifiMode);
     lastStation = 0;
     apSettings.setDefaults();
     for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
