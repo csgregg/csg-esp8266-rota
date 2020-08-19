@@ -36,6 +36,7 @@ SOFTWARE.
 #include "NetworkSetttingsPage.h"
 #include "AboutPage.h"
 #include "IndexPage.h"
+#include "SystemPage.h"
 #include <LittleFS.h>
     
 // Webpages
@@ -46,6 +47,7 @@ PageHandler webpages[] = {
     {networksettingspage.URL, networksettingspage.handler, networksettingspage.init},
     {aboutpage.URL, aboutpage.handler, aboutpage.init},
     {indexpage.URL, indexpage.handler, indexpage.init},
+    {systempage.URL, systempage.handler, systempage.init},
 };
 
 

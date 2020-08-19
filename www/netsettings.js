@@ -59,7 +59,6 @@ function initPage() {
     // console.log("Status - Initialize Page");
 
     wifiListRevision = 0;
-    document.getElementById('loader').style.display='block';
     doRequest("","",loadWifiList);
 
 }
@@ -155,6 +154,7 @@ function wifiSureNo() {
 
 function wifiSureYes() {
 
+    document.getElementById('wifi_sure').style.display='block';
     document.getElementById('loader').style.display='block';
 
     var x = document.getElementById('wifi_stn_ssid');
