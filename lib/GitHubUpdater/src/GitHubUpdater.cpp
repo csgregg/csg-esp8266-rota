@@ -1,4 +1,4 @@
-/* Remote Updater Library
+/* GitHub Updater Library
 
 MIT License
 
@@ -61,52 +61,52 @@ https://arduinojson.org/v6/assistant/
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-
+#include "IOTDevice.h"
 #include "Logger.h"
-#include "ESPRemoteUpdater.h"
+#include "GitHubUpdater.h"
+
+
+// Make it Global
+bool GitHubUpdater::_doUpdateCheck;
 
 
 
-bool ESPRemoteUpdater::_doUpdateCheck;
+void ICACHE_FLASH_ATTR UpdaterSettings::setDefaults() {
 
-
-void ICACHE_FLASH_ATTR ESPRemoteUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
-
-    _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo + PSTR("&user=") + user;
-    if( token != "" ) _assetRequestURL += PSTR("&token=") + token;
-
-    _repoName = repo;
-    _deviceCode = deviceCode;
-    _buildTag = buildTag;
-    _updateinterval = updateinterval;
-    _skipUpdates = skip;
-
-
+    interval = UPDATER_INTERVAL;
+    skipUpdates = UPDATER_SKIP;
+    service = ESCAPEQUOTE(UPDATER_SERVICE);
+    repoName = ESCAPEQUOTE(UPDATER_REPO);
+    user = ESCAPEQUOTE(UPDATER_USER);
+    token = ESCAPEQUOTE(UPDATER_TOKEN);
+    deviceCode = ESCAPEQUOTE(DEVICE_CODE);
+    buildTag = ESCAPEQUOTE(BUILD_TAG);
 }
-
 
 
 // TODO - Change like ESP8266HTTPUpdate::handleUpdate
 
-void ICACHE_FLASH_ATTR ESPRemoteUpdater::begin( WiFiClient &client ) {
+void ICACHE_FLASH_ATTR GitHubUpdater::begin( WiFiClient &client, UpdaterSettings &settings ) {
 
     _client = &client;
+    _updatersettings = &settings;
+
+    _assetRequestURL = PSTR("http://") + _updatersettings->service + PSTR("?repo=") + _updatersettings->repoName + PSTR("&user=") + _updatersettings->user;
+    if( _updatersettings->token != "" ) _assetRequestURL += PSTR("&token=") + _updatersettings->token;
 
     _doUpdateCheck = false;
 
-    _updateCheck.attach( _updateinterval, TriggerUpdateCheck );
+    _updateCheck.attach( _updatersettings->interval, TriggerUpdateCheck );
 
     LOG(F("(Updater) Starting updater"));
 }
 
 
-void ESPRemoteUpdater::TriggerUpdateCheck() {
-    _doUpdateCheck = true;
-}
+
 
 // TODO change to POST intead of GET
 
-String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
+String ICACHE_FLASH_ATTR GitHubUpdater::getLatestBuild() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
 
@@ -164,7 +164,7 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
         PGM_P format4 = PSTR("(Updater) Returned Repo: %s");
         logger.printf( format4, repoName.c_str() );
 
-        if( repoName != _repoName ) {
+        if( repoName != _updatersettings->repoName ) {
 
             LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
 
@@ -193,10 +193,10 @@ String ICACHE_FLASH_ATTR ESPRemoteUpdater::getLatestBuild() {
  
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS( const bin_type type ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR GitHubUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
-    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
+    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _updatersettings->deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
 
     LOG(F("(Updater) Updating File System"));
     logger.setTypeTag(LOG_HIGH,TAG_STATUS);
@@ -205,7 +205,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS( const bin_type ty
 
     HTTPUpdateResult ret;
 
-    if( _skipUpdates ) {
+    if( _updatersettings->skipUpdates ) {
 
         LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
@@ -237,10 +237,10 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateFS( const bin_type ty
 
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( const bin_type type, bool restart ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR GitHubUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
-    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
+    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _updatersettings->deviceCode + _progSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
 
     LOG(F("(Updater) Updating Program"));
     logger.setTypeTag(LOG_HIGH, TAG_STATUS);
@@ -249,7 +249,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( const bin_type 
 
     HTTPUpdateResult ret;
 
-    if( _skipUpdates ) {
+    if( _updatersettings->skipUpdates ) {
 
         LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
@@ -292,7 +292,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR ESPRemoteUpdater::UpdateProg( const bin_type 
 
 
 
-void ESPRemoteUpdater::handle() {
+void GitHubUpdater::handle() {
 
     if ( WiFi.status() == WL_CONNECTED && _doUpdateCheck ) {
 
@@ -300,7 +300,7 @@ void ESPRemoteUpdater::handle() {
 
         logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
         PGM_P format1 = PSTR("(Updater) Current version: %s");
-        logger.printf( format1, _buildTag.c_str() );
+        logger.printf( format1, _updatersettings->buildTag.c_str() );
 
         // Check for update
 
@@ -310,7 +310,7 @@ void ESPRemoteUpdater::handle() {
         format1 = PSTR("(Updater) Latest version: %s");
         logger.printf( format1, checkTag.c_str() );
 
-        if( checkTag == _buildTag ) {
+        if( checkTag == _updatersettings->buildTag ) {
             LOG(F("(Updater) No new update"));  
             return;
         }
@@ -324,6 +324,6 @@ void ESPRemoteUpdater::handle() {
 
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_ESP_REMOTE_UPDATER)
-    ESPRemoteUpdater updater;
+    GitHubUpdater updater;
 #endif
 
