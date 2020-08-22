@@ -31,35 +31,65 @@ binaries built by Travis-CI.
 
 
 
-#ifndef ESP_REMOTE_UPDATER_H
+#ifndef GITHUB_UPDATER_H
 
-    #define ESP_REMOTE_UPDATER_H
+    #define GITHUB_UPDATER_H
 
-    #define DEFAULT_UPDATE_INTERVAL 300
 
-    typedef enum : int {
-        REMOTE_FS_UPDATE_FAILED,
-        REMOTE_IMG_UPDATE_FAILED,
-        REMOTE_UPDATE_NO_UPDATES,
-        REMOTE_UPDATE_OK
-    } t_update_result;
+    // Updater settings
+
+    class UpdaterSettings {
+        public:
+
+            void setDefaults();
+    
+            long interval;
+            bool skipUpdates;
+            String service;
+            String repoName;
+            String user;
+            String token;
+            String deviceCode;
+            String buildTag;
+        
+            // Create a compare operators
+            bool operator==(const UpdaterSettings& other) const {
+
+                return interval == other.interval
+                    && skipUpdates == other.skipUpdates
+                    && service == other.service
+                    && repoName == other.repoName
+                    && user == other.user
+                    && token == other.token
+                    && deviceCode == other.deviceCode
+                    && buildTag == other.buildTag;
+
+            }
+
+            bool operator!=(const UpdaterSettings& other) const {
+
+                return interval != other.interval
+                    || skipUpdates != other.skipUpdates
+                    || service == other.service
+                    || repoName == other.repoName
+                    || user == other.user
+                    || token != other.token
+                    || deviceCode != other.deviceCode
+                    || buildTag != buildTag;
+
+            }
+    };
 
 
     // Remote Updater Class
 
-    class ESPRemoteUpdater {
+    class GitHubUpdater {
         
         public:
             
-            void setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
-            void begin( WiFiClient& client );
+            void begin( WiFiClient& client, UpdaterSettings& settings );
 
             void handle();
-
-            String getLatestBuild();
-
-            int getLastError();
-            String getLastErrorString();
 
             enum bin_type {
                 RAW,                        // Uncompressed BIN file (.bin)
@@ -72,22 +102,18 @@ binaries built by Travis-CI.
             const char* _FSSuffix = "-Fv";
 
             String _assetRequestURL;
-            String _repoName;
-            String _deviceCode;
-            String _buildTag;
             String _latestTag;
-            bool _skipUpdates;
 
+            UpdaterSettings* _updatersettings;
             WiFiClient * _client;
 
             Ticker _updateCheck;
             static bool _doUpdateCheck;
 
-            float _updateinterval = DEFAULT_UPDATE_INTERVAL;
-
-            static void TriggerUpdateCheck();
-
-            int _lastError;
+            String getLatestBuild();
+            static void TriggerUpdateCheck() {
+                _doUpdateCheck = true;
+            };
 
             HTTPUpdateResult UpdateFS( const bin_type type );
             HTTPUpdateResult UpdateProg( const bin_type type, const bool restart = false );
@@ -97,7 +123,7 @@ binaries built by Travis-CI.
 
     };
 
-    extern ESPRemoteUpdater updater;
+    extern GitHubUpdater updater;
 
 #endif
 

@@ -73,7 +73,7 @@ Mode 4 - Serve specific release
     if( !empty($_GET["user"]) ) $user = $_GET["user"];
     if( !empty($_GET["type"]) ) $type = $_GET["type"];
 
-    if( $DEBUG ) echo nl2br("ESP8266 Remote Updater - GitHub Asset Fetch Service\r\n");
+    if( $DEBUG ) echo nl2br("ESP8266 GitHub Updater - Asset Fetch Service\r\n");
 
     // Set mode
     if( empty($requestedTag) ) $mode = 1;

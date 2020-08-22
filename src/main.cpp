@@ -1,6 +1,6 @@
 #include "Logger.h"
 #include "IOTDevice.h"
-#include "ESPRemoteUpdater.h"
+#include "GitHubUpdater.h"
 #include "ConfigManager.h"
 #include "LiteralManager.h"
 #include "NetworkManager.h"
@@ -47,14 +47,13 @@ void ICACHE_FLASH_ATTR setup() {
     device.begin(device_getBuildFlag(flag_BUILD_NO),device_getBuildFlag(flag_BUILD_TIMESTAMP).c_str());
 
     config.Initialize();
-    //config.ResetToDefaults();
+    config.ResetToDefaults();
 
     network.begin( config.settings.networkConfig );
 
     logger.setMode( device_getBuildFlag(flag_LOGGER_AS_SERIAL), device_getBuildFlag(flag_LOGGER_AS_SERVICE), loggingLevel(device_getBuildFlag(flag_LOGGER_LEVEL)) );
 
-    updater.setup( device_getBuildFlag(flag_UPDATER_SERVICE), device_getBuildFlag(flag_UPDATER_REPO), device_getBuildFlag(flag_UPDATER_USER), device_getBuildFlag(flag_UPDATER_TOKEN), device_getBuildFlag(flag_DEVICE_CODE), device_getBuildFlag(flag_BUILD_TAG), device_getBuildFlag(flag_UPDATER_INTERVAL), device_getBuildFlag(flag_UPDATER_SKIP) );
-    updater.begin( network.getWiFiClient() );
+    updater.begin( network.getWiFiClient(), config.settings.updaterConfig );
     
     elaborateBuildFlags();
     LOG(F("(Loop) Starting"));
