@@ -47,7 +47,7 @@ binaries built by Travis-CI.
 
     // Remote Updater Class
 
-    class ESPRemoteUpdater {
+    class GitHubOTAUpdater {
         
         public:
             
@@ -97,7 +97,7 @@ binaries built by Travis-CI.
 
     };
 
-    extern ESPRemoteUpdater updater;
+    extern GitHubOTAUpdater updater;
 
 #endif
 
