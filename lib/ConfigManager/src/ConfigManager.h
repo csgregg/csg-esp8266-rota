@@ -40,7 +40,6 @@ through the settings member.
     #include <ESP8266WiFi.h>
 
     #include "NetworkManager.h"
-    #include "GitHubUpdater.h"
 
 
     #define MAX_CONFIG_STRING_LEN 32
@@ -59,17 +58,14 @@ through the settings member.
     struct deviceSettings
     {
         NetworkSettings networkConfig;
-        UpdaterSettings updaterConfig;
 
         // Create a compare operators
         bool operator==(const deviceSettings& other) const {
-            return networkConfig == other.networkConfig
-                && updaterConfig == other.updaterConfig;
+            return networkConfig == other.networkConfig;
         }
 
         bool operator!=(const deviceSettings& other) const {
-            return networkConfig != other.networkConfig
-                || updaterConfig != other.updaterConfig;
+            return networkConfig != other.networkConfig;
         }
 
     };
