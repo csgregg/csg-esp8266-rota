@@ -42,6 +42,7 @@ through the settings member.
     #include "NetworkManager.h"
 
 
+
     #define MAX_CONFIG_STRING_LEN 32
     #define CONFIG_START_MARKER_SIZE 16
     #define CONFIG_START_MARKER "CONFIG_START_V1"
