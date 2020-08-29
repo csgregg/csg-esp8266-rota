@@ -24,7 +24,7 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-Acknowledgements
+TODO - Add acknowledgements
 
 */
 
@@ -36,7 +36,7 @@ Acknowledgements
     #define MAX_LITERAL_SIZE    48          // Largest allowed literal size
 
 
-    #include "Literals.h"       // TODO - Need to figure out how to move this to the main src folder
+    #include "Literals.h"       // TODO - Need to figure out how to move this to the main include folder
 
     // Enumerate the IDs for the literals
     enum literalID {
@@ -64,7 +64,7 @@ Acknowledgements
         public:
 
             String Get(literalID ID);           // Retrieve literal by ID
-            char * pGet(literalID ID);          // Retrieve literal ptr by ID
+            char* pGet(literalID ID);          // Retrieve literal ptr by ID
 
 
         protected:
@@ -77,5 +77,7 @@ Acknowledgements
     
     extern LiteralManager literals;             // Declaring the global instance
 
+    #define sLIT(name) literals.Get(name)       // Returns String for literal
+    #define cLIT(name) literals.pGet(name)      // Returns char* to literal
 
 #endif

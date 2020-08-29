@@ -32,7 +32,7 @@ SOFTWARE.
 #include "AboutPage.h"
 #include "Logger.h"
 #include "WebManager.h"
-#include "IOTDevice.h"
+#include "Device.h"
 
 // TODO: Flashstrings
 
@@ -41,10 +41,10 @@ void AboutPage::initializeAjax(){
 
     LOG_HIGH("(Page) About - Initialize AJAX");
 
-    device_id.setValue(device.getChipId());
+  //  device_id.setValue(device.getChipId());
     build_env.setValue(flag_BUILD_ENV);
-    build_no.setValue(device.getBuildNo());
-    build_time.setValue(device.getBuildTime());
+  //  build_no.setValue(flag_BUILD_NO);
+    build_time.setValue(flag_BUILD_TIMESTAMP);
 
 }
 

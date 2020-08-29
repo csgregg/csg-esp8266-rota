@@ -33,6 +33,8 @@ SOFTWARE.
 
     #define NETWORK_MANAGER_H
 
+    #include <ESP8266WiFi.h>
+
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
     #define MAX_PASSWORD_LEN 16
@@ -81,6 +83,8 @@ SOFTWARE.
     class StationConfig {
 
         public:
+
+            // TODO - Add constructor or initialization ?
 
             void setDefaults();
 
@@ -137,7 +141,7 @@ SOFTWARE.
     class NetworkSettings {
 
         public:
-
+            // TODO - Add constructor to set deflauts and use build flags for defaults
             void setWiFiDefaults();
     
             // WiFi Mode

@@ -35,7 +35,7 @@ through the settings member.
 
 #include "ConfigManager.h"
 #include "Logger.h"
-#include "IOTDevice.h"
+#include "Device.h"
 
 
 // Public:
@@ -47,7 +47,7 @@ ConfigManager::ConfigManager() {
 
 
 // Initialize the flash
-void ICACHE_FLASH_ATTR ConfigManager::Initialize( const bool forceInit ) {
+void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 
     // Start it up
     if( !_IsInitialized ) {
@@ -97,6 +97,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
     // Default settings
 
     settings.networkConfig.setWiFiDefaults();
+    settings.logConfig.setDefaults();
 
 
     // Save to flash

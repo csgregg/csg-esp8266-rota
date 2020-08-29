@@ -35,6 +35,10 @@ binaries built by Travis-CI.
 
     #define ESP_REMOTE_UPDATER_H
 
+    #include <ESP8266WiFi.h>
+    #include <ESP8266httpUpdate.h>
+    #include <Ticker.h>
+
     #define DEFAULT_UPDATE_INTERVAL 300
 
     typedef enum : int {
@@ -47,7 +51,7 @@ binaries built by Travis-CI.
 
     // Remote Updater Class
 
-    class GitHubOTAUpdater {
+    class OTAUpdater {
         
         public:
             
@@ -97,7 +101,7 @@ binaries built by Travis-CI.
 
     };
 
-    extern GitHubOTAUpdater updater;
+    extern OTAUpdater updater;
 
 #endif
 

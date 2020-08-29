@@ -32,7 +32,7 @@ SOFTWARE.
 #include "IndexPage.h"
 #include "Logger.h"
 #include "WebManager.h"
-#include "IOTDevice.h"
+#include "Device.h"
 
 // TODO: Flashstrings
 

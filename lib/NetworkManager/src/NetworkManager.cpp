@@ -29,15 +29,13 @@ SOFTWARE.
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <FS.h> 
-
 #include <EmbAJAX.h>
 
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "WebManager.h"
-#include "IOTDevice.h"
+#include "Device.h"
 
 
 // Network Settings 
@@ -58,8 +56,8 @@ void StationConfig::setDefaults() {
 
 void APConfig::setDefaults() {
 
-    strcpy( SSID, device_getBuildFlag(flag_DEVICE_CODE).c_str() );
-    strcpy( password, device_getBuildFlag(flag_DEVICE_CODE).c_str() );        // TODO Make secure token for this
+    strcpy( SSID, flag_DEVICE_CODE );
+    strcpy( password, flag_DEVICE_CODE );        // TODO Make secure token for this
     channel = DEFAULT_CHANNEL;
     ip = uint32_t(DEFAULT_STATICIP);
     subnet = uint32_t(DEFAULT_SUBNET);
