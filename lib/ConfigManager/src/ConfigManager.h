@@ -36,11 +36,10 @@ through the settings member.
 
     #define CONFIG_MANAGER_H
 
-
-    #include <ESP8266WiFi.h>
+    #include <Arduino.h>
 
     #include "NetworkManager.h"
-
+    #include "Logger.h"
 
 
     #define MAX_CONFIG_STRING_LEN 32
@@ -59,14 +58,17 @@ through the settings member.
     struct deviceSettings
     {
         NetworkSettings networkConfig;
+        LogSettings logConfig;
 
         // Create a compare operators
         bool operator==(const deviceSettings& other) const {
-            return networkConfig == other.networkConfig;
+            return networkConfig == other.networkConfig
+                && logConfig == other.logConfig;
         }
 
         bool operator!=(const deviceSettings& other) const {
-            return networkConfig != other.networkConfig;
+            return networkConfig != other.networkConfig
+                || logConfig != other.logConfig;
         }
 
     };
@@ -88,7 +90,7 @@ through the settings member.
 
             ConfigManager();
 
-            void Initialize(const bool forceInit = false);          // Start the config manager
+            void begin(const bool forceInit = false);          // Start the config manager
             void ResetToDefaults();                                 // Saves the default settings
             void Read();                                            // Reads all the settings
             void Save(const bool force = false);                    // Saves all the settings

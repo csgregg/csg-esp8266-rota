@@ -36,9 +36,7 @@ JSON Loggining Format
   "message": "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456",
   "Device": {
     "Hardware": {
-      "Platform": "12345678901234567890",
       "Board": "12345678901234567890",
-      "Framework": "12345678901234567890",
       "MAC": "mm:mm:mm:ss:ss:ss"
     },
     "Env": {
@@ -63,56 +61,61 @@ TODO - Add function to check in and regsiter
 
 
 #include <ESP8266HTTPClient.h>
-#include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
-#include "IOTDevice.h"
 #include "Logger.h"
+#include "Device.h"
+
+
+
+void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
+    serialBaud = flag_MONITOR_SPEED;
+    strcpy(serviceURL,flag_LOGGER_SERVICE);
+    strcpy(serviceKey,flag_LOGGER_SERVICE_KEY);
+    serialMode = flag_LOGGER_AS_SERIAL;
+    serviceMode = flag_LOGGER_AS_SERVICE;
+    strcpy(globalTags,flag_LOGGER_GLOBAL_TAGS);
+    level = logLevel(flag_LOGGER_LEVEL);
+}
+
 
 
 // Public:
 
-// Sets up logger - needs to be followed by setMode() to actually start
-void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags, const bool modeSerial  ) {
+// Sets up logger
+void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settings ) {
 
 #ifndef NO_LOGGING
 
-    _client = &client;
+    _settings = &settings;
 
-    _ServiceURL = PSTR("http://") + service + PSTR("/") + key + PSTR("/tag/") + tags + PSTR("/");
+    _FullServiceURL = PSTR("http://");
+    _FullServiceURL =+ _settings->serviceURL;
+    _FullServiceURL =+ PSTR("/");
+    _FullServiceURL =+ _settings->serviceKey;
+    _FullServiceURL =+ PSTR("/tag/");
+    _FullServiceURL =+ _settings->globalTags;
+    _FullServiceURL =+ PSTR("/");
 
-    if( modeSerial ) {
-        Serial.begin(baud);             
+    if( _settings->serialMode ) {
+        Serial.begin(_settings->serialBaud);             
         Serial.println(F("\n\nLOG: (Logger) Starting Logging"));
     }
+
+    setTypeTag(LOG_HIGH, TAG_STATUS);
+    PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
+    logger.printf( format1,_settings->level );
+
+    if( _settings->serviceMode ) LOG_HIGH(F("(Logger) Logging Service: ON"));
+    else LOG_HIGH(F("(Logger) Logging Service: OFF"));
 
 #endif
     
 }
 
 
-// Sets logging mode
-void ICACHE_FLASH_ATTR LogClient::setMode( const bool modeSerial, const bool modeService, const loggingLevel level ){
-
-#ifndef NO_LOGGING
-
-    _serialOn = modeSerial;
-    _serviceOn = modeService;
-    _logginglevel = level;
-
-    setTypeTag(LOG_HIGH, TAG_STATUS);
-    PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
-    logger.printf( format1, _logginglevel );
-
-    if(_serviceOn) LOG_HIGH(F("(Logger) Logging Service: ON"));
-    else LOG_HIGH(F("(Logger) Logging Service: OFF"));
-
-#endif
-
-}
-
-
 // TODO Need to add print functions for flashstringhelper
+// TODO Add int function
 // TODO Need to add return JSON header only
 
 // Main log function - char[]
@@ -120,13 +123,10 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 
 #ifndef NO_LOGGING
 
-    // TODO - since this is build specific might move this logic to the preprocessor to save memory.
-    // Need to consider if we want to be able to change log level at runtime
-
-    if( type >= _logginglevel ) return;
+    if( uint(type) >= uint(_settings->level) ) return;
    
-    if( _serialOn ) LogToSerial(type, tag, message);
-    if( _serviceOn ) LogToService(type, tag, message);
+    if( _settings->serialMode ) LogToSerial(type, tag, message);
+    if( _settings->serviceMode ) LogToService(type, tag, message);
 
 #endif
 
@@ -142,7 +142,7 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
     strcpy_P(func, func_P);             // __FUNC__ is held in Flash so handle appropriately
 
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+    if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
 
         PGM_P format = PSTR("(Context: %s %s %i) %s");
         size_t contextsize =  ( strlen(format) - 8 ) + strlen(file) + strlen(func);
@@ -266,6 +266,45 @@ void ICACHE_FLASH_ATTR LogClient::printf( const char * format, ... ) {
 }
 
 
+
+void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const char* flag) {
+
+#ifndef NO_LOGGING
+
+    char buffer[MAX_MESSAGE_LEN];
+    sprintf(buffer, PSTR("(Build) %s: %s"), name, FPSTR(flag));
+
+    println(type, tag, buffer);
+
+#endif
+}
+
+void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const bool flag) {
+
+#ifndef NO_LOGGING
+
+    char buffer[MAX_MESSAGE_LEN];
+    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
+
+    println(type, tag, buffer);
+
+#endif
+}
+
+void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const uint flag) {
+
+#ifndef NO_LOGGING
+
+    char buffer[MAX_MESSAGE_LEN];
+    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
+
+    println(type, tag, buffer);
+
+#endif
+}
+
+
+
 // Protected:
 
 // Create and log prefix - needs to be followed by message using Serial.println()
@@ -273,7 +312,7 @@ void ICACHE_FLASH_ATTR LogClient::LogPrefix( const logType type, const logTag ta
 
 #ifndef NO_LOGGING
 
-    if( _logginglevel == LOGGING_LEVEL_VERBOSE) {
+    if( _settings->level == LOGGING_LEVEL_VERBOSE) {
         PGM_P format = PSTR("LOG: %s: %s - Millis: %li, Heap: %i - ");
         Serial.printf(format, c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
     }
@@ -309,15 +348,17 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 #ifndef NO_LOGGING
 
+    if( !_client->connected() ) return;             // TODO - better error handling needed
+
     char thistag[strlen(c_log_tag_descript[tag])];
     strcpy(thistag, c_log_tag_descript[tag]);
 
     char thistype[strlen(c_log_type_descript[type])];
     strcpy(thistype, c_log_type_descript[type]);
 
-    String loggingURL = _ServiceURL + String(thistag) + "/";
+    String loggingURL = _FullServiceURL + String(thistag) + "/";
    
-    if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+    if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
         Serial.print(F("(Logger) Logging to: "));
         Serial.println(loggingURL);
@@ -326,7 +367,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     // Build JSON
     // Use https://arduinojson.org/v6/assistant/
     
-    const size_t capacity = JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + 2*JSON_OBJECT_SIZE(4) + 640;
+    const size_t capacity = 2*JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 509;
     DynamicJsonDocument jsonLog(capacity);
 
     jsonLog[F("localtime")] = millis();
@@ -341,16 +382,16 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("Platform")] = device_getBuildFlag(flag_PLATFORM);
-        Device_Hardware[F("Board")] = device_getBuildFlag(flag_BOARD);
-        Device_Hardware[F("Framework")] = device_getBuildFlag(flag_FRAMEWORK);
+        Device_Hardware[F("Platform")] = flag_PLATFORM;     // TODO - Remove
+        Device_Hardware[F("Board")] = flag_BOARD;
+        Device_Hardware[F("Framework")] = flag_FRAMEWORK;     // TODO - Remove
         String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
-        Device_Env[F("Name")] = device_getBuildFlag(flag_DEVICE_NAME);
-        Device_Env[F("Code")] = device_getBuildFlag(flag_DEVICE_CODE);
-        Device_Env[F("Build")] = device_getBuildFlag(flag_BUILD_ENV);
-        Device_Env[F("Tag")] = device_getBuildFlag(flag_BUILD_TAG);
+        Device_Env[F("Name")] = flag_DEVICE_NAME;
+        Device_Env[F("Code")] = flag_DEVICE_CODE;
+        Device_Env[F("Build")] = flag_BUILD_ENV;
+        Device_Env[F("Tag")] = flag_BUILD_TAG;
         Device_Env[F("Heap")] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject(F("Network"));
@@ -365,7 +406,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     serializeJson(jsonLog, jsonMessage);
 
-    if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+    if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(LOG_DETAIL, TAG_STATUS);
         Serial.print(F("(Logger) Log (JSON): "));
         Serial.println(jsonMessage); 
@@ -386,13 +427,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
-        if( _serialOn && _logginglevel == LOGGING_LEVEL_VERBOSE ) {
+        if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(LOG_DETAIL, TAG_STATUS);
             Serial.println(F("(Logger) Logging to servce: SUCCESS "));
         }
     }
     else {
-        if( _serialOn && _logginglevel > LOGGING_LEVEL_CRITICAL ) {
+        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(LOG_CRITICAL, TAG_STATUS);
             Serial.print(F("(Logger) Logging to servce: ERROR "));
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );

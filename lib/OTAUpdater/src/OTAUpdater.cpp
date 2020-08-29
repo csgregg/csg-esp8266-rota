@@ -58,19 +58,18 @@ https://arduinojson.org/v6/assistant/
 */
 
 
-#include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 
 
 #include "Logger.h"
-#include "GitHubOTAUpdater.h"
+#include "OTAUpdater.h"
 
 
 
-bool GitHubOTAUpdater::_doUpdateCheck;
+bool OTAUpdater::_doUpdateCheck;
 
 
-void ICACHE_FLASH_ATTR GitHubOTAUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
+void ICACHE_FLASH_ATTR OTAUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
 
     _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo + PSTR("&user=") + user;
     if( token != "" ) _assetRequestURL += PSTR("&token=") + token;
@@ -88,7 +87,7 @@ void ICACHE_FLASH_ATTR GitHubOTAUpdater::setup( const String &service, const Str
 
 // TODO - Change like ESP8266HTTPUpdate::handleUpdate
 
-void ICACHE_FLASH_ATTR GitHubOTAUpdater::begin( WiFiClient &client ) {
+void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client ) {
 
     _client = &client;
 
@@ -100,13 +99,13 @@ void ICACHE_FLASH_ATTR GitHubOTAUpdater::begin( WiFiClient &client ) {
 }
 
 
-void GitHubOTAUpdater::TriggerUpdateCheck() {
+void OTAUpdater::TriggerUpdateCheck() {
     _doUpdateCheck = true;
 }
 
 // TODO change to POST intead of GET
 
-String ICACHE_FLASH_ATTR GitHubOTAUpdater::getLatestBuild() {
+String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
 
@@ -193,7 +192,7 @@ String ICACHE_FLASH_ATTR GitHubOTAUpdater::getLatestBuild() {
  
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR GitHubOTAUpdater::UpdateFS( const bin_type type ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
     String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
@@ -237,7 +236,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR GitHubOTAUpdater::UpdateFS( const bin_type ty
 
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR GitHubOTAUpdater::UpdateProg( const bin_type type, bool restart ) {
+HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
     String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
@@ -292,7 +291,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR GitHubOTAUpdater::UpdateProg( const bin_type 
 
 
 
-void GitHubOTAUpdater::handle() {
+void OTAUpdater::handle() {
 
     if ( WiFi.status() == WL_CONNECTED && _doUpdateCheck ) {
 
@@ -324,6 +323,6 @@ void GitHubOTAUpdater::handle() {
 
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_ESP_REMOTE_UPDATER)
-    GitHubOTAUpdater updater;
+    OTAUpdater updater;
 #endif
 

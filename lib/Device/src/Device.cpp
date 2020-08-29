@@ -1,8 +1,8 @@
-/* Literal Manager Library
+/* IOT Device Library
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,15 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-Acknowledgements
+Defines the physical attributes of the IOT device and the build environment.
+
+Build flags are loaded from platformio.ini
 
 */
 
-
-#include <Arduino.h>
-
-#include "LiteralManager.h"
+#include "Device.h"
 
 
-// Public :
-
-// Retrieve the literal by ID
-String ICACHE_FLASH_ATTR LiteralManager::Get(literalID ID) {
-
-	strcpy_P( _Buffer, (char*)pgm_read_dword(&(LiteralRefs[ID])) );
-	return String(_Buffer);
-
-}
-
-char ICACHE_FLASH_ATTR *LiteralManager::pGet(literalID ID) {
-
-	return (char*)pgm_read_dword(&(LiteralRefs[ID]));
-
-}
-
-
-
-// Create the global config instance
-
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_LITERALS)
-    LiteralManager literals;
+#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_DEVICE)
+    IOTDevice device;
 #endif

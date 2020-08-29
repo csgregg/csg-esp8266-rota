@@ -34,11 +34,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     #define LOGGER_H
 
-    #include <Ticker.h>
-    #include <ESP8266httpUpdate.h>
-
-    #include "IOTDevice.h"
-
+    #include <ESP8266WiFi.h>
 
     // Turn off all debug if necessary
     #ifndef LOGGER_LEVEL
@@ -61,6 +57,8 @@ debug of code. Macros are defined for to simplifiy common usage.
 
       #define DEBUG_STOP() Serial.printf("(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
       #define DEBUG_RAW(text) Serial.println(text)
+  
+      #define LOG_FLAG(name) logger.printFlag(LOG_NORMAL, TAG_STATUS, #name, name)      // Used to pass flag name as argument to method
 
     #else
 
@@ -76,19 +74,25 @@ debug of code. Macros are defined for to simplifiy common usage.
       #define DEBUG_STOP()
       #define DEBUG_RAW(text)
 
+      #define LOG_FLAG(text)
+
     #endif
 
-
+    // Sizes
     #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
     #define MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
     #define MAX_TAG_TYPES 2
+    #define MAX_GLOBAL_TAG_LEN 8    // Max length of global tag string
+    #define MAX_KEY_LEN 40          // Max length of service key string
+    #define MAX_SERVICE_LEN 32      // Max length of service URL
+
+    // Defaults
+    #define LOGGER_DEFAULT_BAUD 115200
 
     // Define max JSON key sizes
     #define JSON_SIZE_LOCALTIME 10
     #define JSON_SIZE_MESSAGE MAX_MESSAGE_LEN
-    #define JSON_SIZE_PLATFORM 20
     #define JSON_SIZE_BOARD 20
-    #define JSON_SIZE_FRAMEWORK 20
     #define JSON_SIZE_MAC 17
     #define JSON_SIZE_NAME 30
     #define JSON_SIZE_CODE 20
@@ -100,7 +104,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     // TODO - move enums into class
 
     // Logging level to filter logs 
-    enum loggingLevel {
+    enum logLevel : uint {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_CRITICAL = 1,     // Critical only
         LOGGING_LEVEL_NORMAL = 2,       // Normal and Critical
@@ -110,7 +114,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 
     // Type of log - used in the filter of log level and added to message
-    enum logType {
+    enum logType : uint {
         LOG_CRITICAL = 0,
         LOG_NORMAL = 1,
         LOG_HIGH = 2, 
@@ -119,10 +123,56 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 
     // Tags applied to message
-    enum logTag {
+    enum logTag : uint {
         TAG_DEBUG,
         TAG_STATUS
     } ;
+
+
+    // Logger settings
+    class LogSettings {
+        public:
+
+            LogSettings() {
+                setDefaults();
+            };
+
+            void setDefaults();
+
+            uint serialBaud;
+            char serviceURL[MAX_SERVICE_LEN];
+            char serviceKey[MAX_KEY_LEN];
+
+            bool serialMode;
+            bool serviceMode;
+
+            char globalTags[MAX_GLOBAL_TAG_LEN];
+            logLevel level;
+
+             // Create a compare operators
+
+            bool operator==(const LogSettings& other) const {
+                return serialBaud == other.serialBaud
+                    && (strcmp(serviceURL, other.serviceURL)==0)
+                    && (strcmp(serviceKey, other.serviceKey)==0)
+                    && serialMode == other.serialMode
+                    && serviceMode == other.serviceMode
+                    && (strcmp(globalTags, other.globalTags)==0)
+                    && level == other.level;
+            }
+
+            bool operator!=(const LogSettings& other) const {
+                return serialBaud != other.serialBaud
+                    || (strcmp(serviceURL, other.serviceURL)!=0)
+                    || (strcmp(serviceKey, other.serviceKey)!=0)
+                    || serialMode != other.serialMode
+                    || serviceMode != other.serviceMode
+                    || (strcmp(globalTags, other.globalTags)!=0)
+                    || level != other.level;
+            }
+
+    };
+
 
     
     // Logger Class
@@ -132,9 +182,10 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             /// To set up logging
 
-            void begin( WiFiClient &client, const long baud, const String &service, const String &key, const String &tags, const bool modeSerial  );
-            void setMode( const bool modeSerial = false, const bool modeService = false, const loggingLevel level = LOGGING_OFF );
-
+            void begin( WiFiClient &client, LogSettings &settings );
+            bool SerialOn() { return _settings->serialMode; };
+            
+ 
             // Log messages (with overloads)
 
             void println(const logType type, const logTag tag, const char * message);
@@ -153,20 +204,17 @@ debug of code. Macros are defined for to simplifiy common usage.
             void setTypeTag(const logType type, const logTag tag);
             void printf(const char * format, ...);
 
-            bool SerialOn() { return _serialOn; };
-            bool ServiceOn() { return _serviceOn; };
-
+            // For build flags
+            void printFlag(const logType type, const logTag tag, const char* name, const char* flag);
+            void printFlag(const logType type, const logTag tag, const char* name, const bool flag);
+            void printFlag(const logType type, const logTag tag, const char* name, const uint flag);
 
         protected:
 
-            WiFiClient * _client;
+            WiFiClient* _client;
+            LogSettings* _settings;
 
-            String _ServiceURL;
-
-            bool _serialOn = false;
-            bool _serviceOn = false;
-
-            uint _logginglevel = LOGGING_OFF;
+            String _FullServiceURL;
 
             void inline LogPrefix(const logType type, const logTag tag);
 
@@ -176,8 +224,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             logType _lasttype;
             logTag _lasttag;
 
-            const char * const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};
-            const char * const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
+            const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - moce to progmem
+            const char* const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
 
         private:
 
