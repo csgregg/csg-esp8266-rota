@@ -27,15 +27,12 @@ SOFTWARE.
 
 */
 
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <EmbAJAX.h>
+
 
 #include "NetworkManager.h"
 #include "Logger.h"
-#include "ConfigManager.h"
-#include "WebManager.h"
 #include "Device.h"
+//#include "WebManager.h"
 
 
 // Network Settings 
@@ -93,8 +90,6 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
     InitializeWiFi();
 
-    website.begin();
-
 }
 
 
@@ -122,8 +117,6 @@ void NetworkManager::InitializeWiFi() {
 void NetworkManager::handle() {
 
     handleWiFi();
-
-    website.handle();
 
 }
 

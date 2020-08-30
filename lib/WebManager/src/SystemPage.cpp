@@ -30,9 +30,8 @@ SOFTWARE.
 
 
 #include "SystemPage.h"
-#include "Logger.h"
-#include "WebManager.h"
 #include "Device.h"
+#include "Logger.h"
 #include "ConfigManager.h"
 
 // TODO: Flashstrings
@@ -48,15 +47,15 @@ void SystemPage::handleAjax(){
 
     LOG_HIGH("(Page) Index - Handle AJAX");
 
-   // if( website.AjaxID == "btn_restart" ) device.restart();
+    if( website.AjaxID == "btn_restart" ) device.restart();
 
     if( website.AjaxID == "btn_rst_net" ){
-        config.settings.networkConfig.setWiFiDefaults();
-        config.Save();
+     //   config.settings.networkConfig.setWiFiDefaults();
+     //   config.Save();
     }
 
     if( website.AjaxID == "btn_rst_all" ){
-        config.ResetToDefaults();
+     //   config.ResetToDefaults();
     }
 
 }

@@ -40,6 +40,7 @@ through the settings member.
 
     #include "NetworkManager.h"
     #include "Logger.h"
+    #include "OTAUpdater.h"
 
 
     #define MAX_CONFIG_STRING_LEN 32

@@ -35,6 +35,7 @@ TODO - Add acknowledgements
 
     #define MAX_LITERAL_SIZE    48          // Largest allowed literal size
 
+    #include <Arduino.h>
 
     #include "Literals.h"       // TODO - Need to figure out how to move this to the main include folder
 
