@@ -31,7 +31,6 @@ SOFTWARE.
 
 #include "AboutPage.h"
 #include "Logger.h"
-#include "WebManager.h"
 #include "Device.h"
 
 // TODO: Flashstrings

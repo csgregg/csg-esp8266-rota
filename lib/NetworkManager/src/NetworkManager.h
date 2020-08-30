@@ -225,7 +225,6 @@ SOFTWARE.
                 return false;
             };
 
-         //   uint ConnectedStation;
 
         protected:
 
@@ -246,7 +245,6 @@ SOFTWARE.
 
             NetworkSettings *_networkSettings;
 
-            //bool _StationConnected;         // Are we connected to WiFi
             bool _APRunning;                // Is the AP running
             uint _APConnections;            // How many clients are connected
 

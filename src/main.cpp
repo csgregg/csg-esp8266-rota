@@ -1,10 +1,10 @@
-#include "Logger.h"
-#include "Device.h"
-#include "OTAUpdater.h"
-#include "ConfigManager.h"
 #include "LiteralManager.h"
+#include "Device.h"
+#include "ConfigManager.h"
+#include "Logger.h"
 #include "NetworkManager.h"
-
+#include "WebManager.h"
+#include "OTAUpdater.h"
 
 
 void ICACHE_FLASH_ATTR elaborateBuildFlags() {
@@ -44,7 +44,7 @@ void ICACHE_FLASH_ATTR setup() {
     config.begin();
     logger.begin( network.getWiFiClient(), config.settings.logConfig );    
     network.begin( config.settings.networkConfig );
-
+    website.begin();
 
     updater.setup( flag_UPDATER_SERVICE, flag_UPDATER_REPO, flag_UPDATER_USER, flag_UPDATER_TOKEN, flag_DEVICE_CODE, flag_BUILD_TAG, flag_UPDATER_INTERVAL, flag_UPDATER_SKIP );
     updater.begin( network.getWiFiClient() );
@@ -60,5 +60,6 @@ void loop() {
 
   updater.handle();
   network.handle();
+  website.handle();
 
 }

@@ -33,7 +33,7 @@ Describes the About web page
 
     #define SYSTEM_PAGE_H
 
-    #include "EmbAJAX.h"
+
     #include "WebManager.h"
 
 
