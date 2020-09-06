@@ -197,7 +197,6 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
     // Are we waiting for SDK to try to retry for a period
     if( _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) {
-        DEBUG("(Network) Waiting for SDK to retry connection");
         return false;  
     }
 

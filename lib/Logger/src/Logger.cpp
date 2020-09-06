@@ -153,11 +153,11 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
     if( !_settings ) begin( _preSettings );
 
-    char func[MAX_MESSAGE_LEN];
-
-    strcpy_P(func, func_P);             // __FUNC__ is held in Flash so handle appropriately
-
     if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
+
+        char func[MAX_MESSAGE_LEN];
+
+        strcpy_P(func, func_P);             // __FUNC__ is held in Flash so handle appropriately
 
         PGM_P format = PSTR("(Context: %s %s %i) %s");
         size_t contextsize =  ( strlen(format) - 8 ) + strlen(file) + strlen(func);
@@ -172,6 +172,33 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
         println(type, tag, str);
     }
     else println(type, tag, message);
+
+#endif
+
+}
+
+
+
+// Overload println() - int
+void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i ) {
+
+#ifndef NO_LOGGING
+
+    char msg[sizeof(int)*3];
+    sprintf(msg,"%i",i);
+    println(type, tag, msg);
+
+#endif
+
+}
+// Overload println() - int with context
+void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i, const char * file, const char * func_P, const int line ) {
+
+#ifndef NO_LOGGING
+
+    char msg[sizeof(int)*3];
+    sprintf(msg,"%i",i);
+    println(type, tag, msg, file, func_P, line);
 
 #endif
 

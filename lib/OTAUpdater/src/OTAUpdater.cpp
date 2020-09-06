@@ -143,7 +143,7 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
             logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
         }
 
-        return "";      // TODO - should this be String();
+        return "";
     }
     else {
 
@@ -221,7 +221,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG(PSTR("(Updater) No new file system update"));
+        LOG(F("(Updater) No new file system update"));
         break;
         
     case HTTP_UPDATE_OK:
