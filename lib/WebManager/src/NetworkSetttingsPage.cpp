@@ -31,8 +31,7 @@ SOFTWARE.
 
 #include "NetworkSetttingsPage.h"
 #include "Logger.h"
-//#include "ConfigManager.h"
-//#include "WebManager.h"
+#include "ConfigManager.h"
 
 // TODO: Flashstrings
 // TODO: AP mode
@@ -43,8 +42,8 @@ void NetworkSettingsPage::initializeAjax(){
     LOG_HIGH("(Page) Network Settings - Initialize AJAX");
 
     char ipbuffer[15];
-//TODO - change to pass settings to class like elsewhere
-  //  wifiAP = config.settings.networkConfig.apSettings;
+
+    wifiAP = config.settings.networkConfig.apSettings;
 
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
@@ -62,9 +61,9 @@ void NetworkSettingsPage::initializeAjax(){
 
     wifi_stn_asip.setValue(getAssignedIP());
 
-  //  WiFiMode mode =  config.settings.networkConfig.wifiMode;
-  //  wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
-  //  wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
+    WiFiMode mode =  config.settings.networkConfig.wifiMode;
+    wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
+    wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
 
 }
 
@@ -78,7 +77,7 @@ void NetworkSettingsPage::handleAjax(){
     
     // Used to send back basic details of a specific wifi station
     if( website.AjaxID == "wifi_stn_id" ) {
-    //    wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
+        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.isStationConnected(wifi_stn_id.intValue()));
     }
 
@@ -97,7 +96,7 @@ void NetworkSettingsPage::setWifiMode(WiFiMode mode) {
     LOG("(Page) Network Settings - Set WiFi mode");
     
     network.setWiFiMode(mode);
-   // config.Save();
+    config.Save();
 
     wifi_stn_asip.setValue(getAssignedIP());
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
@@ -111,7 +110,7 @@ void NetworkSettingsPage::loadWifiStation(uint id) {
 
     char ipbuffer[15];
 
-  //  wifiStation = config.settings.networkConfig.stationSettings[id];
+    wifiStation = config.settings.networkConfig.stationSettings[id];
 
     wifi_stn_ssid.setValue(wifiStation.SSID);
     wifi_stn_pwd.setValue(wifiStation.password);
@@ -151,8 +150,8 @@ void NetworkSettingsPage::saveAP() {
     ap.gateway.fromString(wifi_ap_gtwy.value());
     ap.channel = atoi(wifi_ap_ch.value());
 
-  //  config.settings.networkConfig.apSettings = ap;
-  //  config.Save();
+    config.settings.networkConfig.apSettings = ap;
+    config.Save();
 
     network.reconnectWifi();
 }
@@ -173,8 +172,8 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
     wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
 
-  //  config.settings.networkConfig.stationSettings[id] = wifiStation;
-  //  config.Save();
+    config.settings.networkConfig.stationSettings[id] = wifiStation;
+    config.Save();
 
     if( network.getConnectedStation() == id ) network.reconnectWifi();
 
@@ -186,8 +185,8 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 void NetworkSettingsPage::connectWifiStation(uint id) {
     
-   // if( network.connectWiFiStation(id) ) config.Save();
-  //  else network.reconnectWifi();
+    if( network.connectWiFiStation(id) ) config.Save();
+    else network.reconnectWifi();
 
     // Make the client reload the wifi list
     wifi_stn_asip.setValue(getAssignedIP());

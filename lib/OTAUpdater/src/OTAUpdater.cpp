@@ -60,40 +60,49 @@ https://arduinojson.org/v6/assistant/
 
 #include <ArduinoJson.h>
 
-
+#include "Device.h"
 #include "Logger.h"
 #include "OTAUpdater.h"
 
 
 
-bool OTAUpdater::_doUpdateCheck;
+bool OTAUpdater::_doUpdateCheck = false;
 
 
-void ICACHE_FLASH_ATTR OTAUpdater::setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip = false ) {
-
-    _assetRequestURL = PSTR("http://") + service + PSTR("?repo=") + repo + PSTR("&user=") + user;
-    if( token != "" ) _assetRequestURL += PSTR("&token=") + token;
-
-    _repoName = repo;
-    _deviceCode = deviceCode;
-    _buildTag = buildTag;
-    _updateinterval = updateinterval;
-    _skipUpdates = skip;
-
-
+void OTASettings::setDefaults() {
+    strcpy_P(service, flag_UPDATER_SERVICE);
+    strcpy_P(repo, flag_UPDATER_REPO);
+    strcpy_P(user, flag_UPDATER_USER);
+    strcpy_P(token, flag_UPDATER_TOKEN);
+    interval = flag_UPDATER_INTERVAL;
+    skipUpdates = flag_UPDATER_SKIP;
 }
+
 
 
 
 // TODO - Change like ESP8266HTTPUpdate::handleUpdate
 
-void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client ) {
+void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &settings ) {
 
     _client = &client;
+    _settings = &settings;
 
-    _doUpdateCheck = false;
+    strcpy_P(_assetRequestURL, PSTR("http://"));
+    strcat(_assetRequestURL, _settings->service);
+    strcat_P(_assetRequestURL, PSTR("?repo="));
+    strcat(_assetRequestURL, _settings->repo);
+    strcat_P(_assetRequestURL, PSTR("&user="));
+    strcat(_assetRequestURL, _settings->user);
+    if( _settings->token[0] != '\0' ) {
+        strcat_P(_assetRequestURL, PSTR("&token="));
+        strcat(_assetRequestURL, _settings->token);
+    }
 
-    _updateCheck.attach( _updateinterval, TriggerUpdateCheck );
+
+    _doUpdateCheck = true;      // TODO - needs to be false
+
+    _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
 
     LOG(F("(Updater) Starting updater"));
 }
@@ -113,9 +122,8 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
     http.setReuse(false);
 
-    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
     PGM_P format1 = PSTR("(Updater) URL: %s");
-    logger.printf( format1, _assetRequestURL.c_str() );
+    logger.printf( LOG_DETAIL, TAG_STATUS, format1, _assetRequestURL );
 
     http.begin( *_client, _assetRequestURL );
 
@@ -128,15 +136,11 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
     if( httperror != HTTP_CODE_OK ) {
 
-        logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-
         if( httperror < 0 ) {
-            PGM_P format2 = PSTR("(Updater) Error getting latest release: ERROR %s");
-            logger.printf( format2, http.errorToString(httperror).c_str() );
+            logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httperror).c_str() );
         }
         else {
-            PGM_P format3 = PSTR("(Updater) Error getting latest release: ERROR %i");
-            logger.printf( format3, httperror );
+            logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
         }
 
         return "";      // TODO - should this be String();
@@ -152,18 +156,14 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
         // TODO - Improve JSON error checking
         if (jsonerror) {
-            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-            PGM_P format4a = PSTR("(Updater) JSON Error: %s");
-            logger.printf( format4a, jsonerror.c_str() );
+            logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
         }
 
         String repoName = responseJSON[F("repo")];
 
-        logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
-        PGM_P format4 = PSTR("(Updater) Returned Repo: %s");
-        logger.printf( format4, repoName.c_str() );
+        logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
 
-        if( repoName != _repoName ) {
+        if( repoName != _settings->repo ) {
 
             LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
 
@@ -175,13 +175,9 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
         const char* releaseDate = latestRelease[F("date")];
 
         _latestTag = latestTag;
-        String str = releaseDate;
 
-        logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
-        PGM_P format5 = PSTR("(Updater) Latest version: %s");
-        logger.printf( format5, _latestTag.c_str() );
-        PGM_P format6 = PSTR("(Updater) Release date: %s");
-        logger.printf( format6, str.c_str() );
+        logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Latest version: %s"), _latestTag.c_str() );
+        logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Release date: %s"), releaseDate );
 
         return _latestTag;
     }
@@ -195,16 +191,21 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
-    String littleFSFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _FSSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
+    char littleFSFileRequest[OTA_MAX_IMAGE_URL_LEN];
+    strcpy(littleFSFileRequest, _assetRequestURL);
+    strcat_P(littleFSFileRequest, PSTR("&asset="));
+    strcat_P(littleFSFileRequest,  flag_DEVICE_CODE);
+    strcat(littleFSFileRequest, _FSSuffix);
+    strcat_P(littleFSFileRequest, PSTR("&tag="));
+    strcat(littleFSFileRequest, _latestTag.c_str());        // TODO - change latestag to char[]
+    strcat(littleFSFileRequest, ( type == GZ ? "&type=gz" : ""));
 
     LOG(F("(Updater) Updating File System"));
-    logger.setTypeTag(LOG_HIGH,TAG_STATUS);
-    PGM_P format1 = PSTR("(Updater) File system image request: %s");
-    logger.printf( format1, littleFSFileRequest.c_str() );
+    logger.printf( LOG_HIGH,TAG_STATUS, PSTR("(Updater) File system image request: %s"), littleFSFileRequest );
 
     HTTPUpdateResult ret;
 
-    if( _skipUpdates ) {
+    if( _settings->skipUpdates ) {
 
         LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
@@ -215,14 +216,12 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
     switch(ret) {
 
     case HTTP_UPDATE_FAILED: {
-            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-            PGM_P format2 = PSTR("(Updater) File system update failed - Error (%d): %s");
-            logger.printf( format2, ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+            logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
         }
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG(F("(Updater) No new file system update"));
+        LOG(PSTR("(Updater) No new file system update"));
         break;
         
     case HTTP_UPDATE_OK:
@@ -239,16 +238,21 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
-    String imageFileRequest = _assetRequestURL + PSTR("&asset=") + _deviceCode + _progSuffix + PSTR("&tag=") + _latestTag + ( type == GZ ? "&type=gz" : "");
-
+    char imageFileRequest[OTA_MAX_IMAGE_URL_LEN];
+    strcpy(imageFileRequest, _assetRequestURL);
+    strcat_P(imageFileRequest, PSTR("&asset="));
+    strcat_P(imageFileRequest,  flag_DEVICE_CODE);
+    strcat(imageFileRequest, _progSuffix);
+    strcat_P(imageFileRequest, PSTR("&tag="));
+    strcat(imageFileRequest, _latestTag.c_str());        // TODO - change latestag to char[]
+    strcat(imageFileRequest, ( type == GZ ? "&type=gz" : ""));
+    
     LOG(F("(Updater) Updating Program"));
-    logger.setTypeTag(LOG_HIGH, TAG_STATUS);
-    PGM_P format1 = PSTR("(Updater) Program image request: %s");
-    logger.printf( format1, imageFileRequest.c_str() );
+    logger.printf( LOG_HIGH, TAG_STATUS, PSTR("(Updater) Program image request: %s"), imageFileRequest );
 
     HTTPUpdateResult ret;
 
-    if( _skipUpdates ) {
+    if( _settings->skipUpdates ) {
 
         LOG(F("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
@@ -263,9 +267,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
     switch(ret) {
 
     case HTTP_UPDATE_FAILED: {
-            logger.setTypeTag(LOG_CRITICAL, TAG_STATUS);
-            PGM_P format2 = PSTR("(Updater) Program update failed - Error (%d): %s");
-            logger.printf( format2, ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
+            logger.printf( LOG_CRITICAL, TAG_STATUS, PSTR("(Updater) Program update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
         }
         break;
 
@@ -279,7 +281,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
     }
 
     if( ret == HTTP_UPDATE_OK && restart ) {
-        logger.println(LOG_CRITICAL, TAG_STATUS, F("(Updater) Rebooting in 5 sec"));
+        LOG_CRITICAL(F("(Updater) Rebooting in 5 sec"));
         delay(5000);
         ESP.restart();
 
@@ -297,19 +299,19 @@ void OTAUpdater::handle() {
 
         _doUpdateCheck = false;
 
-        logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
-        PGM_P format1 = PSTR("(Updater) Current version: %s");
-        logger.printf( format1, _buildTag.c_str() );
+        String currentTag = FPSTR(flag_BUILD_TAG);
+
+        logger.printf( LOG_NORMAL, TAG_STATUS, PSTR("(Updater) Current version: %s"), currentTag.c_str() );
 
         // Check for update
 
         String checkTag = getLatestBuild();
+
         if( checkTag == "" ) return;
 
-        format1 = PSTR("(Updater) Latest version: %s");
-        logger.printf( format1, checkTag.c_str() );
+        logger.printf( LOG_NORMAL, TAG_STATUS, PSTR("(Updater) Latest version: %s"), checkTag.c_str() );
 
-        if( checkTag == _buildTag ) {
+        if( checkTag == currentTag ) {
             LOG(F("(Updater) No new update"));  
             return;
         }

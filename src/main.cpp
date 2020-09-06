@@ -40,14 +40,13 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
 void ICACHE_FLASH_ATTR setup() {
 
-    device.begin( flag_BUILD_NO, flag_BUILD_TIMESTAMP );
+    device.begin( flag_BUILD_NO, flag_BUILD_TIMESTAMP );  // TODO - Flashstring?
     config.begin();
-    logger.begin( network.getWiFiClient(), config.settings.logConfig );    
+    logger.begin( network.getWiFiClient(), config.settings.logConfig );  
+  
     network.begin( config.settings.networkConfig );
     website.begin();
-
-    updater.setup( flag_UPDATER_SERVICE, flag_UPDATER_REPO, flag_UPDATER_USER, flag_UPDATER_TOKEN, flag_DEVICE_CODE, flag_BUILD_TAG, flag_UPDATER_INTERVAL, flag_UPDATER_SKIP );
-    updater.begin( network.getWiFiClient() );
+    updater.begin( network.getWiFiClient(), config.settings.otaConfig );
     
     elaborateBuildFlags();
     
@@ -58,8 +57,8 @@ void ICACHE_FLASH_ATTR setup() {
 
 void loop() {
 
-  updater.handle();
-  network.handle();
+  network.handle();   // TODO - Check all these are not in flash (ICACHE_FLASH_ATTR)
   website.handle();
+  updater.handle();
 
 }

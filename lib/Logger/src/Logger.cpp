@@ -70,11 +70,11 @@ TODO - Add function to check in and regsiter
 
 void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
     serialBaud = flag_MONITOR_SPEED;
-    strcpy(serviceURL,flag_LOGGER_SERVICE);
-    strcpy(serviceKey,flag_LOGGER_SERVICE_KEY);
+    strcpy_P(serviceURL,flag_LOGGER_SERVICE);
+    strcpy_P(serviceKey,flag_LOGGER_SERVICE_KEY);
     serialMode = flag_LOGGER_AS_SERIAL;
     serviceMode = flag_LOGGER_AS_SERVICE;
-    strcpy(globalTags,flag_LOGGER_GLOBAL_TAGS);
+    strcpy_P(globalTags,flag_LOGGER_GLOBAL_TAGS);
     level = logLevel(flag_LOGGER_LEVEL);
 }
 
@@ -83,31 +83,42 @@ void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
 // Public:
 
 // Sets up logger
-void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settings ) {
+void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
 #ifndef NO_LOGGING
 
     _settings = &settings;
 
-    _FullServiceURL = PSTR("http://");
-    _FullServiceURL =+ _settings->serviceURL;
-    _FullServiceURL =+ PSTR("/");
-    _FullServiceURL =+ _settings->serviceKey;
-    _FullServiceURL =+ PSTR("/tag/");
-    _FullServiceURL =+ _settings->globalTags;
-    _FullServiceURL =+ PSTR("/");
+    if( _settings->serviceMode ) {
+        _FullServiceURL = PSTR("http://");
+        _FullServiceURL =+ _settings->serviceURL;
+        _FullServiceURL =+ PSTR("/");
+        _FullServiceURL =+ _settings->serviceKey;
+        _FullServiceURL =+ PSTR("/tag/");
+        _FullServiceURL =+ _settings->globalTags;
+        _FullServiceURL =+ PSTR("/");
+    }
 
     if( _settings->serialMode ) {
         Serial.begin(_settings->serialBaud);             
-        Serial.println(F("\n\nLOG: (Logger) Starting Logging"));
+        Serial.println(F("\nLOG: (Logger) Starting Logging"));
     }
 
-    setTypeTag(LOG_HIGH, TAG_STATUS);
     PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
-    logger.printf( format1,_settings->level );
+    logger.printf( LOG_HIGH, TAG_STATUS, format1,_settings->level );
 
     if( _settings->serviceMode ) LOG_HIGH(F("(Logger) Logging Service: ON"));
     else LOG_HIGH(F("(Logger) Logging Service: OFF"));
+
+#endif
+
+}
+void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settings ) {
+
+#ifndef NO_LOGGING
+
+    _client = &client;
+    begin(settings);
 
 #endif
     
@@ -123,8 +134,10 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 
 #ifndef NO_LOGGING
 
+    if( !_settings ) begin( _preSettings );
+
     if( uint(type) >= uint(_settings->level) ) return;
-   
+
     if( _settings->serialMode ) LogToSerial(type, tag, message);
     if( _settings->serviceMode ) LogToService(type, tag, message);
 
@@ -137,6 +150,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) begin( _preSettings );
 
     char func[MAX_MESSAGE_LEN];
 
@@ -219,21 +234,9 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 }
 
 
-// Sets up Tag and Type for printf() function
-void ICACHE_FLASH_ATTR LogClient::setTypeTag( const logType type, const logTag tag ){
-
-#ifndef NO_LOGGING
-    
-    _lasttype = type;
-    _lasttag = tag;
-
-#endif
-
-}
-
 
 // Formatted log function - needs to be preceded by setTagType()
-void ICACHE_FLASH_ATTR LogClient::printf( const char * format, ... ) {
+void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * format, ... ) {
 
 #ifndef NO_LOGGING
 
@@ -259,7 +262,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const char * format, ... ) {
         delete[] buffer;
     }
 
-    println(_lasttype, _lasttag, temp);
+    println(type, tag, temp);
 
 #endif
 
@@ -382,16 +385,16 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("Platform")] = flag_PLATFORM;     // TODO - Remove
-        Device_Hardware[F("Board")] = flag_BOARD;
-        Device_Hardware[F("Framework")] = flag_FRAMEWORK;     // TODO - Remove
+        Device_Hardware[F("Platform")] = FPSTR(flag_PLATFORM);     // TODO - Remove
+        Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
+        Device_Hardware[F("Framework")] = FPSTR(flag_FRAMEWORK);     // TODO - Remove
         String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
-        Device_Env[F("Name")] = flag_DEVICE_NAME;
-        Device_Env[F("Code")] = flag_DEVICE_CODE;
-        Device_Env[F("Build")] = flag_BUILD_ENV;
-        Device_Env[F("Tag")] = flag_BUILD_TAG;
+        Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
+        Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
+        Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
+        Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
         Device_Env[F("Heap")] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject(F("Network"));

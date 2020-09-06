@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,12 @@ SOFTWARE.
 */
 
 
-
-
 #include <LittleFS.h>
 
 #include "WebManager.h"
 #include "Logger.h"
 
+// TODO - Do we want to move the web pages into separate lib?
 #include "NetworkSetttingsPage.h"
 #include "AboutPage.h"
 #include "IndexPage.h"
@@ -217,8 +216,7 @@ bool WebsiteManager::handlelittleFS() {
 
     String shortpath = URL;
 
-    logger.setTypeTag( LOG_HIGH, TAG_STATUS );
-    logger.printf("(Website) Web server - file: %s", shortpath.c_str() );
+    logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - file: %s", shortpath.c_str() );
 
     String path = "/www" + shortpath + ".gz";
 

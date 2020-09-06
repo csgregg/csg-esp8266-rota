@@ -60,16 +60,19 @@ through the settings member.
     {
         NetworkSettings networkConfig;
         LogSettings logConfig;
+        OTASettings otaConfig;
 
         // Create a compare operators
         bool operator==(const deviceSettings& other) const {
             return networkConfig == other.networkConfig
-                && logConfig == other.logConfig;
+                && logConfig == other.logConfig
+                && otaConfig == other.otaConfig;
         }
 
         bool operator!=(const deviceSettings& other) const {
             return networkConfig != other.networkConfig
-                || logConfig != other.logConfig;
+                || logConfig != other.logConfig
+                || otaConfig != other.otaConfig;
         }
 
     };
