@@ -33,23 +33,21 @@ SOFTWARE.
 #include "Logger.h"
 #include "Device.h"
 
-// TODO: Flashstrings
-
 
 void AboutPage::initializeAjax(){
 
-    LOG_HIGH("(Page) About - Initialize AJAX");
+    LOG_HIGH(F("(Page) About - Initialize AJAX"));
 
-  //  device_id.setValue(device.getChipId());
- //   build_env.setValue(flag_BUILD_ENV);
-  //  build_no.setValue(flag_BUILD_NO);
- //   build_time.setValue(flag_BUILD_TIMESTAMP);
+    device_id.setValue(device.getChipId());
+    build_env.setValue(device.getBuildEnv());
+    build_no.setValue(device.getBuildNo());
+    build_time.setValue(device.getBuildTime());
 
 }
 
 void AboutPage::handleAjax(){
 
-    LOG_HIGH("(Page) About - Handle AJAX");     
+    LOG_HIGH(F("(Page) About - Handle AJAX"));     
 
 }
 

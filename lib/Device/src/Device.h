@@ -88,9 +88,7 @@ Build flags are loaded from platformio.ini
     #endif
    
     // Physical board
-    static const char flag_PLATFORM [] PROGMEM = ESCAPEQUOTE(PLATFORM);                         // Device platform
     static const char flag_BOARD [] PROGMEM = ESCAPEQUOTE(BOARD);                               // Specific board
-    static const char flag_FRAMEWORK [] PROGMEM = ESCAPEQUOTE(FRAMEWORK);                       // Device framwork
 
     // General build details
     static const char flag_BUILD_TAG [] PROGMEM = ESCAPEQUOTE(BUILD_TAG);                       // Build tag - when used in Travis-CI comes from the GitHub Release
@@ -124,22 +122,32 @@ Build flags are loaded from platformio.ini
         public:
 
             // Need to do this because these flags seem to get defined at differnet time to the rest
-            void begin(const uint build_no, const char* build_time) {
-                _build_no = build_no;
-                strcpy(_build_time, build_time);
+            void begin() {
+                sprintf(_build_no,"%i",flag_BUILD_NO);
+                strcpy(_build_time, flag_BUILD_TIMESTAMP);
+                sprintf(_chipID, "%0X", EspClass::getChipId());
+                strcpy(_buildEnv,flag_BUILD_ENV);
             };
 
             // Get build number and time stamp
-            uint getBuildNo() {
+            char* getBuildNo() {
                 return _build_no;
             };
             char* getBuildTime() {
                 return _build_time;
             };
+            char* getChipId() {
+                return _chipID;
+            };
+            char* getBuildEnv() {
+                return _buildEnv;
+            };
 
         protected:
-            long _build_no;
+            char _build_no[5];
             char _build_time[24+1];
+            char _chipID[9];
+            char _buildEnv[32];
             
     };
 

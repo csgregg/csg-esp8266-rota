@@ -195,9 +195,6 @@ debug of code. Macros are defined for to simplifiy common usage.
             void println(const logType type, const logTag tag, const char c);
             void println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
 
-            void println(const logType type, const logTag tag, int i);
-            void println(const logType type, const logTag tag, int i, const char * file, const char * func_P, const int line );    
-
             void println(const logType type, const logTag tag, const String &message);
             void println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
@@ -214,7 +211,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             WiFiClient* _client;
             LogSettings* _settings;
 
-            String _FullServiceURL;
+            char _FullServiceURL[MAX_GLOBAL_TAG_LEN+MAX_KEY_LEN+MAX_SERVICE_LEN+16];
 
             void inline LogPrefix(const logType type, const logTag tag);
 

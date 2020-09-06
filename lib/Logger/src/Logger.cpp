@@ -90,13 +90,14 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 #ifndef NO_LOGGING
 
     if( _settings->serviceMode ) {
-        _FullServiceURL = PSTR("http://");
-        _FullServiceURL =+ _settings->serviceURL;
-        _FullServiceURL =+ PSTR("/");
-        _FullServiceURL =+ _settings->serviceKey;
-        _FullServiceURL =+ PSTR("/tag/");
-        _FullServiceURL =+ _settings->globalTags;
-        _FullServiceURL =+ PSTR("/");
+
+        strcpy_P(_FullServiceURL,PSTR("http://"));
+        strcat(_FullServiceURL, _settings->serviceURL);
+        strcat_P(_FullServiceURL, PSTR("/"));
+        strcat(_FullServiceURL, _settings->serviceKey);
+        strcat_P(_FullServiceURL, PSTR("/tag/"));
+        strcat(_FullServiceURL, _settings->globalTags);
+        strcat_P(_FullServiceURL, PSTR("/"));
     }
 
     if( _settings->serialMode ) {
@@ -173,32 +174,6 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
 }
 
-
-
-// Overload println() - int
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i ) {
-
-#ifndef NO_LOGGING
-
-    char msg[sizeof(int)*3];
-    sprintf(msg,"%i",i);
-    println(type, tag, msg);
-
-#endif
-
-}
-// Overload println() - int with context
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i, const char * file, const char * func_P, const int line ) {
-
-#ifndef NO_LOGGING
-
-    char msg[sizeof(int)*3];
-    sprintf(msg,"%i",i);
-    println(type, tag, msg, file, func_P, line);
-
-#endif
-
-}
 
 
 // Overload println() - char
@@ -374,8 +349,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 #ifndef NO_LOGGING
 
-    if( !_client->connected() ) return;             // TODO - better error handling needed
-
     char thistag[strlen(c_log_tag_descript[tag])];
     strcpy(thistag, c_log_tag_descript[tag]);
 
@@ -408,9 +381,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     JsonObject Device = jsonLog.createNestedObject("Device");
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("Platform")] = FPSTR(flag_PLATFORM);     // TODO - Remove
         Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
-        Device_Hardware[F("Framework")] = FPSTR(flag_FRAMEWORK);     // TODO - Remove
         String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
