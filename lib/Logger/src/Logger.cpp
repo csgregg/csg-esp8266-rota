@@ -85,9 +85,9 @@ void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
 // Sets up logger
 void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
-#ifndef NO_LOGGING
+     _settings = &settings;
 
-    _settings = &settings;
+#ifndef NO_LOGGING
 
     if( _settings->serviceMode ) {
         _FullServiceURL = PSTR("http://");
@@ -115,13 +115,9 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 }
 void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settings ) {
 
-#ifndef NO_LOGGING
-
     _client = &client;
     begin(settings);
-
-#endif
-    
+   
 }
 
 

@@ -37,6 +37,8 @@ debug of code. Macros are defined for to simplifiy common usage.
     #include <ESP8266WiFi.h>
 
     // Turn off all debug if necessary
+    // #define NO_LOGGING
+
     #ifndef LOGGER_LEVEL
         #define NO_LOGGING
     #endif
@@ -141,7 +143,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             char serviceURL[MAX_SERVICE_LEN] = "";
             char serviceKey[MAX_KEY_LEN] = "";
 
-            bool serialMode = true;
+            bool serialMode = false;
             bool serviceMode = false;
 
             char globalTags[MAX_GLOBAL_TAG_LEN] = "";
