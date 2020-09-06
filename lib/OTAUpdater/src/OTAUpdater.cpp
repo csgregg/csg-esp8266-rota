@@ -99,8 +99,7 @@ void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &setti
         strcat(_assetRequestURL, _settings->token);
     }
 
-
-    _doUpdateCheck = true;      // TODO - needs to be false
+    _doUpdateCheck = false;
 
     _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
 
