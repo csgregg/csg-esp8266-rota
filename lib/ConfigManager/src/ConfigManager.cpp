@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ through the settings member.
 
 #include <EEPROM.h>
 
-
 #include "ConfigManager.h"
 #include "Logger.h"
 #include "Device.h"
@@ -41,7 +40,7 @@ through the settings member.
 // Public:
 
 // Consructor
-ConfigManager::ConfigManager() {
+ICACHE_FLASH_ATTR ConfigManager::ConfigManager() {
     _IsInitialized = false;             // Don't do anything until flash is initialized   
 }
 
@@ -56,6 +55,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 		_IsInitialized = true;
 
         LOG(F("(Config) Starting Configuation Manager"));
+
     }
 
     // Check to see if it has been used before and has the right marker in place to confim
@@ -95,10 +95,9 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
     }
 
     // Default settings
-
     settings.networkConfig.setWiFiDefaults();
     settings.logConfig.setDefaults();
-
+    settings.otaConfig.setDefaults();
 
     // Save to flash
     Save(true);
@@ -158,15 +157,13 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 
 // Protected:
 
-
 // Look for the marker that was placed when the flash was set up
 bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 	startMarker markerData = EEPROM.get(0, markerData);
 
-    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
     PGM_P format = PSTR("(Config) Marker from flash: %s");
-    logger.printf( format, markerData.marker );
+    logger.printf( LOG_DETAIL, TAG_STATUS, format, markerData.marker );
     
     // Return if it is there
     return (strcmp(markerData.marker, CONFIG_START_MARKER) == 0);
@@ -178,9 +175,8 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
     startMarker markerData;
 
-    logger.setTypeTag(LOG_DETAIL, TAG_STATUS);
     PGM_P format = PSTR("(Config) Writing marker: %s");
-    logger.printf( format, markerData.marker );
+    logger.printf( LOG_DETAIL, TAG_STATUS, format, markerData.marker );
 
     strncpy(markerData.marker, CONFIG_START_MARKER, sizeof(CONFIG_START_MARKER));
 	markerData = EEPROM.put(0, markerData);

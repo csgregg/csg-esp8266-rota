@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,15 +32,14 @@ SOFTWARE.
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "Device.h"
-//#include "WebManager.h"
 
 
 // Network Settings 
 
 void StationConfig::setDefaults() {
 
-    strcpy( SSID, DEFAULT_WIFI_SSID );
-    strcpy( password, DEFAULT_WIFI_PWD );
+    strcpy_P( SSID, DEFAULT_WIFI_SSID );
+    strcpy_P( password, DEFAULT_WIFI_PWD );
     DHCPMode = DEFAULT_DHCPMODE;
     ip = uint32_t(0x00000000);
     subnet = uint32_t(0x00000000);
@@ -53,8 +52,8 @@ void StationConfig::setDefaults() {
 
 void APConfig::setDefaults() {
 
-    strcpy( SSID, flag_DEVICE_CODE );
-    strcpy( password, flag_DEVICE_CODE );        // TODO Make secure token for this
+    strcpy_P( SSID, flag_DEVICE_CODE );
+    strcpy_P( password, flag_DEVICE_CODE );        // TODO Make secure token for this
     channel = DEFAULT_CHANNEL;
     ip = uint32_t(DEFAULT_STATICIP);
     subnet = uint32_t(DEFAULT_SUBNET);
@@ -78,9 +77,6 @@ void NetworkSettings::setWiFiDefaults() {
 // Network Manager Class
 
 // Public:
-
-
-
 
 void NetworkManager::begin( NetworkSettings &settings ) {
 
@@ -154,8 +150,7 @@ bool NetworkManager::handleWiFiAP(const bool force) {
     uint connections = WiFi.softAPgetStationNum();
 
     if( connections != _APConnections ) {
-        logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
-        logger.printf("(Network) WiFi AP - Clients: %i", connections );
+        logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi AP - Clients: %i", connections );
         _APConnections = connections;
     }
 
@@ -245,8 +240,7 @@ bool NetworkManager::startWiFiAccessPoint() {
                             _networkSettings->apSettings.channel );
 
     if( ret ) {
-        logger.setTypeTag(LOG_NORMAL,TAG_STATUS);
-        logger.printf("(Network) Acess point started with SSID: %s, IP: %s", _networkSettings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
+        logger.printf( LOG_NORMAL,TAG_STATUS, "(Network) Acess point started with SSID: %s, IP: %s", _networkSettings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
 	}
     else LOG(F("(Network) WiFi Access point not started"));
 
@@ -264,8 +258,7 @@ bool NetworkManager::connectWiFiStation( const int id ) {
         return false;
     }
 
-    logger.setTypeTag( LOG_NORMAL, TAG_STATUS );
-    logger.printf("(Network) WiFi mode - Station %i: %s", id, _networkSettings->stationSettings[id].SSID );
+    logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi mode - Station %i: %s", id, _networkSettings->stationSettings[id].SSID );
 
     bool ssid = strcmp( _networkSettings->stationSettings[id].SSID, "") != 0;
 	bool password = strcmp( _networkSettings->stationSettings[id].password, "") != 0;
@@ -313,19 +306,16 @@ bool NetworkManager::connectWiFiStation( const int id ) {
     		if( logger.SerialOn() ) {
                 IPAddress ip;
 
-                logger.setTypeTag(LOG_NORMAL, TAG_STATUS);
                 ip =  _networkSettings->stationSettings[id].ip;
-                logger.printf("(Network) WiFi station connected - IP: %s", ip.toString().c_str());
-
-                logger.setTypeTag(LOG_HIGH, TAG_STATUS);
+                logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi station connected - IP: %s", ip.toString().c_str());
                 ip =  _networkSettings->stationSettings[id].subnet;           
-                logger.printf("(Network) WiFi station connected - Subnet: %s", ip.toString().c_str());
+                logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - Subnet: %s", ip.toString().c_str());
                 ip =  _networkSettings->stationSettings[id].gateway;           
-                logger.printf("(Network) WiFi station connected - Gateway: %s", ip.toString().c_str());
+                logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - Gateway: %s", ip.toString().c_str());
                 ip =  _networkSettings->stationSettings[id].dns1;
-                logger.printf("(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
+                logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
                 ip =  _networkSettings->stationSettings[id].dns2;
-                logger.printf("(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
+                logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
             }
         }
         else LOG(F("(Network) WiFi Station not connected"));

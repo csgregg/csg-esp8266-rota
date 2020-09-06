@@ -41,9 +41,9 @@ void AboutPage::initializeAjax(){
     LOG_HIGH("(Page) About - Initialize AJAX");
 
   //  device_id.setValue(device.getChipId());
-    build_env.setValue(flag_BUILD_ENV);
+ //   build_env.setValue(flag_BUILD_ENV);
   //  build_no.setValue(flag_BUILD_NO);
-    build_time.setValue(flag_BUILD_TIMESTAMP);
+ //   build_time.setValue(flag_BUILD_TIMESTAMP);
 
 }
 

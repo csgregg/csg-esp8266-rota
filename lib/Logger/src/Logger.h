@@ -55,7 +55,7 @@ debug of code. Macros are defined for to simplifiy common usage.
       #define LOG_HIGH(text) logger.println(LOG_HIGH, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
 
-      #define DEBUG_STOP() Serial.printf("(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
+      #define DEBUG_STOP() Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
       #define DEBUG_RAW(text) Serial.println(text)
   
       #define LOG_FLAG(name) logger.printFlag(LOG_NORMAL, TAG_STATUS, #name, name)      // Used to pass flag name as argument to method
@@ -101,6 +101,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define JSON_SIZE_IP 15
     #define JSON_SIZE_SSID 32
 
+
     // TODO - move enums into class
 
     // Logging level to filter logs 
@@ -131,23 +132,20 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     // Logger settings
     class LogSettings {
-        public:
 
-            LogSettings() {
-                setDefaults();
-            };
+        public:
 
             void setDefaults();
 
-            uint serialBaud;
-            char serviceURL[MAX_SERVICE_LEN];
-            char serviceKey[MAX_KEY_LEN];
+            uint serialBaud = DEFAULT_MONITOR_BAUD;
+            char serviceURL[MAX_SERVICE_LEN] = "";
+            char serviceKey[MAX_KEY_LEN] = "";
 
-            bool serialMode;
-            bool serviceMode;
+            bool serialMode = true;
+            bool serviceMode = false;
 
-            char globalTags[MAX_GLOBAL_TAG_LEN];
-            logLevel level;
+            char globalTags[MAX_GLOBAL_TAG_LEN] = "";
+            logLevel level = LOGGING_LEVEL_NORMAL;
 
              // Create a compare operators
 
@@ -183,7 +181,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             /// To set up logging
 
             void begin( WiFiClient &client, LogSettings &settings );
-            bool SerialOn() { return _settings->serialMode; };
+            void begin( LogSettings &settings );
+            bool SerialOn() { return _settings->serialMode; };              // TODO - remove
             
  
             // Log messages (with overloads)
@@ -197,12 +196,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             void println(const logType type, const logTag tag, const String &message);
             void println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
+            void printf(const logType type, const logTag tag, const char * format, ...);
             // TODO Add overload for FlashStrings
-
-            // Special for formated message
-
-            void setTypeTag(const logType type, const logTag tag);
-            void printf(const char * format, ...);
 
             // For build flags
             void printFlag(const logType type, const logTag tag, const char* name, const char* flag);
@@ -226,6 +221,8 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - moce to progmem
             const char* const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
+
+            LogSettings _preSettings;
 
         private:
 

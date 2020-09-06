@@ -41,6 +41,16 @@ binaries built by Travis-CI.
 
     #define DEFAULT_UPDATE_INTERVAL 300
 
+    // Define Sizes
+    #define OTA_MAX_SERVICE_LEN 48
+    #define OTA_MAX_REPO_LEN 24
+    #define OTA_MAX_USER_LEN 16
+    #define OTA_MAX_TOKEN_LEN 48
+    #define OTA_MAX_CODE_LEN 16
+    #define OTA_MAX_TAG_LEN 12
+    #define OTA_MAX_URL_LEN  OTA_MAX_SERVICE_LEN + OTA_MAX_REPO_LEN + OTA_MAX_USER_LEN + OTA_MAX_TOKEN_LEN + OTA_MAX_CODE_LEN + OTA_MAX_TAG_LEN + (sizeof("http://")-1) + (sizeof("?repo=")-1) + (sizeof("&user=")-1) + (sizeof("&token=")-1) + 1
+    #define OTA_MAX_IMAGE_URL_LEN OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof(_progSuffix)-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1)
+
     typedef enum : int {
         REMOTE_FS_UPDATE_FAILED,
         REMOTE_IMG_UPDATE_FAILED,
@@ -49,14 +59,50 @@ binaries built by Travis-CI.
     } t_update_result;
 
 
+
+    class OTASettings {
+        public:
+
+            void setDefaults();
+
+            char service[OTA_MAX_SERVICE_LEN] = "";
+            char repo[OTA_MAX_REPO_LEN] = "";
+            char user[OTA_MAX_USER_LEN] = "";
+            char token[OTA_MAX_TOKEN_LEN] = "";
+            uint interval = DEFAULT_UPDATE_INTERVAL;
+            bool skipUpdates = true;
+
+             // Create a compare operators
+
+            bool operator==(const OTASettings& other) const {
+                return (strcmp(service, other.service)==0)
+                    && (strcmp(repo, other.repo)==0)
+                    && (strcmp(user, other.user)==0)
+                    && (strcmp(token, other.token)==0)
+                    && interval == other.interval
+                    && skipUpdates == other.skipUpdates;
+            }
+
+            bool operator!=(const OTASettings& other) const {
+                return (strcmp(service, other.service)!=0)
+                    || (strcmp(repo, other.repo)!=0)
+                    || (strcmp(user, other.user)!=0)
+                    || (strcmp(token, other.token)!=0)
+                    || interval != other.interval
+                    || skipUpdates != other.skipUpdates;
+            }
+
+    };
+
+
+
     // Remote Updater Class
 
     class OTAUpdater {
         
         public:
             
-            void setup( const String &service, const String &repo, const String &user, const String &token, const String &deviceCode, const String &buildTag, long updateinterval, bool skip );
-            void begin( WiFiClient& client );
+            void begin( WiFiClient& client, OTASettings &settings );
 
             void handle();
 
@@ -75,19 +121,14 @@ binaries built by Travis-CI.
             const char* _progSuffix = "-Pv";
             const char* _FSSuffix = "-Fv";
 
-            String _assetRequestURL;
-            String _repoName;
-            String _deviceCode;
-            String _buildTag;
+            char _assetRequestURL[OTA_MAX_URL_LEN];    
             String _latestTag;
-            bool _skipUpdates;
 
-            WiFiClient * _client;
+            WiFiClient* _client;
+            OTASettings* _settings;
 
             Ticker _updateCheck;
             static bool _doUpdateCheck;
-
-            float _updateinterval = DEFAULT_UPDATE_INTERVAL;
 
             static void TriggerUpdateCheck();
 
