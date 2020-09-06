@@ -9,12 +9,9 @@
 
 void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
-    LOG_FLAG(flag_PLATFORM);
     LOG_FLAG(flag_BOARD);
-
     LOG_FLAG(flag_DEVICE_NAME);
     LOG_FLAG(flag_DEVICE_CODE);
-    LOG_FLAG(flag_FRAMEWORK);
     LOG_FLAG(flag_BUILD_TAG);
     LOG_FLAG(flag_BUILD_ENV);
     LOG_FLAG(flag_BUILD_NO);
@@ -40,10 +37,9 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
 
 void ICACHE_FLASH_ATTR setup() {
 
-    device.begin( flag_BUILD_NO, flag_BUILD_TIMESTAMP );  // TODO - Flashstring?
+    device.begin();
     config.begin();
     logger.begin( network.getWiFiClient(), config.settings.logConfig );  
-  
     network.begin( config.settings.networkConfig );
     website.begin();
     updater.begin( network.getWiFiClient(), config.settings.otaConfig );
