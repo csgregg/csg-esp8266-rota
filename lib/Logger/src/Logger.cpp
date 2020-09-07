@@ -349,6 +349,8 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 #ifndef NO_LOGGING
 
+    if( WiFi.status() != WL_CONNECTED ) return;
+
     char thistag[strlen(c_log_tag_descript[tag])];
     strcpy(thistag, c_log_tag_descript[tag]);
 
