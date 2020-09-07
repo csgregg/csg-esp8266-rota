@@ -3,7 +3,7 @@ import platform
 import time
 
 
-print("Extra Script (Pre): build_number_pre.py")
+print("Extra Script (Pre): local_pre.py")
 
 FILENAME_BUILDNO = '.version'
 FILENAME_VERSION_H = 'include/Version.h'
