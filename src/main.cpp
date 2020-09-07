@@ -44,7 +44,7 @@ void ICACHE_FLASH_ATTR setup() {
     website.begin();
     updater.begin( network.getWiFiClient(), config.settings.otaConfig );
     
-    elaborateBuildFlags();
+    // elaborateBuildFlags();
     
     LOG(F("(Loop) Starting"));
     

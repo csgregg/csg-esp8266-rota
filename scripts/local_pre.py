@@ -1,7 +1,7 @@
-Import("env")
 import platform
 import time
 
+Import("env")
 
 print("Extra Script (Pre): local_pre.py")
 

@@ -2,17 +2,18 @@ import os
 import gzip
 import shutil
 import requests
-
 import html
+
+Import("env")
+
+print("Extra Script (Pre): www_pre.py")
+
 
 # Install packages
 os.system("python -m pip install --upgrade pip")
 os.system("python -m pip install beautifulsoup4")
 from bs4 import BeautifulSoup
 
-Import("env")
-
-print("Extra Script (Pre): www_pre.py")
 
 # Create folders
 try:
