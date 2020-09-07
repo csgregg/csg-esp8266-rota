@@ -1,6 +1,6 @@
 Import("env")
 
-print("Extra Script (Pre): build_pre.py")
+print("Extra Script (Pre): common_pre.py")
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
