@@ -56,5 +56,6 @@ void loop() {
   network.handle();   // TODO - Check all these are not in flash (ICACHE_FLASH_ATTR)
   website.handle();
   updater.handle();
+  logger.handle();
 
 }

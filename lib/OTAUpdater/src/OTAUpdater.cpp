@@ -101,6 +101,7 @@ void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &setti
 
     _doUpdateCheck = false;
 
+    if( _updateCheck.active() ) _updateCheck.detach();
     _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
 
     LOG(F("(Updater) Starting updater"));
@@ -294,7 +295,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
 
 void OTAUpdater::handle() {
 
-    if ( WiFi.status() == WL_CONNECTED && _doUpdateCheck ) {
+    if ( _doUpdateCheck && WiFi.status() == WL_CONNECTED ) {
 
         _doUpdateCheck = false;
 

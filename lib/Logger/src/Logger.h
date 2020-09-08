@@ -35,6 +35,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define LOGGER_H
 
     #include <ESP8266WiFi.h>
+    #include <Ticker.h>
 
     // Turn off all debug if necessary
     // #define NO_LOGGING
@@ -145,6 +146,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             bool serialMode = false;
             bool serviceMode = false;
+            bool tickMode = true;
 
             char globalTags[MAX_GLOBAL_TAG_LEN] = "";
             logLevel level = LOGGING_LEVEL_NORMAL;
@@ -157,6 +159,7 @@ debug of code. Macros are defined for to simplifiy common usage.
                     && (strcmp(serviceKey, other.serviceKey)==0)
                     && serialMode == other.serialMode
                     && serviceMode == other.serviceMode
+                    && tickMode == other.tickMode
                     && (strcmp(globalTags, other.globalTags)==0)
                     && level == other.level;
             }
@@ -167,6 +170,7 @@ debug of code. Macros are defined for to simplifiy common usage.
                     || (strcmp(serviceKey, other.serviceKey)!=0)
                     || serialMode != other.serialMode
                     || serviceMode != other.serviceMode
+                    || tickMode != other.tickMode
                     || (strcmp(globalTags, other.globalTags)!=0)
                     || level != other.level;
             }
@@ -184,7 +188,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void begin( WiFiClient &client, LogSettings &settings );
             void begin( LogSettings &settings );
-            bool SerialOn() { return _settings->serialMode; };              // TODO - remove
+            bool SerialOn() { return _settings->serialMode; };
             
  
             // Log messages (with overloads)
@@ -206,6 +210,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             void printFlag(const logType type, const logTag tag, const char* name, const bool flag);
             void printFlag(const logType type, const logTag tag, const char* name, const uint flag);
 
+            void handle();
+
         protected:
 
             WiFiClient* _client;
@@ -217,9 +223,11 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void LogToSerial(const logType type, const logTag tag, const char * message);
             void LogToService(const logType type, const logTag tag, const char * message);
+            bool handleTick();      // Send minimum data to logging service
 
-            logType _lasttype;
-            logTag _lasttag;
+            Ticker _tickCheck;
+            static bool _doTick;
+            static void TriggerTick();
 
             const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - moce to progmem
             const char* const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
