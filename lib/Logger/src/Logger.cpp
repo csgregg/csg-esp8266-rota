@@ -67,6 +67,8 @@ TODO - Add function to check in and regsiter
 #include "Device.h"
 
 
+bool LogClient::_doTick = false;
+
 
 void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
     serialBaud = flag_MONITOR_SPEED;
@@ -89,7 +91,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
 #ifndef NO_LOGGING
 
-    if( _settings->serviceMode ) {
+    if( _settings->serviceMode || _settings->tickMode ) {
 
         strcpy_P(_FullServiceURL,PSTR("http://"));
         strcat(_FullServiceURL, _settings->serviceURL);
@@ -105,11 +107,16 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
         Serial.println(F("\nLOG: (Logger) Starting Logging"));
     }
 
-    PGM_P format1 = PSTR("(Logger) Logging set at level: %i");
-    logger.printf( LOG_HIGH, TAG_STATUS, format1,_settings->level );
+    logger.printf( LOG_HIGH, TAG_STATUS, PSTR("(Logger) Logging set at level: %i"), _settings->level );
 
     if( _settings->serviceMode ) LOG_HIGH(F("(Logger) Logging Service: ON"));
-    else LOG_HIGH(F("(Logger) Logging Service: OFF"));
+
+    if( _settings->tickMode ) LOG_HIGH(F("(Logger) Tick Service: ON"));
+
+    _doTick = false;
+
+    if( _tickCheck.active() ) _tickCheck.detach();
+    if( _settings->tickMode) _tickCheck.attach( 10, TriggerTick );
 
 #endif
 
@@ -438,6 +445,97 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
             else Serial.println( httpCode );
         }
+    }
+
+#endif
+
+}
+
+
+// Send tick to Loggly Service
+bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
+
+#ifndef NO_LOGGING
+
+    LOG_HIGH(F("(Logger) Logging a tick"));
+
+    if( WiFi.status() != WL_CONNECTED ) return false;
+
+    char thistag[strlen(c_log_tag_descript[TAG_STATUS])];
+    strcpy(thistag, c_log_tag_descript[TAG_STATUS]);
+
+    char thistype[strlen(c_log_type_descript[LOG_NORMAL])];
+    strcpy(thistype, c_log_type_descript[LOG_NORMAL]);
+
+    String loggingURL = _FullServiceURL + String(thistag) + "/";
+
+    // Build JSON
+    // Use https://arduinojson.org/v6/assistant/
+    
+    const size_t capacity = 3*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 244;
+    DynamicJsonDocument jsonLog(capacity);
+
+    jsonLog[F("localtime")] = millis();
+
+    JsonObject Device = jsonLog.createNestedObject("Device");
+
+        JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
+        Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
+        String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
+
+        JsonObject Device_Env = Device.createNestedObject(F("Env"));
+        Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
+        Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
+        Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
+        Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
+        Device_Env[F("Heap")] = system_get_free_heap_size();
+
+        JsonObject Device_Network = Device.createNestedObject(F("Network"));
+
+        String tempIP = WiFi.localIP().toString();
+        Device_Network[F("IPAddress")] = tempIP.c_str();
+
+        String tempSSID = WiFi.SSID();
+        Device_Network[F("SSID")] = tempSSID.c_str();
+
+    String jsonMessage;
+
+    serializeJson(jsonLog, jsonMessage);
+
+    // Start the connection
+    
+    HTTPClient http;
+
+    http.begin(*_client, loggingURL);           // TODO - add some error handling
+
+    http.setUserAgent(F("ESP8266-http-logger"));
+    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+
+    int httpCode = http.POST(jsonMessage);
+    String payload = http.getString();
+    http.end();
+
+    return (httpCode == HTTP_CODE_OK );
+
+#endif
+
+}
+
+
+void LogClient::TriggerTick() {
+    _doTick = true;
+}
+
+
+void LogClient::handle() {
+
+#ifndef NO_LOGGING
+
+    if ( _settings->tickMode && _doTick && WiFi.status() == WL_CONNECTED ) {
+
+        _doTick = false;
+
+        handleTick();
     }
 
 #endif
