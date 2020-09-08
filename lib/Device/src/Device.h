@@ -118,7 +118,7 @@ Build flags are loaded from platformio.ini
     static const bool flag_LOGGER_AS_SERIAL = atoi(ESCAPEQUOTE(LOGGER_AS_SERIAL));              // 0 - 1 to turn on serial logging
     static const bool flag_LOGGER_AS_SERVICE = atoi(ESCAPEQUOTE(LOGGER_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
     static const bool flag_LOGGER_TICKER = atoi(ESCAPEQUOTE(LOGGER_TICKER));                    // 0 - 1 to turn on ticking to Loggly service
-    static const uint flag_LOGGER_TICK_INTERNAL = atoi(ESCAPEQUOTE(LOGGER_TICK_INTERNAL));      // Internal between ticks (sec)
+    static const uint flag_LOGGER_TICK_INTERVAL = atoi(ESCAPEQUOTE(LOGGER_TICK_INTERVAL));      // Internal between ticks (sec)
     static const uint flag_LOGGER_LEVEL = atoi(ESCAPEQUOTE(LOGGER_LEVEL));                      // 0 - 3 to set log level
     static const char flag_LOGGER_SERVICE [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE);             // Path to Loggly API
     static const char flag_LOGGER_SERVICE_KEY [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE_KEY);     // Loggly API key - stored in credentials.h for privacy
