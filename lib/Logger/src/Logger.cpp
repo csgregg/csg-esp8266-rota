@@ -79,7 +79,7 @@ void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
     strcpy_P(globalTags,flag_LOGGER_GLOBAL_TAGS);
     level = logLevel(flag_LOGGER_LEVEL);
     tickMode = flag_LOGGER_TICKER;
-    tickInterval = flag_LOGGER_TICK_INTERNAL;
+    tickInterval = flag_LOGGER_TICK_INTERVAL;
 
 }
 
