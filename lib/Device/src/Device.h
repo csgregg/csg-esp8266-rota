@@ -65,6 +65,14 @@ Build flags are loaded from platformio.ini
 
     #ifndef UPDATER_INTERVAL
         #define UPDATER_INTERVAL 300
+    #endif   
+
+    #ifndef LOGGER_TICK_INTERVAL
+        #define LOGGER_TICK_INTERVAL 60
+    #endif
+
+    #ifndef LOGGER_TICKER
+        #define LOGGER_TICKER 0
     #endif
 
     #ifndef LOGGER_LEVEL
@@ -104,11 +112,13 @@ Build flags are loaded from platformio.ini
     static const char flag_UPDATER_TOKEN [] PROGMEM = ESCAPEQUOTE(UPDATER_TOKEN);               // GitHub API OAUTH token
     static const char flag_UPDATER_SERVICE [] PROGMEM = ESCAPEQUOTE(UPDATER_SERVICE);           // Path to PHP used to return GitHub assets
     static const bool flag_UPDATER_SKIP = atoi(ESCAPEQUOTE(UPDATER_SKIP));                      // Skip any updates
-    static const uint flag_UPDATER_INTERVAL = atoi(ESCAPEQUOTE(UPDATER_INTERVAL));              // Interval between update checks
+    static const uint flag_UPDATER_INTERVAL = atoi(ESCAPEQUOTE(UPDATER_INTERVAL));              // Interval between update checks (sec)
 
     // Used by Logger library
     static const bool flag_LOGGER_AS_SERIAL = atoi(ESCAPEQUOTE(LOGGER_AS_SERIAL));              // 0 - 1 to turn on serial logging
     static const bool flag_LOGGER_AS_SERVICE = atoi(ESCAPEQUOTE(LOGGER_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
+    static const bool flag_LOGGER_TICKER = atoi(ESCAPEQUOTE(LOGGER_TICKER));                    // 0 - 1 to turn on ticking to Loggly service
+    static const uint flag_LOGGER_TICK_INTERNAL = atoi(ESCAPEQUOTE(LOGGER_TICK_INTERNAL));      // Internal between ticks (sec)
     static const uint flag_LOGGER_LEVEL = atoi(ESCAPEQUOTE(LOGGER_LEVEL));                      // 0 - 3 to set log level
     static const char flag_LOGGER_SERVICE [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE);             // Path to Loggly API
     static const char flag_LOGGER_SERVICE_KEY [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE_KEY);     // Loggly API key - stored in credentials.h for privacy

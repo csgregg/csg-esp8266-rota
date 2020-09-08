@@ -44,8 +44,6 @@ debug of code. Macros are defined for to simplifiy common usage.
         #define NO_LOGGING
     #endif
 
-    #define DEFAULT_MONITOR_BAUD 115200
-
     #ifndef NO_LOGGING
 
       // Macros to simplifiy common usage
@@ -90,7 +88,8 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define MAX_SERVICE_LEN 32      // Max length of service URL
 
     // Defaults
-    #define LOGGER_DEFAULT_BAUD 115200
+    #define DEFAULT_MONITOR_BAUD 115200
+    #define DEFAULT_TICK_INTERVAL 30
 
     // Define max JSON key sizes
     #define JSON_SIZE_LOCALTIME 10
@@ -146,7 +145,9 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             bool serialMode = false;
             bool serviceMode = false;
-            bool tickMode = true;
+
+            bool tickMode = false;
+            uint tickInterval = DEFAULT_TICK_INTERVAL;
 
             char globalTags[MAX_GLOBAL_TAG_LEN] = "";
             logLevel level = LOGGING_LEVEL_NORMAL;
@@ -160,6 +161,7 @@ debug of code. Macros are defined for to simplifiy common usage.
                     && serialMode == other.serialMode
                     && serviceMode == other.serviceMode
                     && tickMode == other.tickMode
+                    && tickInterval == other.tickInterval
                     && (strcmp(globalTags, other.globalTags)==0)
                     && level == other.level;
             }
@@ -171,6 +173,7 @@ debug of code. Macros are defined for to simplifiy common usage.
                     || serialMode != other.serialMode
                     || serviceMode != other.serviceMode
                     || tickMode != other.tickMode
+                    || tickInterval != other.tickInterval
                     || (strcmp(globalTags, other.globalTags)!=0)
                     || level != other.level;
             }
