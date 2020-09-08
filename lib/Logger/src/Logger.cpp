@@ -78,6 +78,9 @@ void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
     serviceMode = flag_LOGGER_AS_SERVICE;
     strcpy_P(globalTags,flag_LOGGER_GLOBAL_TAGS);
     level = logLevel(flag_LOGGER_LEVEL);
+    tickMode = flag_LOGGER_TICKER;
+    tickInterval = flag_LOGGER_TICK_INTERNAL;
+
 }
 
 
@@ -116,7 +119,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
     _doTick = false;
 
     if( _tickCheck.active() ) _tickCheck.detach();
-    if( _settings->tickMode) _tickCheck.attach( 10, TriggerTick );
+    if( _settings->tickMode ) _tickCheck.attach( _settings->tickInterval, TriggerTick );
 
 #endif
 
@@ -512,7 +515,6 @@ bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
     int httpCode = http.POST(jsonMessage);
-    String payload = http.getString();
     http.end();
 
     return (httpCode == HTTP_CODE_OK );
