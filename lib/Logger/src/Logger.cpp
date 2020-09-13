@@ -106,6 +106,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
     }
 
     if( _settings->serialMode ) {
+        delay(1000);
         Serial.begin(_settings->serialBaud);             
         Serial.println(F("\nLOG: (Logger) Starting Logging"));
     }

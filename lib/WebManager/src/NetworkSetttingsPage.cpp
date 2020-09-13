@@ -43,7 +43,7 @@ void NetworkSettingsPage::initializeAjax(){
 
     char ipbuffer[15];
 
-    wifiAP = config.settings.networkConfig.apSettings;
+    APConfig wifiAP = config.settings.networkConfig.apSettings;
 
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);

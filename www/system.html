@@ -52,20 +52,23 @@
                         </div> 
                     </div>
                 </div>
-            </div>
 
-            <div class="w3-half">
                 <div class="w3-container w3-white w3-padding-8">
                     <div class="w3-col w3-border w3-text-dark-grey">
                         <div class="w3-row w3-padding-8">
                             <b>Reset Settings to Defaults</b>
                         </div>
-                        <div class="w3-row w3-padding-vert w3-margin-bottom">
-                            <div class="w3-container w3-cell">
-                                <button id="btn_rst_net" class="w3-button w3-blue w3-padding-small" style="width:100px;" onclick="SureDlg(this);">Network</button>
-                            </div>
+                        <div class="w3-row w3-padding-vert">
                             <div class="w3-container w3-cell">
                                 <button id="btn_rst_all" class="w3-button w3-red w3-padding-small" style="width:100px;" onclick="SureDlg(this);">All Settings</button>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-padding-horz">                            
+                            <div class="w3-container w3-cell w3-padding-8">
+                                <button id="btn_rst_net" class="w3-button w3-blue w3-padding-small" style="width:100px;" onclick="SureDlg(this);">Network</button>
+                            </div>
+                            <div class="w3-container w3-cell w3-padding-8">
+                                <button id="btn_rst_log" class="w3-button w3-blue w3-padding-small" style="width:100px;" onclick="SureDlg(this);">Logger</button>
                             </div>
                         </div> 
                         <div class="w3-row w3-padding-8 w3-small">
@@ -75,6 +78,114 @@
                 </div>
             </div>
 
+            <div class="w3-half">
+                <div class="w3-container w3-white w3-padding-8">
+                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-horz">
+                        <div class="w3-row w3-padding-vert">
+                            <b>Logger</b>
+                        </div>
+    
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="log_srl" type="checkbox" value="t">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small" style="width:60px">Serial</div>
+
+                            <div class="w3-cell w3-padding-small" style="width:90px">
+                                <input id="log_baud" class="w3-input w3-border w3-padding-small" maxlength="6" type="text">
+                            </div>
+
+                            <div class="w3-cell" style="line-height: 40px;">
+                                Baud
+                            </div>
+                        </div>
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="log_ser" type="checkbox" value="t">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Loggy service</div>
+                        </div>  
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Loggly URL
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="log_url" class="w3-input w3-border w3-padding-small" type="text">
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Loggly Token
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="log_key" class="w3-input w3-border w3-padding-small" type="text">
+                            </div>
+                        </div>
+                        
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="log_tick" type="checkbox" value="t">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Loggly ticker</div>
+                        </div>  
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Tick interval
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:75px">
+                                <input id="log_tick_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3">
+                            </div>
+                            <div class="w3-col" style="line-height: 40px;width:90px;">
+                                (Seconds)
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Global Tags
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="log_tags" class="w3-input w3-border w3-padding-small" type="text">
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Level
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <select id="log_level" class="w3-select w3-border w3-padding-small">
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="0">Off</option>
+                                    <option value="1">Critical</option>
+                                    <option value="2">Normal</option>
+                                    <option value="3">High</option>
+                                    <option value="4">Verbose</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Save / Cancel -->
+                        <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">
+                            <button id="log_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Dialogs -->

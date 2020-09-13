@@ -46,7 +46,6 @@ Describes the Network Settings web page
 
 
             StationConfig wifiStation;
-            APConfig wifiAP;
 
             // Wifi AP Elements
 
@@ -55,11 +54,11 @@ Describes the Network Settings web page
             EmbAJAXServerFunction wifi_mode_save;
 
             EmbAJAXServerFunction wifi_ap_save;
-            EmbAJAXTextInput<32> wifi_ap_ssid;
-            EmbAJAXTextInput<16> wifi_ap_pwd;
-            EmbAJAXTextInput<15> wifi_ap_ip;
-            EmbAJAXTextInput<15> wifi_ap_snet;
-            EmbAJAXTextInput<15> wifi_ap_gtwy;
+            EmbAJAXTextInput<MAX_SSID_LEN> wifi_ap_ssid;
+            EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi_ap_pwd;
+            EmbAJAXTextInput<16> wifi_ap_ip;
+            EmbAJAXTextInput<16> wifi_ap_snet;
+            EmbAJAXTextInput<16> wifi_ap_gtwy;
             EmbAJAXOptionSelect<13> wifi_ap_ch;
             const char* wifi_chs[13] = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
             
@@ -72,18 +71,18 @@ Describes the Network Settings web page
             EmbAJAXServerFunction wifi_stn_cnct;
 
             EmbAJAXVarInt wifi_stn_count;
-            EmbAJAXVarChar<32> wifi_stn_name;
+            EmbAJAXVarChar<MAX_SSID_LEN> wifi_stn_name;
             EmbAJAXVarBool wifi_stn_on;
             EmbAJAXClientFunction<int> loadWifiList;
 
-            EmbAJAXTextInput<32> wifi_stn_ssid;
-            EmbAJAXTextInput<16> wifi_stn_pwd;
+            EmbAJAXTextInput<MAX_SSID_LEN> wifi_stn_ssid;
+            EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi_stn_pwd;
             EmbAJAXCheckButton wifi_stn_dhcp;
-            EmbAJAXTextInput<15> wifi_stn_ip;
-            EmbAJAXTextInput<15> wifi_stn_snet;
-            EmbAJAXTextInput<15> wifi_stn_gtwy;
-            EmbAJAXTextInput<15> wifi_stn_dns1;
-            EmbAJAXTextInput<15> wifi_stn_dns2;
+            EmbAJAXTextInput<16> wifi_stn_ip;
+            EmbAJAXTextInput<16> wifi_stn_snet;
+            EmbAJAXTextInput<16> wifi_stn_gtwy;
+            EmbAJAXTextInput<16> wifi_stn_dns1;
+            EmbAJAXTextInput<16> wifi_stn_dns2;
             EmbAJAXMutableSpan wifi_stn_asip;
 
             EmbAJAXClientFunction<int> clearLoader;

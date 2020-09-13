@@ -40,6 +40,20 @@ void SystemPage::initializeAjax(){
 
     LOG_HIGH("(Page) Index - Initialize AJAX");
 
+    LogSettings logger = config.settings.logConfig;
+
+    char buffer[8];
+
+    log_srl.setChecked( logger.serialMode );
+    log_baud.setValue( itoa(logger.serialBaud,buffer,10) );
+    log_ser.setChecked( logger.serviceMode );
+    log_url.setValue( logger.serviceURL );
+    log_key.setValue( logger.serviceKey );
+    log_tick.setChecked( logger.tickMode );
+    log_tick_int.setValue( itoa(logger.tickInterval,buffer,10) );
+    log_tags.setValue( logger.globalTags );
+    log_level.selectOption( logger.level );
+
 }
 
 void SystemPage::handleAjax(){
@@ -53,9 +67,38 @@ void SystemPage::handleAjax(){
         config.Save();
     }
 
+    if( website.AjaxID == "btn_rst_log" ){
+        config.settings.logConfig.setDefaults();
+        config.Save();
+    }
+
     if( website.AjaxID == "btn_rst_all" ){
         config.ResetToDefaults();
     }
+
+    if( website.AjaxID == "log_save" ) saveLogConfig();
+
+}
+
+
+void SystemPage::saveLogConfig() {
+    
+    LogSettings log;
+        
+    log.serialMode = log_srl.isChecked();   
+    log.serialBaud = atoi(log_baud.value());
+    log.serviceMode = log_ser.isChecked();
+    strncpy(log.serviceURL,log_url.value(),MAX_SERVICE_LEN);
+    strncpy(log.serviceKey,log_key.value(),MAX_KEY_LEN);
+    log.tickMode = log_tick.isChecked();
+    log.tickInterval = atoi(log_tick_int.value());
+    strncpy(log.globalTags,log_tags.value(),MAX_GLOBAL_TAG_LEN);
+    log.level = (logLevel)atoi(log_level.value());
+
+    config.settings.logConfig = log;
+    config.Save();
+
+    logger.begin(config.settings.logConfig);
 
 }
 
