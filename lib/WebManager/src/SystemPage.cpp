@@ -58,7 +58,7 @@ void SystemPage::initializeAjax(){
 
 void SystemPage::handleAjax(){
 
-    LOG_HIGH("(Page) Index - Handle AJAX");
+    LOG_HIGH("(Page) System - Handle AJAX");
 
     if( website.AjaxID == "btn_restart" ) device.restart();
 
