@@ -121,6 +121,7 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     HTTPClient http;
 
     http.setReuse(false);
+    http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
     PGM_P format1 = PSTR("(Updater) URL: %s");
     logger.printf( LOG_DETAIL, TAG_STATUS, format1, _assetRequestURL );

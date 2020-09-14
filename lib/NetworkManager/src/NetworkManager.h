@@ -145,22 +145,25 @@ SOFTWARE.
     #define MAX_CHECK_SERVICE_LEN 48            // Max length of generate_204 check URL
      
 
-    class NetCheckSettings {
+    class NetCheckConfig {
 
         public:
 
             void setDefaults();
 
+            bool on = false;
             char checkService[MAX_CHECK_SERVICE_LEN] = "";      // TODO - shorten the URL
             uint interval = DEFAULT_NETCHECK_INTERVAL;
 
-            bool operator==(const NetCheckSettings& other) const {
+            bool operator==(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)==0)
+                    && on == other.on
                     && interval == other.interval;
             }
 
-            bool operator!=(const NetCheckSettings& other) const {
+            bool operator!=(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)!=0)
+                    || on != other.on
                     || interval != other.interval;
             }
 
@@ -171,7 +174,7 @@ SOFTWARE.
 
         public:
 
-            void setWiFiDefaults();
+            void setDefaults();
     
             // WiFi Mode
             WiFiMode wifiMode;          
@@ -182,6 +185,9 @@ SOFTWARE.
 
             // Access point mode settings
             APConfig apSettings;
+
+            // Connectivity checker settings
+            NetCheckConfig netCheckSettings;
         
             // Create a compare operators
             bool operator==(const NetworkSettings& other) const {
@@ -191,7 +197,8 @@ SOFTWARE.
 
                 return wifiMode == other.wifiMode
                     && stations
-                    && apSettings == other.apSettings;
+                    && apSettings == other.apSettings
+                    && netCheckSettings == other.netCheckSettings;
 
             }
 
@@ -202,7 +209,8 @@ SOFTWARE.
 
                 return wifiMode != other.wifiMode
                     || stations
-                    || apSettings != other.apSettings;
+                    || apSettings != other.apSettings
+                    || netCheckSettings != other.netCheckSettings;
 
             }
 
@@ -229,7 +237,7 @@ SOFTWARE.
             void reconnectWifi();
             bool connectWiFiStation( const int id = 0 );
             void setWiFiMode( WiFiMode mode ) {
-                _networkSettings->wifiMode = mode;
+                _settings->wifiMode = mode;
                 handleWiFi(true);
             };            
 
@@ -270,7 +278,7 @@ SOFTWARE.
                 for( int i = 0; i < MAX_SSIDS; i++ ) _stationConnected[i] = false;
             };
 
-            NetworkSettings *_networkSettings;
+            NetworkSettings *_settings;
 
             bool _APRunning;                // Is the AP running
             uint _APConnections;            // How many clients are connected
