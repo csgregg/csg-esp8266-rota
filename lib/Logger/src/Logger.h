@@ -89,7 +89,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     // Defaults
     #define DEFAULT_MONITOR_BAUD 115200
-    #define DEFAULT_TICK_INTERVAL 30
+    #define DEFAULT_TICK_INTERVAL 60
 
     // Define max JSON key sizes
     #define JSON_SIZE_LOCALTIME 10

@@ -18,7 +18,7 @@ function doRequest(id='', value='', callback='') {
        if(window.ajaxstatus) window.ajaxstatus.in();
        if(callback) callback();
     }
-    if(id) {         // Why?
+    if(id) {         // TODO - Why?
        req.onerror = req.ontimeout = function() {
           if(callback) callback();
        }
