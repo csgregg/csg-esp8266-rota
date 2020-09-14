@@ -33,6 +33,10 @@ void ICACHE_FLASH_ATTR elaborateBuildFlags() {
     LOG_FLAG(flag_LOGGER_SERVICE_KEY);
     LOG_FLAG(flag_LOGGER_GLOBAL_TAGS);
     LOG_FLAG(flag_MONITOR_SPEED);
+
+    LOG_FLAG(flag_NET_CHECKER);
+    LOG_FLAG(flag_NET_CHECK_SERVICE);
+    LOG_FLAG(flag_NET_CHECK_INTERVAL);
        
 }
 

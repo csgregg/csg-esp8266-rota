@@ -95,7 +95,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
     }
 
     // Default settings
-    settings.networkConfig.setWiFiDefaults();
+    settings.networkConfig.setDefaults();
     settings.logConfig.setDefaults();
     settings.otaConfig.setDefaults();
 

@@ -63,7 +63,7 @@ void SystemPage::handleAjax(){
     if( website.AjaxID == "btn_restart" ) device.restart();
 
     if( website.AjaxID == "btn_rst_net" ){
-        config.settings.networkConfig.setWiFiDefaults();
+        config.settings.networkConfig.setDefaults();
         config.Save();
     }
 

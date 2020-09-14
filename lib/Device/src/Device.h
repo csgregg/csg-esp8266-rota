@@ -106,6 +106,11 @@ Build flags are loaded from platformio.ini
     static const uint flag_BUILD_NO = atoi(ESCAPEQUOTE(BUILD_NUMBER));                          // Get build number
     static const char flag_BUILD_TIMESTAMP [] PROGMEM = ESCAPEQUOTE(BUILD_TIMESTAMP);           // Set build date and time
     
+    // Used by Netork Manager
+    static const bool flag_NET_CHECKER = atoi(ESCAPEQUOTE(NET_CHECKER));                        // 0 - 1 to turn on internet connectivity checker
+    static const char flag_NET_CHECK_SERVICE [] PROGMEM = ESCAPEQUOTE(NET_CHECK_SERVICE);       // Generate 204 script
+    static const uint flag_NET_CHECK_INTERVAL = atoi(ESCAPEQUOTE(NET_CHECK_INTERVAL));          // Interval between checks for internet connectivity
+
     // Used by Remote OTA library
     static const char flag_UPDATER_REPO [] PROGMEM = ESCAPEQUOTE(UPDATER_REPO);                 // GitHub reprositary holding this code
     static const char flag_UPDATER_USER [] PROGMEM = ESCAPEQUOTE(UPDATER_USER);                 // GitHub API user

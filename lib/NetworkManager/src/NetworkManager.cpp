@@ -65,20 +65,24 @@ void APConfig::setDefaults() {
 }
 
 
-void NetCheckSettings::setDefaults() {
+void NetCheckConfig::setDefaults() {
 
-    strcpy( checkService, "http://iot.greggs.org/generate_204" );       // TODO - Change to build flag
-    interval = DEFAULT_NETCHECK_INTERVAL;
+    on = flag_NET_CHECKER;
+    strcpy_P( checkService, PSTR("http://") );
+    strcat_P( checkService, flag_NET_CHECK_SERVICE );
+    interval = flag_NET_CHECK_INTERVAL;
 
 }
 
 
-void NetworkSettings::setWiFiDefaults() {
+void NetworkSettings::setDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
     lastStation = 0;
     apSettings.setDefaults();
     for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
+    netCheckSettings.setDefaults();
+
 }
 
 
@@ -99,7 +103,7 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 
     LOG(F("(Network) Starting network services"));
 
-    _networkSettings = &settings;
+    _settings = &settings;
 
     InitializeWiFi();
     InitializeNetCheck();
@@ -112,7 +116,9 @@ void NetworkManager::InitializeNetCheck() {
     _doNetCheck = false;
 
     if( _netCheck.active() ) _netCheck.detach();
-    _netCheck.attach( DEFAULT_NETCHECK_INTERVAL, TriggerNetCheck );      // TODO - Add interval to settings
+
+    if( _settings->netCheckSettings.on ) _netCheck.attach( _settings->netCheckSettings.interval, TriggerNetCheck ); 
+
 };
 
 
@@ -122,7 +128,7 @@ void NetworkManager::TriggerNetCheck() {
 
 
 void NetworkManager::HandleNetCheck() {
-
+;
     if ( _doNetCheck && WiFi.status() == WL_CONNECTED ) {
 
         _doNetCheck = false;
@@ -130,18 +136,22 @@ void NetworkManager::HandleNetCheck() {
         HTTPClient http;
 
         http.setReuse(false);
+        http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-        LOG_DETAIL( F("(Network) - Checking for internet") );
+        LOG_HIGH( F("(Network) - Checking for internet") );
 
-        http.begin( _client, "http://iot.greggs.org/generate_204" );                 // Add generate_204 url to settings
+        http.begin( _client, _settings->netCheckSettings.checkService );                 // Add generate_204 url to settings
 
         http.setUserAgent(F("ESP8266-http-Update"));                            // Change all instances to literals
         http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
         int httpresponse = http.GET();
+
         http.end();
 
         _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
+
+        LOG_HIGH( _ConnectedToInternet ? F("(Network) - Connected") : F("(Network) - Not connected") );
 
     }
 }
@@ -185,7 +195,7 @@ void NetworkManager::handleWiFi(const bool force) {
 
     if( force ) ResetConnectedStatus();
 
-    switch( _networkSettings->wifiMode ) {
+    switch( _settings->wifiMode ) {
         case WIFI_AP:
             _APRunning = handleWiFiAP(force);
             break;
@@ -238,11 +248,11 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
     bool anystns = false;
     for( int i = 0; i < MAX_SSIDS && !anystns; i++ ) {
-        if( strcmp( _networkSettings->stationSettings[i].SSID, "" ) != 0 ) anystns = true;
+        if( strcmp( _settings->stationSettings[i].SSID, "" ) != 0 ) anystns = true;
     }
     if( !anystns ) {
         LOG(F("(Network) No saved WiFi Stations"));
-        _networkSettings->wifiMode = WIFI_AP;
+        _settings->wifiMode = WIFI_AP;
         return false;
     }
 
@@ -261,7 +271,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     // Turn on AP if we have waited too long
     if(_disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
         LOG(F("(Network) - Cannot connect to WiFi. Starting AP"));
-        _networkSettings->wifiMode = WIFI_AP;
+        _settings->wifiMode = WIFI_AP;
         return false;
     }
 
@@ -269,7 +279,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     bool success = false;
     
     for( int i = 0; i < MAX_SSIDS && !success; i++ ) {
-        int trystation = (i + _networkSettings->lastStation) % MAX_SSIDS;
+        int trystation = (i + _settings->lastStation) % MAX_SSIDS;
         success = connectWiFiStation( trystation );
     }
 
@@ -281,23 +291,23 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 bool NetworkManager::startWiFiAccessPoint() {
     LOG(F("(Network) WiFi mode - Access Point"));
 
-    bool ret = WiFi.mode( _networkSettings->wifiMode );
+    bool ret = WiFi.mode( _settings->wifiMode );
 
     if( !ret ) return false;
 
-    bool ssid = strcmp( _networkSettings->apSettings.SSID, "") != 0;
-	bool password = strcmp( _networkSettings->apSettings.password, "") != 0;
+    bool ssid = strcmp( _settings->apSettings.SSID, "") != 0;
+	bool password = strcmp( _settings->apSettings.password, "") != 0;
 
-    WiFi.softAPConfig( _networkSettings->apSettings.ip, _networkSettings->apSettings.gateway, _networkSettings->apSettings.subnet );
+    WiFi.softAPConfig( _settings->apSettings.ip, _settings->apSettings.gateway, _settings->apSettings.subnet );
 
 	if( !ssid ) return false;
-    else if( !password ) ret = WiFi.softAP( _networkSettings->apSettings.SSID, NULL, _networkSettings->apSettings.channel );
-    else ret = WiFi.softAP( _networkSettings->apSettings.SSID,
-                            _networkSettings->apSettings.password,
-                            _networkSettings->apSettings.channel );
+    else if( !password ) ret = WiFi.softAP( _settings->apSettings.SSID, NULL, _settings->apSettings.channel );
+    else ret = WiFi.softAP( _settings->apSettings.SSID,
+                            _settings->apSettings.password,
+                            _settings->apSettings.channel );
 
     if( ret ) {
-        logger.printf( LOG_NORMAL,TAG_STATUS, "(Network) Acess point started with SSID: %s, IP: %s", _networkSettings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
+        logger.printf( LOG_NORMAL,TAG_STATUS, "(Network) Acess point started with SSID: %s, IP: %s", _settings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
 	}
     else LOG(F("(Network) WiFi Access point not started"));
 
@@ -310,35 +320,35 @@ bool NetworkManager::connectWiFiStation( const int id ) {
 
     ResetConnectedStatus();
 
-    if( _networkSettings->wifiMode != WIFI_STA &&_networkSettings->wifiMode != WIFI_AP_STA ) {
+    if( _settings->wifiMode != WIFI_STA &&_settings->wifiMode != WIFI_AP_STA ) {
         LOG(F("Not in station mode"));
         return false;
     }
 
-    logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi mode - Station %i: %s", id, _networkSettings->stationSettings[id].SSID );
+    logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi mode - Station %i: %s", id, _settings->stationSettings[id].SSID );
 
-    bool ssid = strcmp( _networkSettings->stationSettings[id].SSID, "") != 0;
-	bool password = strcmp( _networkSettings->stationSettings[id].password, "") != 0;
+    bool ssid = strcmp( _settings->stationSettings[id].SSID, "") != 0;
+	bool password = strcmp( _settings->stationSettings[id].password, "") != 0;
 
 	if( !ssid ) {
         LOG(F("(Network) Station has no SSID"));
         return false;
     }
 
-    bool ret = WiFi.mode( _networkSettings->wifiMode );
+    bool ret = WiFi.mode( _settings->wifiMode );
 
-    if( _networkSettings->stationSettings[id].DHCPMode == STATIC ) 
-        ret = WiFi.config( _networkSettings->stationSettings[id].ip,
-            _networkSettings->stationSettings[id].gateway,
-            _networkSettings->stationSettings[id].subnet,
-            _networkSettings->stationSettings[id].dns1,
-            _networkSettings->stationSettings[id].dns2 );
+    if( _settings->stationSettings[id].DHCPMode == STATIC ) 
+        ret = WiFi.config( _settings->stationSettings[id].ip,
+            _settings->stationSettings[id].gateway,
+            _settings->stationSettings[id].subnet,
+            _settings->stationSettings[id].dns1,
+            _settings->stationSettings[id].dns2 );
 
     WiFi.setAutoReconnect(false);
 
-    if( !password ) ret = WiFi.begin( _networkSettings->stationSettings[id].SSID );
-    else ret = WiFi.begin( _networkSettings->stationSettings[id].SSID,
-                           _networkSettings->stationSettings[id].password );
+    if( !password ) ret = WiFi.begin( _settings->stationSettings[id].SSID );
+    else ret = WiFi.begin( _settings->stationSettings[id].SSID,
+                           _settings->stationSettings[id].password );
 
 	if( ret ) {
 		int i = 0;
@@ -353,25 +363,25 @@ bool NetworkManager::connectWiFiStation( const int id ) {
         _stationConnected[id] = ret;
 
         if( ret ) {
-            _networkSettings->lastStation = id;
-            _networkSettings->stationSettings[id].ip = WiFi.localIP();
-            _networkSettings->stationSettings[id].subnet = WiFi.subnetMask();
-            _networkSettings->stationSettings[id].gateway = WiFi.gatewayIP();
-            _networkSettings->stationSettings[id].dns1 = WiFi.dnsIP(0);
-            _networkSettings->stationSettings[id].dns2 = WiFi.dnsIP(1);
+            _settings->lastStation = id;
+            _settings->stationSettings[id].ip = WiFi.localIP();
+            _settings->stationSettings[id].subnet = WiFi.subnetMask();
+            _settings->stationSettings[id].gateway = WiFi.gatewayIP();
+            _settings->stationSettings[id].dns1 = WiFi.dnsIP(0);
+            _settings->stationSettings[id].dns2 = WiFi.dnsIP(1);
 
     		if( logger.SerialOn() ) {
                 IPAddress ip;
 
-                ip =  _networkSettings->stationSettings[id].ip;
+                ip =  _settings->stationSettings[id].ip;
                 logger.printf( LOG_NORMAL, TAG_STATUS, "(Network) WiFi station connected - IP: %s", ip.toString().c_str());
-                ip =  _networkSettings->stationSettings[id].subnet;           
+                ip =  _settings->stationSettings[id].subnet;           
                 logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - Subnet: %s", ip.toString().c_str());
-                ip =  _networkSettings->stationSettings[id].gateway;           
+                ip =  _settings->stationSettings[id].gateway;           
                 logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - Gateway: %s", ip.toString().c_str());
-                ip =  _networkSettings->stationSettings[id].dns1;
+                ip =  _settings->stationSettings[id].dns1;
                 logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
-                ip =  _networkSettings->stationSettings[id].dns2;
+                ip =  _settings->stationSettings[id].dns2;
                 logger.printf( LOG_HIGH, TAG_STATUS, "(Network) WiFi station connected - DNS: %s", ip.toString().c_str());
             }
         }
