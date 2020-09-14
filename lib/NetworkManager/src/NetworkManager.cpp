@@ -28,10 +28,13 @@ SOFTWARE.
 */
 
 
+#include <ESP8266HTTPClient.h>
 
 #include "NetworkManager.h"
 #include "Logger.h"
 #include "Device.h"
+
+
 
 
 // Network Settings 
@@ -62,6 +65,14 @@ void APConfig::setDefaults() {
 }
 
 
+void NetCheckSettings::setDefaults() {
+
+    strcpy( checkService, "http://iot.greggs.org/generate_204" );       // TODO - Change to build flag
+    interval = DEFAULT_NETCHECK_INTERVAL;
+
+}
+
+
 void NetworkSettings::setWiFiDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
@@ -71,10 +82,16 @@ void NetworkSettings::setWiFiDefaults() {
 }
 
 
+
+
+
 // TODO - Flash cache
 
 
 // Network Manager Class
+
+
+bool NetworkManager::_doNetCheck = false;
 
 // Public:
 
@@ -85,9 +102,49 @@ void NetworkManager::begin( NetworkSettings &settings ) {
     _networkSettings = &settings;
 
     InitializeWiFi();
+    InitializeNetCheck();
 
 }
 
+
+void NetworkManager::InitializeNetCheck() {
+
+    _doNetCheck = false;
+
+    if( _netCheck.active() ) _netCheck.detach();
+    _netCheck.attach( DEFAULT_NETCHECK_INTERVAL, TriggerNetCheck );      // TODO - Add interval to settings
+};
+
+
+void NetworkManager::TriggerNetCheck() {
+    _doNetCheck = true;
+}
+
+
+void NetworkManager::HandleNetCheck() {
+
+    if ( _doNetCheck && WiFi.status() == WL_CONNECTED ) {
+
+        _doNetCheck = false;
+
+        HTTPClient http;
+
+        http.setReuse(false);
+
+        LOG_DETAIL( F("(Network) - Checking for internet") );
+
+        http.begin( _client, "http://iot.greggs.org/generate_204" );                 // Add generate_204 url to settings
+
+        http.setUserAgent(F("ESP8266-http-Update"));                            // Change all instances to literals
+        http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+
+        int httpresponse = http.GET();
+        http.end();
+
+        _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
+
+    }
+}
 
 
 void NetworkManager::InitializeWiFi() {
@@ -113,6 +170,7 @@ void NetworkManager::InitializeWiFi() {
 void NetworkManager::handle() {
 
     handleWiFi();
+    HandleNetCheck();
 
 }
 
@@ -327,9 +385,6 @@ bool NetworkManager::connectWiFiStation( const int id ) {
 }
 
 
-bool NetworkManager::checkInternet() {
-    return true;
-}
 
 
 // Create the global config instance
