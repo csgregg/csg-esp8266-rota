@@ -34,6 +34,7 @@ SOFTWARE.
     #define NETWORK_MANAGER_H
 
     #include <ESP8266WiFi.h>
+    #include <Ticker.h>
 
     #define MAX_SSIDS 3
     #define MAX_SSID_LEN 32
@@ -42,41 +43,10 @@ SOFTWARE.
     enum DHCPModes { DHCP, STATIC };         // DHCP Mode
 
 
-    // AP network config
-    class APConfig {
-
-        public:
-
-            void setDefaults();
-
-            char SSID[MAX_SSID_LEN];
-            char password[MAX_PASSWORD_LEN];
-            byte channel;
-            IPAddress ip;
-            IPAddress subnet;
-            IPAddress gateway;
-
-            // Create a compare operators
-
-            bool operator==(const APConfig& other) const {
-                return (strcmp(SSID, other.SSID)==0)
-                    && (strcmp(password, other.password)==0)
-                    && channel == other.channel
-                    && ip == other.ip
-                    && subnet == other.subnet
-                    && gateway == other.gateway;
-            }
-
-            bool operator!=(const APConfig& other) const {
-                return (strcmp(SSID, other.SSID)!=0)
-                    || (strcmp(password, other.password)!=0)
-                    || channel != other.channel
-                    || ip != other.ip
-                    || subnet != other.subnet
-                    || gateway != other.gateway;
-            }
-
-    };
+    // Defaults
+    #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
+    #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
+    #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
 
     // Client network config
@@ -124,10 +94,6 @@ SOFTWARE.
     };
 
 
-    #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
-    #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
-    #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
-
     // Defaults
     #define DEFAULT_WIFIMODE WIFI_STA           // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
@@ -136,12 +102,75 @@ SOFTWARE.
     #define DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
     #define DEFAULT_CHANNEL 11
 
- 
+
+    // AP network config
+    class APConfig {
+
+        public:
+
+            void setDefaults();
+
+            char SSID[MAX_SSID_LEN];
+            char password[MAX_PASSWORD_LEN];
+            byte channel;
+            IPAddress ip;
+            IPAddress subnet;
+            IPAddress gateway;
+
+            // Create a compare operators
+
+            bool operator==(const APConfig& other) const {
+                return (strcmp(SSID, other.SSID)==0)
+                    && (strcmp(password, other.password)==0)
+                    && channel == other.channel
+                    && ip == other.ip
+                    && subnet == other.subnet
+                    && gateway == other.gateway;
+            }
+
+            bool operator!=(const APConfig& other) const {
+                return (strcmp(SSID, other.SSID)!=0)
+                    || (strcmp(password, other.password)!=0)
+                    || channel != other.channel
+                    || ip != other.ip
+                    || subnet != other.subnet
+                    || gateway != other.gateway;
+            }
+
+    };
+
+
+    // Defaults
+    #define DEFAULT_NETCHECK_INTERVAL 10        // 10 sec - how often to check connected to the internet
+    #define MAX_CHECK_SERVICE_LEN 48            // Max length of generate_204 check URL
+     
+
+    class NetCheckSettings {
+
+        public:
+
+            void setDefaults();
+
+            char checkService[MAX_CHECK_SERVICE_LEN] = "";      // TODO - shorten the URL
+            uint interval = DEFAULT_NETCHECK_INTERVAL;
+
+            bool operator==(const NetCheckSettings& other) const {
+                return (strcmp(checkService, other.checkService)==0)
+                    && interval == other.interval;
+            }
+
+            bool operator!=(const NetCheckSettings& other) const {
+                return (strcmp(checkService, other.checkService)!=0)
+                    || interval != other.interval;
+            }
+
+    };
+
 
     class NetworkSettings {
 
         public:
-            // TODO - Add constructor to set deflauts and use build flags for defaults
+
             void setWiFiDefaults();
     
             // WiFi Mode
@@ -235,8 +264,6 @@ SOFTWARE.
 
             bool handleWiFiAP(const bool force = false);
 
-            bool checkInternet();
-
             void InitializeWiFi();
 
             void ResetConnectedStatus() {
@@ -256,6 +283,13 @@ SOFTWARE.
 
             bool _stationConnected[MAX_SSIDS];   
 
+            Ticker _netCheck;
+            static bool _doNetCheck;
+
+            static void TriggerNetCheck();
+            void InitializeNetCheck();
+            void HandleNetCheck();
+            bool NetCheck();
    
         private:
 
