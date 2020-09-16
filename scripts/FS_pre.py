@@ -7,7 +7,7 @@ from SCons.Script import COMMAND_LINE_TARGETS
 
 Import("env")
 
-print("Extra Script (Pre): www_pre.py")
+print("Extra Script (Pre): FS_pre.py")
 
 
 def checkFSBuild():
