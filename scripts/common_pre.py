@@ -1,5 +1,5 @@
 Import("env")
-print(env.Dump())
+print(env.ParseFlags(env['ENV']))
 
 print("Extra Script (Pre): common_pre.py")
 
