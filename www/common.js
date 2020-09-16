@@ -1,4 +1,23 @@
 
+
+
+function SureDlg(action) {
+   sureAction = action.id;
+   document.getElementById('sure_dlg').style.display='block';
+}
+
+
+
+function reloadPage() {
+   location.reload();
+}
+
+
+function clearLoader() {
+   document.getElementById('loader').style.display='none';
+}
+
+
 ///// Menu functions /////
 
 

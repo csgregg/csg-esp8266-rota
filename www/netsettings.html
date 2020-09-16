@@ -39,7 +39,7 @@
                     <div class="w3-row">
                         <div class="w3-cell">
                             <label class="switch">
-                                <input id="wifi_mode_stn" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('wifi_sure').style.display='block'">
+                                <input id="wifi_mode_stn" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('sure_dlg').style.display='block'">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -49,7 +49,7 @@
                     <div class="w3-row">
                         <div class="w3-cell">
                             <label class="switch">
-                                <input id="wifi_mode_ap" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('wifi_sure').style.display='block'">
+                                <input id="wifi_mode_ap" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('sure_dlg').style.display='block'">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -163,7 +163,7 @@
 
                             <!-- Save / Cancel -->
                             <div class="w3-container w3-padding-vert">
-                                <button id="wifi_ap_save" onclick="sureAction=this.id;document.getElementById('wifi_sure').style.display='block'" type="button" class="w3-button w3-green">Save</button>
+                                <button id="wifi_ap_save" onclick="sureAction=this.id;document.getElementById('sure_dlg').style.display='block'" type="button" class="w3-button w3-green">Save</button>
                             </div>
                         </div>        
                     </form>
@@ -257,38 +257,12 @@
 
                     <!-- Save / Cancel -->
                     <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                        <button id="wifi_stn_save" onclick="sureAction=this.id;document.getElementById('wifi_sure').style.display='block'" type="button" class="w3-button w3-green">Save</button>
+                        <button id="wifi_stn_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                         <button id="wifi_stn_cancel" onclick="document.getElementById('wifi_stn_dlg').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
-                        <button id="wifi_stn_forget" onclick="sureAction=this.id;document.getElementById('wifi_sure').style.display='block'" type="button" class="w3-button w3-blue w3-right">Forget</button>
+                        <button id="wifi_stn_forget" onclick="SureDlg(this);" type="button" class="w3-button w3-blue w3-right">Forget</button>
                     </div>
                 </form>
             </div>  
-        </div>
-
-        <!-- Are you sure dialog -->
-
-        <div id="wifi_sure" class="w3-modal">
-            <div class="w3-modal-content w3-card-4" style="max-width:200px">
-                <div class="w3-container w3-center w3-padding-8">
-                    <b>Are you sure?</b>
-                </div>
-                <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                    <button onclick="wifiSureYes()" type="button" class="w3-button w3-green" style="width:70px">Yes</button>
-                    <button onclick="wifiSureNo()" type="button" class="w3-button w3-red w3-right" style="width:70px">No</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Spinner -->
-
-        <div id="loader" class="w3-modal">
-            <div class="w3-modal-content">
-                <div class="w3-container w3-grey">
-                    <div class="w3-cell w3-cell-middle">
-                        <div class="loader"></div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- !FOOTER! -->

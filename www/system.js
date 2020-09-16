@@ -10,20 +10,11 @@ function updatePage() {
 }
 
 
-function reloadPage() {
-    location.reload();
-}
-
 
 function SureNo() {
     document.getElementById('sure_dlg').style.display='none';
-}
+ }
 
-
-function SureDlg(action) {
-    sureAction = action.id;
-    document.getElementById('sure_dlg').style.display='block';
-}
 
 
 function SureYes() {
@@ -58,6 +49,4 @@ function SureYes() {
 
 }
 
-function clearLoader(value) {
-    document.getElementById('loader').style.display='none';
-}
+

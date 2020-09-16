@@ -15,6 +15,8 @@ var availWifiStn;
 var wifiListRevision = 0;
 
 
+
+
 function addWifiStationEntry() {
     //console.log("Add station")
 
@@ -124,7 +126,7 @@ function connectWifi(value) {
     wifiStationID = value;
     sureAction="wifi_stn_cnct";
 
-    document.getElementById('wifi_sure').style.display='block';
+    document.getElementById('sure_dlg').style.display='block';
 }
 
 function addWifiDialog() {
@@ -143,8 +145,8 @@ function addWifiDialog() {
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
 
-function wifiSureNo() {
-    document.getElementById('wifi_sure').style.display='none';
+function SureNo() {
+    document.getElementById('sure_dlg').style.display='none';
 
     if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
         document.getElementById(sureAction).checked = !document.getElementById(sureAction).checked;
@@ -152,9 +154,9 @@ function wifiSureNo() {
     }
 }
 
-function wifiSureYes() {
+function SureYes() {
 
-    document.getElementById('wifi_sure').style.display='block';
+    document.getElementById('sure_dlg').style.display='block';
     document.getElementById('loader').style.display='block';
 
     var x = document.getElementById('wifi_stn_ssid');
@@ -227,7 +229,7 @@ function wifiSureYes() {
     }
 
     // Hide dialog
-    document.getElementById('wifi_sure').style.display='none';
+    document.getElementById('sure_dlg').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='none';
 }
 
