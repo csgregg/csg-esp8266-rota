@@ -3,10 +3,22 @@ import gzip
 import shutil
 import requests
 import html
+from SCons.Script import COMMAND_LINE_TARGETS        
 
 Import("env")
 
 print("Extra Script (Pre): www_pre.py")
+
+
+def checkFSBuild():
+
+  for t in COMMAND_LINE_TARGETS:
+    if type(t) == str:
+      name = t
+    else:
+      name = t.name
+    return bool("buildfs")
+  return False
 
 
 # Install packages
@@ -15,27 +27,28 @@ os.system("python -m pip install beautifulsoup4")
 from bs4 import BeautifulSoup
 
 
-# Create folders
-try:
-    os.mkdir("data")
-except OSError:
-    print ("<data> folder exists")
-else:
-    print ("Created <data> folder")
+def createfolders():
+    # Create folders
+    try:
+        os.mkdir("data")
+    except OSError:
+        print ("<data> folder exists")
+    else:
+        print ("Created <data> folder")
 
-try:
-    os.mkdir("data/tmp")
-except OSError:
-    print ("<data/tmp> folder exists")
-else:
-    print ("Created <data/tmp> folder")
+    try:
+        os.mkdir("data/tmp")
+    except OSError:
+        print ("<data/tmp> folder exists")
+    else:
+        print ("Created <data/tmp> folder")
 
-try:
-    os.mkdir("data/www")
-except OSError:
-    print ("<data/www> folder exists")
-else:
-    print ("Created <data/www> folder")
+    try:
+        os.mkdir("data/www")
+    except OSError:
+        print ("<data/www> folder exists")
+    else:
+        print ("Created <data/www> folder")
 
 
 # Get build flags values from env
@@ -111,15 +124,21 @@ def deflate_www(sourceFolder,destFolder):
 
 
 
-# Clean up
-deletecontents("data/tmp")
-deletecontents("data")
+if checkFSBuild():
 
-# Parse and replace 
-parse_replace("www","data/tmp")
+    # Clean up
+    createfolders()
+    deletecontents("data/tmp")
+    deletecontents("data")
 
-# Deflate www into data
-deflate_www("data/tmp","data/www")
+    # Parse and replace 
+    parse_replace("www","data/tmp")
 
-# Clean up
-shutil.rmtree("data/tmp")
+    # Deflate www into data
+    deflate_www("data/tmp","data/www")
+
+    # Clean up
+    shutil.rmtree("data/tmp")
+
+else:
+    print("Not FS Build")
