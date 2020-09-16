@@ -1,5 +1,19 @@
 Import("env")
-print(env.ParseFlags(env['ENV']))
+from SCons.Script import COMMAND_LINE_TARGETS        
+
+
+def dump_targets():
+
+  for t in COMMAND_LINE_TARGETS:
+    if type(t) == str:
+      name = t
+    else:
+      name = t.name
+    return bool("buildfs")
+  return False
+
+
+print(dump_targets())
 
 print("Extra Script (Pre): common_pre.py")
 
