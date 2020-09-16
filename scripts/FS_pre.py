@@ -62,7 +62,37 @@ def minify_file(file,url):
     with open(file, 'wb') as f_out:
         f_out.write(minified)
 
-            
+
+def replaceBuildFlags(file):
+    with open(file, 'rb') as f_in:
+        content = f_in.read()
+        soup = BeautifulSoup(content, 'html')
+        for item in soup.find_all(class_='pre-replace'):
+            if str(item) != 'None':
+                flag = item.string
+                print('Replacing ' + flag + ' with \'' + get_build_flag_value(flag) + '\' in ' + file )
+                item.replaceWith(get_build_flag_value(flag))
+        f_in.close()
+    with open(file,'w') as f_out:
+        f_out.write(str(soup))
+
+
+
+def includeHTMLfile(file,sources):
+    with open(file, 'rb') as f_in:
+        content = f_in.read()
+        soup = BeautifulSoup(content, 'html')
+        for item in soup.find_all(class_='pre-include'):
+            if str(item) != 'None':
+                includeFile = item['src']
+                print('Including ' + includeFile + ' in ' + file )
+                with open(os.path.join(sources, includeFile), 'r') as f_incl:
+                    newcontent = f_incl.read()
+                    item.replaceWith(BeautifulSoup(newcontent, 'html'))
+        f_in.close()
+    with open(file,'w') as f_out:
+        f_out.write(str(soup))
+
 
 # Replace build codes and move to new folder
 def parse_replace(sourceFolder,destFolder):
@@ -74,16 +104,9 @@ def parse_replace(sourceFolder,destFolder):
     for folder, subfolders, files in os.walk(p_sourceFolder):
         for file in files:
             if file.endswith('.html'):
-                with open(os.path.join(folder, file), 'rb') as f_in:
-                    content = f_in.read()
-                    soup = BeautifulSoup(content, 'html')
-                    for item in soup.find_all(class_='bs-replace'):
-                        if str(item) != 'None':
-                            flag = item.string
-                            print('Replacing ' + flag + ' with \'' + get_build_flag_value(flag) + '\' in ' + file )
-                            item.string = get_build_flag_value(flag) 
-                with open(os.path.join(p_destFolder,file),'w') as f_out:
-                    f_out.write(str(soup))
+                shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
+                includeHTMLfile(os.path.join(p_destFolder,file),folder)
+                replaceBuildFlags(os.path.join(p_destFolder,file))
                 minify_file(os.path.join(p_destFolder,file),'https://html-minifier.com/raw')
             elif file.endswith('.js'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
@@ -91,7 +114,7 @@ def parse_replace(sourceFolder,destFolder):
             elif file.endswith('.css'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
                 minify_file(os.path.join(p_destFolder,file),'https://cssminifier.com/raw')
-            else:
+            elif not file.endswith('.html'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
 
 
@@ -138,7 +161,7 @@ if checkFSBuild():
     deflate_www("data/tmp","data/www")
 
     # Clean up
-    shutil.rmtree("data/tmp")
+ #   shutil.rmtree("data/tmp")
 
 else:
     print("Not FS Build")
