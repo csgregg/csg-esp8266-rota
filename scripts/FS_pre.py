@@ -21,11 +21,6 @@ def checkFSBuild():
   return False
 
 
-# Install packages
-os.system("python -m pip install --upgrade pip")
-os.system("python -m pip install beautifulsoup4")
-from bs4 import BeautifulSoup
-
 
 def createfolders():
     # Create folders
@@ -125,6 +120,11 @@ def deflate_www(sourceFolder,destFolder):
 
 
 if checkFSBuild():
+
+    # Install packages
+    os.system("python -m pip install --upgrade pip")
+    os.system("python -m pip install beautifulsoup4")
+    from bs4 import BeautifulSoup
 
     # Clean up
     createfolders()
