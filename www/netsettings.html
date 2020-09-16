@@ -1,28 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<title>Network Settings</title>
-<meta http-equiv="Content-Type" content="text/html;">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="w3.css">
-<link rel="stylesheet" href="device.css">
-
+<head>
+    <title>About</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="w3.css">
+    <link rel="stylesheet" href="common.css">
+    <script src="netsettings.js"></script>
+    <script src="common.js"></script>
+</head>
 
 <body class="w3-light-grey">
-
+    
     <!-- !HEADER! -->
-    <!-- Top container -->
-    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
-        <button class="w3-bar-item w3-margin-left w3-button w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">Menu</button>
-        <span class="w3-bar-item w3-display-right">
-            <span class="bs-replace">DEVICE_NAME</span>
-        </span>
-        <div class="w3-display-left w3-padding-small">
-            <span id="EmbAjaxStatusInd" class="statusdot" style="background:green"></span>
-        </div>
-    </div>
-
-    <!-- !MENU! -->
-    <div w3-include-html="menu.html"></div>
+    <span class="pre-include" src="header.htm"></span>
 
     <!-- !PAGE CONTENT! -->
     <div class="w3-main w3-white" style="margin-left:300px;margin-top:43px;">
@@ -301,15 +292,11 @@
         </div>
 
         <!-- !FOOTER! -->
-        <div w3-include-html="footer.html"></div>
+        <span class="pre-include" src="footer.htm"></span>
 
         <!-- End page content -->
     </div>
 
-    <script src="netsettings.js"></script>
-    <script src="menu.js"></script>
-    <script src="device.js"></script>
-    
 </body>
 
 </html>

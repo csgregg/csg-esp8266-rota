@@ -1,3 +1,53 @@
+
+///// Menu functions /////
+
+
+function menu_highlight() {
+   var mySidebar = document.getElementById("mySidebar");
+   // Highlight menu item
+   var url = window.location.pathname;
+   var hrefname = "a[href='" + url.substring(url.lastIndexOf('/')+1) + "']";   
+   if( hrefname == "a[href='']" ) hrefname = "a[href='index.html']";     // Catch error if / 
+   var menuitem = mySidebar.querySelectorAll(hrefname);
+   menuitem[0].classList.add("w3-blue");
+}
+
+
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function menu_open() {
+   // Get the Sidebar
+   var mySidebar = document.getElementById("mySidebar");
+
+   menu_highlight();
+
+   // Get the DIV with overlay effect
+   var overlayBg = document.getElementById("myOverlay");
+
+   if (mySidebar.style.display == 'block') {
+       mySidebar.style.display = 'none';
+       overlayBg.style.display = "none";
+   } else {
+       mySidebar.style.display = 'block';
+       overlayBg.style.display = "block";
+   }
+   doPoll();
+}
+
+// Close the sidebar with the close button
+function menu_close() {
+   // Get the Sidebar
+   var mySidebar = document.getElementById("mySidebar");
+
+   // Get the DIV with overlay effect
+   var overlayBg = document.getElementById("myOverlay");
+   
+   mySidebar.style.display = "none";
+   overlayBg.style.display = "none";
+}
+
+
+
 ///// Ajax Handlers /////
 
 /*
@@ -31,6 +81,7 @@ function doRequest(id='', value='', callback='') {
 
 }
 
+
 function doUpdates(response) {
    // console.log('Status - doUpdates');
 
@@ -60,6 +111,7 @@ function doUpdates(response) {
    }
 }
 
+
 ///// Status Indicator /////
 
 class embajaxstatus {
@@ -80,45 +132,11 @@ class embajaxstatus {
 } 
 
 
-
 function doPoll() {
    // console.log("Status - Poll");
-   highlight_menu();
+   menu_highlight();
    doRequest('','',updatePage);
 }
-
-
-
-///// Include HTML Files /////
-
-function includeHTML() {
-   var z, i, elmnt, file, xhttp;
-   /* Loop through a collection of all HTML elements: */
-   z = document.getElementsByTagName("*");
-   for (i = 0; i < z.length; i++) {
-     elmnt = z[i];
-     /*search for elements with a certain atrribute:*/
-     file = elmnt.getAttribute("w3-include-html");
-     if (file) {
-       /* Make an HTTP request using the attribute value as the file name: */
-       xhttp = new XMLHttpRequest();
-       xhttp.onreadystatechange = function() {
-         if (this.readyState == 4) {
-           if (this.status == 200) {elmnt.innerHTML = this.responseText;}
-           if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
-           /* Remove the attribute, and call this function once more: */
-           elmnt.removeAttribute("w3-include-html");
-           includeHTML();
-         }
-       }
-       xhttp.open("GET", file, true);
-       xhttp.send();
-       /* Exit the function: */
-       return;
-     }
-   }
- }
-
 
  
 ///// Page initialization /////
@@ -126,6 +144,5 @@ function includeHTML() {
 // Each page should have updatePage and initPage JS functions
 
 ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
-includeHTML();
 initPage();
 setInterval(doPoll,1000);
