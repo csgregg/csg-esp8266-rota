@@ -1,4 +1,5 @@
 Import("env")
+dump("env")
 
 print("Extra Script (Pre): common_pre.py")
 
