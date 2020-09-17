@@ -44,8 +44,6 @@ Describes the About web page
             void (*handler)();
             void (*init)();
 
-            EmbAJAXVarBool int_status;
-
             EmbAJAXBase* page_elements[1] = {
       
                 &int_status,
@@ -53,8 +51,6 @@ Describes the About web page
             };
 
            IndexPage( void(*phandler)(), void(*pinit)() ) : 
-
-                int_status("int_status"),
 
                 ajax(page_elements, "")
                 {

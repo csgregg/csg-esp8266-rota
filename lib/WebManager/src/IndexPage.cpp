@@ -47,8 +47,6 @@ void IndexPage::handleAjax(){
 
     LOG_HIGH("(Page) Index - Handle AJAX");     
 
-    int_status.setValue(network.isInternetConnected());
-
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_INDEXPAGE)

@@ -73,8 +73,6 @@ void NetworkSettingsPage::handleAjax(){
 
     LOG_HIGH("(Page) Network Settings - Handle AJAX");
 
-    int_status.setValue(network.isInternetConnected());
-
     if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
     
     // Used to send back basic details of a specific wifi station
