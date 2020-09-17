@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="w3.css">
     <link rel="stylesheet" href="common.css">
-    <script src="netsettings.js"></script>
-    <script src="common.js"></script>
 </head>
 
 <body class="w3-light-grey">
@@ -257,20 +255,23 @@
 
                     <!-- Save / Cancel -->
                     <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                        <button id="wifi_stn_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                        <button id="wifi_stn_save" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                         <button id="wifi_stn_cancel" onclick="document.getElementById('wifi_stn_dlg').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
-                        <button id="wifi_stn_forget" onclick="SureDlg(this);" type="button" class="w3-button w3-blue w3-right">Forget</button>
+                        <button id="wifi_stn_forget" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" class="w3-button w3-blue w3-right">Forget</button>
                     </div>
                 </form>
             </div>  
         </div>
-
-        <!-- !FOOTER! -->
-        <span class="pre-include" src="footer.htm"></span>
-
-        <!-- End page content -->
     </div>
 
+    <!-- !FOOTER! -->
+    <span class="pre-include" src="footer.htm"></span>
+
+    <!-- End page content -->
+
+    <script src="netsettings.js"></script>
+    <script src="common.js"></script>
+    
 </body>
 
 </html>

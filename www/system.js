@@ -19,8 +19,8 @@ function SureNo() {
 
 function SureYes() {
 
-    document.getElementById('sure_dlg').style.display='none';
-    document.getElementById('loader').style.display='block';
+    clearSure();
+    showLoader();
 
     if( sureAction == "log_save" ) {
 

@@ -107,15 +107,32 @@ def parse_replace(sourceFolder,destFolder):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
                 includeHTMLfile(os.path.join(p_destFolder,file),folder)
                 replaceBuildFlags(os.path.join(p_destFolder,file))
-                minify_file(os.path.join(p_destFolder,file),'https://html-minifier.com/raw')
             elif file.endswith('.js'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
-                minify_file(os.path.join(p_destFolder,file),'https://javascript-minifier.com/raw')
             elif file.endswith('.css'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
-                minify_file(os.path.join(p_destFolder,file),'https://cssminifier.com/raw')
             elif not file.endswith('.html'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
+
+
+
+# Replace build codes and move to new folder
+def minify_files(sourceFolder):
+    p_sourceFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + sourceFolder)
+
+    print('Minifying files in ' + p_sourceFolder)
+
+    for folder, subfolders, files in os.walk(p_sourceFolder):
+        for file in files:
+            if file.endswith('.html'):
+                minify_file(os.path.join(p_sourceFolder,file),'https://html-minifier.com/raw')
+            elif file.endswith('.js'):
+                minify_file(os.path.join(p_sourceFolder,file),'https://javascript-minifier.com/raw')
+            elif file.endswith('.css'):
+                minify_file(os.path.join(p_sourceFolder,file),'https://cssminifier.com/raw')
+
+
+
 
 
 # Empty folder
@@ -157,11 +174,14 @@ if checkFSBuild():
     # Parse and replace 
     parse_replace("www","data/tmp")
 
+    # Minify files
+    minify_files("data/tmp")
+
     # Deflate www into data
     deflate_www("data/tmp","data/www")
 
     # Clean up
- #   shutil.rmtree("data/tmp")
+    shutil.rmtree("data/tmp")
 
 else:
     print("Not FS Build")

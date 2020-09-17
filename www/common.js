@@ -17,6 +17,18 @@ function clearLoader() {
    document.getElementById('loader').style.display='none';
 }
 
+function showLoader() {
+   document.getElementById('loader').style.display='block';
+}
+
+
+function clearSure() {
+   document.getElementById('sure_dlg').style.display='none';
+}
+
+function showSure() {
+   document.getElementById('sure_dlg').style.display='block';
+}
 
 ///// Menu functions /////
 
@@ -153,7 +165,6 @@ class embajaxstatus {
 
 function doPoll() {
    // console.log("Status - Poll");
-   menu_highlight();
    doRequest('','',updatePage);
 }
 
@@ -164,4 +175,6 @@ function doPoll() {
 
 ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
 initPage();
+menu_highlight();
+doPoll();
 setInterval(doPoll,1000);
