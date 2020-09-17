@@ -50,8 +50,6 @@ void AboutPage::handleAjax(){
 
     LOG_HIGH(F("(Page) About - Handle AJAX"));    
 
-    int_status.setValue(network.isInternetConnected()); 
-
 }
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_ABOUTPAGE)

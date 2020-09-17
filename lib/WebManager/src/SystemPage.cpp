@@ -61,8 +61,6 @@ void SystemPage::handleAjax(){
 
     LOG_HIGH("(Page) System - Handle AJAX");
 
-    int_status.setValue(network.isInternetConnected());
-
     if( website.AjaxID == "btn_restart" ) device.restart();
 
     if( website.AjaxID == "btn_rst_net" ){

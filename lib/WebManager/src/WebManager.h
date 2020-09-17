@@ -115,8 +115,10 @@ SOFTWARE.
         }
         void updateFromDriverArg(const char* argname) override;
         void setValue(T value) {
-            _value = value;     // TODO - used strcpy
-            setChanged();
+            if ( _value != value ) {
+                _value = value;
+                setChanged();            
+            };
         }
         int intValue() const;
         bool boolValue() const;
@@ -186,6 +188,7 @@ SOFTWARE.
 
     };
 
+    extern EmbAJAXVarBool int_status;
     extern WebsiteManager website;        // Declaring the global instance
 
 #endif

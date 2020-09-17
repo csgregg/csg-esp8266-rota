@@ -171,6 +171,7 @@ void WebsiteManager::begin() {
             if( _server.method() == HTTP_POST ) {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
+                        int_status.setValue(network.isInternetConnected());
                         (webpages[i].handler)();
                         break;
                     }    
@@ -246,5 +247,6 @@ bool WebsiteManager::handlelittleFS() {
 // Create the global config instance
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_WEBSITE_MANAGER)
+    EmbAJAXVarBool int_status("int_status");
     WebsiteManager website;
 #endif
