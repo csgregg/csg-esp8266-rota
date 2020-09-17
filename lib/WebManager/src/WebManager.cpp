@@ -171,7 +171,8 @@ void WebsiteManager::begin() {
             if( _server.method() == HTTP_POST ) {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
-                        int_status.setValue(network.isInternetConnected());
+//                        int_status.setValue(network.isInternetConnected());       // TODO
+                        int_status.setValue( (millis()/1000) % 10 < 5 );
                         (webpages[i].handler)();
                         break;
                     }    
