@@ -47,6 +47,8 @@ Describes the Network Settings web page
 
             StationConfig wifiStation;
 
+            EmbAJAXVarBool int_status;
+
             // Wifi AP Elements
 
             EmbAJAXCheckButton wifi_mode_ap;
@@ -87,7 +89,9 @@ Describes the Network Settings web page
 
             EmbAJAXClientFunction<int> clearLoader;
 
-            EmbAJAXBase* page_elements[28] = {
+            EmbAJAXBase* page_elements[29] = {
+
+            &int_status,
 
             &wifi_mode_ap,
             &wifi_mode_stn,
@@ -127,6 +131,8 @@ Describes the Network Settings web page
 
             NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
 
+                int_status("int_status"),
+                
                 wifi_mode_ap("wifi_mode_ap",""),
                 wifi_mode_stn("wifi_mode_stn",""),
                 wifi_mode_save("wifi_mode_save"),

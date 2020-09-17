@@ -47,6 +47,8 @@ Describes the About web page
 
             LogSettings loggerSettings;
 
+            EmbAJAXVarBool int_status;
+
             EmbAJAXServerFunction btn_restart;
             EmbAJAXServerFunction btn_rst_net;
             EmbAJAXServerFunction btn_rst_all;
@@ -63,8 +65,10 @@ Describes the About web page
             const char* logLevels[5] = {"0","1","2","3","4"};
             EmbAJAXServerFunction log_save;
 
-            EmbAJAXBase* page_elements[13] = {
+            EmbAJAXBase* page_elements[14] = {
       
+                &int_status,
+
                 &btn_restart,
                 &btn_rst_net,
                 &btn_rst_all,
@@ -84,6 +88,8 @@ Describes the About web page
 
            SystemPage( void(*phandler)(), void(*pinit)() ) : 
 
+                int_status("int_status"),
+                
                 btn_restart("btn_restart"),
                 btn_rst_net("btn_rst_net"),
                 btn_rst_all("btn_rst_all"),

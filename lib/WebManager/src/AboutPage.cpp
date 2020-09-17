@@ -32,6 +32,7 @@ SOFTWARE.
 #include "AboutPage.h"
 #include "Logger.h"
 #include "Device.h"
+#include "NetworkManager.h"
 
 
 void AboutPage::initializeAjax(){
@@ -47,7 +48,9 @@ void AboutPage::initializeAjax(){
 
 void AboutPage::handleAjax(){
 
-    LOG_HIGH(F("(Page) About - Handle AJAX"));     
+    LOG_HIGH(F("(Page) About - Handle AJAX"));    
+
+    int_status.setValue(network.isInternetConnected()); 
 
 }
 

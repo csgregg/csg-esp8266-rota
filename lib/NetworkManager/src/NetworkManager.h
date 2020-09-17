@@ -244,7 +244,8 @@ SOFTWARE.
             void handle();
 
             bool isAPRunning( ) { return _APRunning; };
-            bool isInternetConnected( ) { return _ConnectedToInternet; };
+            bool isInternetConnected( ) { 
+                return _APRunning; };
 
             WiFiClient& getWiFiClient() { return _client; };
           
