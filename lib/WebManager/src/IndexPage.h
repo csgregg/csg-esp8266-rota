@@ -44,17 +44,17 @@ Describes the About web page
             void (*handler)();
             void (*init)();
 
-            EmbAJAXMutableSpan element;
+            EmbAJAXVarBool int_status;
 
             EmbAJAXBase* page_elements[1] = {
       
-                &element
+                &int_status,
 
             };
 
            IndexPage( void(*phandler)(), void(*pinit)() ) : 
 
-                element("element"),
+                int_status("int_status"),
 
                 ajax(page_elements, "")
                 {

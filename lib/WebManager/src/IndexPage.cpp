@@ -32,6 +32,7 @@ SOFTWARE.
 #include "IndexPage.h"
 #include "Logger.h"
 #include "Device.h"
+#include "NetworkManager.h"
 
 // TODO: Flashstrings
 
@@ -45,6 +46,8 @@ void IndexPage::initializeAjax(){
 void IndexPage::handleAjax(){
 
     LOG_HIGH("(Page) Index - Handle AJAX");     
+
+    int_status.setValue(network.isInternetConnected());
 
 }
 

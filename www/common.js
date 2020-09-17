@@ -109,7 +109,6 @@ function doRequest(id='', value='', callback='') {
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
 
-
 }
 
 
@@ -140,6 +139,8 @@ function doUpdates(response) {
          }
       }
    }
+
+   window.ajaxstatus.intStatus(); 
 }
 
 
@@ -160,12 +161,17 @@ class embajaxstatus {
        }
        this.misses=0;
    }
+   intStatus() {
+      if( this.misses <= 1 ) this.div.style.background = (window.int_status == 't') ? "green" : "orange";
+   }
 } 
+
 
 
 function doPoll() {
    // console.log("Status - Poll");
-   doRequest('','',updatePage);
+   
+   doRequest('','',updatePage);  
 }
 
  

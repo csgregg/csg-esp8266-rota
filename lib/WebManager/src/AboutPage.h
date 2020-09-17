@@ -44,13 +44,17 @@ Describes the About web page
             void (*handler)();
             void (*init)();
 
+            EmbAJAXVarBool int_status;
+
             EmbAJAXMutableSpan device_id;
             EmbAJAXMutableSpan build_env;
             EmbAJAXMutableSpan build_no;
             EmbAJAXMutableSpan build_time;
 
-            EmbAJAXBase* page_elements[4] = {
+            EmbAJAXBase* page_elements[5] = {
       
+                &int_status,
+
                 &device_id,
                 &build_env,
                 &build_no,
@@ -60,6 +64,8 @@ Describes the About web page
 
            AboutPage( void(*phandler)(), void(*pinit)() ) : 
 
+                int_status("int_status"),
+                
                 device_id("device_id"),
                 build_env("build_env"),
                 build_no("build_no"),

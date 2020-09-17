@@ -17,7 +17,7 @@ def checkFSBuild():
       name = t
     else:
       name = t.name
-    return bool("buildfs")
+    return bool(name == "buildfs" or name == "uploadfs")
   return False
 
 
