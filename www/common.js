@@ -27,9 +27,7 @@ function clearSure() {
    document.getElementById('sure_dlg').style.display='none';
 }
 
-function showSure() {
-   document.getElementById('sure_dlg').style.display='block';
-}
+
 
 ///// Menu functions /////
 
@@ -98,12 +96,8 @@ function doRequest(id='', value='', callback='') {
        // console.log(req.responseText);
        doUpdates(JSON.parse(req.responseText));
        if(window.ajaxstatus) window.ajaxstatus.in();
+       if( id=='' ) window.ajaxstatus.intStatus();
        if(callback) callback();
-    }
-    if(id) {         // TODO - Why?
-       req.onerror = req.ontimeout = function() {
-          if(callback) callback();
-       }
     }
     // console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
@@ -111,6 +105,26 @@ function doRequest(id='', value='', callback='') {
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
 
 }
+
+
+function doRequestWait(id='', value='') {
+   // console.log('Status - doRequestWait');
+
+   var req = new XMLHttpRequest();
+    req.timeout = 10000;
+    if(window.ajaxstatus) window.ajaxstatus.out();
+    req.onload = function() {
+       if(window.ajaxstatus) window.ajaxstatus.in();
+    }
+    // console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
+    req.open('POST', document.URL, true);
+    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
+
+}
+
+
+
 
 
 function doUpdates(response) {
@@ -139,9 +153,7 @@ function doUpdates(response) {
             window[updates[i].id](changes[j][1]);
          }
       }
-   }
-
-   window.ajaxstatus.intStatus(); 
+   } 
 }
 
 
@@ -166,10 +178,10 @@ class embajaxstatus {
       if( this.misses <= 1 ) {
          switch(Number(window.net_status)) {
             case 2:        // WiFi connected, no internet
-              this.div.style.background = "darkblue";
+              this.div.style.background = "orange";
               break;
             case -2:        // WiFi connected, no internet
-              this.div.style.background = "rgb(0, 0, 100)";
+              this.div.style.background = "yellow";
               break;
             case 1:        // Connected to internet
               this.div.style.background = "green";
@@ -178,7 +190,7 @@ class embajaxstatus {
               this.div.style.background = "rgb(0, 100, 0)";
               break;
             default:       // Network disconnected
-              this.div.style.background = "orange";
+              this.div.style.background = "red";
           }
       }
    }

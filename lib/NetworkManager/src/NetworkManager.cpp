@@ -67,8 +67,7 @@ void APConfig::setDefaults() {
 
 void NetCheckConfig::setDefaults() {
 
-    on = flag_NET_CHECKER;
-    strcpy_P( checkService, PSTR("http://") );
+    mode = flag_NET_CHECKER;
     strcat_P( checkService, flag_NET_CHECK_SERVICE );
     interval = flag_NET_CHECK_INTERVAL;
 
@@ -111,13 +110,23 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 }
 
 
+NetworkStatus NetworkManager::getNetworkStatus() {
+    if( _ConnectedToInternet ) return NetworkStatus::NORMAL;
+    else {
+        if( isStationConnected() || _APConnections > 0 ) return NetworkStatus::NOINETERNET;
+        else return NetworkStatus::DISCONNECTED;
+    }
+};
+
+
 void NetworkManager::InitializeNetCheck() {
 
-    _doNetCheck = false;
+    _doNetCheck = _settings->netCheckSettings.mode;
+    _ConnectedToInternet = false;
 
     if( _netCheck.active() ) _netCheck.detach();
 
-    if( _settings->netCheckSettings.on ) _netCheck.attach( _settings->netCheckSettings.interval, TriggerNetCheck ); 
+    if( _settings->netCheckSettings.mode ) _netCheck.attach( _settings->netCheckSettings.interval, TriggerNetCheck ); 
 
 };
 
@@ -128,28 +137,36 @@ void NetworkManager::TriggerNetCheck() {
 
 
 void NetworkManager::HandleNetCheck() {
-;
-    if ( _doNetCheck && WiFi.status() == WL_CONNECTED ) {
+
+    if ( _doNetCheck ) {
 
         _doNetCheck = false;
+        _ConnectedToInternet = false;
 
-        HTTPClient http;
+        if( WiFi.status() == WL_CONNECTED ) {
 
-        http.setReuse(false);
-        http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+            HTTPClient http;
 
-        LOG_HIGH( F("(Network) - Checking for internet") );
+            http.setReuse(false);
+            http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-        http.begin( _client, _settings->netCheckSettings.checkService );                 // Add generate_204 url to settings
+            LOG_HIGH( F("(Network) - Checking for internet") );
 
-        http.setUserAgent(F("ESP8266-http-Update"));                            // Change all instances to literals
-        http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+            char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];
+            strcpy_P(url,PSTR("http://"));
+            strcat(url, _settings->netCheckSettings.checkService);
 
-        int httpresponse = http.GET();
+            http.begin( _client, url );
 
-        http.end();
+            http.setUserAgent(F("ESP8266-http-Update"));                            // Change all instances to literals
+            http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
-        _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
+            int httpresponse = http.GET();
+
+            http.end();
+
+            _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
+        }
 
         LOG_HIGH( _ConnectedToInternet ? F("(Network) - Connected") : F("(Network) - Not connected") );
 

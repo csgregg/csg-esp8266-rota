@@ -87,7 +87,12 @@ Describes the Network Settings web page
 
             EmbAJAXClientFunction<int> clearLoader;
 
-            EmbAJAXBase* page_elements[29] = {
+            EmbAJAXCheckButton net_ck_mode;
+            EmbAJAXTextInput<4> net_ck_int;
+            EmbAJAXTextInput<MAX_CHECK_SERVICE_LEN> net_ck_url;
+            EmbAJAXServerFunction net_ck_save;
+
+            EmbAJAXBase* page_elements[33] = {
 
             &net_status,
 
@@ -124,6 +129,11 @@ Describes the Network Settings web page
             &wifi_stn_asip,
 
             &clearLoader,
+
+            &net_ck_mode,
+            &net_ck_int,
+            &net_ck_url,
+            &net_ck_save,
 
             };
 
@@ -163,6 +173,11 @@ Describes the Network Settings web page
 
                 clearLoader("clearLoader"),
 
+                net_ck_mode("net_ck_mode",""),
+                net_ck_int("net_ck_int"),
+                net_ck_url("net_ck_url"),
+                net_ck_save("net_ck_save"),
+
                 ajax(page_elements, "")
                 {
                     URL = "/netsettings.html";
@@ -185,6 +200,8 @@ Describes the Network Settings web page
             void setWifiMode(WiFiMode mode);
 
             void saveAP();
+
+            void saveNetCheck();
 
             char* getAssignedIP() {
                 static char ip[15];

@@ -37,7 +37,7 @@
                     <div class="w3-row">
                         <div class="w3-cell">
                             <label class="switch">
-                                <input id="wifi_mode_stn" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('sure_dlg').style.display='block'">
+                                <input id="wifi_mode_stn" type="checkbox" value="t" onchange="SureDlg(this);">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -47,7 +47,7 @@
                     <div class="w3-row">
                         <div class="w3-cell">
                             <label class="switch">
-                                <input id="wifi_mode_ap" type="checkbox" value="t" onchange="sureAction=this.id;document.getElementById('sure_dlg').style.display='block'">
+                                <input id="wifi_mode_ap" type="checkbox" value="t" onchange="SureDlg(this);">
                                 <span class="slider round"></span>
                             </label>
                         </div>
@@ -169,6 +169,60 @@
             </div>
         </div>
 
+
+        <div class="w3-row w3-margin-bottom">
+            <div class="w3-half">
+
+                <!-- Connectivity -->
+                <div class="w3-container w3-white w3-padding-8">
+                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
+                        <div class="w3-row w3-padding-vert">
+                            <b>Connectivity</b>
+                        </div>
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="net_ck_mode" type="checkbox" value="t">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Check</div>
+                        </div>  
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Check interval
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:75px">
+                                <input id="net_ck_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3">
+                            </div>
+                            <div class="w3-col" style="line-height: 40px;width:90px;">
+                                (Seconds)
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Check URL
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="net_ck_url" class="w3-input w3-border w3-padding-small" type="text">
+                            </div>
+                        </div>
+
+                        <!-- Save -->
+                        <div class="w3-container w3-padding-8">
+                            <button id="net_ck_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                        </div>
+                        
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+
+
         <!-- Dialogs -->
     
         <!-- Wifi Network Dialog -->
@@ -204,7 +258,7 @@
                         </div>
                     
                         <!-- DHCP Detais -->
-                        <div id="wifi_stn_statics" class="w3-container w3-animate-opacity" style="padding:0!important; display: block;">
+                        <div id="wifi_stn_statics" class="w3-container w3-animate-opacity" style="padding:0!important; display: none;">
                     
                             <div class="w3-row w3-left">
                                 <div class="w3-col" style="line-height: 35px;width:80px;">

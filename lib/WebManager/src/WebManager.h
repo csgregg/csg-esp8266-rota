@@ -185,6 +185,8 @@ SOFTWARE.
             void handleAJAX();                                      // process AJAX request
             void InitAJAX();                                        // process page initialization
 
+            int statusFlash = 1;
+
 
         private:
 

@@ -171,7 +171,10 @@ void WebsiteManager::begin() {
             if( _server.method() == HTTP_POST ) {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
-                        net_status.setValue( ((millis()/1000) % (STATUS_FLASH_SPEED*2) < STATUS_FLASH_SPEED) ? network.getNetworkStatus() : -network.getNetworkStatus() );
+                        if( AjaxID == "" ) {
+                            net_status.setValue( network.getNetworkStatus() * statusFlash );
+                            statusFlash = statusFlash * -1;
+                        }
                         (webpages[i].handler)();
                         break;
                     }    

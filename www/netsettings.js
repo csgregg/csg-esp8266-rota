@@ -123,9 +123,7 @@ function connectWifi(value) {
     // console.log('Status - Connect Wifi Station');
 
     wifiStationID = value;
-    sureAction="wifi_stn_cnct";
-
-    showSure();
+    showDlg(document.getElementById('wifi_stn_cnct'));
 }
 
 function addWifiDialog() {
@@ -170,40 +168,43 @@ function SureYes() {
     if( sureAction == "wifi_stn_save") {
 
         // Send updates data
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_pwd');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_dhcp');
-        doRequest(x.id, x.checked ? 't' : 'f');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
         x = document.getElementById('wifi_stn_ip');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_snet');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_gtwy');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_dns1');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_stn_dns2');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
 
         // Send Save command then reload list
         doRequest(sureAction,wifiStationID);
+
+        // Hide dialog
+        document.getElementById('wifi_stn_dlg').style.display='none';
     }
 
     if( sureAction == "wifi_ap_save" ) {
         // Send updates data
         x = document.getElementById('wifi_ap_ssid');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_pwd');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_ip');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_snet');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_gtwy');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_ch');
-        doRequest(x.id, x.value);
+        doRequestWait(x.id, x.value);
 
         // Send Save command and update AP
         doRequest(sureAction,1);
@@ -228,6 +229,18 @@ function SureYes() {
         doRequest('wifi_mode_save',mode);
     }
 
-    // Hide dialog
-    document.getElementById('wifi_stn_dlg').style.display='none';
+    if( sureAction == "net_ck_save" ) {
+
+        // Send updates data
+        x = document.getElementById('net_ck_mode');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        x = document.getElementById('net_ck_int');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('net_ck_url');
+        doRequestWait(x.id, x.value);
+        
+        // Send Save command and update AP
+        doRequest(sureAction,1,clearLoader);
+    }
+
 }

@@ -147,7 +147,7 @@ SOFTWARE.
 
     // Defaults
     #define DEFAULT_NETCHECK_INTERVAL 10        // 10 sec - how often to check connected to the internet
-    #define MAX_CHECK_SERVICE_LEN 48            // Max length of generate_204 check URL
+    #define MAX_CHECK_SERVICE_LEN 36            // Max length of generate_204 check URL
      
 
     class NetCheckConfig {
@@ -156,19 +156,19 @@ SOFTWARE.
 
             void setDefaults();
 
-            bool on = false;
+            bool mode = false;
             char checkService[MAX_CHECK_SERVICE_LEN] = "";      // TODO - shorten the URL
             uint interval = DEFAULT_NETCHECK_INTERVAL;
 
             bool operator==(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)==0)
-                    && on == other.on
+                    && mode == other.mode
                     && interval == other.interval;
             }
 
             bool operator!=(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)!=0)
-                    || on != other.on
+                    || mode != other.mode
                     || interval != other.interval;
             }
 
@@ -266,13 +266,9 @@ SOFTWARE.
 
             bool isAPRunning( ) { return _APRunning; };
             bool isInternetConnected( ) { return _ConnectedToInternet; };
-            NetworkStatus getNetworkStatus() {
-                if( _ConnectedToInternet ) return NetworkStatus::NORMAL;
-                else {
-                    if( isStationConnected() ) return NetworkStatus::NOINETERNET;
-                    else return NetworkStatus::DISCONNECTED;
-                }
-            };
+            NetworkStatus getNetworkStatus();
+
+            void setNetChecker() { InitializeNetCheck(); }
 
 
         protected:

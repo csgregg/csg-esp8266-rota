@@ -41,29 +41,36 @@ void NetworkSettingsPage::initializeAjax(){
 
     LOG_HIGH("(Page) Network Settings - Initialize AJAX");
 
-    char ipbuffer[15];
+    char buffer[16];
 
+    wifi_stn_asip.setValue(getAssignedIP());
+
+    // AP Settings
     APConfig wifiAP = config.settings.networkConfig.apSettings;
 
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
-    wifi_ap_ip.setValue(ipbuffer);
+    sprintf(buffer, "%i.%i.%i.%i", wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
+    wifi_ap_ip.setValue(buffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
-    wifi_ap_snet.setValue(ipbuffer);
+    sprintf(buffer, "%i.%i.%i.%i", wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
+    wifi_ap_snet.setValue(buffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
-    wifi_ap_gtwy.setValue(ipbuffer);
+    sprintf(buffer, "%i.%i.%i.%i", wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
+    wifi_ap_gtwy.setValue(buffer);
 
     wifi_ap_ch.selectOption(wifiAP.channel);
 
-    wifi_stn_asip.setValue(getAssignedIP());
+    WiFiMode wifimode =  config.settings.networkConfig.wifiMode;
+    wifi_mode_stn.setChecked( wifimode == WIFI_STA || wifimode == WIFI_AP_STA );
+    wifi_mode_ap.setChecked( wifimode == WIFI_AP || wifimode == WIFI_AP_STA );
 
-    WiFiMode mode =  config.settings.networkConfig.wifiMode;
-    wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
-    wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
+    // Connectivity Settings
+    NetCheckConfig netStatus = config.settings.networkConfig.netCheckSettings;
+    net_ck_mode.setChecked( netStatus.mode );
+    net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
+    net_ck_url.setValue( netStatus.checkService );
 
 }
 
@@ -88,6 +95,8 @@ void NetworkSettingsPage::handleAjax(){
     if( website.AjaxID == "wifi_mode_save" ) setWifiMode((WiFiMode)website.AjaxValue.toInt()); 
 
     if( website.AjaxID == "wifi_ap_save" ) saveAP();
+
+    if( website.AjaxID == "net_ck_save" ) saveNetCheck();
 
 }
 
@@ -154,6 +163,22 @@ void NetworkSettingsPage::saveAP() {
     config.Save();
 
     network.reconnectWifi();
+}
+
+
+void NetworkSettingsPage::saveNetCheck() {
+
+    NetCheckConfig netStatus;
+
+    netStatus.mode = net_ck_mode.isChecked();
+    strncpy(netStatus.checkService,net_ck_url.value(),MAX_CHECK_SERVICE_LEN);
+    netStatus.interval = atoi(net_ck_int.value());
+
+    config.settings.networkConfig.netCheckSettings = netStatus;
+    config.Save();
+
+    network.setNetChecker();
+
 }
 
 
