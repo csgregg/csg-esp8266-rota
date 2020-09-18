@@ -4,6 +4,7 @@ var sureAction;
 
 
 function initPage() {
+    doRequest("","");
 }
 
 function updatePage() {

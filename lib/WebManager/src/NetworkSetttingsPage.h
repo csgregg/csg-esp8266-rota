@@ -89,7 +89,7 @@ Describes the Network Settings web page
 
             EmbAJAXBase* page_elements[29] = {
 
-            &int_status,
+            &net_status,
 
             &wifi_mode_ap,
             &wifi_mode_stn,

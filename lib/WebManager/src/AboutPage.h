@@ -51,7 +51,7 @@ Describes the About web page
 
             EmbAJAXBase* page_elements[5] = {
       
-                &int_status,
+                &net_status,
 
                 &device_id,
                 &build_env,

@@ -46,7 +46,7 @@ Describes the About web page
 
             EmbAJAXBase* page_elements[1] = {
       
-                &int_status,
+                &net_status,
 
             };
 

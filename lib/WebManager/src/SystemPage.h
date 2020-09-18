@@ -65,7 +65,7 @@ Describes the About web page
 
             EmbAJAXBase* page_elements[14] = {
       
-                &int_status,
+                &net_status,
 
                 &btn_restart,
                 &btn_rst_net,
