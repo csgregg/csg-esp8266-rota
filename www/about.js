@@ -1,6 +1,8 @@
 
 function initPage() {
     // console.log("Status - Initialize Page");
+
+    doRequest("","");
 }
 
 function updatePage() {

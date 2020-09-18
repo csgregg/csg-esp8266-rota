@@ -1,5 +1,6 @@
 
-
+// Available station
+var net_status;
 
 function SureDlg(action) {
    sureAction = action.id;
@@ -162,7 +163,24 @@ class embajaxstatus {
        this.misses=0;
    }
    intStatus() {
-      if( this.misses <= 1 ) this.div.style.background = (window.int_status == 't') ? "green" : "orange";
+      if( this.misses <= 1 ) {
+         switch(Number(window.net_status)) {
+            case 2:        // WiFi connected, no internet
+              this.div.style.background = "darkblue";
+              break;
+            case -2:        // WiFi connected, no internet
+              this.div.style.background = "rgb(0, 0, 100)";
+              break;
+            case 1:        // Connected to internet
+              this.div.style.background = "green";
+              break;
+            case -1:        // Connected to internet
+              this.div.style.background = "rgb(0, 100, 0)";
+              break;
+            default:       // Network disconnected
+              this.div.style.background = "orange";
+          }
+      }
    }
 } 
 
@@ -182,5 +200,4 @@ function doPoll() {
 ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
 initPage();
 menu_highlight();
-doPoll();
 setInterval(doPoll,1000);

@@ -42,6 +42,11 @@ SOFTWARE.
 
     enum DHCPModes { DHCP, STATIC };         // DHCP Mode
 
+    enum NetworkStatus : uint {
+        DISCONNECTED = 0,
+        NORMAL = 1,                         // Connected to WiFi and internet
+        NOINETERNET = 2
+    };
 
     // Defaults
     #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
@@ -243,9 +248,6 @@ SOFTWARE.
 
             void handle();
 
-            bool isAPRunning( ) { return _APRunning; };
-            bool isInternetConnected( ) { return _ConnectedToInternet; };
-
             WiFiClient& getWiFiClient() { return _client; };
           
             uint getConnectedStation() {
@@ -260,6 +262,16 @@ SOFTWARE.
                     if( _stationConnected[i] ) return true;
                 }
                 return false;
+            };
+
+            bool isAPRunning( ) { return _APRunning; };
+            bool isInternetConnected( ) { return _ConnectedToInternet; };
+            NetworkStatus getNetworkStatus() {
+                if( _ConnectedToInternet ) return NetworkStatus::NORMAL;
+                else {
+                    if( isStationConnected() ) return NetworkStatus::NOINETERNET;
+                    else return NetworkStatus::DISCONNECTED;
+                }
             };
 
 

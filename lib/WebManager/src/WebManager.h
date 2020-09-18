@@ -155,6 +155,9 @@ SOFTWARE.
 
     ////////// Website Manager Class ///////////
 
+
+    #define STATUS_FLASH_SPEED  4       // 4 Seconds
+
     class WebsiteManager {
 
         public:
@@ -188,7 +191,7 @@ SOFTWARE.
 
     };
 
-    extern EmbAJAXVarBool int_status;
+    extern EmbAJAXVarInt net_status;
     extern WebsiteManager website;        // Declaring the global instance
 
 #endif
