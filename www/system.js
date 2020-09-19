@@ -45,6 +45,8 @@ function SureYes() {
         doRequestWait(x.id, x.value);
 
         doRequest(sureAction,1,clearLoader);
+
+        disableSave("log_save","log_cancel");
     }
     else {
         doRequest(sureAction,1,reloadPage);

@@ -77,14 +77,14 @@
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="log_srl" type="checkbox" value="t">
+                                    <input id="log_srl" type="checkbox" value="t" onchange="enableSave('log_save','log_cancel');">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
                             <div class="w3-cell w3-padding-small" style="width:60px">Serial</div>
 
                             <div class="w3-cell w3-padding-small" style="width:90px">
-                                <input id="log_baud" class="w3-input w3-border w3-padding-small" maxlength="6" type="text">
+                                <input id="log_baud" class="w3-input w3-border w3-padding-small" maxlength="6" type="text" onchange="enableSave('log_save','log_cancel');">
                             </div>
 
                             <div class="w3-cell" style="line-height: 40px;">
@@ -95,7 +95,7 @@
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="log_ser" type="checkbox" value="t">
+                                    <input id="log_ser" type="checkbox" value="t" onchange="enableSave('log_save','log_cancel');">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -107,7 +107,7 @@
                                 Loggly URL
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="log_url" class="w3-input w3-border w3-padding-small" type="text">
+                                <input id="log_url" class="w3-input w3-border w3-padding-small" type="text" maxlength="31" onchange="enableSave('log_save','log_cancel');">
                             </div>
                         </div>
 
@@ -116,14 +116,14 @@
                                 Loggly Token
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="log_key" class="w3-input w3-border w3-padding-small" type="text">
+                                <input id="log_key" class="w3-input w3-border w3-padding-small" type="text" maxlength="39" onchange="enableSave('log_save','log_cancel');">
                             </div>
                         </div>
                         
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="log_tick" type="checkbox" value="t">
+                                    <input id="log_tick" type="checkbox" value="t" onchange="enableSave('log_save'),'log_cancel';">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -135,7 +135,7 @@
                                 Tick interval
                             </div>
                             <div class="w3-col w3-padding-small" style="width:75px">
-                                <input id="log_tick_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3">
+                                <input id="log_tick_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3" onchange="enableSave('log_save','log_cancel');">
                             </div>
                             <div class="w3-col" style="line-height: 40px;width:90px;">
                                 (Seconds)
@@ -147,7 +147,7 @@
                                 Global Tags
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="log_tags" class="w3-input w3-border w3-padding-small" type="text">
+                                <input id="log_tags" class="w3-input w3-border w3-padding-small" type="text" maxlength="7" onchange="enableSave('log_save','log_cancel');">
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@
                                 Level
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <select id="log_level" class="w3-select w3-border w3-padding-small">
+                                <select id="log_level" class="w3-select w3-border w3-padding-small" onchange="enableSave('log_save','log_cancel');">
                                     <option value="" disabled selected>Select</option>
                                     <option value="0">Off</option>
                                     <option value="1">Critical</option>
@@ -167,9 +167,10 @@
                             </div>
                         </div>
 
-                        <!-- Save -->
+                        <!-- Save / Cancel -->
                         <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">
-                            <button id="log_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                            <button id="log_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green w3-disabled">Save</button>
+                            <button id="log_cancel" onclick="disableSave('log_save','log_cancel');doRequestAll();" type="button" class="w3-button w3-red w3-disabled">Cancel</button>
                         </div>
                         
                     </div>
