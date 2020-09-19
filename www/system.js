@@ -46,7 +46,9 @@ function SureYes() {
 
         doRequest(sureAction,1,clearLoader);
     }
-    else doRequest(sureAction,1,reloadPage);
+    else {
+        doRequest(sureAction,1,reloadPage);
+    }
 
 }
 

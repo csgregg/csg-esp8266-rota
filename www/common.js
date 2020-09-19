@@ -7,12 +7,9 @@ function SureDlg(action) {
    document.getElementById('sure_dlg').style.display='block';
 }
 
-
-
 function reloadPage() {
    location.reload();
 }
-
 
 function clearLoader() {
    document.getElementById('loader').style.display='none';
@@ -21,7 +18,6 @@ function clearLoader() {
 function showLoader() {
    document.getElementById('loader').style.display='block';
 }
-
 
 function clearSure() {
    document.getElementById('sure_dlg').style.display='none';
@@ -88,22 +84,25 @@ var serverrevision = 0;
 
 function doRequest(id='', value='', callback='') {
    // console.log('Status - doRequest');
-   
+
    var req = new XMLHttpRequest();
-    req.timeout = 10000;
+    req.timeout = 5000;
     if(window.ajaxstatus) window.ajaxstatus.out();
-    req.onload = function() {
-       // console.log(req.responseText);
-       doUpdates(JSON.parse(req.responseText));
-       if(window.ajaxstatus) window.ajaxstatus.in();
-       if( id=='' ) window.ajaxstatus.intStatus();
-       if(callback) callback();
+    req.onreadystatechange = function() {
+      if (req.readyState == 4){   //if complete
+          if(req.status == 200){  //check if "OK"
+            // console.log(req.responseText);
+            doUpdates(JSON.parse(req.responseText));
+            if(window.ajaxstatus) window.ajaxstatus.in();
+            if( id=='' ) window.ajaxstatus.intStatus();
+         }
+         if(callback) callback();
+      } 
     }
     // console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     req.send('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
-
 }
 
 
@@ -113,8 +112,13 @@ function doRequestWait(id='', value='') {
    var req = new XMLHttpRequest();
     req.timeout = 10000;
     if(window.ajaxstatus) window.ajaxstatus.out();
-    req.onload = function() {
-       if(window.ajaxstatus) window.ajaxstatus.in();
+    req.onreadystatechange = function() {
+      if (req.readyState == 4){   //if complete
+          if(req.status == 200){  //check if "OK"
+            // console.log(req.responseText);
+            if(window.ajaxstatus) window.ajaxstatus.in();
+         }
+      } 
     }
     // console.log('id=' + id + '&value=' + encodeURIComponent(value) + '&revision=' + serverrevision);
     req.open('POST', document.URL, true);
