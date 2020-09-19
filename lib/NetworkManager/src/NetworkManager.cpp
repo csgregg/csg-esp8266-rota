@@ -68,7 +68,7 @@ void APConfig::setDefaults() {
 void NetCheckConfig::setDefaults() {
 
     mode = flag_NET_CHECKER;
-    strcat_P( checkService, flag_NET_CHECK_SERVICE );
+    strcpy_P( checkService, flag_NET_CHECK_SERVICE );
     interval = flag_NET_CHECK_INTERVAL;
 
 }
