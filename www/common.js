@@ -23,6 +23,13 @@ function clearSure() {
    document.getElementById('sure_dlg').style.display='none';
 }
 
+function enableSave(...btns) {
+   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).classList.remove("w3-disabled");  
+}
+
+function disableSave(...btns) {
+   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).classList.add("w3-disabled");  
+}
 
 
 ///// Menu functions /////
@@ -128,7 +135,10 @@ function doRequestWait(id='', value='') {
 }
 
 
-
+function doRequestAll(callback) {
+   serverrevision = 50000;       // Force reload all
+   doRequest('','',callback);
+}
 
 
 function doUpdates(response) {

@@ -208,6 +208,9 @@ function SureYes() {
 
         // Send Save command and update AP
         doRequest(sureAction,1);
+
+        disableSave("wifi_ap_save","wifi_ap_cancel");
+        
     }
 
     if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
@@ -241,6 +244,8 @@ function SureYes() {
         
         // Send Save command and update AP
         doRequest(sureAction,1,clearLoader);
+
+        disableSave("net_ck_save","net_ck_cancel");
     }
 
 }
