@@ -14,6 +14,8 @@ function updatePage() {
 
 function SureNo() {
     document.getElementById('sure_dlg').style.display='none';
+    if( sureAction == "log_save" ) disableSave("log_save","log_cancel");
+    doRequestAll();
  }
 
 

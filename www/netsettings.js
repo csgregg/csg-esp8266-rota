@@ -123,7 +123,7 @@ function connectWifi(value) {
     // console.log('Status - Connect Wifi Station');
 
     wifiStationID = value;
-    showDlg(document.getElementById('wifi_stn_cnct'));
+    SureDlg('wifi_stn_cnct');
 }
 
 function addWifiDialog() {
@@ -149,7 +149,13 @@ function SureNo() {
     if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
         document.getElementById(sureAction).checked = !document.getElementById(sureAction).checked;
         clearLoader();
+        return;
     }
+
+    if( sureAction == "wifi_ap_save" ) disableSave("wifi_ap_save","wifi_ap_cancel");
+    if( sureAction == "net_ck_save" ) disableSave("net_ck_save","net_ck_cancel");
+
+    doRequestAll();
 }
 
 function SureYes() {
@@ -231,6 +237,8 @@ function SureYes() {
   
         doRequest('wifi_mode_save',mode);
     }
+
+    if( sureAction == "wifi_stn_cnct" ) doRequest('wifi_stn_cnct',wifiStationID);
 
     if( sureAction == "net_ck_save" ) {
 

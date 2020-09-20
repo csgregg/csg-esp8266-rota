@@ -62,6 +62,8 @@ void NetworkSettingsPage::initializeAjax(){
 
     wifi_ap_ch.selectOption(wifiAP.channel);
 
+    wifi_ap_save.setEnabled(false);
+
     WiFiMode wifimode =  config.settings.networkConfig.wifiMode;
     wifi_mode_stn.setChecked( wifimode == WIFI_STA || wifimode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( wifimode == WIFI_AP || wifimode == WIFI_AP_STA );
@@ -71,6 +73,7 @@ void NetworkSettingsPage::initializeAjax(){
     net_ck_mode.setChecked( netStatus.mode );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
     net_ck_url.setValue( netStatus.checkService );
+    net_ck_save.setEnabled(false);
 
 }
 

@@ -123,7 +123,7 @@
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="log_tick" type="checkbox" value="t" onchange="enableSave('log_save'),'log_cancel';">
+                                    <input id="log_tick" type="checkbox" value="t" onchange="enableSave('log_save','log_cancel');">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -169,8 +169,8 @@
 
                         <!-- Save / Cancel -->
                         <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">
-                            <button id="log_save" onclick="SureDlg(this);" type="button" class="w3-button w3-green w3-disabled">Save</button>
-                            <button id="log_cancel" onclick="disableSave('log_save','log_cancel');doRequestAll();" type="button" class="w3-button w3-red w3-disabled">Cancel</button>
+                            <button class="w3-button w3-green" disabled id="log_save" onclick="SureDlg(this);" type="button">Save</button>
+                            <button class="w3-button w3-red" disabled id="log_cancel" onclick="disableSave('log_save','log_cancel');doRequestAll();" type="button">Cancel</button>
                         </div>
                         
                     </div>
