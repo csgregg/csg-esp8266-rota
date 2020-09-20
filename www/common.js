@@ -2,8 +2,11 @@
 // Available station
 var net_status;
 
+
 function SureDlg(action) {
-   sureAction = action.id;
+   console.log( typeof action );
+   if( typeof action === "string" ) sureAction = action;
+   else sureAction = action.id;
    document.getElementById('sure_dlg').style.display='block';
 }
 
@@ -24,11 +27,11 @@ function clearSure() {
 }
 
 function enableSave(...btns) {
-   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).classList.remove("w3-disabled");  
+   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).disabled = false;
 }
 
 function disableSave(...btns) {
-   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).classList.add("w3-disabled");  
+   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).disabled = true;
 }
 
 

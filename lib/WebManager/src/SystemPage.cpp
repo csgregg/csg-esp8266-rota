@@ -55,6 +55,8 @@ void SystemPage::initializeAjax(){
     log_tags.setValue( logger.globalTags );
     log_level.selectOption( logger.level );
 
+    log_save.setEnabled(false);
+
 }
 
 void SystemPage::handleAjax(){
