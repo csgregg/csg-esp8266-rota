@@ -38,7 +38,7 @@ SOFTWARE.
 #include "AboutPage.h"
 #include "IndexPage.h"
 #include "SystemPage.h"
-#include "index_html_gz.h"
+#include "WebFiles.h"
 
     
 // Webpages
@@ -215,6 +215,7 @@ String WebsiteManager::getContentType(String filename) {
 
 
 // Send the right file to the client (if it exists)
+// Assumes GZIPed files
 bool WebsiteManager::handleFileRequest() {
 
     String contentType = getContentType(URL);                  // Get the MIME type
