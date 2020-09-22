@@ -127,14 +127,48 @@ def inlineFlashFiles(sourceFolder,destFile):
 
     with open(p_destFile, 'w' ) as f_out:
 
+        f_out.write("#ifndef WEBFILES_H\n")
+        f_out.write("#define WEBFILES_H\n\n")
+
         f_out.write("#include <Arduino.h>\n\n\n")
 
         # Each file here
 
-        f_out.write("\n\n\n")
-        f_out.write("")
+        for folder, subfolders, files in os.walk(p_sourceFolder):
+            for file in files:
+                print("Creating inline Flash for file: " + file)
+                fileName = os.path.basename(file)
+                h_fileName = fileName.replace(" ","")
+                h_fileName = h_fileName.replace(".","_")
+                h_fileName = h_fileName.replace("-","_")
+                url = os.path.splitext(fileName)[0]
 
+                f_out.write("const uint8_t __" + h_fileName + "__ [] PROGMEM = {")
+                with open(os.path.join(p_sourceFolder,file), 'rb') as f_in:
+                    byte = f_in.read(1)
+                    while byte:
+                        out = "0x00{:X},".format(ord(byte))
+                        f_out.write(out)
+                        byte = f_in.read(1)
+                f_out.write("\n};\n\n")
 
+                reftable = "{\n.path = \"/" + url + "\",\n.content = __" + h_fileName + "__,\n.len = sizeof(__" + h_fileName + "__),\n},\n\n"
+
+                fileList.append(reftable)
+
+        f_out.write("\n")
+
+        f_out.write("static struct t_websitefiles {\n")
+        f_out.write("const char* path;\n")
+        f_out.write("const uint8_t* content;\n")
+        f_out.write("const uint len;\n")
+        f_out.write("} websiteFiles[] PROGMEM = {\n\n")
+
+        for listItem in fileList:
+            f_out.write(listItem)
+
+        f_out.write("};\n\n")
+        f_out.write("#endif\n")
 
 
 
@@ -229,7 +263,9 @@ if checkFSBuild():
     # Deflate www into data
     deflate_www("data/tmp","data/www")
 
-    createInlineFile("data/www/index.html.gz","include")
+    #createInlineFile("data/www/index.html.gz","include")
+
+    inlineFlashFiles("data/www","include/WebFiles.h")
 
     # Clean up
     shutil.rmtree("data/tmp")
