@@ -33,6 +33,7 @@ SOFTWARE.
 
     #define WEBSITE_MANAGER_H
 
+    #include <ESP8266WebServer.h>
     #include <EmbAJAX.h>
 
     #define WEB_PORT 80
@@ -167,7 +168,7 @@ SOFTWARE.
                 , _ajax(&_server)
             {}
 
-            EmbAJAXOutputDriverWebServerClass _server;
+            ESP8266WebServer _server;
             EmbAJAXOutputDriver _ajax;
 
             void begin();
@@ -181,7 +182,7 @@ SOFTWARE.
         protected:
 
             String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handlelittleFS();                                    // send the right file to the client (if it exists)
+            bool handleFileRequest();                                    // send the right file to the client (if it exists)
             void handleAJAX();                                      // process AJAX request
             void InitAJAX();                                        // process page initialization
 

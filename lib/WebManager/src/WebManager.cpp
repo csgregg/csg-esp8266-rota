@@ -38,6 +38,7 @@ SOFTWARE.
 #include "AboutPage.h"
 #include "IndexPage.h"
 #include "SystemPage.h"
+#include "index_html_gz.h"
 
     
 // Webpages
@@ -181,7 +182,7 @@ void WebsiteManager::begin() {
             }
 
             // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
-            else if( !handlelittleFS() ) _server.send( 404, F("text/html"), F("404: Not Found") );
+            else if( !handleFileRequest() ) _server.send( 404, F("text/html"), F("404: Not Found") );
         
         }
 
@@ -200,32 +201,48 @@ void WebsiteManager::begin() {
 
 // convert the file extension to the MIME type
 String WebsiteManager::getContentType(String filename) { 
-    if (filename.endsWith(F(".html.gz"))) return F("text/html");
-    else if (filename.endsWith(F(".html"))) return F("text/html");
-    else if (filename.endsWith(F(".css.gz"))) return F("text/css");
+    if (filename.endsWith(F(".html"))) return F("text/html");                // TODO - Remove .gz if change to handleFS
     else if (filename.endsWith(F(".css"))) return F("text/css");
-    else if (filename.endsWith(F(".js.gz"))) return F("application/javascript");
     else if (filename.endsWith(F(".js"))) return F("application/javascript");
-    else if (filename.endsWith(F(".ico.gz"))) return F("image/x-icon");
     else if (filename.endsWith(F(".ico"))) return F("image/x-icon");
-    else if (filename.endsWith(F(".woff.gz"))) return F("application/font-woff");
-    else if (filename.endsWith(F(".woff"))) return F("application/font-woff");
+    else if (filename.endsWith(F(".gif"))) return F("image/gif");
+    else if (filename.endsWith(F(".svg"))) return F("image/svg+xml");
+    else if (filename.endsWith(F(".jpg"))) return F("image/jpeg");
+    else if (filename.endsWith(F(".png"))) return F("image/png");
     return F("text/plain");
 }
 
 
 
 // Send the right file to the client (if it exists)
-bool WebsiteManager::handlelittleFS() {
+bool WebsiteManager::handleFileRequest() {
 
-    String shortpath = URL;
+    String contentType = getContentType(URL);                  // Get the MIME type
 
-    logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - file: %s", shortpath.c_str() );
+    // Try from Flash
+    for( uint i=0; i<(sizeof(websiteFiles)/sizeof(t_websitefiles)); i++ ) {
+        if( strcmp_P( URL.c_str(), websiteFiles[i].path ) == 0 ) {
 
-    String path = "/www" + shortpath + ".gz";
+            logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - flash: %s", URL.c_str() );
 
-    String contentType = getContentType(path);              // Get the MIME type
-    if( LittleFS.exists(path) ) {                             // If the file exists then send it
+            _server.sendHeader(F("Content-Encoding"),F("gzip"));
+            _server.setContentLength(websiteFiles[i].len);
+            _server.send(200,contentType,"");
+
+            WiFiClient client = _server.client();
+            
+            client.write_P((const char*)FPSTR(websiteFiles[i].content),websiteFiles[i].len);
+
+            return true;
+        }
+    }
+
+    // Try from LittleFS
+    String path = "/www" + URL + ".gz";
+    if( LittleFS.exists(path) ) {                               // If the file exists then send it
+
+        logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - file: %s", URL.c_str() );
+
         File file = LittleFS.open(path, "r");
         _server.streamFile(file, contentType);
         file.close();
