@@ -116,6 +116,58 @@ def parse_replace(sourceFolder,destFolder):
 
 
 
+# Inline files in Flash
+def inlineFlashFiles(sourceFolder,destFile):
+    p_sourceFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + sourceFolder)
+    p_destFile = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + destFile)
+
+    print("Inlining files from " + p_sourceFolder + " into " + destFile)
+
+    fileList = []
+
+    with open(p_destFile, 'w' ) as f_out:
+
+        f_out.write("#include <Arduino.h>\n\n\n")
+
+        # Each file here
+
+        f_out.write("\n\n\n")
+        f_out.write("")
+
+
+
+
+
+def createInlineFile(file,destFolder):
+
+    print("Inlining file: " + file)
+    fileName = os.path.basename(file)
+    fileMame = fileName.replace(" ","")
+    fileName = fileName.replace(".","_")
+    destFile = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + destFolder + "/" + fileName + ".h" )
+    sourceFile = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + file)
+
+    with open(destFile, 'w' ) as f_out:
+
+        f_out.write("#include <Arduino.h>\n\n")
+
+
+        f_out.write("const uint8_t " + fileName + "[] PROGMEM = {")
+        with open(sourceFile, 'rb') as f_in:
+            byte = f_in.read(1)
+            while byte:
+                out = "0x00{:X},".format(ord(byte))
+                f_out.write(out)
+                byte = f_in.read(1)
+                
+        f_out.write("\n};\n\n")
+
+  
+
+
+
+
+
 # Replace build codes and move to new folder
 def minify_files(sourceFolder):
     p_sourceFolder = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + sourceFolder)
@@ -130,9 +182,6 @@ def minify_files(sourceFolder):
                 minify_file(os.path.join(p_sourceFolder,file),'https://javascript-minifier.com/raw')
             elif file.endswith('.css'):
                 minify_file(os.path.join(p_sourceFolder,file),'https://cssminifier.com/raw')
-
-
-
 
 
 # Empty folder
@@ -179,6 +228,8 @@ if checkFSBuild():
 
     # Deflate www into data
     deflate_www("data/tmp","data/www")
+
+    createInlineFile("data/www/index.html.gz","include")
 
     # Clean up
     shutil.rmtree("data/tmp")
