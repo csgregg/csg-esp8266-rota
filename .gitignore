@@ -3,7 +3,7 @@
 
 # Local build number
 .version
-include/Version.h
+include
 
 # Local temp data 
 data

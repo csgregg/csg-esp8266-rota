@@ -152,16 +152,16 @@ def inlineFlashFiles(sourceFolder,destFile):
                         byte = f_in.read(1)
                 f_out.write("\n};\n\n")
 
-                reftable = "{\n.path = \"/" + url + "\",\n.content = __" + h_fileName + "__,\n.len = sizeof(__" + h_fileName + "__),\n},\n\n"
-
+                # Capture table entry
+                reftable = "\t{\n\t\t.path = \"/" + url + "\",\n\t\t.content = __" + h_fileName + "__,\n\t\t.len = sizeof(__" + h_fileName + "__),\n\t},\n\n"
                 fileList.append(reftable)
 
         f_out.write("\n")
 
         f_out.write("static struct t_websitefiles {\n")
-        f_out.write("const char* path;\n")
-        f_out.write("const uint8_t* content;\n")
-        f_out.write("const uint len;\n")
+        f_out.write("\tconst char* path;\n")
+        f_out.write("\tconst uint8_t* content;\n")
+        f_out.write("\tconst uint len;\n")
         f_out.write("} websiteFiles[] PROGMEM = {\n\n")
 
         for listItem in fileList:
@@ -169,37 +169,6 @@ def inlineFlashFiles(sourceFolder,destFile):
 
         f_out.write("};\n\n")
         f_out.write("#endif\n")
-
-
-
-def createInlineFile(file,destFolder):
-
-    print("Inlining file: " + file)
-    fileName = os.path.basename(file)
-    fileMame = fileName.replace(" ","")
-    fileName = fileName.replace(".","_")
-    destFile = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + destFolder + "/" + fileName + ".h" )
-    sourceFile = os.path.abspath(env.subst("$PROJECT_DIR") + "/" + file)
-
-    with open(destFile, 'w' ) as f_out:
-
-        f_out.write("#include <Arduino.h>\n\n")
-
-
-        f_out.write("const uint8_t " + fileName + "[] PROGMEM = {")
-        with open(sourceFile, 'rb') as f_in:
-            byte = f_in.read(1)
-            while byte:
-                out = "0x00{:X},".format(ord(byte))
-                f_out.write(out)
-                byte = f_in.read(1)
-                
-        f_out.write("\n};\n\n")
-
-  
-
-
-
 
 
 # Replace build codes and move to new folder
@@ -241,6 +210,7 @@ def deflate_www(sourceFolder,destFolder):
                     shutil.copyfileobj(f_in, f_out)
 
 
+# Main
 
 if checkFSBuild():
 
@@ -263,8 +233,7 @@ if checkFSBuild():
     # Deflate www into data
     deflate_www("data/tmp","data/www")
 
-    #createInlineFile("data/www/index.html.gz","include")
-
+    # Inline files into flash
     inlineFlashFiles("data/www","include/WebFiles.h")
 
     # Clean up
