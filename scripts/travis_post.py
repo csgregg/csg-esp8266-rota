@@ -27,8 +27,8 @@ def prepareBINs(*args, **kwargs):
     print(target_path)
     print(progtarget)
     print(new_fstarget)
-    os.system("ls -las" + target_path)
-    os.system("ls -las" + env.ParseFlags(env['BUILD_DIR']))
+    os.system("ls -las " + target_path)
+    os.system("ls -las " + env.ParseFlags(env['BUILD_DIR']))
     os.system("gzip -9 -k " + progtarget)
     os.system("gzip -9 -k " + new_fstarget)
 
