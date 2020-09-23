@@ -1,15 +1,14 @@
 .pio
 .vscode
 
-# Local build number
+# Dynamically generated
 .version
 include
 
 # Local temp data 
 data
-fonts
 
-# Librarys that are not managed
+# Libraries that are not managed
 lib/EmbAJAX
 
 # Important for Security #
