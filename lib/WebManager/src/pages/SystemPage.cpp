@@ -35,12 +35,10 @@ Server-side functions of system.html
 #include "ConfigManager.h"
 #include "NetworkManager.h"
 
-// TODO: Flashstrings
 
+void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
-void SystemPage::initializeAjax(){
-
-    LOG_HIGH("(Page) Index - Initialize AJAX");
+    LOG_HIGH(F("(Page) Index - Initialize AJAX"));
 
     LogSettings logger = config.settings.logConfig;
 
@@ -60,32 +58,32 @@ void SystemPage::initializeAjax(){
 
 }
 
-void SystemPage::handleAjax(){
+void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
 
-    LOG_HIGH("(Page) System - Handle AJAX");
+    LOG_HIGH(F("(Page) System - Handle AJAX"));
 
-    if( website.AjaxID == "btn_restart" ) device.restart();
+    if( website.AjaxID == F("btn_restart") ) device.restart();
 
-    if( website.AjaxID == "btn_rst_net" ){
+    if( website.AjaxID == F("btn_rst_net") ){
         config.settings.networkConfig.setDefaults();
         config.Save();
     }
 
-    if( website.AjaxID == "btn_rst_log" ){
+    if( website.AjaxID == F("btn_rst_log") ){
         config.settings.logConfig.setDefaults();
         config.Save();
     }
 
-    if( website.AjaxID == "btn_rst_all" ){
+    if( website.AjaxID == F("btn_rst_all") ){
         config.ResetToDefaults();
     }
 
-    if( website.AjaxID == "log_save" ) saveLogConfig();
+    if( website.AjaxID == F("log_save") ) saveLogConfig();
 
 }
 
 
-void SystemPage::saveLogConfig() {
+void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
     
     LogSettings log;
         

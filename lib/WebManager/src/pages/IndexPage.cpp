@@ -38,15 +38,15 @@ Server-side functions of index.html
 // TODO: Flashstrings
 
 
-void IndexPage::initializeAjax(){
+void ICACHE_FLASH_ATTR IndexPage::initializeAjax(){
 
-    LOG_HIGH("(Page) Index - Initialize AJAX");
+    LOG_HIGH(F("(Page) Index - Initialize AJAX"));
 
 }
 
-void IndexPage::handleAjax(){
+void ICACHE_FLASH_ATTR IndexPage::handleAjax(){
 
-    LOG_HIGH("(Page) Index - Handle AJAX");     
+    LOG_HIGH(F("(Page) Index - Handle AJAX"));     
 
 }
 

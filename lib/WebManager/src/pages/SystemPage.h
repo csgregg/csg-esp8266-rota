@@ -110,11 +110,11 @@ Server-side functions of system.html
 
             EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-            void handleAjax();
+            void ICACHE_FLASH_ATTR handleAjax();
 
-            void initializeAjax();
+            void ICACHE_FLASH_ATTR initializeAjax();
 
-            void saveLogConfig();
+            void ICACHE_FLASH_ATTR saveLogConfig();
     };
     
     extern SystemPage systempage;

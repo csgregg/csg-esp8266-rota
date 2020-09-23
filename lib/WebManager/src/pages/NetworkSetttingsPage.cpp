@@ -29,17 +29,15 @@ Server-side functions of netsettings.html
 */
 
 
-
 #include "NetworkSetttingsPage.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 
-// TODO: Flashstrings
 
 
-void NetworkSettingsPage::initializeAjax(){
+void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
-    LOG_HIGH("(Page) Network Settings - Initialize AJAX");
+    LOG_HIGH(F("(Page) Network Settings - Initialize AJAX"));
 
     char buffer[16];
 
@@ -79,33 +77,33 @@ void NetworkSettingsPage::initializeAjax(){
 
 
 
-void NetworkSettingsPage::handleAjax(){
+void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
-    LOG_HIGH("(Page) Network Settings - Handle AJAX");
+    LOG_HIGH(F("(Page) Network Settings - Handle AJAX"));
 
-    if( website.AjaxID == "wifi_stn_save" ) saveWifiStation(website.AjaxValue.toInt());
+    if( website.AjaxID == F("wifi_stn_save") ) saveWifiStation(website.AjaxValue.toInt());
     
     // Used to send back basic details of a specific wifi station
-    if( website.AjaxID == "wifi_stn_id" ) {
+    if( website.AjaxID == F("wifi_stn_id") ) {
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.isStationConnected(wifi_stn_id.intValue()));
     }
 
-    if( website.AjaxID == "wifi_stn_btn") loadWifiStation(wifi_stn_btn.intValue());
+    if( website.AjaxID == F("wifi_stn_btn") ) loadWifiStation(wifi_stn_btn.intValue());
 
-    if( website.AjaxID == "wifi_stn_cnct") connectWifiStation(wifi_stn_cnct.intValue());     
+    if( website.AjaxID == F("wifi_stn_cnct") ) connectWifiStation(wifi_stn_cnct.intValue());     
 
-    if( website.AjaxID == "wifi_mode_save" ) setWifiMode((WiFiMode)website.AjaxValue.toInt()); 
+    if( website.AjaxID == F("wifi_mode_save") ) setWifiMode((WiFiMode)website.AjaxValue.toInt()); 
 
-    if( website.AjaxID == "wifi_ap_save" ) saveAP();
+    if( website.AjaxID == F("wifi_ap_save") ) saveAP();
 
-    if( website.AjaxID == "net_ck_save" ) saveNetCheck();
+    if( website.AjaxID == F("net_ck_save") ) saveNetCheck();
 
 }
 
 
-void NetworkSettingsPage::setWifiMode(WiFiMode mode) {
-    LOG("(Page) Network Settings - Set WiFi mode");
+void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
+    LOG(F("(Page) Network Settings - Set WiFi mode"));
     
     network.setWiFiMode(mode);
     config.Save();
@@ -118,7 +116,7 @@ void NetworkSettingsPage::setWifiMode(WiFiMode mode) {
 
 
 
-void NetworkSettingsPage::loadWifiStation(uint id) {
+void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
     char ipbuffer[15];
 
@@ -148,7 +146,7 @@ void NetworkSettingsPage::loadWifiStation(uint id) {
 }
 
 
-void NetworkSettingsPage::saveAP() {
+void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
     
     APConfig ap;
 
@@ -169,7 +167,7 @@ void NetworkSettingsPage::saveAP() {
 }
 
 
-void NetworkSettingsPage::saveNetCheck() {
+void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     NetCheckConfig netStatus;
 
@@ -185,7 +183,7 @@ void NetworkSettingsPage::saveNetCheck() {
 }
 
 
-void NetworkSettingsPage::saveWifiStation(uint id) {
+void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
@@ -211,7 +209,7 @@ void NetworkSettingsPage::saveWifiStation(uint id) {
 
 }
 
-void NetworkSettingsPage::connectWifiStation(uint id) {
+void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
     
     if( network.connectWiFiStation(id) ) config.Save();
     else network.reconnectWifi();

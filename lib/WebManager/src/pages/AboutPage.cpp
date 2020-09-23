@@ -29,14 +29,13 @@ Server-side functions of about.html
 */
 
 
-
 #include "AboutPage.h"
 #include "Logger.h"
 #include "Device.h"
 #include "NetworkManager.h"
 
 
-void AboutPage::initializeAjax(){
+void ICACHE_FLASH_ATTR AboutPage::initializeAjax(){
 
     LOG_HIGH(F("(Page) About - Initialize AJAX"));
 
@@ -47,7 +46,7 @@ void AboutPage::initializeAjax(){
 
 }
 
-void AboutPage::handleAjax(){
+void ICACHE_FLASH_ATTR AboutPage::handleAjax(){
 
     LOG_HIGH(F("(Page) About - Handle AJAX"));    
 
