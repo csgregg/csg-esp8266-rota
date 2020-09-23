@@ -132,7 +132,6 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settin
 
 // TODO Need to add print functions for flashstringhelper
 // TODO Add int function
-// TODO Need to add return JSON header only
 
 // Main log function - char[]
 void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const char * message ) {
@@ -241,7 +240,7 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 
 
 
-// Formatted log function - needs to be preceded by setTagType()
+// Formatted log function
 void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * format, ... ) {
 
 #ifndef NO_LOGGING
@@ -275,7 +274,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 }
 
 
-
+// Prints build flag - overload char[]
 void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const char* flag) {
 
 #ifndef NO_LOGGING
@@ -288,6 +287,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #endif
 }
 
+// Prints build flag - overload bool
 void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const bool flag) {
 
 #ifndef NO_LOGGING
@@ -300,6 +300,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #endif
 }
 
+// Prints build flag - overload uint
 void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const uint flag) {
 
 #ifndef NO_LOGGING

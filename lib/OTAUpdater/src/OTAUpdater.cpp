@@ -73,8 +73,8 @@ void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
     strcpy_P(repo, flag_UPDATER_REPO);
     strcpy_P(user, flag_UPDATER_USER);
     strcpy_P(token, flag_UPDATER_TOKEN);
-    interval = flag_UPDATER_INTERVAL;           // TODO - Does this still need to be a flag now it is controlable?
-    skipUpdates = flag_UPDATER_SKIP;            // TODO - Does this still need to be a flag now it is controlable?
+    interval = flag_UPDATER_INTERVAL;
+    skipUpdates = flag_UPDATER_SKIP;
 }
 
 
