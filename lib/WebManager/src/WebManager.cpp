@@ -27,8 +27,9 @@ SOFTWARE.
 
 */
 
-
+#ifndef WEB_FLASHFILES
 #include <LittleFS.h>
+#endif
 
 #include "WebManager.h"
 #include "Logger.h"
@@ -193,7 +194,9 @@ void WebsiteManager::begin() {
     );
 
     // Start LittleFS and webserver
+#ifndef WEB_FLASHFILES
     LittleFS.begin(); 
+#endif
     _server.begin();
 
     // Initialize all page Ajax
@@ -224,8 +227,7 @@ bool WebsiteManager::handleFileRequest() {
 
     String contentType = getContentType(URL);                  // Get the MIME type
 
-// Are we using flash instead of LittleFS for web files
-#ifdef WEB_FLASHFILES
+#ifdef WEB_FLASHFILES                   // Are we using flash instead of LittleFS for web files
     // Try from Flash
     for( uint i=0; i<(sizeof(websiteFiles)/sizeof(t_websitefiles)); i++ ) {
         if( strcmp_P( URL.c_str(), websiteFiles[i].path ) == 0 ) {
@@ -245,6 +247,7 @@ bool WebsiteManager::handleFileRequest() {
     }
 #endif
 
+#ifndef WEB_FLASHFILES                  // Are we using flash instead of LittleFS for web files
     // Try from LittleFS
     String path = "/www" + URL + ".gz";
     if( LittleFS.exists(path) ) {                               // If the file exists then send it
@@ -264,10 +267,11 @@ bool WebsiteManager::handleFileRequest() {
 
         return true;
     }
+#endif
 
     LOG(F("(Website) Web server - file not found"));
 
-    return false;                                         // If the file doesn't exist, return false
+    return false;                                         // If the file doesn't anywhere, return false
 }
 
 
