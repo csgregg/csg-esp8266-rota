@@ -22,8 +22,9 @@ def prepareBINs(*args, **kwargs):
 
     new_fstarget = os.path.join(target_path, "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG")))
 
+    print(target_path)
     os.system("ls -las " + target_path)
-    
+
     os.rename(fstarget, new_fstarget)
 
     os.system("ls -las " + target_path)
@@ -36,4 +37,5 @@ def prepareBINs(*args, **kwargs):
 
 
 # Set up call after FS bin has been created
+env.AddPostAction("$BUILD_DIR/littlefs.bin", print(os.path.dirname(os.path.abspath(str(kwargs['target'][0]))))) 
 env.AddPostAction("$BUILD_DIR/${PROGNAME}.bin", prepareBINs) 
