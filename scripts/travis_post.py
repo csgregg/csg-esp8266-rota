@@ -45,7 +45,7 @@ def tempfunc(*args, **kwargs):
     print(new_fstarget)
     os.system("ls -las " + target_path)
     os.system("ls -las /tmp")
-    os.systmp("mv " + fstarget + " /tmp")
+    os.system("mv " + fstarget + " /tmp")
     os.system("ls -las /tmp")
 
 
