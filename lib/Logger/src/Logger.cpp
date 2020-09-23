@@ -108,7 +108,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
         Serial.println(F("\nLOG: (Logger) Starting Logging"));
     }
 
-    logger.printf( LOG_HIGH, TAG_STATUS, PSTR("(Logger) Logging set at level: %i"), _settings->level );
+    LOGF_HIGH( PSTR("(Logger) Logging set at level: %i"), _settings->level );
 
     if( _settings->serviceMode ) LOG_HIGH(F("(Logger) Logging Service: ON"));
 
@@ -256,7 +256,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(LOG_CRITICAL, TAG_STATUS, F("(Logger) LogClient: Buffer error"));
+            println(CRITICAL_LOG, STATUS_TAG, F("(Logger) LogClient: Buffer error"));
             return;
         }
         va_start(arg, format);
@@ -368,7 +368,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     String loggingURL = _FullServiceURL + String(thistag) + "/";
    
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
-        LogPrefix(LOG_DETAIL, TAG_STATUS);
+        LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(F("(Logger) Logging to: "));
         Serial.println(loggingURL);
     }
@@ -414,7 +414,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     serializeJson(jsonLog, jsonMessage);
 
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
-        LogPrefix(LOG_DETAIL, TAG_STATUS);
+        LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(F("(Logger) Log (JSON): "));
         Serial.println(jsonMessage); 
     }
@@ -424,7 +424,12 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     
     HTTPClient http;
 
-    http.begin(*_client, loggingURL);           // TODO - add some error handling
+    if( !http.begin(*_client, loggingURL) ) {
+        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+            LogPrefix(CRITICAL_LOG, STATUS_TAG);
+            Serial.print(F("(Logger) Logging to servce: HTTP Client Error "));
+        }
+    };
 
     http.setUserAgent(F("ESP8266-http-logger"));
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));
@@ -435,13 +440,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     if( httpCode == HTTP_CODE_OK ) {
         if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
-            LogPrefix(LOG_DETAIL, TAG_STATUS);
+            LogPrefix(DETAIL_LOG, STATUS_TAG);
             Serial.println(F("(Logger) Logging to servce: SUCCESS "));
         }
     }
     else {
         if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
-            LogPrefix(LOG_CRITICAL, TAG_STATUS);
+            LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(F("(Logger) Logging to servce: ERROR "));
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
             else Serial.println( httpCode );
@@ -462,11 +467,11 @@ bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
 
     if( WiFi.status() != WL_CONNECTED ) return false;
 
-    char thistag[strlen(c_log_tag_descript[TAG_STATUS])];
-    strcpy(thistag, c_log_tag_descript[TAG_STATUS]);
+    char thistag[strlen(c_log_tag_descript[STATUS_TAG])];
+    strcpy(thistag, c_log_tag_descript[STATUS_TAG]);
 
-    char thistype[strlen(c_log_type_descript[LOG_NORMAL])];
-    strcpy(thistype, c_log_type_descript[LOG_NORMAL]);
+    char thistype[strlen(c_log_type_descript[NORMAL_LOG])];
+    strcpy(thistype, c_log_type_descript[NORMAL_LOG]);
 
     String loggingURL = _FullServiceURL + String(thistag) + "/";
 

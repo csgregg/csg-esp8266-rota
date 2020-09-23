@@ -48,34 +48,44 @@ debug of code. Macros are defined for to simplifiy common usage.
 
       // Macros to simplifiy common usage
 
-      #define DEBUG_DETAIL(text) logger.println(LOG_DETAIL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define DEBUG(text) logger.println(LOG_NORMAL, TAG_DEBUG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define DEBUG_DETAIL(text) logger.println(DETAIL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define DEBUG(text) logger.println(NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
       
-      #define LOG_DETAIL(text) logger.println(LOG_DETAIL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG(text) logger.println(LOG_NORMAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG_HIGH(text) logger.println(LOG_HIGH, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG_CRITICAL(text) logger.println(LOG_CRITICAL, TAG_STATUS, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG(text) logger.println(NORMAL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG_DETAIL(text) logger.println(DETAIL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG_HIGH(text) logger.println(HIGH_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG_CRITICAL(text) logger.println(CRITICAL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
 
-      #define DEBUG_STOP() Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();}
-      #define DEBUG_RAW(text) Serial.println(text)
+      #define LOGF(...) logger.printf(NORMAL_LOG, STATUS_TAG, __VA_ARGS__)
+      #define LOGF_DETAIL(...) logger.printf(DETAIL_LOG, STATUS_TAG, __VA_ARGS__)
+      #define LOGF_HIGH(...) logger.printf(HIGH_LOG, STATUS_TAG, __VA_ARGS__)
+      #define LOGF_CRITICAL(...) logger.printf(CRITICAL_LOG, STATUS_TAG, __VA_ARGS__)
+
+      #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
+      #define DEBUG_RAW(text) Serial.println(text);
   
-      #define LOG_FLAG(name) logger.printFlag(LOG_NORMAL, TAG_STATUS, #name, name)      // Used to pass flag name as argument to method
+      #define LOG_FLAG(name) logger.printFlag(NORMAL_LOG, STATUS_TAG, #name, name)      // Used to pass flag name as argument to method
 
     #else
 
-      #define DEBUG_DETAIL(text)
-      #define DEBUG(text)
-      #define DEBUG_CRITICAL(text)
+      #define DEBUG_DETAIL
+      #define DEBUG
+      #define DEBUG_CRITICAL
 
-      #define LOG_DETAIL(text)
-      #define LOG(text)
-      #define LOG_HIGH(text)
-      #define LOG_CRITICAL(text)
+      #define LOG
+      #define LOG_DETAIL
+      #define LOG_HIGH
+      #define LOG_CRITICAL
 
-      #define DEBUG_STOP()
-      #define DEBUG_RAW(text)
+      #define LOGF
+      #define LOGF_DETAIL
+      #define LOGF_HIGH
+      #define LOGF_CRITICAL
 
-      #define LOG_FLAG(text)
+      #define DEBUG_STOP
+      #define DEBUG_RAW
+
+      #define LOG_FLAG
 
     #endif
 
@@ -118,17 +128,17 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     // Type of log - used in the filter of log level and added to message
     enum logType : uint {
-        LOG_CRITICAL = 0,
-        LOG_NORMAL = 1,
-        LOG_HIGH = 2, 
-        LOG_DETAIL = 3
+        CRITICAL_LOG = 0,
+        NORMAL_LOG = 1,
+        HIGH_LOG = 2, 
+        DETAIL_LOG = 3
     } ;
 
 
     // Tags applied to message
     enum logTag : uint {
-        TAG_DEBUG,
-        TAG_STATUS
+        DEBUG_TAG,
+        STATUS_TAG
     } ;
 
     // Type names

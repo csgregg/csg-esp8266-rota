@@ -236,7 +236,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
     for( uint i=0; i<(sizeof(websiteFiles)/sizeof(t_websitefiles)); i++ ) {
         if( strcmp_P( URL.c_str(), websiteFiles[i].path ) == 0 ) {
 
-            logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - flash: %s", URL.c_str() );
+            LOGF_HIGH( PSTR("(Website) Web server - flash: %s"), URL.c_str() );
 
             _server.sendHeader(F("Content-Encoding"),F("gzip"));
             _server.setContentLength(websiteFiles[i].len);
@@ -256,7 +256,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
     String path = "/www" + URL + ".gz";
     if( LittleFS.exists(path) ) {                               // If the file exists then send it
 
-        logger.printf( LOG_HIGH, TAG_STATUS, "(Website) Web server - file: %s", URL.c_str() );
+        LOGF_HIGH( PSTR("(Website) Web server - file: %s"), URL.c_str() );
 
         File file = LittleFS.open(path, "r");
         _server.streamFile(file, contentType);
