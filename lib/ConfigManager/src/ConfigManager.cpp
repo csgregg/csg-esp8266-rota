@@ -130,13 +130,13 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
         return;
     }
 
-    // Check to see what is there first and only save if differnet 
+    
 
     if( !force ) {
 
         deviceSettings readset = EEPROM.get(markerDataSize, readset);
 
-        // TODO - is this necessary?
+        // Check to see what is there first and only save if different 
         if( readset == settings ) {
 
             LOG(F("(Config) Settings unchanged - not saving"));

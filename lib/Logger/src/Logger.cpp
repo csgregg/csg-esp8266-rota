@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,9 +53,6 @@ JSON Loggining Format
 }
 
 Use https://arduinojson.org/v6/assistant/ to determine size of file.
-
-
-TODO - Add function to check in and regsiter
 
 */
 

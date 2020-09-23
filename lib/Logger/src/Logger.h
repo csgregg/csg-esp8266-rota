@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -232,7 +232,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             static bool _doTick;
             static void TriggerTick();
 
-            const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - moce to progmem
+            const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - move to progmem
             const char* const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
 
             LogSettings _preSettings;

@@ -6,7 +6,7 @@ Import("env")
 print("Extra Script (Pre): local_pre.py")
 
 FILENAME_BUILDNO = '.version'
-FILENAME_VERSION_H = 'include/Version.h'
+FILENAME_VERSION_H = 'dynamic/Version.h'
 
 build_no = 0
 try:
