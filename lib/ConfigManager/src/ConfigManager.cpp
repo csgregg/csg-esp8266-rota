@@ -162,8 +162,7 @@ bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 	startMarker markerData = EEPROM.get(0, markerData);
 
-    PGM_P format = PSTR("(Config) Marker from flash: %s");
-    logger.printf( LOG_DETAIL, TAG_STATUS, format, markerData.marker );
+    LOGF_DETAIL( PSTR("(Config) Marker from flash: %s"), markerData.marker );
     
     // Return if it is there
     return (strcmp(markerData.marker, CONFIG_START_MARKER) == 0);
@@ -175,8 +174,7 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
     startMarker markerData;
 
-    PGM_P format = PSTR("(Config) Writing marker: %s");
-    logger.printf( LOG_DETAIL, TAG_STATUS, format, markerData.marker );
+    LOGF_DETAIL( PSTR("(Config) Writing marker: %s"), markerData.marker );
 
     strncpy(markerData.marker, CONFIG_START_MARKER, sizeof(CONFIG_START_MARKER));
 	markerData = EEPROM.put(0, markerData);
