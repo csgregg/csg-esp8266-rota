@@ -16,16 +16,18 @@ def get_build_flag_value(flag_name):
 def gzipBINs(*args, **kwargs):
     print("Extra Script (Post): process_bins_post.py")
 
-    fstarget = str(kwargs['target'][0])
+    progtarget = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(fstarget))
-    progtarget = os.path.join(target_path, env['PROGNAME']+".bin")
+    fstarget_file = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
+    fstarget = os.path.join(target_path,fstarget_file)
 
     print(fstarget)
     print(target_path)
-    print(progtarget) 
+    print(progtarget)
+    print(fstarget_file)
 
     os.system("ls -las /tmp")
-    os.system("mv /tmp/" + env['PROGNAME']+".bin " + target_path)
+    os.system("mv /tmp/" + fstarget_file " + target_path)
     os.system("ls -las " + target_path)
 
     os.system("gzip -9 -k " + progtarget)
