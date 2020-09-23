@@ -17,7 +17,7 @@ def gzipBINs(*args, **kwargs):
     print("Extra Script (Post): process_bins_post.py")
 
     progtarget = str(kwargs['target'][0])
-    target_path = os.path.dirname(os.path.abspath(fstarget))
+    target_path = os.path.dirname(os.path.abspath(progtarget))
     fstarget_file = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
     fstarget = os.path.join(target_path,fstarget_file)
 
@@ -37,6 +37,8 @@ def gzipBINs(*args, **kwargs):
 
 
 def keepFSBIN(*args, **kwargs):
+    print("Extra Script (Post): process_bins_post.py")
+
     fstarget = str(kwargs['target'][0])
     target_path = os.path.dirname(os.path.abspath(fstarget))
     new_fstarget = os.path.join(target_path, "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG")))
