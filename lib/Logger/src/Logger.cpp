@@ -522,6 +522,8 @@ bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
 
     return (httpCode == HTTP_CODE_OK );
 
+#else
+    return false;
 #endif
 
 }
