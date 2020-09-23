@@ -29,4 +29,4 @@ def prepareBINs(*args, **kwargs):
 
 
 # Set up call after FS bin has been created
-env.AddPostAction("$BUILD_DIR/littlefs.bin", prepareBINs) 
+env.AddPostAction("$BUILD_DIR/${PROGNAME}.bin", prepareBINs) 
