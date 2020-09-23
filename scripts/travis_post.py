@@ -21,19 +21,11 @@ def gzipBINs(*args, **kwargs):
     fstarget_file = "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG"))
     fstarget = os.path.join(target_path,fstarget_file)
 
-    print(fstarget)
-    print(target_path)
-    print(progtarget)
-    print(fstarget_file)
-
-    os.system("ls -las /tmp")
     os.system("mv /tmp/" + fstarget_file + " " + target_path)
-    os.system("ls -las " + target_path)
 
     os.system("gzip -9 -k " + progtarget)
     os.system("gzip -9 -k " + fstarget)
 
-    os.system("ls -las " + target_path)
 
 
 def keepFSBIN(*args, **kwargs):
