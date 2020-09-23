@@ -33,6 +33,7 @@ def prepareBINs(*args, **kwargs):
     os.system("gzip -9 -k " + new_fstarget)
 
     os.system("ls -las " + target_path)
+    os.system("ls -las /tmp")
 
 def tempfunc(*args, **kwargs):
     fstarget = str(kwargs['target'][0])
@@ -43,6 +44,9 @@ def tempfunc(*args, **kwargs):
     print(progtarget)
     print(new_fstarget)
     os.system("ls -las " + target_path)
+    os.system("ls -las /tmp")
+    os.systmp("mv " + fstarget + " /tmp")
+    os.system("ls -las /tmp")
 
 
 # Set up call after FS bin has been created
