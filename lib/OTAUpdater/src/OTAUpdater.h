@@ -119,7 +119,7 @@ binaries built by Travis-CI.
             const char* _FSSuffix = "-Fv";
 
             char _assetRequestURL[OTA_MAX_URL_LEN];    
-            String _latestTag;
+            char _latestTag[OTA_MAX_TAG_LEN];
 
             WiFiClient* _client;
             OTASettings* _settings;

@@ -174,9 +174,9 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
         const char* latestTag = latestRelease[F("tag")];
         const char* releaseDate = latestRelease[F("date")];
 
-        _latestTag = latestTag;
+        strcpy(_latestTag, latestTag);
 
-        logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Latest version: %s"), _latestTag.c_str() );
+        logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Latest version: %s"), _latestTag );
         logger.printf( LOG_DETAIL, TAG_STATUS, PSTR("(Updater) Release date: %s"), releaseDate );
 
         return _latestTag;
@@ -244,7 +244,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
     strcat_P(imageFileRequest,  flag_DEVICE_CODE);
     strcat(imageFileRequest, _progSuffix);
     strcat_P(imageFileRequest, PSTR("&tag="));
-    strcat(imageFileRequest, _latestTag.c_str());        // TODO - change latestag to char[]
+    strcat(imageFileRequest, _latestTag);
     strcat(imageFileRequest, ( type == GZ ? "&type=gz" : ""));
     
     LOG(F("(Updater) Updating Program"));
