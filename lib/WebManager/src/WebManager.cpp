@@ -24,8 +24,13 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
+Builds on EmbAJAX Library - https://github.com/tfry-git/EmbAJAX
+
+Uses either inlined flash files or LittleFS to server web files, and hangles AJAX calls
 
 */
+
+
 
 #ifndef WEB_FLASHFILES
 #include <LittleFS.h>
@@ -208,7 +213,7 @@ void WebsiteManager::begin() {
 
 // convert the file extension to the MIME type
 String WebsiteManager::getContentType(String filename) { 
-    if (filename.endsWith(F(".html"))) return F("text/html");                // TODO - Remove .gz if change to handleFS
+    if (filename.endsWith(F(".html"))) return F("text/html");
     else if (filename.endsWith(F(".css"))) return F("text/css");
     else if (filename.endsWith(F(".js"))) return F("application/javascript");
     else if (filename.endsWith(F(".ico"))) return F("image/x-icon");

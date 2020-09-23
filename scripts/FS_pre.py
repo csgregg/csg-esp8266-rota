@@ -46,11 +46,11 @@ def createfolders():
         print ("Created <data/www> folder")
 
     try:
-        os.mkdir("include")
+        os.mkdir("dynamic")
     except OSError:
-        print ("<include> folder exists")
+        print ("<dynamic> folder exists")
     else:
-        print ("Created <include> folder")
+        print ("Created <dynamic> folder")
 
 
 # Get build flags values from env
@@ -241,7 +241,7 @@ if checkFSBuild():
     deflate_www("data/tmp","data/www")
 
     # Inline files into flash
-    inlineFlashFiles("data/www","include/WebFiles.h")
+    inlineFlashFiles("data/www","dynamic/WebFiles.h")
 
     # Clean up
     shutil.rmtree("data/tmp")

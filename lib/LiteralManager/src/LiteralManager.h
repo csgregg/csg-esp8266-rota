@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-TODO - Add acknowledgements
+Based on ideas from https://github.com/jjssoftware/iD8266
 
 */
 
@@ -37,7 +37,7 @@ TODO - Add acknowledgements
 
     #include <Arduino.h>
 
-    #include "Literals.h"       // TODO - Need to figure out how to move this to the main include folder
+    #include "Literals.h"
 
     // Enumerate the IDs for the literals
     enum literalID {

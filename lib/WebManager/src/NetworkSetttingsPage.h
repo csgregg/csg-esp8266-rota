@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Chris Gregg
+Copyright (c) 2020 Chris Gregg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-Describes the Network Settings web page
+Server-side functions of netsettings.html
 
 */
 
@@ -38,7 +38,8 @@ Describes the Network Settings web page
 
 
     class NetworkSettingsPage {
-        public:                             // TODO - sort out public and protected
+
+        public:
 
             const char* URL;
             void (*handler)();
@@ -67,7 +68,7 @@ Describes the Network Settings web page
 
             EmbAJAXServerFunction wifi_stn_save;
             EmbAJAXServerFunction wifi_stn_id;
-            EmbAJAXServerFunction wifi_stn_btn;     // Are these really functions or are they varilables
+            EmbAJAXServerFunction wifi_stn_btn;     // TODO - Are these really functions or are they varilables
             EmbAJAXServerFunction wifi_stn_cnct;
 
             EmbAJAXVarInt wifi_stn_count;

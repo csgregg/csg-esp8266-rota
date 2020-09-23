@@ -3,7 +3,7 @@
 
 # Dynamically generated
 .version
-include
+dynamic
 
 # Local temp data 
 data
