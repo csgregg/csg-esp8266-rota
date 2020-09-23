@@ -188,23 +188,23 @@ Server-side functions of netsettings.html
 
             EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-            void handleAjax();
+            void ICACHE_FLASH_ATTR handleAjax();
 
-            void initializeAjax();
+            void ICACHE_FLASH_ATTR initializeAjax();
 
-            void loadWifiStation(uint id);
+            void ICACHE_FLASH_ATTR loadWifiStation(uint id);
 
-            void saveWifiStation(uint id);
+            void ICACHE_FLASH_ATTR saveWifiStation(uint id);
 
-            void connectWifiStation(uint id);
+            void ICACHE_FLASH_ATTR connectWifiStation(uint id);
 
-            void setWifiMode(WiFiMode mode);
+            void ICACHE_FLASH_ATTR setWifiMode(WiFiMode mode);
 
-            void saveAP();
+            void ICACHE_FLASH_ATTR saveAP();
 
-            void saveNetCheck();
+            void ICACHE_FLASH_ATTR saveNetCheck();
 
-            char* getAssignedIP() {
+            char* ICACHE_FLASH_ATTR getAssignedIP() {
                 static char ip[15];
                 sprintf(ip, "%i.%i.%i.%i", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3] );
                 return ip;

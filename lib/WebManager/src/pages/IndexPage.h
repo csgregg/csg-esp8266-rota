@@ -61,9 +61,9 @@ Server-side functions of index.html
 
             EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
 
-            void handleAjax();
+            void ICACHE_FLASH_ATTR handleAjax();
 
-            void initializeAjax();
+            void ICACHE_FLASH_ATTR initializeAjax();
     };
     
     extern IndexPage indexpage;
