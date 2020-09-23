@@ -38,7 +38,11 @@ SOFTWARE.
 #include "AboutPage.h"
 #include "IndexPage.h"
 #include "SystemPage.h"
+
+// Are we using flash instead of LittleFS for web files
+#ifdef WEB_FLASHFILES
 #include "WebFiles.h"
+#endif
 
     
 // Webpages
@@ -220,6 +224,8 @@ bool WebsiteManager::handleFileRequest() {
 
     String contentType = getContentType(URL);                  // Get the MIME type
 
+// Are we using flash instead of LittleFS for web files
+#ifdef WEB_FLASHFILES
     // Try from Flash
     for( uint i=0; i<(sizeof(websiteFiles)/sizeof(t_websitefiles)); i++ ) {
         if( strcmp_P( URL.c_str(), websiteFiles[i].path ) == 0 ) {
@@ -237,6 +243,7 @@ bool WebsiteManager::handleFileRequest() {
             return true;
         }
     }
+#endif
 
     // Try from LittleFS
     String path = "/www" + URL + ".gz";
