@@ -169,7 +169,7 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
         JsonObject latestRelease = responseJSON[F("releases")][0];
         const char* latestTag = latestRelease[F("tag")];
-        const char* releaseDate = latestRelease[F("date")];
+        const char* releaseDate = latestRelease[F("date")];         // TODO - releaseDate isn't used
 
         strcpy(_latestTag, latestTag);
 

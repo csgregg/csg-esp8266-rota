@@ -48,9 +48,10 @@ debug of code. Macros are defined for to simplifiy common usage.
 
       // Macros to simplifiy common usage
 
-      #define DEBUG_DETAIL(text) logger.println(DETAIL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
       #define DEBUG(text) logger.println(NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      
+      #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
+      #define DEBUG_RAW(text) Serial.println(text);
+
       #define LOG(text) logger.println(NORMAL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG_DETAIL(text) logger.println(DETAIL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
       #define LOG_HIGH(text) logger.println(HIGH_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
@@ -60,32 +61,26 @@ debug of code. Macros are defined for to simplifiy common usage.
       #define LOGF_DETAIL(...) logger.printf(DETAIL_LOG, STATUS_TAG, __VA_ARGS__)
       #define LOGF_HIGH(...) logger.printf(HIGH_LOG, STATUS_TAG, __VA_ARGS__)
       #define LOGF_CRITICAL(...) logger.printf(CRITICAL_LOG, STATUS_TAG, __VA_ARGS__)
-
-      #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
-      #define DEBUG_RAW(text) Serial.println(text);
   
       #define LOG_FLAG(name) logger.printFlag(NORMAL_LOG, STATUS_TAG, #name, name)      // Used to pass flag name as argument to method
 
     #else
 
-      #define DEBUG_DETAIL
-      #define DEBUG
-      #define DEBUG_CRITICAL
+      #define DEBUG(text)
+      #define DEBUG_STOP()
+      #define DEBUG_RAW(text)
+      
+      #define LOG(text)
+      #define LOG_DETAIL(text)
+      #define LOG_HIGH(text)
+      #define LOG_CRITICAL(text)
 
-      #define LOG
-      #define LOG_DETAIL
-      #define LOG_HIGH
-      #define LOG_CRITICAL
+      #define LOGF(...)
+      #define LOGF_DETAIL(...)
+      #define LOGF_HIGH(...)
+      #define LOGF_CRITICAL(...)
 
-      #define LOGF
-      #define LOGF_DETAIL
-      #define LOGF_HIGH
-      #define LOGF_CRITICAL
-
-      #define DEBUG_STOP
-      #define DEBUG_RAW
-
-      #define LOG_FLAG
+      #define LOG_FLAG(text)
 
     #endif
 
