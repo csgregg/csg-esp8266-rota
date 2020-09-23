@@ -29,13 +29,11 @@ Server-side functions of index.html
 */
 
 
-
 #include "IndexPage.h"
 #include "Logger.h"
 #include "Device.h"
 #include "NetworkManager.h"
 
-// TODO: Flashstrings
 
 
 void ICACHE_FLASH_ATTR IndexPage::initializeAjax(){

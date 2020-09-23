@@ -317,7 +317,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 // Protected:
 
 // Create and log prefix - needs to be followed by message using Serial.println()
-void ICACHE_FLASH_ATTR LogClient::LogPrefix( const logType type, const logTag tag ){
+void LogClient::LogPrefix( const logType type, const logTag tag ){
 
 #ifndef NO_LOGGING
 

@@ -94,10 +94,10 @@ through the settings member.
 
             ConfigManager();
 
-            void begin(const bool forceInit = false);          // Start the config manager
-            void ResetToDefaults();                                 // Saves the default settings
-            void Read();                                            // Reads all the settings
-            void Save(const bool force = false);                    // Saves all the settings
+            void ICACHE_FLASH_ATTR begin(const bool forceInit = false);          // Start the config manager
+            void ICACHE_FLASH_ATTR ResetToDefaults();                                 // Saves the default settings
+            void ICACHE_FLASH_ATTR Read();                                            // Reads all the settings
+            void ICACHE_FLASH_ATTR Save(const bool force = false);                    // Saves all the settings
 
             // Make the settings set accessible
             deviceSettings settings;
@@ -105,9 +105,9 @@ through the settings member.
 
         protected:
 
-            bool CheckMarker();
-            void WriteMarker();
-            void EraseFlash();
+            bool ICACHE_FLASH_ATTR CheckMarker();
+            void ICACHE_FLASH_ATTR WriteMarker();
+            void ICACHE_FLASH_ATTR EraseFlash();
 
             bool _IsInitialized;
 
