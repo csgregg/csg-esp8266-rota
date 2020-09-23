@@ -27,7 +27,7 @@ def gzipBINs(*args, **kwargs):
     print(fstarget_file)
 
     os.system("ls -las /tmp")
-    os.system("mv /tmp/" + fstarget_file + " + target_path)
+    os.system("mv /tmp/" + fstarget_file + " " + target_path)
     os.system("ls -las " + target_path)
 
     os.system("gzip -9 -k " + progtarget)
