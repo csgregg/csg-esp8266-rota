@@ -188,7 +188,7 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 }
  
 
-
+#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
 HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
@@ -233,7 +233,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
     return ret;
 
 }
-
+#endif
 
 
 HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
@@ -317,8 +317,11 @@ void OTAUpdater::handle() {
             return;
         }
         
-        // Compressed only works for program, not file system
-        if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );
+#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
+        if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system
+#else
+        UpdateProg( GZ, true );
+#endif
         
     }
 }

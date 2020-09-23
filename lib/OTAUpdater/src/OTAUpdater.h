@@ -134,7 +134,9 @@ binaries built by Travis-CI.
 
             int _lastError;
 
+#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
             HTTPUpdateResult UpdateFS( const bin_type type );
+#endif
             HTTPUpdateResult UpdateProg( const bin_type type, const bool restart = false );
 
         private:
