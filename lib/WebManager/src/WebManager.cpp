@@ -39,11 +39,10 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 #include "WebManager.h"
 #include "Logger.h"
 
-// TODO - Do we want to move the web pages into separate lib?
-#include "NetworkSetttingsPage.h"
-#include "AboutPage.h"
-#include "IndexPage.h"
-#include "SystemPage.h"
+#include "pages/NetworkSetttingsPage.h"
+#include "pages/AboutPage.h"
+#include "pages/IndexPage.h"
+#include "pages/SystemPage.h"
 
 // Are we using flash instead of LittleFS for web files
 #ifdef WEB_FLASHFILES

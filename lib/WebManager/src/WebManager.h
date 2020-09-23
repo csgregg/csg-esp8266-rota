@@ -185,7 +185,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         protected:
 
             String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handleFileRequest();                                    // send the right file to the client (if it exists)
+            bool handleFileRequest();                               // send the right file to the client (if it exists)
             void handleAJAX();                                      // process AJAX request
             void InitAJAX();                                        // process page initialization
 
