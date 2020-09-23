@@ -23,7 +23,7 @@ def prepareBINs(*args, **kwargs):
 
     new_fstarget = os.path.join(target_path, "%s-Fv%s.bin" % (get_build_flag_value("DEVICE_CODE"), get_build_flag_value("BUILD_TAG")))
     os.rename(fstarget, new_fstarget)
-
+os.system("ls -las")
     os.system("gzip -9 -k " + progtarget)
     os.system("gzip -9 -k " + new_fstarget)
 
