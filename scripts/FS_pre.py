@@ -45,6 +45,13 @@ def createfolders():
     else:
         print ("Created <data/www> folder")
 
+    try:
+        os.mkdir("include")
+    except OSError:
+        print ("<include> folder exists")
+    else:
+        print ("Created <include> folder")
+
 
 # Get build flags values from env
 def get_build_flag_value(flag_name):
