@@ -63,7 +63,7 @@ binaries built by Travis-CI.
     class OTASettings {
         public:
 
-            void setDefaults();
+            void ICACHE_FLASH_ATTR setDefaults();
 
             char service[OTA_MAX_SERVICE_LEN] = "";
             char repo[OTA_MAX_REPO_LEN] = "";
@@ -102,14 +102,11 @@ binaries built by Travis-CI.
         
         public:
             
-            void begin( WiFiClient& client, OTASettings &settings );
+            void ICACHE_FLASH_ATTR begin( WiFiClient& client, OTASettings &settings );
 
             void handle();
 
-            String getLatestBuild();
-
-            int getLastError();
-            String getLastErrorString();
+            String ICACHE_FLASH_ATTR getLatestBuild();
 
             enum bin_type {
                 RAW,                        // Uncompressed BIN file (.bin)
@@ -135,9 +132,9 @@ binaries built by Travis-CI.
             int _lastError;
 
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-            HTTPUpdateResult UpdateFS( const bin_type type );
+            HTTPUpdateResult ICACHE_FLASH_ATTR UpdateFS( const bin_type type );
 #endif
-            HTTPUpdateResult UpdateProg( const bin_type type, const bool restart = false );
+            HTTPUpdateResult ICACHE_FLASH_ATTR UpdateProg( const bin_type type, const bool restart = false );
 
         private:
         

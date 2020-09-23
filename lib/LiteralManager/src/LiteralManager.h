@@ -64,8 +64,8 @@ Based on ideas from https://github.com/jjssoftware/iD8266
 
         public:
 
-            String Get(literalID ID);           // Retrieve literal by ID
-            char* pGet(literalID ID);          // Retrieve literal ptr by ID
+            String ICACHE_FLASH_ATTR Get(literalID ID);           // Retrieve literal by ID
+            char* ICACHE_FLASH_ATTR pGet(literalID ID);          // Retrieve literal ptr by ID
 
 
         protected:

@@ -131,13 +131,22 @@ debug of code. Macros are defined for to simplifiy common usage.
         TAG_STATUS
     } ;
 
+    // Type names
+    static const char cCritical[] PROGMEM = "CRITICAL";
+    static const char cNormal[] PROGMEM = "Normal";
+    static const char cHigh[] PROGMEM = "High";
+    static const char cVerbose[] PROGMEM = "Verbose";
+
+    // Tag names
+    static const char cDebug[] PROGMEM = "DEBUG";
+    static const char cStatus[] PROGMEM = "STATUS";
 
     // Logger settings
     class LogSettings {
 
         public:
 
-            void setDefaults();
+            void ICACHE_FLASH_ATTR setDefaults();
 
             uint serialBaud = DEFAULT_MONITOR_BAUD;
             char serviceURL[MAX_SERVICE_LEN] = "";
@@ -189,29 +198,29 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             /// To set up logging
 
-            void begin( WiFiClient &client, LogSettings &settings );
-            void begin( LogSettings &settings );
-            bool SerialOn() { return _settings->serialMode; };
+            void ICACHE_FLASH_ATTR begin( WiFiClient &client, LogSettings &settings );
+            void ICACHE_FLASH_ATTR begin( LogSettings &settings );
+            bool ICACHE_FLASH_ATTR SerialOn() { return _settings->serialMode; };
             
  
             // Log messages (with overloads)
 
-            void println(const logType type, const logTag tag, const char * message);
-            void println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line );
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char * message);
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line );
 
-            void println(const logType type, const logTag tag, const char c);
-            void println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c);
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
 
-            void println(const logType type, const logTag tag, const String &message);
-            void println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message);
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
-            void printf(const logType type, const logTag tag, const char * format, ...);
+            void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * format, ...);
             // TODO Add overload for FlashStrings
 
             // For build flags
-            void printFlag(const logType type, const logTag tag, const char* name, const char* flag);
-            void printFlag(const logType type, const logTag tag, const char* name, const bool flag);
-            void printFlag(const logType type, const logTag tag, const char* name, const uint flag);
+            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const char* flag);
+            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const bool flag);
+            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const uint flag);
 
             void handle();
 
@@ -226,14 +235,14 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void LogToSerial(const logType type, const logTag tag, const char * message);
             void LogToService(const logType type, const logTag tag, const char * message);
-            bool handleTick();      // Send minimum data to logging service
+            bool ICACHE_FLASH_ATTR handleTick();      // Send minimum data to logging service
 
             Ticker _tickCheck;
             static bool _doTick;
             static void TriggerTick();
 
-            const char* const c_log_type_descript[MAX_LOG_TYPES] = {"CRITICAL","Normal","High","Verbose"};      // TODO - move to progmem
-            const char* const c_log_tag_descript[MAX_TAG_TYPES] = {"DEBUG","STATUS"};
+            const char* const c_log_type_descript[MAX_LOG_TYPES] = {cCritical,cNormal,cHigh,cVerbose};
+            const char* const c_log_tag_descript[MAX_TAG_TYPES] = {cDebug,cStatus};
 
             LogSettings _preSettings;
 

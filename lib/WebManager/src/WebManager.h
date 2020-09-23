@@ -174,7 +174,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             ESP8266WebServer _server;
             EmbAJAXOutputDriver _ajax;
 
-            void begin();
+            void ICACHE_FLASH_ATTR begin();
             void handle() { _ajax.loopHook(); };
  
             String URL;
@@ -184,10 +184,10 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
         protected:
 
-            String getContentType( const String filename );         // convert the file extension to the MIME type
-            bool handleFileRequest();                               // send the right file to the client (if it exists)
-            void handleAJAX();                                      // process AJAX request
-            void InitAJAX();                                        // process page initialization
+            String ICACHE_FLASH_ATTR getContentType( const String filename );         // convert the file extension to the MIME type
+            bool ICACHE_FLASH_ATTR handleFileRequest();                               // send the right file to the client (if it exists)
+            void ICACHE_FLASH_ATTR handleAJAX();                                      // process AJAX request
+            void ICACHE_FLASH_ATTR InitAJAX();                                        // process page initialization
 
             int statusFlash = 1;
 

@@ -163,7 +163,7 @@ void EmbAJAXStyle::setStyle(const char* style) {
 
 
 // Initialize web manaber
-void WebsiteManager::begin() {
+void ICACHE_FLASH_ATTR WebsiteManager::begin() {
 
      // If the client requests any URI
     _server.onNotFound( 
@@ -211,7 +211,7 @@ void WebsiteManager::begin() {
 
 
 // convert the file extension to the MIME type
-String WebsiteManager::getContentType(String filename) { 
+String ICACHE_FLASH_ATTR WebsiteManager::getContentType(String filename) { 
     if (filename.endsWith(F(".html"))) return F("text/html");
     else if (filename.endsWith(F(".css"))) return F("text/css");
     else if (filename.endsWith(F(".js"))) return F("application/javascript");
@@ -227,7 +227,7 @@ String WebsiteManager::getContentType(String filename) {
 
 // Send the right file to the client (if it exists)
 // Assumes GZIPed files
-bool WebsiteManager::handleFileRequest() {
+bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 
     String contentType = getContentType(URL);                  // Get the MIME type
 

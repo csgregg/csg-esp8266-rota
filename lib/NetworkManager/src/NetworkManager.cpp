@@ -40,7 +40,7 @@ Manages Network Functions
 
 // Network Settings 
 
-void StationConfig::setDefaults() {
+void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 
     strcpy_P( SSID, DEFAULT_WIFI_SSID );
     strcpy_P( password, DEFAULT_WIFI_PWD );
@@ -54,7 +54,7 @@ void StationConfig::setDefaults() {
 }
 
 
-void APConfig::setDefaults() {
+void ICACHE_FLASH_ATTR APConfig::setDefaults() {
 
     strcpy_P( SSID, flag_DEVICE_CODE );
     strcpy_P( password, flag_DEVICE_CODE );        // TODO Make secure token for this
@@ -66,7 +66,7 @@ void APConfig::setDefaults() {
 }
 
 
-void NetCheckConfig::setDefaults() {
+void ICACHE_FLASH_ATTR NetCheckConfig::setDefaults() {
 
     mode = flag_NET_CHECKER;
     strcpy_P( checkService, flag_NET_CHECK_SERVICE );
@@ -75,7 +75,7 @@ void NetCheckConfig::setDefaults() {
 }
 
 
-void NetworkSettings::setDefaults() {
+void ICACHE_FLASH_ATTR NetworkSettings::setDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
     lastStation = 0;
@@ -87,11 +87,6 @@ void NetworkSettings::setDefaults() {
 
 
 
-
-
-// TODO - Flash cache
-
-
 // Network Manager Class
 
 
@@ -99,7 +94,7 @@ bool NetworkManager::_doNetCheck = false;
 
 // Public:
 
-void NetworkManager::begin( NetworkSettings &settings ) {
+void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
 
     LOG(F("(Network) Starting network services"));
 
@@ -111,7 +106,7 @@ void NetworkManager::begin( NetworkSettings &settings ) {
 }
 
 
-NetworkStatus NetworkManager::getNetworkStatus() {
+NetworkStatus ICACHE_FLASH_ATTR NetworkManager::getNetworkStatus() {
     if( _ConnectedToInternet ) return NetworkStatus::NORMAL;
     else {
         if( isStationConnected() || _APConnections > 0 ) return NetworkStatus::NOINETERNET;
@@ -120,7 +115,7 @@ NetworkStatus NetworkManager::getNetworkStatus() {
 };
 
 
-void NetworkManager::InitializeNetCheck() {
+void ICACHE_FLASH_ATTR NetworkManager::InitializeNetCheck() {
 
     _doNetCheck = _settings->netCheckSettings.mode;
     _ConnectedToInternet = false;
@@ -175,7 +170,7 @@ void NetworkManager::HandleNetCheck() {
 }
 
 
-void NetworkManager::InitializeWiFi() {
+void ICACHE_FLASH_ATTR NetworkManager::InitializeWiFi() {
 
     LOG(F("(Network) Starting WiFi"));
 
@@ -247,7 +242,7 @@ bool NetworkManager::handleWiFiAP(const bool force) {
 }
 
 
-void NetworkManager::reconnectWifi() {
+void ICACHE_FLASH_ATTR NetworkManager::reconnectWifi() {
     LOG("(Network) Reconnecting Wifi");
     WiFi.setAutoReconnect(false);
     WiFi.disconnect(false);
@@ -306,7 +301,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 }
 
 
-bool NetworkManager::startWiFiAccessPoint() {
+bool ICACHE_FLASH_ATTR NetworkManager::startWiFiAccessPoint() {
     LOG(F("(Network) WiFi mode - Access Point"));
 
     bool ret = WiFi.mode( _settings->wifiMode );
@@ -333,7 +328,7 @@ bool NetworkManager::startWiFiAccessPoint() {
 }
 
 
-bool NetworkManager::connectWiFiStation( const int id ) {
+bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
     LOG(F("(Network) Connecting Wifi Station"));
 
     ResetConnectedStatus();

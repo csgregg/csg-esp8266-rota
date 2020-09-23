@@ -153,7 +153,7 @@ Manages Network Functions
 
         public:
 
-            void setDefaults();
+            void ICACHE_FLASH_ATTR setDefaults();
 
             bool mode = false;
             char checkService[MAX_CHECK_SERVICE_LEN] = "";      // TODO - shorten the URL
@@ -178,7 +178,7 @@ Manages Network Functions
 
         public:
 
-            void setDefaults();
+            void ICACHE_FLASH_ATTR setDefaults();
     
             // WiFi Mode
             WiFiMode wifiMode;          
@@ -234,40 +234,40 @@ Manages Network Functions
                 _ConnectedToInternet = false;
             }
 
-            void begin( NetworkSettings &settings );
+            void ICACHE_FLASH_ATTR begin( NetworkSettings &settings );
 
-            bool setWiFiStation();
-            bool setWiFiAP();
-            void reconnectWifi();
-            bool connectWiFiStation( const int id = 0 );
-            void setWiFiMode( WiFiMode mode ) {
+            bool ICACHE_FLASH_ATTR setWiFiStation();
+            bool ICACHE_FLASH_ATTR setWiFiAP();
+            void ICACHE_FLASH_ATTR reconnectWifi();
+            bool ICACHE_FLASH_ATTR connectWiFiStation( const int id = 0 );
+            void ICACHE_FLASH_ATTR setWiFiMode( WiFiMode mode ) {
                 _settings->wifiMode = mode;
                 handleWiFi(true);
             };            
 
             void handle();
 
-            WiFiClient& getWiFiClient() { return _client; };
+            WiFiClient& ICACHE_FLASH_ATTR getWiFiClient() { return _client; };
           
-            uint getConnectedStation() {
+            uint ICACHE_FLASH_ATTR getConnectedStation() {
                 for( int i = 0; i < MAX_SSIDS; i++ ) {
                     if( _stationConnected[i] ) return i;
                 }
                 return 0;
             };
-            bool isStationConnected(uint id) { return _stationConnected[id]; };
-            bool isStationConnected() {
+            bool ICACHE_FLASH_ATTR isStationConnected(uint id) { return _stationConnected[id]; };
+            bool ICACHE_FLASH_ATTR isStationConnected() {
                 for( int i = 0; i < MAX_SSIDS; i++ ) {
                     if( _stationConnected[i] ) return true;
                 }
                 return false;
             };
 
-            bool isAPRunning( ) { return _APRunning; };
-            bool isInternetConnected( ) { return _ConnectedToInternet; };
-            NetworkStatus getNetworkStatus();
+            bool ICACHE_FLASH_ATTR isAPRunning( ) { return _APRunning; };
+            bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
+            NetworkStatus ICACHE_FLASH_ATTR getNetworkStatus();
 
-            void setNetChecker() { InitializeNetCheck(); }
+            void ICACHE_FLASH_ATTR setNetChecker() { InitializeNetCheck(); }
 
 
         protected:
@@ -275,13 +275,13 @@ Manages Network Functions
             void handleWiFi(const bool force = false);
 
             bool handleWiFiStation(const bool force = false);
-            bool startWiFiAccessPoint();
+            bool ICACHE_FLASH_ATTR startWiFiAccessPoint();
 
             bool handleWiFiAP(const bool force = false);
 
-            void InitializeWiFi();
+            void ICACHE_FLASH_ATTR InitializeWiFi();
 
-            void ResetConnectedStatus() {
+            void ICACHE_FLASH_ATTR ResetConnectedStatus() {
                 for( int i = 0; i < MAX_SSIDS; i++ ) _stationConnected[i] = false;
             };
 
@@ -302,9 +302,9 @@ Manages Network Functions
             static bool _doNetCheck;
 
             static void TriggerNetCheck();
-            void InitializeNetCheck();
+            void ICACHE_FLASH_ATTR InitializeNetCheck();
             void HandleNetCheck();
-            bool NetCheck();
+            bool ICACHE_FLASH_ATTR NetCheck();
    
         private:
 
