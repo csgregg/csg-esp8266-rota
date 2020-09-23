@@ -384,11 +384,19 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
             _settings->stationSettings[id].dns2 = WiFi.dnsIP(1);
 
     		if( logger.SerialOn() ) {
-                LOGF( PSTR("(Network) WiFi station connected - IP: %s"), _settings->stationSettings[id].ip.toString().c_str());         
-                LOGF_HIGH( PSTR("(Network) WiFi station connected - Subnet: %s"), _settings->stationSettings[id].subnet.toString().c_str());         
-                LOGF_HIGH( PSTR("(Network) WiFi station connected - Gateway: %s"), _settings->stationSettings[id].gateway.toString().c_str());
-                LOGF_HIGH( PSTR("(Network) WiFi station connected - DNS: %s"), _settings->stationSettings[id].dns1.toString().c_str());
-                LOGF_HIGH( PSTR("(Network) WiFi station connected - DNS: %s"), _settings->stationSettings[id].dns2.toString().c_str());
+
+                IPAddress ip;
+
+                ip = _settings->stationSettings[id].ip;
+                LOGF( PSTR("(Network) WiFi station connected - IP: %s"), ip.toString().c_str());
+                ip = _settings->stationSettings[id].subnet;     
+                LOGF_HIGH( PSTR("(Network) WiFi station connected - Subnet: %s"), ip.toString().c_str());         
+                ip = _settings->stationSettings[id].gateway;
+                LOGF_HIGH( PSTR("(Network) WiFi station connected - Gateway: %s"), ip.toString().c_str());
+                ip = _settings->stationSettings[id].dns1;
+                LOGF_HIGH( PSTR("(Network) WiFi station connected - DNS: %s"), ip.toString().c_str());
+                ip = _settings->stationSettings[id].dns2;
+                LOGF_HIGH( PSTR("(Network) WiFi station connected - DNS: %s"), ip.toString().c_str());
             }
         }
         else LOG(F("(Network) WiFi Station not connected"));

@@ -323,12 +323,10 @@ void LogClient::LogPrefix( const logType type, const logTag tag ){
 #ifndef NO_LOGGING
 
     if( _settings->level == LOGGING_LEVEL_VERBOSE) {
-        PGM_P format = PSTR("LOG: %s: %s - Millis: %li, Heap: %i - ");
-        Serial.printf(format, c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
+        Serial.printf_P(PSTR("LOG: %s: %s - Millis: %li, Heap: %i - "), c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
     }
     else {
-        PGM_P format = PSTR("LOG: %s: %s - ");
-        Serial.printf(format, c_log_tag_descript[tag], c_log_type_descript[type]);
+        Serial.printf_P(PSTR("LOG: %s: %s - "), c_log_tag_descript[tag], c_log_type_descript[type]);
     }
 
 #endif
@@ -360,14 +358,14 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     if( WiFi.status() != WL_CONNECTED ) return;
 
-    char thistag[strlen(c_log_tag_descript[tag])];
-    strcpy(thistag, c_log_tag_descript[tag]);
+    char thistag[strlen_P(c_log_tag_descript[tag])];
+    strcpy_P(thistag, c_log_tag_descript[tag]);
 
-    char thistype[strlen(c_log_type_descript[type])];
-    strcpy(thistype, c_log_type_descript[type]);
+    char thistype[strlen_P(c_log_type_descript[type])];
+    strcpy_P(thistype, c_log_type_descript[type]);
 
     String loggingURL = _FullServiceURL + String(thistag) + "/";
-   
+ 
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(F("(Logger) Logging to: "));
@@ -468,11 +466,11 @@ bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
 
     if( WiFi.status() != WL_CONNECTED ) return false;
 
-    char thistag[strlen(c_log_tag_descript[STATUS_TAG])];
-    strcpy(thistag, c_log_tag_descript[STATUS_TAG]);
+    char thistag[strlen_P(c_log_tag_descript[STATUS_TAG])];
+    strcpy_P(thistag, c_log_tag_descript[STATUS_TAG]);
 
-    char thistype[strlen(c_log_type_descript[NORMAL_LOG])];
-    strcpy(thistype, c_log_type_descript[NORMAL_LOG]);
+    char thistype[strlen_P(c_log_type_descript[NORMAL_LOG])];
+    strcpy_P(thistype, c_log_type_descript[NORMAL_LOG]);
 
     String loggingURL = _FullServiceURL + String(thistag) + "/";
 

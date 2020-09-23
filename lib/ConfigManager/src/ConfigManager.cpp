@@ -130,8 +130,6 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
         return;
     }
 
-    
-
     if( !force ) {
 
         deviceSettings readset = EEPROM.get(markerDataSize, readset);
