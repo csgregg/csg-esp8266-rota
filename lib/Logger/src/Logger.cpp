@@ -468,11 +468,11 @@ bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
 
     if( WiFi.status() != WL_CONNECTED ) return false;
 
-    char thistag[strlen(c_log_tag_descript[STATUS_TAG])];
-    strcpy(thistag, c_log_tag_descript[STATUS_TAG]);
+    char thistag[strlen_P(c_log_tag_descript[STATUS_TAG])];
+    strcpy_P(thistag, c_log_tag_descript[STATUS_TAG]);
 
-    char thistype[strlen(c_log_type_descript[NORMAL_LOG])];
-    strcpy(thistype, c_log_type_descript[NORMAL_LOG]);
+    char thistype[strlen_P(c_log_type_descript[NORMAL_LOG])];
+    strcpy_P(thistype, c_log_type_descript[NORMAL_LOG]);
 
     String loggingURL = _FullServiceURL + String(thistag) + "/";
 
