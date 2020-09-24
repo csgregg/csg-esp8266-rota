@@ -80,8 +80,6 @@ void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
 
 
 
-// TODO - Change like ESP8266HTTPUpdate::handleUpdate
-
 void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &settings ) {
 
     _client = &client;
@@ -111,15 +109,11 @@ void OTAUpdater::TriggerUpdateCheck() {
     _doUpdateCheck = true;
 }
 
-// TODO change to POST intead of GET
+
 
 bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
-    LOG_HIGH(F("(Updater) Checking latest build..."));
-
-    // Expecting JSON back with latest release details
-
-    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
+    LOG(F("(Updater) Checking latest build..."));
 
     LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
@@ -138,6 +132,9 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
         else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
         return false;
     }
+
+    // Expecting JSON back with latest release details
+    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
 
     DynamicJsonDocument responseJSON(capacity);
 
