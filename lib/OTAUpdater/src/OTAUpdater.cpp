@@ -121,17 +121,15 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
 
+    LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
+
     HTTPClient http;
 
     http.setReuse(false);
     http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
-
-    LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
-
+    http.useHTTP10(true);
+    
     http.begin( *_client, _assetRequestURL );
-
-    http.setUserAgent(F("ESP8266-http-Update"));
-    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
     int httpcode = http.GET();
 
@@ -141,31 +139,21 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
         return false;
     }
 
-    int len = http.getSize();
-    char httppayload[capacity];
-    WiFiClient * stream = http.getStreamPtr();
-
-    while( http.connected() && (len > 0 || len == -1) ) {
-        size_t size = stream->available();
-
-        if(size) {
-            int c = stream->readBytes(httppayload, ((size > sizeof(httppayload)) ? sizeof(httppayload) : size ));
-            if(len >0) len -= c;
-        }
-    }
-    http.end();
-
     DynamicJsonDocument responseJSON(capacity);
 
-    DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
+    DeserializationError jsonerror = deserializeJson( responseJSON, http.getStream() );
+    http.end();
 
-    if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
+    if (jsonerror) {
+        LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
+        return false;
+    }
 
     const char* repoName = responseJSON[F("repo")];
 
     LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName );
 
-    if( repoName != _settings->repo ) {
+    if( strcmp( repoName, _settings->repo) != 0 ) {
         LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
         return false;
     }
