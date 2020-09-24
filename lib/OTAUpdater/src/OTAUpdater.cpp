@@ -117,6 +117,10 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
 
+    // Expecting JSON back with latest release details
+
+    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
+
     HTTPClient http;
 
     http.setReuse(false);
@@ -129,28 +133,37 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     http.setUserAgent(F("ESP8266-http-Update"));
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
-    int httperror = http.GET();
-    String httppayload = http.getString();
-    http.end();
+    int httpcode = http.GET();
 
-    if( httperror != HTTP_CODE_OK ) {
-        if( httperror < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httperror).c_str() );
-        else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
+    if( httpcode != HTTP_CODE_OK ) {
+        if( httpcode < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
+        else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
         return false;
     }
 
-    // Expecting JSON back with latest release details
+    int len = http.getSize();
+    char httppayload[capacity];
+    WiFiClient * stream = http.getStreamPtr();
 
-    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
+    while( http.connected() && (len > 0 || len == -1) ) {
+        size_t size = stream->available();
+
+        if(size) {
+            int c = stream->readBytes(httppayload, ((size > sizeof(httppayload)) ? sizeof(httppayload) : size ));
+            if(len >0) len -= c;
+        }
+    }
+    http.end();
+
     DynamicJsonDocument responseJSON(capacity);
 
     DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
 
     if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
 
-    String repoName = responseJSON[F("repo")];
+    const char* repoName = responseJSON[F("repo")];
 
-    LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
+    LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName );
 
     if( repoName != _settings->repo ) {
         LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
@@ -158,27 +171,26 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     }
 
     JsonObject latestRelease = responseJSON[F("releases")][0];
-    String latestTag = latestRelease[F("tag")];
-    String releaseDate = latestRelease[F("date")];
+    const char* latestTag = latestRelease[F("tag")];
+    const char* releaseDate = latestRelease[F("date")];
 
-    if( latestTag == "" ) {
+    if( strcmp(latestTag,"") == 0 ) {
         LOG_CRITICAL(F("(Updater) Error getting latest tag"));
         return false;
     }
 
-    String currentTag = FPSTR(flag_BUILD_TAG);
-    LOGF( PSTR("(Updater) Current version: %s"), currentTag.c_str() );
-    LOGF_HIGH( PSTR("(Updater) Latest version: %s"), latestTag.c_str() );
-    LOGF_HIGH( PSTR("(Updater) Release date: %s"), releaseDate.c_str() );
+    LOGF_HIGH( PSTR("(Updater) Current version: %s"), flag_BUILD_TAG );
+    LOGF_HIGH( PSTR("(Updater) Latest version: %s"), latestTag );
+    LOGF_HIGH( PSTR("(Updater) Release date: %s"), releaseDate );
 
     // Check for update
-    if( latestTag == currentTag ) {
+    if( strcmp_P( flag_BUILD_TAG, latestTag ) == 0 ) {
         LOG(F("(Updater) No new update"));  
         return false;
     }
 
-    strcpy(_latestTag, latestTag.c_str());
-    strcpy(_latestReleaseDate, releaseDate.c_str());
+    strcpy(_latestTag, latestTag);
+    strcpy(_latestReleaseDate, releaseDate);
 
     return true;
 
