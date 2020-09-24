@@ -113,12 +113,7 @@ void OTAUpdater::TriggerUpdateCheck() {
 
 // TODO change to POST intead of GET
 
-<<<<<<< HEAD
-
-bool ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
-=======
-String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
->>>>>>> parent of 2bef3e9... destring updater
+bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
 
@@ -127,8 +122,7 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     http.setReuse(false);
     http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-
-    LOGF_DETAIL( PSTR("(Updater) URL: %s"), _assetRequestURL );
+    LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
     http.begin( *_client, _assetRequestURL );
 
@@ -139,88 +133,54 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     String httppayload = http.getString();
     http.end();
 
-<<<<<<< HEAD
-    if( httpcode != HTTP_CODE_OK ) {
-        if( httpcode < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
-        else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
-        return false;
-=======
     if( httperror != HTTP_CODE_OK ) {
-
-        if( httperror < 0 ) {
-           LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httperror).c_str() );
-        }
-        else {
-            LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
-        }
-
-        return "";
->>>>>>> parent of 2bef3e9... destring updater
+        if( httperror < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httperror).c_str() );
+        else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
+        return false;
     }
-    else {
 
-        // Expecting JSON back with latest release details
+    // Expecting JSON back with latest release details
 
-        const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
-        DynamicJsonDocument responseJSON(capacity);
+    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
+    DynamicJsonDocument responseJSON(capacity);
 
-        DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
+    DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
 
-        if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
+    if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
 
-        String repoName = responseJSON[F("repo")];
+    String repoName = responseJSON[F("repo")];
 
-       LOGF_DETAIL( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
+    LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
 
-        if( repoName != _settings->repo ) {
-
-<<<<<<< HEAD
-    if( strcmp(repoName, _settings->repo) != 0 ) {
+    if( repoName != _settings->repo ) {
         LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
         return false;
     }
-=======
-            LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
 
-            return "";
-        }
+    JsonObject latestRelease = responseJSON[F("releases")][0];
+    String latestTag = latestRelease[F("tag")];
+    String releaseDate = latestRelease[F("date")];
 
-        JsonObject latestRelease = responseJSON[F("releases")][0];
-        const char* latestTag = latestRelease[F("tag")];
-        const char* releaseDate = latestRelease[F("date")];         // TODO - releaseDate isn't used
->>>>>>> parent of 2bef3e9... destring updater
-
-        strcpy(_latestTag, latestTag);
-
-<<<<<<< HEAD
-    if( strcmp(latestTag,"") == 0 ) {
-        LOG_CRITICAL(F("(Updater) Error getting update")); 
+    if( latestTag == "" ) {
+        LOG_CRITICAL(F("(Updater) Error getting latest tag"));
         return false;
     }
 
-    strcpy(_latestTag, latestTag);
-    strcpy(_latestReleaseDate, releaseDate);
-
-    LOGF( PSTR("(Updater) Current version: %s"), PSTR(flag_BUILD_TAG) );
-    LOGF_DETAIL( PSTR("(Updater) Latest version: %s"), latestTag );
-    LOGF_DETAIL( PSTR("(Updater) Release date: %s"), releaseDate );
+    String currentTag = FPSTR(flag_BUILD_TAG);
+    LOGF( PSTR("(Updater) Current version: %s"), currentTag.c_str() );
+    LOGF_HIGH( PSTR("(Updater) Latest version: %s"), latestTag.c_str() );
+    LOGF_HIGH( PSTR("(Updater) Release date: %s"), releaseDate.c_str() );
 
     // Check for update
-    if( strcmp_P( flag_BUILD_TAG, latestTag ) == 0 ) {
+    if( latestTag == currentTag ) {
         LOG(F("(Updater) No new update"));  
         return false;
     }
 
+    strcpy(_latestTag, latestTag.c_str());
+    strcpy(_latestReleaseDate, releaseDate.c_str());
+
     return true;
-=======
-        LOGF_DETAIL( PSTR("(Updater) Latest version: %s"), _latestTag );
-        LOGF_DETAIL( PSTR("(Updater) Release date: %s"), releaseDate );
-
-        return _latestTag;
-    }
-
-    return "";
->>>>>>> parent of 2bef3e9... destring updater
 
 }
  
@@ -337,25 +297,7 @@ void OTAUpdater::handle() {
 
         _doUpdateCheck = false;
 
-<<<<<<< HEAD
-=======
-        String currentTag = FPSTR(flag_BUILD_TAG);
-
-        LOGF( PSTR("(Updater) Current version: %s"), currentTag.c_str() );
-
-        // Check for update
-
-        String checkTag = getLatestBuild();
-
-        if( checkTag == "" ) return;
-
-        LOGF( PSTR("(Updater) Latest version: %s"), checkTag.c_str() );
-
-        if( checkTag == currentTag ) {
-            LOG(F("(Updater) No new update"));  
-            return;
-        }
->>>>>>> parent of 2bef3e9... destring updater
+        if( !checkForUpdate() ) return;     // No new update
         
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
         if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system

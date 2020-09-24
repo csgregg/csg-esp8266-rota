@@ -99,7 +99,7 @@ Manages Network Functions
 
 
     // Defaults
-    #define DEFAULT_WIFIMODE WIFI_STA           // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+    #define DEFAULT_WIFIMODE WIFI_AP_STA        // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
     #define DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
