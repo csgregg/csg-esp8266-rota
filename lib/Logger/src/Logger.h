@@ -49,6 +49,7 @@ debug of code. Macros are defined for to simplifiy common usage.
       // Macros to simplifiy common usage
 
       #define DEBUG(text) logger.println(NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define DEBUGF(...) logger.printf(NORMAL_LOG, DEBUG_TAG, __VA_ARGS__)
       #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
       #define DEBUG_RAW(text) Serial.println(text);
 
@@ -67,6 +68,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     #else
 
       #define DEBUG(text)
+      #define DEBUGF(...)
       #define DEBUG_STOP()
       #define DEBUG_RAW(text)
       
@@ -141,10 +143,12 @@ debug of code. Macros are defined for to simplifiy common usage.
     static const char cNormal[] PROGMEM = "Normal";
     static const char cHigh[] PROGMEM = "High";
     static const char cVerbose[] PROGMEM = "Verbose";
+    #define MAX_TYPE_DESC_LEN 9
 
     // Tag names
     static const char cDebug[] PROGMEM = "DEBUG";
     static const char cStatus[] PROGMEM = "STATUS";
+    #define MAX_TAG_DESC_LEN 7
 
     // Logger settings
     class LogSettings {

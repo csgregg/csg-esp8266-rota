@@ -146,7 +146,7 @@ void NetworkManager::HandleNetCheck() {
             http.setReuse(false);
             http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-            LOG_HIGH( F("(Network) Checking for internet") );
+            LOG( F("(Network) Checking for internet") );
 
             char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];
             strcpy_P(url,PSTR("http://"));
