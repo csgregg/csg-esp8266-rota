@@ -240,7 +240,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void LogToSerial(const logType type, const logTag tag, const char * message);
             void LogToService(const logType type, const logTag tag, const char * message);
-            bool ICACHE_FLASH_ATTR handleTick();      // Send minimum data to logging service
+            bool handleTick();      // Send minimum data to logging service
 
             Ticker _tickCheck;
             static bool _doTick;

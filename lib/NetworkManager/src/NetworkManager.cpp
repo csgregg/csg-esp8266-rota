@@ -146,7 +146,7 @@ void NetworkManager::HandleNetCheck() {
             http.setReuse(false);
             http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-            LOG_HIGH( F("(Network) - Checking for internet") );
+            LOG_HIGH( F("(Network) Checking for internet") );
 
             char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];
             strcpy_P(url,PSTR("http://"));
@@ -164,7 +164,7 @@ void NetworkManager::HandleNetCheck() {
             _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
         }
 
-        LOG_HIGH( _ConnectedToInternet ? F("(Network) - Connected") : F("(Network) - Not connected") );
+        LOG_HIGH( _ConnectedToInternet ? F("(Network) Connected") : F("(Network) Not connected") );
 
     }
 }

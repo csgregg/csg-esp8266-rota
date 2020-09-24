@@ -460,7 +460,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 
 // Send tick to Loggly Service
-bool ICACHE_FLASH_ATTR LogClient::handleTick( ){
+bool LogClient::handleTick( ){
 
 #ifndef NO_LOGGING
 
