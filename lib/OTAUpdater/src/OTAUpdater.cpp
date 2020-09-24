@@ -113,7 +113,7 @@ void OTAUpdater::TriggerUpdateCheck() {
 
 
 
-char* ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
+bool ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
 
@@ -136,15 +136,9 @@ char* ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     int httpcode = http.GET();
 
     if( httpcode != HTTP_CODE_OK ) {
-
-        if( httpcode < 0 ) {
-           LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
-        }
-        else {
-            LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
-        }
-
-        return NULL;
+        if( httpcode < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
+        else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
+        return false;
     }
 
     int len = http.getSize();
@@ -172,23 +166,33 @@ char* ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     LOGF_DETAIL( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
 
     if( strcmp(repoName, _settings->repo) != 0 ) {
-
         LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
-
-        return NULL;
+        return false;
     }
 
     JsonObject latestRelease = responseJSON[F("releases")][0];
     const char* latestTag = latestRelease[F("tag")];
     const char* releaseDate = latestRelease[F("date")];
 
+    if( strcmp(latestTag,"") == 0 ) {
+        LOG_CRITICAL(F("(Updater) Error getting update")); 
+        return false;
+    }
+
     strcpy(_latestTag, latestTag);
     strcpy(_latestReleaseDate, releaseDate);
 
+    LOGF( PSTR("(Updater) Current version: %s"), PSTR(flag_BUILD_TAG) );
     LOGF_DETAIL( PSTR("(Updater) Latest version: %s"), latestTag );
     LOGF_DETAIL( PSTR("(Updater) Release date: %s"), releaseDate );
 
-    return _latestTag;
+    // Check for update
+    if( strcmp_P( flag_BUILD_TAG, latestTag ) == 0 ) {
+        LOG(F("(Updater) No new update"));  
+        return false;
+    }
+
+    return true;
 
 }
  
@@ -305,21 +309,6 @@ void OTAUpdater::handle() {
 
         _doUpdateCheck = false;
 
-        LOGF( PSTR("(Updater) Current version: %s"), PSTR(flag_BUILD_TAG) );
-
-        // Check for update
-
-        char* checkTag;
-        strcpy( checkTag, getLatestBuild() );
-
-        if( strcmp(checkTag,"") == 0 ) return;
-
-        LOGF( PSTR("(Updater) Latest version: %s"), checkTag );
-
-        if( strcmp_P( flag_BUILD_TAG, checkTag ) == 0 ) {
-            LOG(F("(Updater) No new update"));  
-            return;
-        }
         
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
         if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system

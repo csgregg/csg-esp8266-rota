@@ -107,7 +107,7 @@ binaries built by Travis-CI.
 
             void handle();
 
-            char* ICACHE_FLASH_ATTR getLatestBuild();
+            bool ICACHE_FLASH_ATTR getLatestBuild();
 
             enum bin_type {
                 RAW,                        // Uncompressed BIN file (.bin)
