@@ -464,7 +464,10 @@ bool LogClient::handleTick( ){
 
 #ifndef NO_LOGGING
 
-    LOG_HIGH(F("(Logger) Logging a tick"));
+    if( _settings->serialMode && _settings->level >= LOGGING_LEVEL_NORMAL ) {
+        LogPrefix(DETAIL_LOG, STATUS_TAG);
+        Serial.println(F("(Logger) Logging a tick")); 
+    }
 
     if( WiFi.status() != WL_CONNECTED ) return false;
 

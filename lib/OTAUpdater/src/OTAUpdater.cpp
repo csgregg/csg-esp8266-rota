@@ -113,7 +113,7 @@ void OTAUpdater::TriggerUpdateCheck() {
 
 bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
-    LOG(F("(Updater) Checking latest build..."));
+    LOG(F("(Updater) Checking latest build"));
 
     LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
@@ -172,7 +172,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     // Check for update
     if( strcmp( currentTag, latestTag ) == 0 ) {
-        LOG(F("(Updater) No new update"));  
+        LOG_HIGH(F("(Updater) No new update"));  
         return false;
     }
 
