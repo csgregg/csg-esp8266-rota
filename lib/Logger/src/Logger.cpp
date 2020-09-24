@@ -360,11 +360,11 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     if( WiFi.status() != WL_CONNECTED ) return;
 
-    char thistag[strlen(c_log_tag_descript[tag])];
-    strcpy(thistag, c_log_tag_descript[tag]);
+    char thistag[strlen_P(c_log_tag_descript[tag])];
+    strcpy_P(thistag, c_log_tag_descript[tag]);
 
-    char thistype[strlen(c_log_type_descript[type])];
-    strcpy(thistype, c_log_type_descript[type]);
+    char thistype[strlen_P(c_log_type_descript[type])];
+    strcpy_P(thistype, c_log_type_descript[type]);
 
     String loggingURL = _FullServiceURL + String(thistag) + "/";
    
