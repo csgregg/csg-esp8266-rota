@@ -111,17 +111,20 @@ void OTAUpdater::TriggerUpdateCheck() {
     _doUpdateCheck = true;
 }
 
-// TODO change to POST intead of GET
 
-String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
+
+char* ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
 
     LOG_HIGH(F("(Updater) Checking latest build..."));
+
+    // Expecting JSON back with latest release details
+
+    static const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
 
     HTTPClient http;
 
     http.setReuse(false);
     http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
-
 
     LOGF_DETAIL( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
@@ -130,56 +133,62 @@ String ICACHE_FLASH_ATTR OTAUpdater::getLatestBuild() {
     http.setUserAgent(F("ESP8266-http-Update"));
     http.addHeader(F("Content-Type"), F("content-type:text/plain"));
 
-    int httperror = http.GET();
-    String httppayload = http.getString();
-    http.end();
+    int httpcode = http.GET();
 
-    if( httperror != HTTP_CODE_OK ) {
+    if( httpcode != HTTP_CODE_OK ) {
 
-        if( httperror < 0 ) {
-           LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httperror).c_str() );
+        if( httpcode < 0 ) {
+           LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
         }
         else {
-            LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httperror );
+            LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
         }
 
-        return "";
+        return NULL;
     }
-    else {
 
-        // Expecting JSON back with latest release details
+    int len = http.getSize();
+    char httppayload[capacity];
+    WiFiClient * stream = http.getStreamPtr();
 
-        const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
-        DynamicJsonDocument responseJSON(capacity);
+    while( http.connected() && (len > 0 || len == -1) ) {
+        size_t size = stream->available();
 
-        DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
-
-        if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
-
-        String repoName = responseJSON[F("repo")];
-
-       LOGF_DETAIL( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
-
-        if( repoName != _settings->repo ) {
-
-            LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
-
-            return "";
+        if(size) {
+            int c = stream->readBytes(httppayload, ((size > sizeof(httppayload)) ? sizeof(httppayload) : size ));
+            if(len >0) len -= c;
         }
+    }
+    http.end();
 
-        JsonObject latestRelease = responseJSON[F("releases")][0];
-        const char* latestTag = latestRelease[F("tag")];
-        const char* releaseDate = latestRelease[F("date")];         // TODO - releaseDate isn't used
+    DynamicJsonDocument responseJSON(capacity);
 
-        strcpy(_latestTag, latestTag);
+    DeserializationError jsonerror = deserializeJson( responseJSON, httppayload );
 
-        LOGF_DETAIL( PSTR("(Updater) Latest version: %s"), _latestTag );
-        LOGF_DETAIL( PSTR("(Updater) Release date: %s"), releaseDate );
+    if (jsonerror) LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
 
-        return _latestTag;
+    const char* repoName = responseJSON[F("repo")];
+
+    LOGF_DETAIL( PSTR("(Updater) Returned Repo: %s"), repoName.c_str() );
+
+    if( strcmp(repoName, _settings->repo) != 0 ) {
+
+        LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
+
+        return NULL;
     }
 
-    return "";
+    JsonObject latestRelease = responseJSON[F("releases")][0];
+    const char* latestTag = latestRelease[F("tag")];
+    const char* releaseDate = latestRelease[F("date")];
+
+    strcpy(_latestTag, latestTag);
+    strcpy(_latestReleaseDate, releaseDate);
+
+    LOGF_DETAIL( PSTR("(Updater) Latest version: %s"), latestTag );
+    LOGF_DETAIL( PSTR("(Updater) Release date: %s"), releaseDate );
+
+    return _latestTag;
 
 }
  
@@ -296,19 +305,18 @@ void OTAUpdater::handle() {
 
         _doUpdateCheck = false;
 
-        String currentTag = FPSTR(flag_BUILD_TAG);
-
-        LOGF( PSTR("(Updater) Current version: %s"), currentTag.c_str() );
+        LOGF( PSTR("(Updater) Current version: %s"), PSTR(flag_BUILD_TAG) );
 
         // Check for update
 
-        String checkTag = getLatestBuild();
+        char* checkTag;
+        strcpy( checkTag, getLatestBuild() );
 
-        if( checkTag == "" ) return;
+        if( strcmp(checkTag,"") == 0 ) return;
 
-        LOGF( PSTR("(Updater) Latest version: %s"), checkTag.c_str() );
+        LOGF( PSTR("(Updater) Latest version: %s"), checkTag );
 
-        if( checkTag == currentTag ) {
+        if( strcmp_P( flag_BUILD_TAG, checkTag ) == 0 ) {
             LOG(F("(Updater) No new update"));  
             return;
         }
