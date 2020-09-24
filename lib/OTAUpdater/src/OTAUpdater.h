@@ -48,7 +48,6 @@ binaries built by Travis-CI.
     #define OTA_MAX_TOKEN_LEN 48
     #define OTA_MAX_CODE_LEN 16
     #define OTA_MAX_TAG_LEN 12
-    #define OTA_MAX_DATE_LEN 22
     #define OTA_MAX_URL_LEN  OTA_MAX_SERVICE_LEN + OTA_MAX_REPO_LEN + OTA_MAX_USER_LEN + OTA_MAX_TOKEN_LEN + OTA_MAX_CODE_LEN + OTA_MAX_TAG_LEN + (sizeof("http://")-1) + (sizeof("?repo=")-1) + (sizeof("&user=")-1) + (sizeof("&token=")-1) + 1
     #define OTA_MAX_IMAGE_URL_LEN OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof(_progSuffix)-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1)
 
@@ -107,7 +106,11 @@ binaries built by Travis-CI.
 
             void handle();
 
+<<<<<<< HEAD
             bool ICACHE_FLASH_ATTR getLatestBuild();
+=======
+            String ICACHE_FLASH_ATTR getLatestBuild();
+>>>>>>> parent of 2bef3e9... destring updater
 
             enum bin_type {
                 RAW,                        // Uncompressed BIN file (.bin)
@@ -121,7 +124,6 @@ binaries built by Travis-CI.
 
             char _assetRequestURL[OTA_MAX_URL_LEN];    
             char _latestTag[OTA_MAX_TAG_LEN];
-            char _latestReleaseDate[OTA_MAX_DATE_LEN];
 
             WiFiClient* _client;
             OTASettings* _settings;
@@ -130,6 +132,8 @@ binaries built by Travis-CI.
             static bool _doUpdateCheck;
 
             static void TriggerUpdateCheck();
+
+            int _lastError;
 
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
             HTTPUpdateResult ICACHE_FLASH_ATTR UpdateFS( const bin_type type );
