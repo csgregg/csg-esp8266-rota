@@ -171,6 +171,8 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     }
 
     JsonObject latestRelease = responseJSON[F("releases")][0];
+    char currentTag[OTA_MAX_TAG_LEN];
+    strcpy_P(currentTag,flag_BUILD_TAG);
     const char* latestTag = latestRelease[F("tag")];
     const char* releaseDate = latestRelease[F("date")];
 
@@ -179,12 +181,12 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
         return false;
     }
 
-    LOGF_HIGH( PSTR("(Updater) Current version: %s"), flag_BUILD_TAG );
+    LOGF_HIGH( PSTR("(Updater) Current version: %s"), currentTag );
     LOGF_HIGH( PSTR("(Updater) Latest version: %s"), latestTag );
     LOGF_HIGH( PSTR("(Updater) Release date: %s"), releaseDate );
 
     // Check for update
-    if( strcmp_P( flag_BUILD_TAG, latestTag ) == 0 ) {
+    if( strcmp( currentTag, latestTag ) == 0 ) {
         LOG(F("(Updater) No new update"));  
         return false;
     }
