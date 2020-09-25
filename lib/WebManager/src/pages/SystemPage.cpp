@@ -38,7 +38,7 @@ Server-side functions of system.html
 
 void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
-    LOG_HIGH(F("(Page) Index - Initialize AJAX"));
+    LOG_HIGH(PSTR("(Page) Index - Initialize AJAX"));
 
     LogSettings logger = config.settings.logConfig;
 
@@ -60,7 +60,7 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
 void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
 
-    LOG_HIGH(F("(Page) System - Handle AJAX"));
+    LOG_HIGH(PSTR("(Page) System - Handle AJAX"));
 
     if( website.AjaxID == F("btn_restart") ) device.restart();
 

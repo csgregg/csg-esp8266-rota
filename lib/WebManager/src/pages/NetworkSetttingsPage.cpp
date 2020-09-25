@@ -37,7 +37,7 @@ Server-side functions of netsettings.html
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
-    LOG_HIGH(F("(Page) Network Settings - Initialize AJAX"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Initialize AJAX"));
 
     char buffer[16];
 
@@ -79,7 +79,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
-    LOG_HIGH(F("(Page) Network Settings - Handle AJAX"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Handle AJAX"));
 
     if( website.AjaxID == F("wifi_stn_save") ) saveWifiStation(website.AjaxValue.toInt());
     
@@ -103,7 +103,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
-    LOG(F("(Page) Network Settings - Set WiFi mode"));
+    LOG(PSTR("(Page) Network Settings - Set WiFi mode"));
     
     network.setWiFiMode(mode);
     config.Save();

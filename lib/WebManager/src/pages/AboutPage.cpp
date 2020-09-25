@@ -37,7 +37,7 @@ Server-side functions of about.html
 
 void ICACHE_FLASH_ATTR AboutPage::initializeAjax(){
 
-    LOG_HIGH(F("(Page) About - Initialize AJAX"));
+    LOG_HIGH(PSTR("(Page) About - Initialize AJAX"));
 
     device_id.setValue(device.getChipId());
     build_env.setValue(device.getBuildEnv());
@@ -48,7 +48,7 @@ void ICACHE_FLASH_ATTR AboutPage::initializeAjax(){
 
 void ICACHE_FLASH_ATTR AboutPage::handleAjax(){
 
-    LOG_HIGH(F("(Page) About - Handle AJAX"));    
+    LOG_HIGH(PSTR("(Page) About - Handle AJAX"));    
 
 }
 

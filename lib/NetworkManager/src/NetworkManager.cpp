@@ -96,7 +96,7 @@ bool NetworkManager::_doNetCheck = false;
 
 void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
 
-    LOG(F("(Network) Starting network services"));
+    LOG(PSTR("(Network) Starting network services"));
 
     _settings = &settings;
 
@@ -146,7 +146,7 @@ void NetworkManager::HandleNetCheck() {
             http.setReuse(false);
             http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-            LOG( F("(Network) Checking for internet") );
+            LOG( PSTR("(Network) Checking for internet") );
 
             char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];
             strcpy_P(url,PSTR("http://"));
@@ -154,8 +154,8 @@ void NetworkManager::HandleNetCheck() {
 
             http.begin( _client, url );
 
-            http.setUserAgent(F("ESP8266-http-Update"));                            // Change all instances to literals
-            http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+            http.setUserAgent(PSTR("ESP8266-http-Update"));                            // Change all instances to literals
+            http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
 
             int httpresponse = http.GET();
 
@@ -164,7 +164,7 @@ void NetworkManager::HandleNetCheck() {
             _ConnectedToInternet = ( httpresponse == HTTP_CODE_NO_CONTENT );
         }
 
-        LOG_HIGH( _ConnectedToInternet ? F("(Network) Connected") : F("(Network) Not connected") );
+        LOG_HIGH( _ConnectedToInternet ? PSTR("(Network) Connected") : PSTR("(Network) Not connected") );
 
     }
 }
@@ -172,7 +172,7 @@ void NetworkManager::HandleNetCheck() {
 
 void ICACHE_FLASH_ATTR NetworkManager::InitializeWiFi() {
 
-    LOG(F("(Network) Starting WiFi"));
+    LOG(PSTR("(Network) Starting WiFi"));
 
     // Initize WiFi
     
@@ -264,7 +264,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
         if( strcmp( _settings->stationSettings[i].SSID, "" ) != 0 ) anystns = true;
     }
     if( !anystns ) {
-        LOG(F("(Network) No saved WiFi Stations"));
+        LOG(PSTR("(Network) No saved WiFi Stations"));
         _settings->wifiMode = WIFI_AP;
         return false;
     }
@@ -272,7 +272,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     // Okay, so not connected
     if( _disconnectedStation == 0 && !force ) {
         _disconnectedStation = millis();
-        LOG(F("(Network) WiFi not connected"));
+        LOG(PSTR("(Network) WiFi not connected"));
         return false;
     }
 
@@ -283,7 +283,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
     // Turn on AP if we have waited too long
     if(_disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
-        LOG(F("(Network) - Cannot connect to WiFi. Starting AP"));
+        LOG(PSTR("(Network) - Cannot connect to WiFi. Starting AP"));
         _settings->wifiMode = WIFI_AP;
         return false;
     }
@@ -302,7 +302,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
 
 bool ICACHE_FLASH_ATTR NetworkManager::startWiFiAccessPoint() {
-    LOG(F("(Network) WiFi mode - Access Point"));
+    LOG(PSTR("(Network) WiFi mode - Access Point"));
 
     bool ret = WiFi.mode( _settings->wifiMode );
 
@@ -322,19 +322,19 @@ bool ICACHE_FLASH_ATTR NetworkManager::startWiFiAccessPoint() {
     if( ret ) {
         LOGF( PSTR("(Network) Acess point started with SSID: %s, IP: %s"), _settings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
 	}
-    else LOG(F("(Network) WiFi Access point not started"));
+    else LOG(PSTR("(Network) WiFi Access point not started"));
 
     return ret;
 }
 
 
 bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
-    LOG(F("(Network) Connecting Wifi Station"));
+    LOG(PSTR("(Network) Connecting Wifi Station"));
 
     ResetConnectedStatus();
 
     if( _settings->wifiMode != WIFI_STA &&_settings->wifiMode != WIFI_AP_STA ) {
-        LOG(F("Not in station mode"));
+        LOG(PSTR("Not in station mode"));
         return false;
     }
 
@@ -344,7 +344,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
 	bool password = strcmp( _settings->stationSettings[id].password, "") != 0;
 
 	if( !ssid ) {
-        LOG(F("(Network) Station has no SSID"));
+        LOG(PSTR("(Network) Station has no SSID"));
         return false;
     }
 
@@ -397,7 +397,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
                 LOGF_HIGH( PSTR("(Network) WiFi station connected - DNS: %s"), ip.toString().c_str());
             }
         }
-        else LOG(F("(Network) WiFi Station not connected"));
+        else LOG(PSTR("(Network) WiFi Station not connected"));
 
     }
 

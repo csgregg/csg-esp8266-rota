@@ -101,7 +101,7 @@ void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &setti
     if( _updateCheck.active() ) _updateCheck.detach();
     _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
 
-    LOG(F("(Updater) Starting updater"));
+    LOG(PSTR("(Updater) Starting updater"));
 }
 
 
@@ -113,7 +113,7 @@ void OTAUpdater::TriggerUpdateCheck() {
 
 bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
-    LOG(F("(Updater) Checking latest build"));
+    LOG(PSTR("(Updater) Checking latest build"));
 
     LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
@@ -151,7 +151,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName );
 
     if( strcmp( repoName, _settings->repo) != 0 ) {
-        LOG_CRITICAL(F("(Updater) JSON Error getting latest release"));
+        LOG_CRITICAL(PSTR("(Updater) JSON Error getting latest release"));
         return false;
     }
 
@@ -162,7 +162,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     const char* releaseDate = latestRelease[F("date")];
 
     if( strcmp(latestTag,"") == 0 ) {
-        LOG_CRITICAL(F("(Updater) Error getting latest tag"));
+        LOG_CRITICAL(PSTR("(Updater) Error getting latest tag"));
         return false;
     }
 
@@ -172,7 +172,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     // Check for update
     if( strcmp( currentTag, latestTag ) == 0 ) {
-        LOG_HIGH(F("(Updater) No new update"));  
+        LOG_HIGH(PSTR("(Updater) No new update"));  
         return false;
     }
 
@@ -195,16 +195,16 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
     strcat(littleFSFileRequest, _FSSuffix);
     strcat_P(littleFSFileRequest, PSTR("&tag="));
     strcat(littleFSFileRequest, _latestTag);
-    strcat(littleFSFileRequest, ( type == GZ ? "&type=gz" : ""));
+    strcat_P(littleFSFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
 
-    LOG(F("(Updater) Updating File System"));
+    LOG(PSTR("(Updater) Updating File System"));
     LOGF_HIGH(  PSTR("(Updater) File system image request: %s"), littleFSFileRequest );
 
     HTTPUpdateResult ret;
 
     if( _settings->skipUpdates ) {
 
-        LOG(F("(Updater) Skipping update"));
+        LOG(PSTR("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -218,11 +218,11 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG(F("(Updater) No new file system update"));
+        LOG(PSTR("(Updater) No new file system update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG(F("(Updater) File system updated successfully"));
+        LOG(PSTR("(Updater) File system updated successfully"));
         break;
     }
 
@@ -242,16 +242,16 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
     strcat(imageFileRequest, _progSuffix);
     strcat_P(imageFileRequest, PSTR("&tag="));
     strcat(imageFileRequest, _latestTag);
-    strcat(imageFileRequest, ( type == GZ ? "&type=gz" : ""));
+    strcat_P(imageFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
     
-    LOG(F("(Updater) Updating Program"));
+    LOG(PSTR("(Updater) Updating Program"));
     LOGF_HIGH( PSTR("(Updater) Program image request: %s"), imageFileRequest );
 
     HTTPUpdateResult ret;
 
     if( _settings->skipUpdates ) {
 
-        LOG(F("(Updater) Skipping update"));
+        LOG(PSTR("(Updater) Skipping update"));
         ret = HTTP_UPDATE_NO_UPDATES;
 
     }
@@ -269,16 +269,16 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
         break;
 
     case HTTP_UPDATE_NO_UPDATES:
-        LOG(F("(Updater) No new program update"));
+        LOG(PSTR("(Updater) No new program update"));
         break;
         
     case HTTP_UPDATE_OK:
-        LOG(F("(Updater) Program updated successfully"));
+        LOG(PSTR("(Updater) Program updated successfully"));
         break;
     }
 
     if( ret == HTTP_UPDATE_OK && restart ) {
-        LOG_CRITICAL(F("(Updater) Rebooting in 5 sec"));
+        LOG_CRITICAL(PSTR("(Updater) Rebooting in 5 sec"));
         delay(5000);
         ESP.restart();
 
