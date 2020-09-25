@@ -156,7 +156,7 @@ Manages Network Functions
             void ICACHE_FLASH_ATTR setDefaults();
 
             bool mode = false;
-            char checkService[MAX_CHECK_SERVICE_LEN] = "";      // TODO - shorten the URL
+            char checkService[MAX_CHECK_SERVICE_LEN] = "";
             uint interval = DEFAULT_NETCHECK_INTERVAL;
 
             bool operator==(const NetCheckConfig& other) const {

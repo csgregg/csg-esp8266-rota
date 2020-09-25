@@ -170,7 +170,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
 
         [&]() { 
 
-            URL = _server.uri();                                    // TODO - change these to char[]?
+            URL = _server.uri();
             AjaxID = _server.arg("id");
             AjaxValue = _server.arg("value");    
 

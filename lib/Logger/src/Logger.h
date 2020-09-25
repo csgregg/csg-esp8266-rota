@@ -111,7 +111,6 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define JSON_SIZE_SSID 32
 
 
-    // TODO - move enums into class
 
     // Logging level to filter logs 
     enum logLevel : uint {
@@ -224,7 +223,6 @@ debug of code. Macros are defined for to simplifiy common usage.
             void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
             void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * format, ...);
-            // TODO Add overload for FlashStrings
 
             // For build flags
             void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const char* flag);
