@@ -105,7 +105,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
     if( _settings->serialMode ) {
         delay(1000);
         Serial.begin(_settings->serialBaud);             
-        Serial.println(PSTR("\nLOG: (Logger) Starting Logging"));
+        Serial.println(PSTR("LOG: (Logger) Starting Logging"));
     }
 
     LOGF_HIGH( PSTR("(Logger) Logging set at level: %i"), _settings->level );
@@ -130,7 +130,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settin
 }
 
 
-// TODO Need to add print functions for flashstringhelper
+// TODO Need to add print overloads for flashstringhelper
 // TODO Add int function
 
 // Main log function - char[]
@@ -427,7 +427,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
         }
-    };
+    }
 
     http.setUserAgent(PSTR("ESP8266-http-logger"));
     http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
@@ -516,8 +516,13 @@ bool LogClient::handleTick( ){
     
     HTTPClient http;
 
-    http.begin(*_client, loggingURL);           // TODO - add some error handling
-
+    if( !http.begin(*_client, loggingURL) ) {
+        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+            LogPrefix(CRITICAL_LOG, STATUS_TAG);
+            Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
+        }
+    }
+    
     http.setUserAgent(PSTR("ESP8266-http-logger"));
     http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
 
