@@ -50,7 +50,7 @@ Manages Network Functions
     };
 
     // Defaults
-    #define STATION_TRY_TIME 10                 // 20 sec - time to allow station to connect
+    #define STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
     #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
     #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
@@ -99,7 +99,7 @@ Manages Network Functions
 
 
     // Defaults
-    #define DEFAULT_WIFIMODE WIFI_AP_STA        // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+    #define DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
     #define DEFAULT_DHCPMODE DHCP
     #define DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
     #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0

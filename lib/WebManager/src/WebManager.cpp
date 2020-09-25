@@ -170,7 +170,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
 
         [&]() { 
 
-            URL = _server.uri();   
+            URL = _server.uri();                                    // TODO - change these to char[]?
             AjaxID = _server.arg("id");
             AjaxValue = _server.arg("value");    
 
@@ -191,7 +191,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
             }
 
             // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
-            else if( !handleFileRequest() ) _server.send( 404, F("text/html"), F("404: Not Found") );
+            else if( !handleFileRequest() ) _server.send( 404, PSTR("text/html"), PSTR("404: Not Found") );
         
         }
 
@@ -212,15 +212,15 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
 
 // convert the file extension to the MIME type
 String ICACHE_FLASH_ATTR WebsiteManager::getContentType(String filename) { 
-    if (filename.endsWith(F(".html"))) return F("text/html");
-    else if (filename.endsWith(F(".css"))) return F("text/css");
-    else if (filename.endsWith(F(".js"))) return F("application/javascript");
-    else if (filename.endsWith(F(".ico"))) return F("image/x-icon");
-    else if (filename.endsWith(F(".gif"))) return F("image/gif");
-    else if (filename.endsWith(F(".svg"))) return F("image/svg+xml");
-    else if (filename.endsWith(F(".jpg"))) return F("image/jpeg");
-    else if (filename.endsWith(F(".png"))) return F("image/png");
-    return F("text/plain");
+    if (filename.endsWith(PSTR(".html"))) return PSTR("text/html");
+    else if (filename.endsWith(PSTR(".css"))) return PSTR("text/css");
+    else if (filename.endsWith(PSTR(".js"))) return PSTR("application/javascript");
+    else if (filename.endsWith(PSTR(".ico"))) return PSTR("image/x-icon");
+    else if (filename.endsWith(PSTR(".gif"))) return PSTR("image/gif");
+    else if (filename.endsWith(PSTR(".svg"))) return PSTR("image/svg+xml");
+    else if (filename.endsWith(PSTR(".jpg"))) return PSTR("image/jpeg");
+    else if (filename.endsWith(PSTR(".png"))) return PSTR("image/png");
+    return PSTR("text/plain");
 }
 
 
@@ -238,7 +238,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 
             LOGF_HIGH( PSTR("(Website) Web server - flash: %s"), URL.c_str() );
 
-            _server.sendHeader(F("Content-Encoding"),F("gzip"));
+            _server.sendHeader(PSTR("Content-Encoding"),PSTR("gzip"));
             _server.setContentLength(websiteFiles[i].len);
             _server.send(200,contentType,"");
 
@@ -273,7 +273,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
     }
 #endif
 
-    LOG(F("(Website) Web server - file not found"));
+    LOG(PSTR("(Website) Web server - file not found"));
 
     return false;                                         // If the file doesn't anywhere, return false
 }

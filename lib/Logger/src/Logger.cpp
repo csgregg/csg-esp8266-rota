@@ -105,14 +105,14 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
     if( _settings->serialMode ) {
         delay(1000);
         Serial.begin(_settings->serialBaud);             
-        Serial.println(F("\nLOG: (Logger) Starting Logging"));
+        Serial.println(PSTR("\nLOG: (Logger) Starting Logging"));
     }
 
     LOGF_HIGH( PSTR("(Logger) Logging set at level: %i"), _settings->level );
 
-    if( _settings->serviceMode ) LOG_HIGH(F("(Logger) Logging Service: ON"));
+    if( _settings->serviceMode ) LOG_HIGH(PSTR("(Logger) Logging Service: ON"));
 
-    if( _settings->tickMode ) LOG_HIGH(F("(Logger) Tick Service: ON"));
+    if( _settings->tickMode ) LOG_HIGH(PSTR("(Logger) Tick Service: ON"));
 
     _doTick = false;
 
@@ -255,7 +255,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
     if (len > sizeof(temp) - 1) {
         buffer = new char[len + 1];
         if (!buffer) {
-            println(CRITICAL_LOG, STATUS_TAG, F("(Logger) LogClient: Buffer error"));
+            println(CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LogClient: Buffer error"));
             return;
         }
         va_start(arg, format);
@@ -360,11 +360,14 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     char thistype[MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[type]);
 
-    String loggingURL = _FullServiceURL + String(thistag) + "/";
+    char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
+    strcpy(loggingURL,_FullServiceURL);
+    strcat(loggingURL,thistag);
+    strcat(loggingURL,"/");
    
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
-        Serial.print(F("(Logger) Logging to: "));
+        Serial.print(PSTR("(Logger) Logging to: "));
         Serial.println(loggingURL);
     }
 
@@ -383,7 +386,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     jsonLog[F("message")] = shortened;
 
-    JsonObject Device = jsonLog.createNestedObject("Device");
+    JsonObject Device = jsonLog.createNestedObject(F("Device"));
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
         Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
@@ -404,13 +407,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         String tempSSID = WiFi.SSID();
         Device_Network[F("SSID")] = tempSSID.c_str();
 
-    String jsonMessage;
+    char jsonMessage[712+1];
 
     serializeJson(jsonLog, jsonMessage);
 
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
-        Serial.print(F("(Logger) Log (JSON): "));
+        Serial.print(PSTR("(Logger) Log (JSON): "));
         Serial.println(jsonMessage); 
     }
 
@@ -422,12 +425,12 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     if( !http.begin(*_client, loggingURL) ) {
         if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
-            Serial.print(F("(Logger) Logging to servce: HTTP Client Error "));
+            Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
         }
     };
 
-    http.setUserAgent(F("ESP8266-http-logger"));
-    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+    http.setUserAgent(PSTR("ESP8266-http-logger"));
+    http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
 
     int httpCode = http.POST(jsonMessage);
     String payload = http.getString();
@@ -436,13 +439,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     if( httpCode == HTTP_CODE_OK ) {
         if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(DETAIL_LOG, STATUS_TAG);
-            Serial.println(F("(Logger) Logging to servce: SUCCESS "));
+            Serial.println(PSTR("(Logger) Logging to servce: SUCCESS "));
         }
     }
     else {
         if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
-            Serial.print(F("(Logger) Logging to servce: ERROR "));
+            Serial.print(PSTR("(Logger) Logging to servce: ERROR "));
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
             else Serial.println( httpCode );
         }
@@ -460,7 +463,7 @@ bool LogClient::handleTick( ){
 
     if( _settings->serialMode && _settings->level >= LOGGING_LEVEL_NORMAL ) {
         LogPrefix(NORMAL_LOG, STATUS_TAG);
-        Serial.println(F("(Logger) Logging a tick")); 
+        Serial.println(PSTR("(Logger) Logging a tick")); 
     }
 
     if( WiFi.status() != WL_CONNECTED ) return false;
@@ -471,7 +474,10 @@ bool LogClient::handleTick( ){
     char thistype[MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[NORMAL_LOG]);
 
-    String loggingURL = _FullServiceURL + String(thistag) + "/";
+    char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
+    strcpy(loggingURL,_FullServiceURL);
+    strcat(loggingURL,thistag);
+    strcat(loggingURL,"/");
 
     // Build JSON
     // Use https://arduinojson.org/v6/assistant/
@@ -481,11 +487,11 @@ bool LogClient::handleTick( ){
 
     jsonLog[F("localtime")] = millis();
 
-    JsonObject Device = jsonLog.createNestedObject("Device");
+    JsonObject Device = jsonLog.createNestedObject(F("Device"));
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
         Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
-        String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
+        Device_Hardware[F("MAC")] = WiFi.macAddress();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
         Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
@@ -502,7 +508,7 @@ bool LogClient::handleTick( ){
         String tempSSID = WiFi.SSID();
         Device_Network[F("SSID")] = tempSSID.c_str();
 
-    String jsonMessage;
+    char jsonMessage[438+1];
 
     serializeJson(jsonLog, jsonMessage);
 
@@ -512,8 +518,8 @@ bool LogClient::handleTick( ){
 
     http.begin(*_client, loggingURL);           // TODO - add some error handling
 
-    http.setUserAgent(F("ESP8266-http-logger"));
-    http.addHeader(F("Content-Type"), F("content-type:text/plain"));
+    http.setUserAgent(PSTR("ESP8266-http-logger"));
+    http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
 
     int httpCode = http.POST(jsonMessage);
     http.end();

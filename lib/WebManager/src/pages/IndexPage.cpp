@@ -38,13 +38,13 @@ Server-side functions of index.html
 
 void ICACHE_FLASH_ATTR IndexPage::initializeAjax(){
 
-    LOG_HIGH(F("(Page) Index - Initialize AJAX"));
+    LOG_HIGH(PSTR("(Page) Index - Initialize AJAX"));
 
 }
 
 void ICACHE_FLASH_ATTR IndexPage::handleAjax(){
 
-    LOG_HIGH(F("(Page) Index - Handle AJAX"));     
+    LOG_HIGH(PSTR("(Page) Index - Handle AJAX"));     
 
 }
 

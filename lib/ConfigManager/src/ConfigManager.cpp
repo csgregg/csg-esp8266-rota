@@ -54,14 +54,14 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
         EEPROM.begin(SPI_FLASH_SEC_SIZE);
 		_IsInitialized = true;
 
-        LOG(F("(Config) Starting Configuation Manager"));
+        LOG(PSTR("(Config) Starting Configuation Manager"));
 
     }
 
     // Check to see if it has been used before and has the right marker in place to confim
     if( !CheckMarker() || forceInit ) {
 
-        LOG(F("(Config) Initializing flash"));
+        LOG(PSTR("(Config) Initializing flash"));
 
         // Erase flash
         EraseFlash();
@@ -76,7 +76,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
     else {
 
         // Flash is already set up and ready to use
-        LOG_HIGH(F("(Config) Flash ready"));
+        LOG_HIGH(PSTR("(Config) Flash ready"));
 
         Read();         // Get the settings for the first time
     }
@@ -87,10 +87,10 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 // Saves the default settings to flash
 void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 
-    LOG(F("(Config) Reset to defaults"));
+    LOG(PSTR("(Config) Reset to defaults"));
 
     if( !_IsInitialized ) {
-        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot save"));
+        LOG_CRITICAL(PSTR("(Config) Flash not yet initialized - cannot save"));
         return;
     }
 
@@ -107,11 +107,11 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
 // Read settings from flash 
 void ICACHE_FLASH_ATTR ConfigManager::Read() {
 
-    LOG_HIGH(F("(Config) Reading settings"));
+    LOG_HIGH(PSTR("(Config) Reading settings"));
 
     // Don't do anything unless ready to use
     if( !_IsInitialized ) {
-        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot read"));
+        LOG_CRITICAL(PSTR("(Config) Flash not yet initialized - cannot read"));
         return;
     }
 
@@ -122,11 +122,11 @@ void ICACHE_FLASH_ATTR ConfigManager::Read() {
 
 void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 
-    LOG(F("(Config) Saving settings"));
+    LOG(PSTR("(Config) Saving settings"));
 
     // Don't do anything unless ready to use
     if( !_IsInitialized ) {
-        LOG_CRITICAL(F("(Config) Flash not yet initialized - cannot save"));
+        LOG_CRITICAL(PSTR("(Config) Flash not yet initialized - cannot save"));
         return;
     }
 
@@ -139,7 +139,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
         // Check to see what is there first and only save if different 
         if( readset == settings ) {
 
-            LOG(F("(Config) Settings unchanged - not saving"));
+            LOG(PSTR("(Config) Settings unchanged - not saving"));
 
             return;
         }
@@ -150,7 +150,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
     EEPROM.put(markerDataSize, settings);
 	EEPROM.commit();
 
-    LOG(F("(Config) New sttings saved"));
+    LOG(PSTR("(Config) New sttings saved"));
 
 }
 
@@ -184,14 +184,14 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 // Erase the content of the flash to 0
 void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
 
-    LOG(F("(Config) Erasing flash"));
+    LOG(PSTR("(Config) Erasing flash"));
 
 	for (uint16_t i = 0 ; i < SPI_FLASH_SEC_SIZE ; i++) {
 		EEPROM.write(i, 0);
 		yield();
 	}
 
-    LOG(F("(Config) Flash erased"));
+    LOG(PSTR("(Config) Flash erased"));
 
 }
 
