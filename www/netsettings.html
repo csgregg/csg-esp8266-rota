@@ -113,7 +113,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid IP Address')) enableSave('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>        
 
@@ -122,7 +122,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Subnet')) enableSave('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>
                     
@@ -131,7 +131,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Gateway')) enableSave('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>
 
@@ -267,7 +267,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid IP Address')) this.value='';">
                                 </div>
                             </div>
                     
@@ -276,7 +276,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Subnet')) this.value='';">
                                 </div>
                             </div>
                     
@@ -285,7 +285,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Gateway')) this.value='';">
                                 </div>
                             </div>
                     
@@ -294,7 +294,7 @@
                                     DNS 1
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx">
+                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value='';">
                                 </div>
                             </div>
                     
@@ -303,13 +303,15 @@
                                     DNS 2
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$" placeholder="xxx.xxx.xxx.xxx"><br>
+                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value='';">
+                                    <br>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Save / Cancel -->
+                    <!-- TODO - Enable/disable buttons -->
                     <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
                         <button id="wifi_stn_save" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                         <button id="wifi_stn_cancel" onclick="document.getElementById('wifi_stn_dlg').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>

@@ -41,7 +41,7 @@
 </div>
 
         
-<!-- Spinner -->
+<!-- Loading spinner -->
 
 <div id="loader" class="w3-modal">
     <div class="w3-modal-content">
@@ -49,6 +49,21 @@
             <div class="w3-cell w3-cell-middle">
                 <div class="loader"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Message popup -->
+
+<div id="message_dlg" class="w3-modal">
+    <div class="w3-modal-content" style="max-width:300px">
+        <div class="w3-container w3-padding-8" style="height:35px">
+            <b>Message</b>
+            <span onclick="message_ack();" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright" title="Close">X</span>
+        </div>
+        <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+            <span id="message_text"></span>
         </div>
     </div>
 </div>

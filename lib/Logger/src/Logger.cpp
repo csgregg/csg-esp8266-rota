@@ -130,8 +130,6 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settin
 }
 
 
-// TODO Need to add println overloads for flashstringhelper
-
 
 // Main log function - char[]
 void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const char * message ) {

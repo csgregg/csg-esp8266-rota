@@ -63,9 +63,9 @@ Server-side functions of system.html
             const char* logLevels[5] = {"0","1","2","3","4"};
             EmbAJAXServerFunction log_save;
 
-            EmbAJAXBase* page_elements[14] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 13] = {
       
-                &net_status,
+                WEB_PAGE_COMMON_ELEMENTS,
 
                 &btn_restart,
                 &btn_rst_net,

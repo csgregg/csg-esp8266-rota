@@ -64,14 +64,29 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         }
         void call(T arg) {
             _arg = arg;
+            _toSend = true;
             setChanged();
         }
         bool sendUpdates(uint16_t since, bool first) {
+            if( !_toSend ) return false;
+            _toSend = false;
             return EmbAJAXElement::sendUpdates(since, first);
         }
+        void reset() {
+            _toSend = false;
+            _success = true;
+        }
+        void updateFromDriverArg(const char* argname) override {
+            char buff[sizeof("OK")];
+            _driver->getArg(argname, buff, sizeof(buff));
+            _success = (strcmp(buff,"OK")==0);
+        }
+
 
     private:
         T _arg;
+        bool _toSend = false;
+        bool _success = true;
     };
 
 
@@ -82,7 +97,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             strcpy(_value, initial);
         }
-        void print() const override {} 
+        void print() const override {}
         const char* value(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return _value;
             return EmbAJAXElement::value(which);
@@ -117,12 +132,14 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             if (which == EmbAJAXBase::Value) return "embajax_var";
             return EmbAJAXElement::valueProperty(which);
         }
-        void updateFromDriverArg(const char* argname) override;
+        void updateFromDriverArg(const char* argname) override {
+
+        }
         void setValue(T value) {
             if ( _value != value ) {
                 _value = value;
                 setChanged();            
-            };
+            }
         }
         int intValue() const;
         bool boolValue() const;
@@ -154,6 +171,10 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         const char* _style;
     };
 
+
+    // Elements that go on every page and are declared in this lib
+    #define WEB_PAGE_COMMON_ELEMENTS &net_status,&post_message
+    #define WEB_PAGE_COMMON_ELEMENTS_COUNT 2
 
 
 
@@ -198,6 +219,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     };
 
     extern EmbAJAXVarInt net_status;
+    extern EmbAJAXClientFunction<char*> post_message;
     extern WebsiteManager website;        // Declaring the global instance
 
 #endif

@@ -93,9 +93,9 @@ Server-side functions of netsettings.html
             EmbAJAXTextInput<MAX_CHECK_SERVICE_LEN> net_ck_url;
             EmbAJAXServerFunction net_ck_save;
 
-            EmbAJAXBase* page_elements[33] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 32] = {
 
-            &net_status,
+            WEB_PAGE_COMMON_ELEMENTS,
 
             &wifi_mode_ap,
             &wifi_mode_stn,

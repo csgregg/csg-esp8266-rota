@@ -1,10 +1,37 @@
 
+
+
+function ValidateIPaddress(inputText,error) {
+   var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+   if(inputText.value.match(ipformat)) {
+      return true;
+   }
+   else
+   {
+      alert(error);           // TODO - Replace all alerts with modal warnings
+      return false;
+   }
+}
+
+
+// Common messsage alert
+function post_message(value) {
+   if(value != "") {
+      document.getElementById('message_text').innerText = value;
+      document.getElementById('message_dlg').style.display='block';
+   }
+}
+function message_ack() {
+   document.getElementById('message_dlg').style.display='none';
+   doRequest("post_message","OK");     // Acknowledge done
+}
+
+
 // Available station
 var net_status;
 
 
 function SureDlg(action) {
-   console.log( typeof action );
    if( typeof action === "string" ) sureAction = action;
    else sureAction = action.id;
    document.getElementById('sure_dlg').style.display='block';
@@ -67,7 +94,9 @@ function menu_open() {
        mySidebar.style.display = 'block';
        overlayBg.style.display = "block";
    }
+
    doPoll();
+
 }
 
 // Close the sidebar with the close button
@@ -80,6 +109,7 @@ function menu_close() {
    
    mySidebar.style.display = "none";
    overlayBg.style.display = "none";
+
 }
 
 
