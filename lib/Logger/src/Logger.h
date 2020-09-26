@@ -49,14 +49,14 @@ debug of code. Macros are defined for to simplifiy common usage.
       // Macros to simplifiy common usage
 
       #define DEBUG(text) logger.println(NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define DEBUGF(...) logger.printf(NORMAL_LOG, DEBUG_TAG, __VA_ARGS__)
+      #define DEBUGF(...) logger.printf(NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
       #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
       #define DEBUG_RAW(text) Serial.println(text);
 
-      #define LOG(text) logger.println(NORMAL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG_DETAIL(text) logger.println(DETAIL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG_HIGH(text) logger.println(HIGH_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define LOG_CRITICAL(text) logger.println(CRITICAL_LOG, STATUS_TAG, text, __FILE__, __FUNCTION__, __LINE__)
+      #define LOG(text) logger.println(NORMAL_LOG, STATUS_TAG, text)
+      #define LOG_DETAIL(text) logger.println(DETAIL_LOG, STATUS_TAG, text)
+      #define LOG_HIGH(text) logger.println(HIGH_LOG, STATUS_TAG, text)
+      #define LOG_CRITICAL(text) logger.println(CRITICAL_LOG, STATUS_TAG, text)
 
       #define LOGF(...) logger.printf(NORMAL_LOG, STATUS_TAG, __VA_ARGS__)
       #define LOGF_DETAIL(...) logger.printf(DETAIL_LOG, STATUS_TAG, __VA_ARGS__)
@@ -145,8 +145,8 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define MAX_TYPE_DESC_LEN 9
 
     // Tag names
-    static const char cDebug[] PROGMEM = "DEBUG";
-    static const char cStatus[] PROGMEM = "STATUS";
+    static const char cDebug[] PROGMEM = " DEBUG";
+    static const char cStatus[] PROGMEM = "Status";
     #define MAX_TAG_DESC_LEN 7
 
     // Logger settings
@@ -219,10 +219,14 @@ debug of code. Macros are defined for to simplifiy common usage.
             void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c);
             void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
 
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const int i);
+            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const int i, const char * file, const char * func_P, const int line );    
+
             void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message);
             void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
 
             void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * format, ...);
+            void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * file, const char * func_P, const int line, const char * format, ...);
 
             // For build flags
             void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const char* flag);
