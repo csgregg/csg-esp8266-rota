@@ -153,17 +153,17 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
     strncpy(ap.SSID, wifi_ap_ssid.value(), MAX_SSID_LEN);
     strncpy(ap.password, wifi_ap_pwd.value(), MAX_PASSWORD_LEN);
     
-    // TODO - Add error checking
-    ap.ip.fromString(wifi_ap_ip.value());
+    if( ap.ip.fromString(wifi_ap_ip.value()) ) {
+        ap.subnet.fromString(wifi_ap_snet.value());
+        ap.gateway.fromString(wifi_ap_gtwy.value());
+        ap.channel = atoi(wifi_ap_ch.value());
 
-    ap.subnet.fromString(wifi_ap_snet.value());
-    ap.gateway.fromString(wifi_ap_gtwy.value());
-    ap.channel = atoi(wifi_ap_ch.value());
+        config.settings.networkConfig.apSettings = ap;
+        config.Save();
 
-    config.settings.networkConfig.apSettings = ap;
-    config.Save();
+        network.reconnectWifi();
+    }
 
-    network.reconnectWifi();
 }
 
 
@@ -188,20 +188,19 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
     
-    // TODO - Add error checking
-    wifiStation.ip.fromString(wifi_stn_ip.value());
+    if( wifiStation.ip.fromString(wifi_stn_ip.value()) ) {
+        wifiStation.subnet.fromString(wifi_stn_snet.value());
+        wifiStation.gateway.fromString(wifi_stn_gtwy.value());
+        wifiStation.dns1.fromString(wifi_stn_dns2.value());
+        wifiStation.dns2.fromString(wifi_stn_dns2.value());
 
-    wifiStation.subnet.fromString(wifi_stn_snet.value());
-    wifiStation.gateway.fromString(wifi_stn_gtwy.value());
-    wifiStation.dns1.fromString(wifi_stn_dns2.value());
-    wifiStation.dns2.fromString(wifi_stn_dns2.value());
+        wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
 
-    wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
+        config.settings.networkConfig.stationSettings[id] = wifiStation;
+        config.Save();
 
-    config.settings.networkConfig.stationSettings[id] = wifiStation;
-    config.Save();
-
-    if( network.getConnectedStation() == id ) network.reconnectWifi();
+        if( network.getConnectedStation() == id ) network.reconnectWifi();    
+    }
 
     // Make the client reload the wifi list
     wifi_stn_asip.setValue(getAssignedIP());

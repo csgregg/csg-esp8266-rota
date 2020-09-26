@@ -182,8 +182,9 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
                         if( AjaxID == "" ) {
-                            net_status.setValue( network.getNetworkStatus() * statusFlash );
+                            net_status.setValue( (network.getNetworkStatus() * statusFlash) );
                             statusFlash = statusFlash * -1;
+
                         }
                         (webpages[i].handler)();
                         break;
@@ -284,5 +285,6 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_WEBSITE_MANAGER)
     EmbAJAXVarInt net_status("net_status",0);
+    EmbAJAXClientFunction<char*> post_message("post_message");
     WebsiteManager website;
 #endif

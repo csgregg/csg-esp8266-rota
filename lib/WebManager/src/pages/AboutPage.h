@@ -49,9 +49,9 @@ Server-side functions of about.html
             EmbAJAXMutableSpan build_no;
             EmbAJAXMutableSpan build_time;
 
-            EmbAJAXBase* page_elements[5] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 4] = {
       
-                &net_status,
+                WEB_PAGE_COMMON_ELEMENTS,
 
                 &device_id,
                 &build_env,

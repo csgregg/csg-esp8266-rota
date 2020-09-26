@@ -145,7 +145,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define MAX_TYPE_DESC_LEN 9
 
     // Tag names
-    static const char cDebug[] PROGMEM = " DEBUG";
+    static const char cDebug[] PROGMEM = "DEBUG ";
     static const char cStatus[] PROGMEM = "Status";
     #define MAX_TAG_DESC_LEN 7
 

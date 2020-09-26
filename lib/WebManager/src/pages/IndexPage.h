@@ -44,9 +44,9 @@ Server-side functions of index.html
             void (*handler)();
             void (*init)();
 
-            EmbAJAXBase* page_elements[1] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT] = {
       
-                &net_status,
+                WEB_PAGE_COMMON_ELEMENTS,
 
             };
 
