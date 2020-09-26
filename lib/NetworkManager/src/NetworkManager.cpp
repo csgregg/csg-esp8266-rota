@@ -57,7 +57,7 @@ void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 void ICACHE_FLASH_ATTR APConfig::setDefaults() {
 
     strcpy_P( SSID, flag_DEVICE_CODE );
-    strcpy_P( password, flag_DEVICE_CODE );        // TODO Make secure token for this
+    strcpy_P( password, flag_DEVICE_CODE );
     channel = DEFAULT_CHANNEL;
     ip = uint32_t(DEFAULT_STATICIP);
     subnet = uint32_t(DEFAULT_SUBNET);

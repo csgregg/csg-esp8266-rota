@@ -130,8 +130,8 @@ void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settin
 }
 
 
-// TODO Need to add print overloads for flashstringhelper
-// TODO Add int function
+// TODO Need to add println overloads for flashstringhelper
+
 
 // Main log function - char[]
 void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const char * message ) {
@@ -161,21 +161,47 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
         char func[MAX_MESSAGE_LEN];
 
-        strcpy_P(func, func_P);             // __FUNC__ is held in Flash so handle appropriately
-
-        PGM_P format = PSTR("(Context: %s %s %i) %s");
-        size_t contextsize =  ( strlen(format) - 8 ) + strlen(file) + strlen(func);
+        size_t contextsize =  ( strlen( PSTR("(Context: %s %s %i) %s")) - 8 ) + strlen(file) + strlen(func);
 
         char shortened[MAX_MESSAGE_LEN];
         strncpy( shortened, message, MAX_MESSAGE_LEN - contextsize );        // Truncate if too long
         shortened[(MAX_MESSAGE_LEN - contextsize)-1] = 0;
 
         char str[MAX_MESSAGE_LEN];
-        sprintf(str, format, file, func, line, shortened);
+        sprintf_P(str, PSTR("(Context: %s %s %i) %s"), file, func_P, line, shortened);
         str[MAX_MESSAGE_LEN-1] = 0;
         println(type, tag, str);
     }
     else println(type, tag, message);
+
+#endif
+
+}
+
+
+
+// Overload println() - char
+void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i ) {
+
+#ifndef NO_LOGGING
+
+    char buff[12];
+    sprintf_P(buff,PSTR("%i"),i);
+    println(type, tag, buff);
+
+#endif
+
+}
+
+
+// Overload println() - char with context
+void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i, const char * file, const char * func_P, const int line ) {
+
+#ifndef NO_LOGGING
+
+    char buff[12];
+    sprintf_P(buff,PSTR("%i"),i);
+    println(type, tag, buff, file, func_P, line);
 
 #endif
 
@@ -274,6 +300,41 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 }
 
 
+// Formatted log function
+void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * file, const char * func_P, const int line, const char * format, ... ) {
+
+#ifndef NO_LOGGING
+
+    va_list arg;
+    va_start(arg, format);
+    char temp[MAX_MESSAGE_LEN];
+    char* buffer = temp;
+
+    size_t len = vsnprintf(temp, sizeof(temp), format, arg);
+    va_end(arg);
+    if (len > sizeof(temp) - 1) {
+        buffer = new char[len + 1];
+        if (!buffer) {
+            println(CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LogClient: Buffer error"));
+            return;
+        }
+        va_start(arg, format);
+        vsnprintf(buffer, len + 1, format, arg);
+        va_end(arg);
+    }
+
+    if (buffer != temp) {
+        delete[] buffer;
+    }
+
+    println(type, tag, temp, file, func_P, line);
+
+#endif
+
+}
+
+
+
 // Prints build flag - overload char[]
 void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const char* flag) {
 
@@ -322,8 +383,8 @@ void LogClient::LogPrefix( const logType type, const logTag tag ){
 
 #ifndef NO_LOGGING
 
-    if( _settings->level == LOGGING_LEVEL_VERBOSE) Serial.printf_P(PSTR("LOG: %s: %s - Millis: %li, Heap: %i - "), c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
-    else Serial.printf_P(PSTR("LOG: %s: %s - "), c_log_tag_descript[tag], c_log_type_descript[type]);
+    if( _settings->level == LOGGING_LEVEL_VERBOSE) Serial.printf_P(PSTR("%s: %s - Millis: %li, Heap: %i - "), c_log_tag_descript[tag], c_log_type_descript[type], millis(), system_get_free_heap_size());
+    else Serial.printf_P(PSTR("%s: %s - "), c_log_tag_descript[tag], c_log_type_descript[type]);
 
 #endif
 
