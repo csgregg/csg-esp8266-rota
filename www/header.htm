@@ -1,18 +1,23 @@
 <!-- Top container -->
-<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
-    <button class="w3-bar-item w3-margin-left w3-button w3-hover-none" onclick="menu_open();"><div class="hamburger"></div><div class="hamburger"></div><div class="hamburger"></div></button>
-    <span class="w3-bar-item w3-display-right">
-        <span class="pre-replace">DEVICE_NAME</span>
-    </span>
-    <div class="w3-display-left w3-padding-small">
-        <span id="EmbAjaxStatusInd" class="statusdot" style="background:green"></span>
+<div class="w3-bar w3-large" style="height:41px;z-index:4;">
+    <div class="w3-top w3-black">
+        <div class="w3-bar-item w3-margin-left w3-button w3-hover-none" onclick="menu_open();"><div class="hamburger"></div><div class="hamburger"></div><div class="hamburger"></div></div>
+        <span class="w3-bar-item w3-display-right">
+            <span class="pre-replace">DEVICE_NAME</span>
+        </span>
+        <div class="w3-display-left w3-padding-small">
+            <span class="statusdot" id="EmbAjaxStatusInd" style="background:green"></span>
+        </div>
     </div>
+</div>
+<div class="w3-bar w3-display-container w3-amber w3-padding-8 w3-hide">
+    <div>Message</div>
+    <div onclick="message_ack();" class="w3-padding-8 w3-hover-red w3-display-right">X</div>
 </div>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left w3-border-right w3-border-light-grey" style="z-index:3;width:300px;" id="mySidebar">
     <div class="w3-bar-block">
-        <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="menu_close()" title="close menu">Close Menu</a>
         <a href="index.html" class="w3-bar-item w3-button w3-padding">Home</a>
         <a href="netsettings.html" class="w3-bar-item w3-button w3-padding">Network Settings</a>
         <a href="system.html" class="w3-bar-item w3-button w3-padding">System</a>
@@ -45,11 +50,7 @@
 
 <div id="loader" class="w3-modal">
     <div class="w3-modal-content">
-        <div class="w3-container w3-grey">
-            <div class="w3-cell w3-cell-middle">
-                <div class="loader"></div>
-            </div>
-        </div>
+        <div class="loader"></div>
     </div>
 </div>
 

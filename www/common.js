@@ -14,7 +14,7 @@ function ValidateIPaddress(inputText,error) {
 }
 
 
-// Common messsage alert
+// Common messsage popup
 function post_message(value) {
    if(value != "") {
       document.getElementById('message_text').innerText = value;
