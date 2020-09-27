@@ -14,7 +14,7 @@
     <span class="pre-include" src="header.htm"></span>
 
     <!-- !PAGE CONTENT! -->
-    <div class="w3-main w3-white" style="margin-left:300px;">
+    <div id="main" class="w3-main w3-white" style="margin-left:300px;">
 
         <!-- Header -->
         <div class="w3-container w3-padding-8">
@@ -25,11 +25,11 @@
             </div>
         </div>
 
-        <div class="w3-row w3-margin-bottom">
+        <div class="w3-row">
 
         <!-- Wifi Mode -->
             <div class="w3-container w3-padding-8">
-                <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-8">
+                <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-horz">
                     <div class="w3-row w3-padding-vert">
                         <b>WiFi Mode</b>
                     </div>
@@ -44,7 +44,7 @@
                         <div class="w3-cell w3-padding-small">Connect to WiFi</div>
                     </div>  
 
-                    <div class="w3-row">
+                    <div class="w3-row w3-margin-bottom">
                         <div class="w3-cell">
                             <label class="switch">
                                 <input id="wifi_mode_ap" type="checkbox" value="t" onchange="SureDlg(this);">
@@ -58,12 +58,12 @@
             </div>
         </div>
 
-        <div class="w3-row w3-margin-bottom">
+        <div class="w3-row">
 
             <!-- Current Wifi Networks -->
             <div class="w3-half">
                 <div class="w3-container w3-padding-8">
-                    <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-8">
+                    <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-horz">
                         <div class="w3-row w3-padding-vert">
                             <b>Saved Networks</b>
                         </div>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="w3-container w3-padding-8">
-                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
+                    <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-horz">
                         <div class="w3-row w3-padding-vert">
                             <b>New Networks</b>
                         </div>
@@ -86,6 +86,7 @@
                             <img class="w3-padding-8" alt="" style="opacity: 1.0;" src="signal32-4.png">
                             <button style="width:150px;" onclick="addWifiDialog()" class="w3-button w3-blue w3-padding-small">Add network</button>
                         </div>
+                        <div class="w3-margin-bottom"></div>
                     </div>
                 </div>
             </div>
@@ -93,7 +94,7 @@
             <!-- Wifi AP Settings -->
             <div class="w3-half">
                 <div class="w3-container w3-padding-8">
-                    <form class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-8">
+                    <form class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-horz">
                         <div class="w3-row">
                             <b>WiFi Access Point</b>
                             <img id="wifi_ap_icon" class="w3-padding-8" alt="" style="opacity: 0.20;" src="signal32-4.png">
@@ -176,7 +177,7 @@
 
                 <!-- Connectivity -->
                 <div class="w3-container w3-padding-8">
-                    <div class="w3-col w3-border w3-text-dark-grey w3-padding-8">
+                    <div class="w3-col w3-border w3-round w3-text-dark-grey w3-padding-horz">
                         <div class="w3-row w3-padding-vert">
                             <b>Connectivity</b>
                         </div>
@@ -213,7 +214,7 @@
                         </div>
 
                         <!-- Save / Cancel -->
-                        <div class="w3-container w3-padding-8">
+                        <div class="w3-container w3-padding-8 w3-margin-bottom">
                             <button id="net_ck_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                             <button id="net_ck_cancel" disabled onclick="disableSave('net_ck_save','net_ck_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                         </div>

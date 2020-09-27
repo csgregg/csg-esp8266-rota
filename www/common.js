@@ -18,11 +18,13 @@ function ValidateIPaddress(inputText,error) {
 function post_message(value) {
    if(value != "") {
       document.getElementById('message_text').innerText = value;
-      document.getElementById('message_dlg').style.display='block';
+      document.getElementById('message_bar').classList.remove("w3-hide");
+      document.getElementById('main').style.marginTop = '39px';
    }
 }
 function message_ack() {
-   document.getElementById('message_dlg').style.display='none';
+   document.getElementById('message_bar').classList.add("w3-hide");
+   document.getElementById('main').style.marginTop = '0px';
    doRequest("post_message","OK");     // Acknowledge done
 }
 

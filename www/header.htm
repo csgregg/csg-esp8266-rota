@@ -10,8 +10,8 @@
         </div>
     </div>
 </div>
-<div class="w3-bar w3-display-container w3-amber w3-padding-8 w3-hide">
-    <div>Message</div>
+<div id="message_bar" class="w3-bar w3-top w3-display-container w3-amber w3-padding-8 w3-hide" style="margin-top:41px;">
+    <div id="message_text">Message</div>
     <div onclick="message_ack();" class="w3-padding-8 w3-hover-red w3-display-right">X</div>
 </div>
 
@@ -57,14 +57,14 @@
 
 <!-- Message popup -->
 
-<div id="message_dlg" class="w3-modal">
+<div id="popup_dlg" class="w3-modal">
     <div class="w3-modal-content" style="max-width:300px">
         <div class="w3-container w3-padding-8" style="height:35px">
             <b>Message</b>
-            <span onclick="message_ack();" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright" title="Close">X</span>
+            <span onclick="popup_ack();" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright">X</span>
         </div>
         <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-            <span id="message_text"></span>
+            <span id="popup_text"></span>
         </div>
     </div>
 </div>
