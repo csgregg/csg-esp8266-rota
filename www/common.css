@@ -17,6 +17,12 @@ html,body,h1,h2,h3,h4,h5 {font-family: sans-serif}
   background-color: lightgray;
 }
 
+input[type=password]::-ms-reveal,
+input[type=password]::-ms-clear
+{
+    display: none;
+}
+
 .loader {
   position:fixed; 
   top: 20%; right: 50%;
@@ -31,7 +37,6 @@ html,body,h1,h2,h3,h4,h5 {font-family: sans-serif}
   -webkit-animation: spin 2s linear infinite; /* Safari */
   animation: spin 2s linear infinite;
 }
-
 
 /* Safari */
 @-webkit-keyframes spin {
