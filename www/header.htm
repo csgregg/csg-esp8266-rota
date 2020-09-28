@@ -1,6 +1,6 @@
 <!-- Top container -->
 <div class="w3-bar w3-large" style="height:41px;z-index:4;">
-    <div class="w3-top w3-black">
+    <div class="w3-top w3-white">
         <div class="w3-bar-item w3-margin-left w3-button w3-hover-none" onclick="menu_open();"><div class="hamburger"></div><div class="hamburger"></div><div class="hamburger"></div></div>
         <span class="w3-bar-item w3-display-right">
             <span class="pre-replace">DEVICE_NAME</span>
@@ -10,23 +10,19 @@
         </div>
     </div>
 </div>
-<div id="message_bar" class="w3-bar w3-top w3-display-container w3-amber w3-padding-8 w3-hide" style="margin-top:41px;">
-    <div id="message_text">Message</div>
-    <div onclick="message_ack();" class="w3-padding-8 w3-hover-red w3-display-right">X</div>
-</div>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-collapse w3-white w3-animate-left w3-border-right w3-border-light-grey" style="z-index:3;width:300px;" id="mySidebar">
+<div class="w3-sidebar w3-collapse w3-light-grey w3-animate-left w3-border-right w3-border-top w3-border-bottom" style="z-index:3;width:300px;border-radius: 0px 2px 2px 0px;" id="mySidebar">
     <div class="w3-bar-block">
         <a href="index.html" class="w3-bar-item w3-button w3-padding">Home</a>
         <a href="netsettings.html" class="w3-bar-item w3-button w3-padding">Network Settings</a>
         <a href="system.html" class="w3-bar-item w3-button w3-padding">System</a>
         <a href="about.html" class="w3-bar-item w3-button w3-padding">About</a>
     </div>
-</nav>
+</div>
 
 <!-- Overlay effect when opening sidebar on small screens -->
-<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="menu_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="menu_close()" style="cursor:pointer;margin-top:41px;" id="myOverlay"></div>
 
 
 <!-- Common Dialogs -->
