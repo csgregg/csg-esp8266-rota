@@ -34,12 +34,12 @@
 <!-- Are you sure dialog -->
 
 <div id="sure_dlg" class="w3-modal">
-    <div class="w3-modal-content w3-card-4" style="max-width:200px">
+    <div class="w3-modal-content w3-center w3-card-4" style="max-width:200px;margin:0 auto;">
         <div class="w3-container w3-center w3-padding-8">
             <b>Are you sure?</b>
         </div>
         <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-            <button onclick="SureYes()" type="button" class="w3-button w3-green" style="width:70px">Yes</button>
+            <button onclick="SureYes()" type="button" class="w3-button w3-green w3-left" style="width:70px">Yes</button>
             <button onclick="SureNo()" type="button" class="w3-button w3-red w3-right" style="width:70px">No</button>
         </div>
     </div>
@@ -58,7 +58,7 @@
 <!-- Message popup -->
 
 <div id="popup_dlg" class="w3-modal">
-    <div class="w3-modal-content" style="max-width:300px">
+    <div class="w3-modal-content w3-center" style="max-width:300px">
         <div class="w3-container w3-padding-8" style="height:35px">
             <b>Message</b>
             <span onclick="popup_ack();" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright">X</span>
