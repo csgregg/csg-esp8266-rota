@@ -235,7 +235,7 @@ if checkFSBuild():
     parse_replace("www","data/tmp")
 
     # Minify files
- #   minify_files("data/tmp")
+    minify_files("data/tmp")
 
     # Deflate www into data
     deflate_www("data/tmp","data/www")
