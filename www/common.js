@@ -19,11 +19,9 @@ function post_message(value) {
    if(value != "") {
       document.getElementById('message_text').innerText = value;
       document.getElementById('message_bar').classList.remove("w3-hide");
-      document.getElementById('top_bar').style.marginBottom = '39px';
    }
    else {
       document.getElementById('message_bar').classList.add("w3-hide");
-      document.getElementById('top_bar').style.marginBottom = '0px';
    }
 }
 function message_ack() {
