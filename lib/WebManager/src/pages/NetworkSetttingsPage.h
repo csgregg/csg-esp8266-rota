@@ -74,7 +74,7 @@ Server-side functions of netsettings.html
             EmbAJAXVarInt wifi_stn_count;
             EmbAJAXVarChar<MAX_SSID_LEN> wifi_stn_name;
             EmbAJAXVarBool wifi_stn_on;
-            EmbAJAXClientFunction<int> loadWifiList;
+            EmbAJAXClientFunction loadWifiList;
 
             EmbAJAXTextInput<MAX_SSID_LEN> wifi_stn_ssid;
             EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi_stn_pwd;
@@ -86,7 +86,7 @@ Server-side functions of netsettings.html
             EmbAJAXTextInput<16> wifi_stn_dns2;
             EmbAJAXMutableSpan wifi_stn_asip;
 
-            EmbAJAXClientFunction<int> clearLoader;
+            EmbAJAXClientFunction clearLoader;
 
             EmbAJAXCheckButton net_ck_mode;
             EmbAJAXTextInput<4> net_ck_int;

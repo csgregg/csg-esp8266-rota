@@ -21,11 +21,13 @@ function post_message(value) {
       document.getElementById('message_bar').classList.remove("w3-hide");
       document.getElementById('main').style.marginTop = '39px';
    }
+   else {
+      document.getElementById('message_bar').classList.add("w3-hide");
+      document.getElementById('main').style.marginTop = '0px';
+   }
 }
 function message_ack() {
-   document.getElementById('message_bar').classList.add("w3-hide");
-   document.getElementById('main').style.marginTop = '0px';
-   doRequest("post_message","OK");     // Acknowledge done
+   doRequest("post_message","");     // Acknowledge done
 }
 
 
