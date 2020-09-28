@@ -8,7 +8,7 @@ function ValidateIPaddress(inputText,error) {
    }
    else
    {
-      alert(error);           // TODO - Replace all alerts with modal warnings
+      alert(error);
       return false;
    }
 }

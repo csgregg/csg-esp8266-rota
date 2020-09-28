@@ -1,6 +1,5 @@
 
 
-// TODO - Classify this 
 
 // Are you sure? Action
 var sureAction;
@@ -70,7 +69,7 @@ function loadWifiList() {
     // console.log("Status - Load WiFi list");
 
     // Clear entries
-    for( var i = 0; i < window.wifi_stn_count; i++) {       // TODO: Change to dynamic calc of number
+    for( var i = 0; i < window.wifi_stn_count; i++) {
         var wifistn = document.getElementById("wifi_stn_entry" + i.toString());
         if( wifistn ) wifistn.remove();
     }
