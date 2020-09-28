@@ -111,7 +111,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
     wifi_stn_asip.setValue(getAssignedIP());
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
-    clearLoader.call(1);
+    clearLoader.call();
 }
 
 
@@ -180,7 +180,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     network.setNetChecker();
 
-    post_message.call("Hello World!");
+    website.postMessage("Hello World!");
 
 }
 
@@ -206,7 +206,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
     // Make the client reload the wifi list
     wifi_stn_asip.setValue(getAssignedIP());
-    loadWifiList.call(1);
+    loadWifiList.call();
 
 }
 
@@ -217,7 +217,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
 
     // Make the client reload the wifi list
     wifi_stn_asip.setValue(getAssignedIP());
-    loadWifiList.call(1);
+    loadWifiList.call();
 
 }
 

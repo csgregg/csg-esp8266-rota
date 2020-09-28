@@ -65,18 +65,14 @@ PageHandler webpages[] = {
 
 //////////////////////// EmbAJAXClientFunction /////////////////////////////
 
-template <> const char* EmbAJAXClientFunction<int>::value(uint8_t which) const {
-    if (which == EmbAJAXBase::Value) {
-        itoa(_arg,itoa_buf,10);
-        return itoa_buf;
-    }
-    return EmbAJAXElement::value(which);
-}
 
-template <> const char* EmbAJAXClientFunction<char*>::value(uint8_t which) const {
-    if (which == EmbAJAXBase::Value) return _arg;
-    return EmbAJAXElement::value(which);
-}
+
+
+
+
+
+
+
 
 
 //////////////////////// EmbAJAXVariable /////////////////////////////
@@ -182,11 +178,11 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
                         if( AjaxID == "" ) {
-                            net_status.setValue( (network.getNetworkStatus() * statusFlash) );
-                            statusFlash = statusFlash * -1;
-
+                            net_status.setValue( (network.getNetworkStatus() * _statusFlash) );         // Toggle status icon
+                            _statusFlash = _statusFlash * -1;
+                            if( post_message.getStatus() == SUCCESS ) post_message.call();      // Clear the message and don't need acknowledgement
                         }
-                        (webpages[i].handler)();
+                        (webpages[i].handler)();            // Call page event handler
                         break;
                     }    
             }
@@ -280,11 +276,15 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 }
 
 
+void ICACHE_FLASH_ATTR WebsiteManager::postMessage(char* msg) {
+    post_message.call(msg);
+};
+
 
 // Create the global config instance
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_WEBSITE_MANAGER)
     EmbAJAXVarInt net_status("net_status",0);
-    EmbAJAXClientFunction<char*> post_message("post_message");
+    EmbAJAXClientFunction post_message("post_message");
     WebsiteManager website;
 #endif

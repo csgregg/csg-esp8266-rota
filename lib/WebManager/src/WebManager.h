@@ -47,46 +47,59 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         void (*init)();
     };
 
+    enum funcStatus : int {
+        NONE,
+        SENT,
+        SUCCESS
+    };
+
+    static char emptyArg[] = "";
+
+
     ////////// Additional Element Types //////////
 
     /** @brief A global javasript function that can be called from the server (not the client) */
-    template <typename T> class EmbAJAXClientFunction : public EmbAJAXElement {
+    /** Client returns "" on success **/
+    class EmbAJAXClientFunction : public EmbAJAXElement {
     public:
         EmbAJAXClientFunction(const char* id) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             _arg = 0;
         }
         void print() const override { return; } 
-        const char* value(uint8_t which = EmbAJAXBase::Value) const override;
+        const char* value(uint8_t which) const {
+            if (which == EmbAJAXBase::Value) return _arg;
+            return EmbAJAXElement::value(which);
+        }
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override {
             if (which == EmbAJAXBase::Value) return "embajax_func";
             return EmbAJAXElement::valueProperty(which);
         }
-        void call(T arg) {
+        
+        void call(char* arg, bool ack = true ) {            // Only require acknowledge for first call, not response from function 
             _arg = arg;
-            _toSend = true;
+            if( ack ) _status = SENT;
+            else _status = NONE;
             setChanged();
         }
-        bool sendUpdates(uint16_t since, bool first) {
-            if( !_toSend ) return false;
-            _toSend = false;
-            return EmbAJAXElement::sendUpdates(since, first);
+        void call() {                   // Only require acknowledge for first call, not response from function 
+            _arg = emptyArg;
+            _status = NONE;
+            setChanged();
         }
-        void reset() {
-            _toSend = false;
-            _success = true;
-        }
+
+        void reset() { _status = NONE; }
         void updateFromDriverArg(const char* argname) override {
-            char buff[sizeof("OK")];
-            _driver->getArg(argname, buff, sizeof(buff));
-            _success = (strcmp(buff,"OK")==0);
+            char buff[1];
+            _driver->getArg(argname, buff, 1);
+            if( _status == SENT && buff[0]==0 ) _status = SUCCESS;         // Function should return "" to acknowledge
         }
+        funcStatus getStatus() { return _status; }
 
 
     private:
-        T _arg;
-        bool _toSend = false;
-        bool _success = true;
+        char* _arg;
+        funcStatus _status = NONE;
     };
 
 
@@ -197,6 +210,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
             void ICACHE_FLASH_ATTR begin();
             void handle() { _ajax.loopHook(); };
+            void ICACHE_FLASH_ATTR postMessage(char* msg);
  
             String URL;
             String AjaxID;
@@ -210,7 +224,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             void ICACHE_FLASH_ATTR handleAJAX();                                      // process AJAX request
             void ICACHE_FLASH_ATTR InitAJAX();                                        // process page initialization
 
-            int statusFlash = 1;
+            int _statusFlash = 1;
 
 
         private:
@@ -219,7 +233,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     };
 
     extern EmbAJAXVarInt net_status;
-    extern EmbAJAXClientFunction<char*> post_message;
+    extern EmbAJAXClientFunction post_message;
     extern WebsiteManager website;        // Declaring the global instance
 
 #endif
