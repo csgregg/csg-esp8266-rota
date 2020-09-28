@@ -42,8 +42,8 @@ Manages Network Functions
 
 void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 
-    strcpy_P( SSID, DEFAULT_WIFI_SSID );
-    strcpy_P( password, DEFAULT_WIFI_PWD );
+    strcpy( SSID, "" );
+    strcpy( password, "" );
     DHCPMode = DEFAULT_DHCPMODE;
     ip = uint32_t(0x00000000);
     subnet = uint32_t(0x00000000);
