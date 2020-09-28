@@ -115,6 +115,7 @@ function loadWifiDialog(value) {
 
     wifiStationID = value;
     doRequest("wifi_stn_btn",value,updatePage);
+    disableSave("wifi_stn_save");
     document.getElementById('wifi_stn_forget').style.display='block';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
@@ -138,6 +139,7 @@ function addWifiDialog() {
     document.getElementById('wifi_stn_dns2').value = '';
     wifiStationID = availWifiStn;
     updatePage();
+    disableSave("wifi_stn_save");
     document.getElementById('wifi_stn_forget').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }

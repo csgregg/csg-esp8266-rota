@@ -232,8 +232,8 @@
 
         <div id="wifi_stn_dlg" class="w3-modal">
             <div class="w3-modal-content w3-center w3-card-4" style="max-width:280px;;margin:0 auto;">
-                <span onclick="document.getElementById('wifi_stn_dlg').style.display='none'" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright" title="Close">X</span>
-                <div class="w3-container w3-center">
+                <span onclick="document.getElementById('wifi_stn_dlg').style.display='none'" class="w3-button w3-large w3-padding-small w3-hover-red w3-display-topright">X</span>
+                <div class="w3-container w3-center w3-padding-8">
                     <b>Wifi Network</b>
                 </div>
                 <form class="w3-container w3-no-padding">
@@ -241,10 +241,10 @@
                         <div class="w3-section">
 
                             <!-- WiFi Details -->
-                            <input id="wifi_stn_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-password">
+                            <input id="wifi_stn_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-user" onchange="enableSave('wifi_stn_save');">
                     
                             <div class="w3-display-container">
-                                <input id="wifi_stn_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password">
+                                <input id="wifi_stn_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password" onchange="enableSave('wifi_stn_save');">
                                 <img class="w3-display-right w3-padding-small" alt="" src="eye-16.png"  onclick="visiblePwd('wifi_stn_pwd')">
                             </div>
                     
@@ -252,7 +252,7 @@
                             <div class="w3-row">
                                 <div class="w3-cell">
                                     <label class="switch">
-                                        <input id="wifi_stn_dhcp" type="checkbox" value="t" onchange="updatePage();">
+                                        <input id="wifi_stn_dhcp" type="checkbox" value="t" onchange="enableSave('wifi_stn_save');updatePage();">
                                         <span class="slider round"></span>
                                     </label>
                                 </div>
@@ -268,7 +268,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid IP Address')) this.value='';">
+                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid IP Address')) this.value=''; else enableSave('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -277,7 +277,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Subnet')) this.value='';">
+                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Subnet')) this.value=''; else enableSave('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -286,7 +286,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Gateway')) this.value='';">
+                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Gateway')) this.value=''; else enableSave('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -295,7 +295,7 @@
                                     DNS 1
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value='';">
+                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableSave('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -304,7 +304,7 @@
                                     DNS 2
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value='';">
+                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableSave('wifi_stn_save');">
                                     <br>
                                 </div>
                             </div>
@@ -312,9 +312,8 @@
                     </div>
 
                     <!-- Save / Cancel -->
-                    <!-- TODO - Enable/disable buttons -->
                     <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                        <button id="wifi_stn_save" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                        <button id="wifi_stn_save" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" disabled class="w3-button w3-green">Save</button>
                         <button id="wifi_stn_cancel" onclick="document.getElementById('wifi_stn_dlg').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
                         <button id="wifi_stn_forget" onclick="document.getElementById('wifi_stn_dlg').style.display='none';SureDlg(this);" type="button" class="w3-button w3-blue w3-right">Forget</button>
                     </div>
