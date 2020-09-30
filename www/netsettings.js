@@ -75,7 +75,7 @@ function loadWifiList() {
     }
     document.getElementById("wifi_stn_add").hidden = true;
 
-    showLoader();
+    showLoader(document.getElementById("wifi_saved_box"));
 
     if( wifiListRevision == serverrevision ) return;
     for( var i = 0; i < window.wifi_stn_count; i++) doRequest("wifi_stn_id",i.toString(),addWifiStationEntry);
@@ -162,8 +162,7 @@ function SureNo() {
 function SureYes() {
 
     clearSure();
-    showLoader();
-
+        
     var x = document.getElementById('wifi_stn_ssid');
 
     // Are we forgetting this one?
@@ -191,6 +190,8 @@ function SureYes() {
         x = document.getElementById('wifi_stn_dns2');
         doRequestWait(x.id, x.value);
 
+        showLoader(document.getElementById('wifi_saved_box'));
+
         // Send Save command then reload list
         doRequest(sureAction,wifiStationID);
 
@@ -212,6 +213,8 @@ function SureYes() {
         doRequestWait(x.id, x.value);
         x = document.getElementById('wifi_ap_ch');
         doRequestWait(x.id, x.value);
+
+        showLoader(document.getElementById('wifi_ap_box'));
 
         // Send Save command and update AP
         doRequest(sureAction,1);
@@ -235,11 +238,18 @@ function SureYes() {
             wifiSureNo();
             return;
         }
+
+        showLoader(document.getElementById('wifi_mode_box'));
   
         doRequest('wifi_mode_save',mode);
     }
 
-    if( sureAction == "wifi_stn_cnct" ) doRequest('wifi_stn_cnct',wifiStationID);
+    if( sureAction == "wifi_stn_cnct" ) {
+
+        showLoader(document.getElementById('wifi_saved_box'));
+
+        doRequest('wifi_stn_cnct',wifiStationID);
+    }
 
     if( sureAction == "net_ck_save" ) {
 
@@ -251,6 +261,8 @@ function SureYes() {
         x = document.getElementById('net_ck_url');
         doRequestWait(x.id, x.value);
         
+        showLoader(document.getElementById('net_ck_box'));
+
         // Send Save command and update AP
         doRequest(sureAction,1,clearLoader);
 
