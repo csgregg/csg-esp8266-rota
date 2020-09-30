@@ -1,7 +1,7 @@
 
 // Available station
 var net_status;
-var loader_element;
+var loader_element=document.getElementById('device_box');
 
 
 // Helper function to get an element's exact position
@@ -45,8 +45,8 @@ function getPosition(el) {
       var width = loader_element.offsetWidth;
       var display = loader.style.display;
 
-      loader.style.left = (pos.x+width-52)+"px";
-      loader.style.top = (pos.y-30)+"px";
+      loader.style.left = (pos.x+width-56)+"px";
+      loader.style.top = (pos.y-26)+"px";
       loader.style.display = display;
    }
  }
