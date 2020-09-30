@@ -39,14 +39,16 @@ function getPosition(el) {
  document.getElementById('mySidebar').addEventListener("DOMAttrModified", updateLoaderPosition, false);
 
  function updateLoaderPosition() {
-   var loader = document.getElementById('loader');
-   var pos = getPosition(loader_element);
-   var width = loader_element.offsetWidth;
-   var display = loader.style.display;
+   if( loader_element ) {
+      var loader = document.getElementById('loader');
+      var pos = getPosition(loader_element);
+      var width = loader_element.offsetWidth;
+      var display = loader.style.display;
 
-   loader.style.left = (pos.x+width-52)+"px";
-   loader.style.top = (pos.y-30)+"px";
-   loader.style.display = display;
+      loader.style.left = (pos.x+width-52)+"px";
+      loader.style.top = (pos.y-30)+"px";
+      loader.style.display = display;
+   }
  }
 
 
@@ -259,13 +261,14 @@ class embajaxstatus {
    constructor(div) {
        this.misses = 0;
        this.div = div;
+       this.flash = false;
    }
    out() {
        if( this.misses < 5 ) if(++(this.misses) >= 5) this.div.style.background = "red";
    }
    in() {
        if( this.misses > 4 ) {
-          this.div.style.background = "green";
+          this.div.style.background = "orange";
           initPage();
        }
        this.misses=0;
@@ -274,20 +277,17 @@ class embajaxstatus {
       if( this.misses <= 1 ) {
          switch(Number(window.net_status)) {
             case 2:        // WiFi connected, no internet
-              this.div.style.background = "orange";
-              break;
-            case -2:        // WiFi connected, no internet
-              this.div.style.background = "yellow";
-              break;
+               if( this.flash ) this.div.style.background = "orange";
+               else this.div.style.background = "darkorange";
+               break;
             case 1:        // Connected to internet
-              this.div.style.background = "green";
-              break;
-            case -1:        // Connected to internet
-              this.div.style.background = "rgb(0, 100, 0)";
-              break;
+               if( this.flash ) this.div.style.background = "green";
+               else this.div.style.background = "rgb(0, 150, 0)";
+               break;
             default:       // Network disconnected
-              this.div.style.background = "red";
+               this.div.style.background = "red";
           }
+          this.flash = !this.flash;
       }
    }
 } 
@@ -295,7 +295,7 @@ class embajaxstatus {
 
 
 function doPoll() {
-   // console.log("Status - Poll");
+   //console.log("Status - Poll");
    
    doRequest('','',updatePage);  
 }
@@ -308,4 +308,4 @@ function doPoll() {
 ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
 initPage();
 menu_highlight();
-//setInterval(doPoll,1000);
+setInterval(doPoll,1000);

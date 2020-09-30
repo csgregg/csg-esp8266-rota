@@ -23,7 +23,6 @@ function SureNo() {
 function SureYes() {
 
     clearSure();
-    showLoader();
 
     if( sureAction == "log_save" ) {
 
@@ -46,14 +45,22 @@ function SureYes() {
         x = document.getElementById('log_level');
         doRequestWait(x.id, x.value);
 
+        showLoader(document.getElementById('logger_box'));
+
         doRequest(sureAction,1,clearLoader);
 
         disableSave("log_save","log_cancel");
     }
-    else {
+
+    if( sureAction == "btn_restart" ) {
+        showLoader(document.getElementById('device_box'));
         doRequest(sureAction,1,reloadPage);
     }
-
+    else {
+        // All the settings resets
+        showLoader(document.getElementById('reset_box'));
+        doRequest(sureAction,1,reloadPage);
+    }
 }
 
 
