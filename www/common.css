@@ -57,11 +57,11 @@ input[type=password]::-ms-clear
   position: fixed;
   width: 80px;
   height: 80px;
-	transform:scale(0.2);
-		-o-transform:scale(0.2);
-		-ms-transform:scale(0.2);
-		-webkit-transform:scale(0.2);
-		-moz-transform:scale(0.2);  
+	transform:scale(0.3);
+		-o-transform:scale(0.3);
+		-ms-transform:scale(0.3);
+		-webkit-transform:scale(0.3);
+		-moz-transform:scale(0.3);  
 }
 .lds-spinner div {
   transform-origin: 40px 40px;
@@ -75,7 +75,7 @@ input[type=password]::-ms-clear
   width: 6px;
   height: 18px;
   border-radius: 20%;
-  background: black;
+  background: darkslategrey;
 }
 .lds-spinner div:nth-child(1) {
   transform: rotate(0deg);
@@ -135,20 +135,13 @@ input[type=password]::-ms-clear
 }
 
 
-
-
-
-
-
-
-
-
-
 .statusdot{
   border-radius: 50%;
   display: inline-block;
   height: 15px;
   width: 15px;
+  margin-top: 7px;
+  margin-left: 1px;
 }   
 
 .switch {
