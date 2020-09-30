@@ -50,6 +50,7 @@ Server-side functions of system.html
             EmbAJAXServerFunction btn_restart;
             EmbAJAXServerFunction btn_rst_net;
             EmbAJAXServerFunction btn_rst_all;
+            EmbAJAXServerFunction btn_rst_log;
 
             EmbAJAXCheckButton log_srl;
             EmbAJAXTextInput<7> log_baud;
@@ -63,13 +64,14 @@ Server-side functions of system.html
             const char* logLevels[5] = {"0","1","2","3","4"};
             EmbAJAXServerFunction log_save;
 
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 13] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 14] = {
       
                 WEB_PAGE_COMMON_ELEMENTS,
 
                 &btn_restart,
                 &btn_rst_net,
                 &btn_rst_all,
+                &btn_rst_log,
 
                 &log_srl,
                 &log_baud,
@@ -89,6 +91,7 @@ Server-side functions of system.html
                 btn_restart("btn_restart"),
                 btn_rst_net("btn_rst_net"),
                 btn_rst_all("btn_rst_all"),
+                btn_rst_log("btn_rst_log"),
 
                 log_srl("log_srl",""),
                 log_baud("log_baud"),

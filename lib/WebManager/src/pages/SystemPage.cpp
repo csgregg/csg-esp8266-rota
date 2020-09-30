@@ -38,11 +38,11 @@ Server-side functions of system.html
 
 void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
-    LOG_HIGH(PSTR("(Page) Index - Initialize AJAX"));
+    LOG_HIGH(PSTR("(Page) System - Initialize AJAX"));
 
     LogSettings logger = config.settings.logConfig;
 
-    char buffer[8];
+    static char buffer[8];
 
     log_srl.setChecked( logger.serialMode );
     log_baud.setValue( itoa(logger.serialBaud,buffer,10) );

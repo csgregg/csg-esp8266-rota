@@ -178,8 +178,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
                     if( URL == webpages[i].URL ) {
                         if( AjaxID == "" ) {
-                            net_status.setValue( (network.getNetworkStatus() * _statusFlash) );         // Toggle status icon
-                            _statusFlash = _statusFlash * -1;
+                            net_status.setValue( network.getNetworkStatus() );                  // Update status icon
                             if( post_message.getStatus() == SUCCESS ) post_message.call();      // Clear the message and don't need acknowledgement
                         }
                         (webpages[i].handler)();            // Call page event handler
@@ -242,6 +241,13 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
             WiFiClient client = _server.client();
             
             client.write_P((const char*)FPSTR(websiteFiles[i].content),websiteFiles[i].len);
+
+            // Initialize Ajax on page load
+            for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+                if( URL == webpages[i].URL ) {
+                    (webpages[i].init)();
+                    break;
+                }
 
             return true;
         }
