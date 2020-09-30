@@ -1,4 +1,54 @@
 
+// Available station
+var net_status;
+var loader_element;
+
+
+// Helper function to get an element's exact position
+function getPosition(el) {
+   var xPos = 0;
+   var yPos = 0;
+  
+   while (el) {
+     if (el.tagName == "BODY") {
+       // deal with browser quirks with body/window/document and page scroll
+       var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+       var yScroll = el.scrollTop || document.documentElement.scrollTop;
+  
+       xPos += (el.offsetLeft - xScroll + el.clientLeft);
+       yPos += (el.offsetTop - yScroll + el.clientTop);
+     } else {
+       // for all other non-BODY elements
+       xPos += (el.offsetLeft - el.scrollLeft + el.clientLeft);
+       yPos += (el.offsetTop - el.scrollTop + el.clientTop);
+     }
+  
+     el = el.offsetParent;
+   }
+   return {
+     x: xPos,
+     y: yPos
+   };
+ }
+
+
+  
+ // deal with the page getting resized or scrolled
+ window.addEventListener("scroll", updateLoaderPosition, false);
+ window.addEventListener("resize", updateLoaderPosition, false);
+ document.getElementById('mySidebar').addEventListener("DOMAttrModified", updateLoaderPosition, false);
+
+ function updateLoaderPosition() {
+   var loader = document.getElementById('loader');
+   var pos = getPosition(loader_element);
+   var width = loader_element.offsetWidth;
+   var display = loader.style.display;
+
+   loader.style.left = (pos.x+width-52)+"px";
+   loader.style.top = (pos.y-30)+"px";
+   loader.style.display = display;
+ }
+
 
 
 function ValidateIPaddress(inputText,error) {
@@ -29,9 +79,6 @@ function message_ack() {
 }
 
 
-// Available station
-var net_status;
-
 
 function SureDlg(action) {
    if( typeof action === "string" ) sureAction = action;
@@ -47,7 +94,9 @@ function clearLoader() {
    document.getElementById('loader').style.display='none';
 }
 
-function showLoader() {
+function showLoader(element) {
+   loader_element = element;
+   updateLoaderPosition();
    document.getElementById('loader').style.display='block';
 }
 
@@ -96,8 +145,6 @@ function menu_open() {
        mySidebar.style.display = 'block';
        overlayBg.style.display = "block";
    }
-
-   doPoll();
 
 }
 
@@ -261,4 +308,4 @@ function doPoll() {
 ajaxstatus = new embajaxstatus(document.getElementById('EmbAjaxStatusInd'));
 initPage();
 menu_highlight();
-setInterval(doPoll,1000);
+//setInterval(doPoll,1000);
