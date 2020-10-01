@@ -90,6 +90,9 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
 #ifndef NO_LOGGING
 
+    _doTick = false;
+    if( _tickCheck.active() ) _tickCheck.detach();
+
     if( _settings->serviceMode || _settings->tickMode ) {
 
         strcpy_P(_FullServiceURL,PSTR("http://"));
@@ -111,12 +114,10 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
     if( _settings->serviceMode ) LOG_HIGH(PSTR("(Logger) Logging Service: ON"));
 
-    if( _settings->tickMode ) LOG_HIGH(PSTR("(Logger) Tick Service: ON"));
-
-    _doTick = false;
-
-    if( _tickCheck.active() ) _tickCheck.detach();
-    if( _settings->tickMode ) _tickCheck.attach( _settings->tickInterval, TriggerTick );
+    if( _settings->tickMode ) {
+        LOG_HIGH(PSTR("(Logger) Tick Service: ON"));
+        _tickCheck.attach( _settings->tickInterval, TriggerTick );
+    }
 
 #endif
 
