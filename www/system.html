@@ -62,12 +62,101 @@
                             <div class="w3-container w3-cell w3-padding-8">
                                 <button id="btn_rst_log" class="w3-button w3-blue w3-padding-small" style="width:100px;" onclick="SureDlg(this);">Logger</button>
                             </div>
+                        </div>
+                        <div class="w3-row w3-padding-horz">     
+                            <div class="w3-container w3-cell w3-padding-8">
+                                <button id="btn_rst_ota" class="w3-button w3-blue w3-padding-small" style="width:100px;" onclick="SureDlg(this);">Updater</button>
+                            </div>
                         </div> 
                         <div class="w3-row w3-padding-8 w3-small">
                             Changes take effect on next restart
                         </div>
                     </div>
                 </div>
+
+                <div class="w3-container w3-padding-notop">
+                    <div id="firmware_box" class="w3-col w3-border w3-light-grey w3-round w3-text-dark-grey">
+                        <div class="w3-row w3-padding-8">
+                            <b>Firmware</b>
+                        </div>
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="ota_mode" type="checkbox" value="t" onchange="enableSave('ota_save','ota_cancel');">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Auto update</div>
+                        </div>  
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Update URL
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="ota_url" class="w3-input w3-border w3-padding-small" type="text" maxlength="47" onchange="enableSave('ota_save','ota_cancel');">
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                GitHub User
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="ota_user" class="w3-input w3-border w3-padding-small" type="text" maxlength="15" onchange="enableSave('ota_save','ota_cancel');">
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                GitHub Repo
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="ota_repo" class="w3-input w3-border w3-padding-small" type="text" maxlength="23" onchange="enableSave('ota_save','ota_cancel');">
+                            </div>
+                        </div>
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                GitHub Token
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="ota_key" class="w3-input w3-border w3-padding-small" type="text" maxlength="47" onchange="enableSave('ota_save','ota_cancel');">
+                            </div>
+                        </div>
+                        
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="ota_skip" type="checkbox" value="t" onchange="enableSave('ota_save','ota_cancel');">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Skip update</div>
+                        </div>  
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                Check interval
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:75px">
+                                <input id="ota_ck_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3" onchange="enableSave('ota_save','ota_cancel');">
+                            </div>
+                            <div class="w3-col" style="line-height: 40px;width:90px;">
+                                (Seconds)
+                            </div>
+                        </div>
+
+                        <!-- Save / Cancel -->
+                        <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">
+                            <button class="w3-button w3-green" disabled id="ota_save" onclick="SureDlg(this);" type="button">Save</button>
+                            <button class="w3-button w3-red" disabled id="ota_cancel" onclick="disableSave('ota_save','ota_cancel');doRequestAll();" type="button">Cancel</button>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
 
             <div class="w3-half">

@@ -36,6 +36,7 @@ Server-side functions of system.html
 
     #include "WebManager.h"
     #include "Logger.h"
+    #include "OTAUpdater.h"
 
 
     class SystemPage {
@@ -51,6 +52,7 @@ Server-side functions of system.html
             EmbAJAXServerFunction btn_rst_net;
             EmbAJAXServerFunction btn_rst_all;
             EmbAJAXServerFunction btn_rst_log;
+            EmbAJAXServerFunction btn_rst_ota;
 
             EmbAJAXCheckButton log_srl;
             EmbAJAXTextInput<7> log_baud;
@@ -64,7 +66,16 @@ Server-side functions of system.html
             const char* logLevels[5] = {"0","1","2","3","4"};
             EmbAJAXServerFunction log_save;
 
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 14] = {
+            EmbAJAXCheckButton ota_mode;
+            EmbAJAXTextInput<OTA_MAX_SERVICE_LEN> ota_url;
+            EmbAJAXTextInput<OTA_MAX_USER_LEN> ota_user;
+            EmbAJAXTextInput<OTA_MAX_REPO_LEN> ota_repo;
+            EmbAJAXTextInput<OTA_MAX_TOKEN_LEN> ota_key;
+            EmbAJAXCheckButton ota_skip;
+            EmbAJAXTextInput<4> ota_ck_int;
+            EmbAJAXServerFunction ota_save;
+
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 23] = {
       
                 WEB_PAGE_COMMON_ELEMENTS,
 
@@ -72,6 +83,7 @@ Server-side functions of system.html
                 &btn_rst_net,
                 &btn_rst_all,
                 &btn_rst_log,
+                &btn_rst_ota,
 
                 &log_srl,
                 &log_baud,
@@ -82,7 +94,16 @@ Server-side functions of system.html
                 &log_tick_int,
                 &log_tags,
                 &log_level,
-                &log_save
+                &log_save,
+
+                &ota_mode,
+                &ota_url,
+                &ota_user,
+                &ota_repo,
+                &ota_key,
+                &ota_skip,
+                &ota_ck_int,
+                &ota_save,
 
             };
 
@@ -92,6 +113,7 @@ Server-side functions of system.html
                 btn_rst_net("btn_rst_net"),
                 btn_rst_all("btn_rst_all"),
                 btn_rst_log("btn_rst_log"),
+                btn_rst_ota("btn_rst_ota"),
 
                 log_srl("log_srl",""),
                 log_baud("log_baud"),
@@ -103,6 +125,15 @@ Server-side functions of system.html
                 log_tags("log_tags"),
                 log_level("log_level",logLevels),
                 log_save("log_save"),
+
+                ota_mode("ota_mode",""),
+                ota_url("ota_url"),
+                ota_user("ota_user"),
+                ota_repo("ota_repo"),
+                ota_key("ota_key"),
+                ota_skip("ota_skip",""),
+                ota_ck_int("ota_ck_int"),
+                ota_save("ota_save"),
 
                 ajax(page_elements, "")
                 {
@@ -118,6 +149,8 @@ Server-side functions of system.html
             void ICACHE_FLASH_ATTR initializeAjax();
 
             void ICACHE_FLASH_ATTR saveLogConfig();
+
+            void ICACHE_FLASH_ATTR saveOTAConfig();
     };
     
     extern SystemPage systempage;

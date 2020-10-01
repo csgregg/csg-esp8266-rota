@@ -71,6 +71,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 
         // Reset to defauls
         ResetToDefaults();
+        Save();
 
     }
     else {

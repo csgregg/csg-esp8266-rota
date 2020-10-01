@@ -34,6 +34,7 @@ Server-side functions of system.html
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkManager.h"
+#include "OTAUpdater.h"
 
 
 void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
@@ -41,6 +42,7 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
     LOG_HIGH(PSTR("(Page) System - Initialize AJAX"));
 
     LogSettings logger = config.settings.logConfig;
+    OTASettings ota = config.settings.otaConfig;
 
     static char buffer[8];
 
@@ -53,8 +55,16 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
     log_tick_int.setValue( itoa(logger.tickInterval,buffer,10) );
     log_tags.setValue( logger.globalTags );
     log_level.selectOption( logger.level );
-
     log_save.setEnabled(false);
+
+    ota_mode.setChecked( ota.mode );
+    ota_url.setValue( ota.service );
+    ota_user.setValue( ota.user );
+    ota_repo.setValue( ota.repo );
+    ota_key.setValue( ota.token );
+    ota_skip.setChecked( ota.skipUpdates );
+    ota_ck_int.setValue( itoa(ota.interval,buffer,10) );
+    ota_save.setEnabled(false);
 
 }
 
@@ -76,9 +86,17 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
 
     if( website.AjaxID == F("btn_rst_all") ){
         config.ResetToDefaults();
+        config.Save();
+    }
+
+    if( website.AjaxID == F("btn_rst_ota") ){
+        config.settings.otaConfig.setDefaults();
+        config.Save();
     }
 
     if( website.AjaxID == F("log_save") ) saveLogConfig();
+
+    if( website.AjaxID == F("ota_save") ) saveOTAConfig();
 
 }
 
@@ -101,6 +119,26 @@ void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
     config.Save();
 
     logger.begin(config.settings.logConfig);
+
+}
+
+
+void ICACHE_FLASH_ATTR SystemPage::saveOTAConfig() {
+    
+    OTASettings ota;
+
+    ota.mode = ota_mode.isChecked();
+    strncpy(ota.service,ota_url.value(),OTA_MAX_SERVICE_LEN);
+    strncpy(ota.user,ota_user.value(),OTA_MAX_USER_LEN);
+    strncpy(ota.repo,ota_repo.value(),OTA_MAX_REPO_LEN);
+    strncpy(ota.token,ota_key.value(),OTA_MAX_TOKEN_LEN);
+    ota.skipUpdates = ota_skip.isChecked();
+    ota.interval = atoi(ota_ck_int.value());
+
+    config.settings.otaConfig = ota;
+    config.Save();
+
+    updater.begin(config.settings.otaConfig);           
 
 }
 
