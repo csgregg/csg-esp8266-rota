@@ -180,8 +180,6 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     network.setNetChecker();
 
-    website.postMessage("Hello World!");
-
 }
 
 

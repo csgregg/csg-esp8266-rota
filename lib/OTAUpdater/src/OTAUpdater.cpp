@@ -79,29 +79,34 @@ void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
 
 
 
-
 void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &settings ) {
-
     _client = &client;
+    begin(settings);
+}
+void ICACHE_FLASH_ATTR OTAUpdater::begin( OTASettings &settings ) {
+
     _settings = &settings;
 
-    strcpy_P(_assetRequestURL, PSTR("http://"));
-    strcat(_assetRequestURL, _settings->service);
-    strcat_P(_assetRequestURL, PSTR("?repo="));
-    strcat(_assetRequestURL, _settings->repo);
-    strcat_P(_assetRequestURL, PSTR("&user="));
-    strcat(_assetRequestURL, _settings->user);
-    if( _settings->token[0] != '\0' ) {
-        strcat_P(_assetRequestURL, PSTR("&token="));
-        strcat(_assetRequestURL, _settings->token);
+    _doUpdateCheck = false;
+    if( _updateCheck.active() ) _updateCheck.detach();
+
+    if( _settings->mode ) {
+        strcpy_P(_assetRequestURL, PSTR("http://"));
+        strcat(_assetRequestURL, _settings->service);
+        strcat_P(_assetRequestURL, PSTR("?repo="));
+        strcat(_assetRequestURL, _settings->repo);
+        strcat_P(_assetRequestURL, PSTR("&user="));
+        strcat(_assetRequestURL, _settings->user);
+        if( _settings->token[0] != '\0' ) {
+            strcat_P(_assetRequestURL, PSTR("&token="));
+            strcat(_assetRequestURL, _settings->token);
+        }
+
+        LOG(PSTR("(Updater) Starting auto updater"));
+
+        _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
     }
 
-    _doUpdateCheck = false;
-
-    if( _updateCheck.active() ) _updateCheck.detach();
-    _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
-
-    LOG(PSTR("(Updater) Starting updater"));
 }
 
 
