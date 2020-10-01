@@ -66,6 +66,7 @@ binaries built by Travis-CI.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
+            bool mode = false;                              // TODO - Implement mode
             char service[OTA_MAX_SERVICE_LEN] = "";
             char repo[OTA_MAX_REPO_LEN] = "";
             char user[OTA_MAX_USER_LEN] = "";

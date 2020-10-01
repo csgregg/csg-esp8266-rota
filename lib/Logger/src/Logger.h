@@ -86,6 +86,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     #endif
 
+    // TODO - Prefix these defines with 'LOG_'
     // Sizes
     #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
     #define MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle

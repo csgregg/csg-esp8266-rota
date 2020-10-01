@@ -45,8 +45,8 @@ function getPosition(el) {
       var width = loader_element.offsetWidth;
       var display = loader.style.display;
 
-      loader.style.left = (pos.x+width-56)+"px";
-      loader.style.top = (pos.y-26)+"px";
+      loader.style.left = (pos.x+width-60)+"px";
+      loader.style.top = (pos.y-22)+"px";
       loader.style.display = display;
    }
  }
