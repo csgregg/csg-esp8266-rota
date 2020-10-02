@@ -282,10 +282,14 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 }
 
 
-void ICACHE_FLASH_ATTR WebsiteManager::postMessage(char* msg) {
-    post_message.call(msg);
+void ICACHE_FLASH_ATTR WebsiteManager::postMessage(const char* msg) {
+    strncpy(_message,msg,WEB_MAX_MESSAGE_LEN);
+    post_message.call(_message);
 };
-
+void ICACHE_FLASH_ATTR WebsiteManager::postMessage(String msg){
+    strncpy(_message,msg.c_str(),WEB_MAX_MESSAGE_LEN);
+    post_message.call(_message);
+};
 
 // Create the global config instance
 

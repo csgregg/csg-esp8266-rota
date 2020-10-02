@@ -40,6 +40,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     #include <EmbAJAX.h>
 
     #define WEB_PORT 80
+    #define WEB_MAX_MESSAGE_LEN 100
     
     struct PageHandler {
         const char* URL;
@@ -210,7 +211,8 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
             void ICACHE_FLASH_ATTR begin();
             void handle() { _ajax.loopHook(); };
-            void ICACHE_FLASH_ATTR postMessage(char* msg);
+            void ICACHE_FLASH_ATTR postMessage(const char* msg);
+            void ICACHE_FLASH_ATTR postMessage(String msg);
  
             String URL;
             String AjaxID;
@@ -224,7 +226,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             void ICACHE_FLASH_ATTR handleAJAX();                                      // process AJAX request
             void ICACHE_FLASH_ATTR InitAJAX();                                        // process page initialization
 
-            int _statusFlash = 1;
+            char _message[WEB_MAX_MESSAGE_LEN];                                     // Stored copy of message
 
 
         private:
