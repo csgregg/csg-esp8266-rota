@@ -170,7 +170,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
         network.reconnectWifi();
     }
     else {
-        post_message.call("Invlaid IP address");
+        website.postMessage(PSTR("Invlaid IP address"));
     }
 
 }
@@ -217,7 +217,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
         if( network.getConnectedStation() == id ) network.reconnectWifi();    
     }
     else {
-        post_message.call("Invlaid IP address");
+         website.postMessage(PSTR("Invlaid IP address"));
     }
 
     // Make the client reload the wifi list
