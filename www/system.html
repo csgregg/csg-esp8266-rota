@@ -69,7 +69,7 @@
                             </div>
                         </div> 
                         <div class="w3-row w3-padding-8 w3-small">
-                            Changes take effect on next restart
+                            Network changes take effect on next restart
                         </div>
                     </div>
                 </div>
@@ -125,16 +125,6 @@
                                 <input id="ota_key" class="w3-input w3-border w3-padding-small" type="text" maxlength="47" onchange="enableSave('ota_save','ota_cancel');">
                             </div>
                         </div>
-                        
-                        <div class="w3-row">
-                            <div class="w3-cell w3-padding-8">
-                                <label class="switch">
-                                    <input id="ota_skip" type="checkbox" value="t" onchange="enableSave('ota_save','ota_cancel');">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="w3-cell w3-padding-small">Skip update</div>
-                        </div>  
 
                         <div class="w3-container w3-padding-horz">
                             <div class="w3-col" style="line-height: 40px;width:100px;">
@@ -147,6 +137,16 @@
                                 (Seconds)
                             </div>
                         </div>
+                        
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="ota_skip" type="checkbox" value="t" onchange="enableSave('ota_save','ota_cancel');">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">Skip update</div>
+                        </div>  
 
                         <!-- Save / Cancel -->
                         <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">

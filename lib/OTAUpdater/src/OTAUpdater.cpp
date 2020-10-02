@@ -69,6 +69,7 @@ bool OTAUpdater::_doUpdateCheck = false;
 
 
 void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
+    mode = true;                              // TODO - add build flag
     strcpy_P(service, flag_UPDATER_SERVICE);
     strcpy_P(repo, flag_UPDATER_REPO);
     strcpy_P(user, flag_UPDATER_USER);
@@ -88,9 +89,11 @@ void ICACHE_FLASH_ATTR OTAUpdater::begin( OTASettings &settings ) {
     _settings = &settings;
 
     _doUpdateCheck = false;
+
     if( _updateCheck.active() ) _updateCheck.detach();
 
     if( _settings->mode ) {
+
         strcpy_P(_assetRequestURL, PSTR("http://"));
         strcat(_assetRequestURL, _settings->service);
         strcat_P(_assetRequestURL, PSTR("?repo="));

@@ -66,7 +66,7 @@ binaries built by Travis-CI.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = false;                              // TODO - Implement mode
+            bool mode = false;
             char service[OTA_MAX_SERVICE_LEN] = "";
             char repo[OTA_MAX_REPO_LEN] = "";
             char user[OTA_MAX_USER_LEN] = "";
@@ -77,7 +77,8 @@ binaries built by Travis-CI.
              // Create a compare operators
 
             bool operator==(const OTASettings& other) const {
-                return (strcmp(service, other.service)==0)
+                return mode == other.mode
+                    && (strcmp(service, other.service)==0)
                     && (strcmp(repo, other.repo)==0)
                     && (strcmp(user, other.user)==0)
                     && (strcmp(token, other.token)==0)
@@ -86,7 +87,8 @@ binaries built by Travis-CI.
             }
 
             bool operator!=(const OTASettings& other) const {
-                return (strcmp(service, other.service)!=0)
+                return mode == other.mode
+                    || (strcmp(service, other.service)!=0)
                     || (strcmp(repo, other.repo)!=0)
                     || (strcmp(user, other.user)!=0)
                     || (strcmp(token, other.token)!=0)

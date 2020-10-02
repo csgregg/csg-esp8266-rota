@@ -52,6 +52,30 @@ function SureYes() {
         disableSave("log_save","log_cancel");
     }
 
+    if( sureAction == "ota_save" ) {
+
+        x = document.getElementById('ota_mode');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        x = document.getElementById('ota_url');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('ota_user');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('ota_repo');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('ota_key');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('ota_skip');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        x = document.getElementById('ota_ck_int');
+        doRequestWait(x.id, x.value);
+
+        showLoader(document.getElementById('ota_box'));
+
+        doRequest(sureAction,1,clearLoader);
+
+        disableSave("ota_save","ota_cancel");
+    }
+
     if( sureAction == "btn_restart" ) {
         showLoader(document.getElementById('device_box'));
         doRequest(sureAction,1,reloadPage);

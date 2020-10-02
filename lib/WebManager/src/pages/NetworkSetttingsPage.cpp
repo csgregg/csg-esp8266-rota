@@ -118,6 +118,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
+    LOG_HIGH(F("(Page) Network Settings - Load Wifi Station"));
+
     char ipbuffer[15];
 
     wifiStation = config.settings.networkConfig.stationSettings[id];
@@ -147,27 +149,36 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
+
+    LOG_HIGH(F("(Page) Network Settings - Save AP"));
     
     APConfig ap;
 
     strncpy(ap.SSID, wifi_ap_ssid.value(), MAX_SSID_LEN);
     strncpy(ap.password, wifi_ap_pwd.value(), MAX_PASSWORD_LEN);
     
-    if( ap.ip.fromString(wifi_ap_ip.value()) ) {
-        ap.subnet.fromString(wifi_ap_snet.value());
-        ap.gateway.fromString(wifi_ap_gtwy.value());
-        ap.channel = atoi(wifi_ap_ch.value());
+    bool valid = true;
+    valid = valid && ap.ip.fromString(wifi_ap_ip.value());
+    valid = valid && ap.subnet.fromString(wifi_ap_snet.value());
+    valid = valid && ap.gateway.fromString(wifi_ap_gtwy.value());
+    ap.channel = atoi(wifi_ap_ch.value());
 
+    if( valid ) {
         config.settings.networkConfig.apSettings = ap;
         config.Save();
 
         network.reconnectWifi();
+    }
+    else {
+        post_message.call("Invlaid IP address");
     }
 
 }
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
+
+    LOG_HIGH(F("(Page) Network Settings - Save Connection Checker"));
 
     NetCheckConfig netStatus;
 
@@ -185,21 +196,28 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
+    LOG_HIGH(F("(Page) Network Settings - Save Wifi Station"));
+
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
-    
-    if( wifiStation.ip.fromString(wifi_stn_ip.value()) ) {
-        wifiStation.subnet.fromString(wifi_stn_snet.value());
-        wifiStation.gateway.fromString(wifi_stn_gtwy.value());
-        wifiStation.dns1.fromString(wifi_stn_dns2.value());
-        wifiStation.dns2.fromString(wifi_stn_dns2.value());
+ 
+    bool valid = true;
+    valid = valid && wifiStation.ip.fromString(wifi_stn_ip.value());
+    valid = valid && wifiStation.subnet.fromString(wifi_stn_snet.value());
+    valid = valid && wifiStation.gateway.fromString(wifi_stn_gtwy.value());
+    valid = valid && wifiStation.dns1.fromString(wifi_stn_dns2.value());
+    valid = valid && wifiStation.dns2.fromString(wifi_stn_dns2.value());
 
-        wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
+    wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
 
+    if( valid || wifiStation.DHCPMode == DHCP ) {
         config.settings.networkConfig.stationSettings[id] = wifiStation;
         config.Save();
 
         if( network.getConnectedStation() == id ) network.reconnectWifi();    
+    }
+    else {
+        post_message.call("Invlaid IP address");
     }
 
     // Make the client reload the wifi list
@@ -209,6 +227,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 }
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
+
+    LOG_HIGH(F("(Page) Network Settings - Connect Wifi Station"));
     
     if( network.connectWiFiStation(id) ) config.Save();
     else network.reconnectWifi();
