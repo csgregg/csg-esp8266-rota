@@ -17,6 +17,7 @@ install:
 - pip install -U platformio
 - platformio platform install espressif8266@2.6.2
 - platformio lib install ArduinoJson
+- platformio lib install DoubleResetDetector
 - platformio lib install https://github.com/tfry-git/EmbAJAX#master
 script:
 - platformio run -t buildfs -e travis

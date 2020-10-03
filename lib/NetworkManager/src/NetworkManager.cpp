@@ -100,6 +100,8 @@ void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
 
     _settings = &settings;
 
+    if( device.getStartMode() == IOTDevice::DOUBLERESET ) _settings->wifiMode = WIFI_AP;
+
     InitializeWiFi();
     InitializeNetCheck();
 
@@ -154,7 +156,7 @@ void NetworkManager::HandleNetCheck() {
 
             http.begin( _client, url );
 
-            http.setUserAgent(PSTR("ESP8266-http-Update"));                            // Change all instances to literals
+            http.setUserAgent(PSTR("ESP8266-http-Update"));                            // TODO - Change all instances to literals
             http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
 
             int httpresponse = http.GET();

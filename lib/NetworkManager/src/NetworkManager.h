@@ -299,7 +299,7 @@ Manages Network Functions
             bool _stationConnected[MAX_SSIDS];   
 
             Ticker _netCheck;
-            static bool _doNetCheck;
+            static bool _doNetCheck;        // TODO - does this need to be static ?
 
             static void TriggerNetCheck();
             void ICACHE_FLASH_ATTR InitializeNetCheck();

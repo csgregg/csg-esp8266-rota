@@ -36,6 +36,7 @@ Build flags are loaded from platformio.ini
     #define DEVICE_H
 
     #include <Arduino.h>
+    #include <DoubleResetDetector.h>
     
     #include "Credentials.h"            // Contains private definitions (excluded from repo)
 
@@ -131,31 +132,50 @@ Build flags are loaded from platformio.ini
     static const uint flag_MONITOR_SPEED = atoi(ESCAPEQUOTE(MONITOR_SPEED));                    // Monitor baud
 
 
+    // Number of seconds after reset during which a 
+    // subseqent reset will be considered a double reset.
+    #define DRD_TIMEOUT 3
+
+    // RTC Memory Address for the DoubleResetDetector to use
+    #define DRD_ADDRESS 0
+
+
     // Expand the EspClass to add build flags, etc
     class IOTDevice : public EspClass {
 
         public:
 
-            // Need to do this because these flags seem to get defined at differnet time to the rest
-            void begin() {
-                sprintf(_build_no,"%i",flag_BUILD_NO);
-                strcpy(_build_time, flag_BUILD_TIMESTAMP);
-                sprintf(_chipID, "%0X", EspClass::getChipId());
-                strcpy(_buildEnv,flag_BUILD_ENV);
+            IOTDevice() : 
+                _drd(DRD_TIMEOUT, DRD_ADDRESS)
+            {};
+
+            enum StartMode {                    // TODO - Move all enums into classes
+                NORMAL,
+                DOUBLERESET,
             };
 
+            void ICACHE_FLASH_ATTR begin();
+
             // Get build number and time stamp
-            char* getBuildNo() {
+            char* ICACHE_FLASH_ATTR getBuildNo() {
                 return _build_no;
             };
-            char* getBuildTime() {
+            char* ICACHE_FLASH_ATTR getBuildTime() {
                 return _build_time;
             };
-            char* getChipId() {
+            char* ICACHE_FLASH_ATTR getChipId() {
                 return _chipID;
             };
-            char* getBuildEnv() {
+            char* ICACHE_FLASH_ATTR getBuildEnv() {
                 return _buildEnv;
+            };
+
+            StartMode getStartMode() {
+                return _startMode;
+            };
+
+            void loop(){
+                _drd.loop();
             };
 
         protected:
@@ -163,7 +183,9 @@ Build flags are loaded from platformio.ini
             char _build_time[24+1];
             char _chipID[9];
             char _buildEnv[32];
-            
+
+            DoubleResetDetector _drd;
+            StartMode _startMode = NORMAL;
     };
 
     extern IOTDevice device;
