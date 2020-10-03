@@ -33,6 +33,19 @@ Build flags are loaded from platformio.ini
 #include "Device.h"
 
 
+// Need to do this because these flags seem to get defined at differnet time to the rest
+void ICACHE_FLASH_ATTR IOTDevice::begin() {
+
+    // Need to do this because these flags seem to get defined at differnet time to the rest
+    sprintf(_build_no,"%i",flag_BUILD_NO);
+    strcpy_P(_build_time, flag_BUILD_TIMESTAMP);
+    sprintf(_chipID, "%0X", EspClass::getChipId());
+    strcpy_P(_buildEnv,flag_BUILD_ENV);
+
+    if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
+    
+};
+
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_DEVICE)
     IOTDevice device;
 #endif
