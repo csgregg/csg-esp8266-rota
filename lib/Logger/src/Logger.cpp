@@ -159,7 +159,7 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
         char func[MAX_MESSAGE_LEN];
 
-        size_t contextsize =  ( strlen( PSTR("(Context: %s %s %i) %s")) - 8 ) + strlen(file) + strlen(func);
+        size_t contextsize =  ( strlen_P( PSTR("(Context: %s %s %i) %s")) - 8 ) + strlen(file) + strlen(func);
 
         char shortened[MAX_MESSAGE_LEN];
         strncpy( shortened, message, MAX_MESSAGE_LEN - contextsize );        // Truncate if too long
@@ -339,7 +339,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf(buffer, PSTR("(Build) %s: %s"), name, FPSTR(flag));
+    sprintf_P(buffer, PSTR("(Build) %s: %s"), name, FPSTR(flag));
 
     println(type, tag, buffer);
 
@@ -365,7 +365,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
+    sprintf_P(buffer, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -536,7 +536,7 @@ bool LogClient::handleTick( ){
     char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
     strcat(loggingURL,thistag);
-    strcat(loggingURL,"/");
+    strcat_P(loggingURL,PSTR("/"));
 
     // Build JSON
     // Use https://arduinojson.org/v6/assistant/
