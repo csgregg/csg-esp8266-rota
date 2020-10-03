@@ -100,7 +100,10 @@ void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
 
     _settings = &settings;
 
-    if( device.getStartMode() == IOTDevice::DOUBLERESET ) _settings->wifiMode = WIFI_AP;
+    if( device.getStartMode() == IOTDevice::DOUBLERESET ) {
+        LOG(F("(Network) Double Reset - starting in AP Mode"));
+        _settings->wifiMode = WIFI_AP;
+    }
 
     InitializeWiFi();
     InitializeNetCheck();
@@ -148,9 +151,9 @@ void NetworkManager::HandleNetCheck() {
             http.setReuse(false);
             http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
 
-            LOG( PSTR("(Network) Checking for internet") );
+            LOG_HIGH(PSTR("(Network) Checking for internet"));
 
-            char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];
+            char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];          // TODO - Move to class member. Elsewhere too
             strcpy_P(url,PSTR("http://"));
             strcat(url, _settings->netCheckSettings.checkService);
 
@@ -237,7 +240,6 @@ bool NetworkManager::handleWiFiAP(const bool force) {
         _APConnections = connections;
     }
 
-    // TODO - check use of 'force'
     if( _APRunning && !force ) return true;
 
     return startWiFiAccessPoint();
@@ -322,7 +324,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::startWiFiAccessPoint() {
                             _settings->apSettings.channel );
 
     if( ret ) {
-        LOGF( PSTR("(Network) Acess point started with SSID: %s, IP: %s"), _settings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
+        LOGF( PSTR("(Network) Access point started with SSID: %s, IP: %s"), _settings->apSettings.SSID, WiFi.softAPIP().toString().c_str() );
 	}
     else LOG(PSTR("(Network) WiFi Access point not started"));
 
@@ -369,9 +371,9 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
 		int i = 0;
 		while( WiFi.status() != WL_CONNECTED && i++ <= STATION_TRY_TIME ) {
 			delay(500);
-			if( logger.SerialOn() ) Serial.print(".");
+			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(".");
 		}
-        if( logger.SerialOn() ) Serial.print("\n");
+        if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print("\n");
 
 		ret = (WiFi.status() == WL_CONNECTED);
 

@@ -9,6 +9,7 @@
 
 void ICACHE_FLASH_ATTR setup() {
 
+    // Services started in the proper order
     device.begin();
     config.begin();
     logger.begin( network.getWiFiClient(), config.settings.logConfig );  
@@ -16,17 +17,18 @@ void ICACHE_FLASH_ATTR setup() {
     website.begin();
     updater.begin( network.getWiFiClient(), config.settings.otaConfig );
     
-    LOG(F("(Loop) Starting"));
+    LOG(F("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     
 }
 
 
 void loop() {
 
-  device.loop();
-  network.handle();
-  website.handle();
-  updater.handle();
-  logger.handle();
+    // Handle each service set
+    device.handle();
+    network.handle();
+    website.handle();
+    updater.handle();
+    logger.handle();
 
 }

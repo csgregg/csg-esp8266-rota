@@ -210,6 +210,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             void ICACHE_FLASH_ATTR begin( WiFiClient &client, LogSettings &settings );
             void ICACHE_FLASH_ATTR begin( LogSettings &settings );
             bool ICACHE_FLASH_ATTR SerialOn() { return _settings->serialMode; };
+            logLevel ICACHE_FLASH_ATTR LogLevel() { return _settings->level; };
             
  
             // Log messages (with overloads)

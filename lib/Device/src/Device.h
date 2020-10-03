@@ -149,7 +149,7 @@ Build flags are loaded from platformio.ini
                 _drd(DRD_TIMEOUT, DRD_ADDRESS)
             {};
 
-            enum StartMode {                    // TODO - Move all enums into classes
+            enum StartMode {                    // TODO - Move all other enums into classes
                 NORMAL,
                 DOUBLERESET,
             };
@@ -170,11 +170,11 @@ Build flags are loaded from platformio.ini
                 return _buildEnv;
             };
 
-            StartMode getStartMode() {
+            StartMode ICACHE_FLASH_ATTR getStartMode() {
                 return _startMode;
             };
 
-            void loop(){
+            void handle(){
                 _drd.loop();
             };
 

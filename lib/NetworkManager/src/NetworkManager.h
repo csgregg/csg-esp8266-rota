@@ -37,7 +37,7 @@ Manages Network Functions
     #include <ESP8266WiFi.h>
     #include <Ticker.h>
 
-    #define MAX_SSIDS 3
+    #define MAX_SSIDS 3                     // TODO - Prefix all defines
     #define MAX_SSID_LEN 32
     #define MAX_PASSWORD_LEN 16
 
@@ -179,7 +179,7 @@ Manages Network Functions
         public:
 
             void ICACHE_FLASH_ATTR setDefaults();
-    
+
             // WiFi Mode
             WiFiMode wifiMode;          
 
