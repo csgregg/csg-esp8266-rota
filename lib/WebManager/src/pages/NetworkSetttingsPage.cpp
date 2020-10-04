@@ -118,7 +118,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
-    LOG_HIGH(F("(Page) Network Settings - Load Wifi Station"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Load Wifi Station"));
 
     char ipbuffer[15];
 
@@ -150,7 +150,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
 
-    LOG_HIGH(F("(Page) Network Settings - Save AP"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Save AP"));
     
     APConfig ap;
 
@@ -178,7 +178,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
-    LOG_HIGH(F("(Page) Network Settings - Save Connection Checker"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Save Connection Checker"));
 
     NetCheckConfig netStatus;
 
@@ -196,7 +196,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
-    LOG_HIGH(F("(Page) Network Settings - Save Wifi Station"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Save Wifi Station"));
 
     strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
     strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
@@ -228,7 +228,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
 
-    LOG_HIGH(F("(Page) Network Settings - Connect Wifi Station"));
+    LOG_HIGH(PSTR("(Page) Network Settings - Connect Wifi Station"));
     
     if( network.connectWiFiStation(id) ) config.Save();
     else network.reconnectWifi();

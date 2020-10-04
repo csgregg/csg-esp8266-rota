@@ -29,6 +29,8 @@ Manages Network Functions
 */
 
 
+// TODO - Split this file into separate classes and files
+
 #include <ESP8266HTTPClient.h>
 
 #include "NetworkManager.h"
@@ -75,6 +77,15 @@ void ICACHE_FLASH_ATTR NetCheckConfig::setDefaults() {
 }
 
 
+void ICACHE_FLASH_ATTR DNSConfig::setDefaults() {
+
+    mode = DNS_DEFAULT_MODE;
+    strcpy_P( hostname, flag_DEVICE_CODE );
+    mDNS = DNS_DEFAULT_MDNS;
+
+}
+
+
 void ICACHE_FLASH_ATTR NetworkSettings::setDefaults() {
 
     wifiMode = DEFAULT_WIFIMODE;
@@ -82,6 +93,7 @@ void ICACHE_FLASH_ATTR NetworkSettings::setDefaults() {
     apSettings.setDefaults();
     for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
     netCheckSettings.setDefaults();
+    dnsSettings.setDefaults();
 
 }
 
@@ -101,12 +113,13 @@ void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
     _settings = &settings;
 
     if( device.getStartMode() == IOTDevice::DOUBLERESET ) {
-        LOG(F("(Network) Double Reset - starting in AP Mode"));
+        LOG(PSTR("(Network) Double Reset - starting in AP Mode"));
         _settings->wifiMode = WIFI_AP;
     }
 
-    InitializeWiFi();
-    InitializeNetCheck();
+    StartWiFi();
+    StartDNS();
+    StartNetCheck();
 
 }
 
@@ -120,7 +133,7 @@ NetworkStatus ICACHE_FLASH_ATTR NetworkManager::getNetworkStatus() {
 };
 
 
-void ICACHE_FLASH_ATTR NetworkManager::InitializeNetCheck() {
+void ICACHE_FLASH_ATTR NetworkManager::StartNetCheck() {
 
     _doNetCheck = _settings->netCheckSettings.mode;
     _ConnectedToInternet = false;
@@ -175,7 +188,7 @@ void NetworkManager::HandleNetCheck() {
 }
 
 
-void ICACHE_FLASH_ATTR NetworkManager::InitializeWiFi() {
+void ICACHE_FLASH_ATTR NetworkManager::StartWiFi() {
 
     LOG(PSTR("(Network) Starting WiFi"));
 
@@ -195,10 +208,64 @@ void ICACHE_FLASH_ATTR NetworkManager::InitializeWiFi() {
 }
 
 
+
+void ICACHE_FLASH_ATTR NetworkManager::StartDNS() {
+
+    _dnsStarted = false;
+    _dnsServer.stop();
+    MDNS.end();
+
+    if( _settings->dnsSettings.mode ) {             // TODO - Compare use of settings to other libs
+
+        LOG(PSTR("(Network) Starting DNS"));
+
+        _dnsServer.setTTL(60);      // modify TTL, default is 60 seconds
+        _dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+
+	    switch ( _settings->wifiMode ) {
+	        case WIFI_AP:
+		        _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
+		        break;
+	        case WIFI_AP_STA:
+		        if( WiFi.status() == WL_CONNECTED ) 
+                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.localIP() );
+                else
+                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
+        		break;
+	        case WIFI_STA:
+		        if( WiFi.status() == WL_CONNECTED ) 
+                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.localIP() );
+        		break;
+	        default:
+		        break;
+        }     
+
+        if( _settings->dnsSettings.mDNS ) _dnsStarted &= MDNS.begin( _settings->dnsSettings.hostname );
+
+        if( _dnsStarted ) LOG_HIGH(PSTR("(Network) DNS Started"));
+        else LOG_HIGH(PSTR("(Network) DNS Error"));
+
+	}
+
+};
+
+
+void NetworkManager::handleDNS() {
+
+    if( _dnsStarted ) {
+        MDNS.update();
+        _dnsServer.processNextRequest();
+    }
+    
+};
+
+
+
 void NetworkManager::handle() {
 
     handleWiFi();
     HandleNetCheck();
+    handleDNS();
 
 }
 

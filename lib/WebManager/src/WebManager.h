@@ -213,6 +213,8 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             void handle() { _ajax.loopHook(); };
             void ICACHE_FLASH_ATTR postMessage(const char* msg);
             void ICACHE_FLASH_ATTR postMessage(String msg);
+
+            void ICACHE_FLASH_ATTR redirectToCaptivePortal();
  
             String URL;
             String AjaxID;
@@ -231,7 +233,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
         private:
 
-
+bool apple = false;
     };
 
     extern EmbAJAXVarInt net_status;

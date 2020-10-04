@@ -169,7 +169,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
             URL = _server.uri();
             AjaxID = _server.arg("id");
             AjaxValue = _server.arg("value");    
-
+                            DEBUG(URL);
             if( URL.endsWith("/") ) URL += F("index.html");         // If a folder is requested, send the index file
             if( !URL.startsWith("/") ) URL =+ "/";
 
@@ -183,11 +183,47 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
                         }
                         (webpages[i].handler)();            // Call page event handler
                         break;
-                    }    
+                    }
+                return;
             }
 
-            // Page request - send it if it exists otherwise, respond with a 404 (Not Found) error
-            else if( !handleFileRequest() ) _server.send( 404, PSTR("text/html"), PSTR("404: Not Found") );
+            // Page request - send it if it exists otherwise.
+            if( handleFileRequest() ) return;
+            
+            // Check for captive portal requests
+
+            // Windows
+            if( URL.endsWith("/ncsi.txt") ) {
+                _server.send ( 200, "text/plain", "" );
+                return;
+            }
+            if( URL.endsWith("/redirect") ) {
+                _server.sendHeader("Location", "http://esp-rota-T1/about.html", true);          // TODO - Sort out these hard codes
+                _server.setContentLength(0);
+                _server.send ( 302, "text/plain", "" );
+                return;
+            }
+
+            // Apple
+            if( URL.endsWith("/hotspot-detect.html") ) {
+                if( apple ) {
+                    _server.send(200, "text/html", "<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>");
+
+                }
+                else {
+                    _server.sendHeader("Location", "http://esp-rota-T1/about.html", true);
+                    _server.setContentLength(0);
+                    _server.send ( 302, "text/plain", "" );
+                    apple = true;
+                }
+
+                return;
+            }
+
+            LOGF(PSTR("(Website) Web server - File not found: %s"), URL.c_str() );
+
+            // Respond with a 404 (Not Found) error if nothing else works
+            _server.send( 404, PSTR("text/html"), PSTR("404: Not Found") );
         
         }
 
@@ -276,10 +312,21 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
     }
 #endif
 
-    LOG(PSTR("(Website) Web server - file not found"));
-
     return false;                                         // If the file doesn't anywhere, return false
 }
+
+
+
+
+void ICACHE_FLASH_ATTR WebsiteManager::redirectToCaptivePortal() {
+    LOG(PSTR("(Website) Request redirected to captive portal"));
+
+    _server.sendHeader("Location", "http://esp-rota-T1", true);
+    _server.setContentLength(0);
+    _server.send ( 302, "text/plain", "");
+}
+
+
 
 
 void ICACHE_FLASH_ATTR WebsiteManager::postMessage(const char* msg) {
