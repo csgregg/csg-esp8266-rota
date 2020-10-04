@@ -45,7 +45,7 @@ through the settings member.
 
     #define MAX_CONFIG_STRING_LEN 32
     #define CONFIG_START_MARKER_SIZE 16
-    #define CONFIG_START_MARKER "CONFIG_START_08"
+    #define CONFIG_START_MARKER "CONFIG_START_09"
 
 
     // Make marker easy to refer to

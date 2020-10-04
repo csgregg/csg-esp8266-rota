@@ -35,7 +35,9 @@ Manages Network Functions
     #define NETWORK_MANAGER_H
 
     #include <ESP8266WiFi.h>
+    #include <ESP8266mDNS.h>
     #include <Ticker.h>
+    #include <DNSServer.h>
 
     #define MAX_SSIDS 3                     // TODO - Prefix all defines
     #define MAX_SSID_LEN 32
@@ -174,6 +176,36 @@ Manages Network Functions
     };
 
 
+    #define DNS_MAX_HOSTNAME_LEN 16
+    #define DNS_DEFAULT_MODE true
+    #define DNS_DEFAULT_MDNS true
+    #define DNS_PORT 53
+
+    class DNSConfig {
+
+        public:
+
+            void ICACHE_FLASH_ATTR setDefaults();
+
+            bool mode = false;
+            bool mDNS = false;
+            char hostname[DNS_MAX_HOSTNAME_LEN] = "";
+
+            bool operator==(const DNSConfig& other) const {
+                return (strcmp(hostname, other.hostname)==0)
+                    && mode == other.mode
+                    && mDNS == other.mDNS;
+            }
+
+            bool operator!=(const DNSConfig& other) const {
+                return (strcmp(hostname, other.hostname)!=0)
+                    || mode != other.mode
+                    || mDNS != other.mDNS;
+            }
+
+    };
+
+
     class NetworkSettings {
 
         public:
@@ -192,6 +224,9 @@ Manages Network Functions
 
             // Connectivity checker settings
             NetCheckConfig netCheckSettings;
+
+            // DNS settings
+            DNSConfig dnsSettings;
         
             // Create a compare operators
             bool operator==(const NetworkSettings& other) const {
@@ -202,7 +237,8 @@ Manages Network Functions
                 return wifiMode == other.wifiMode
                     && stations
                     && apSettings == other.apSettings
-                    && netCheckSettings == other.netCheckSettings;
+                    && netCheckSettings == other.netCheckSettings
+                    && dnsSettings == other.dnsSettings;
 
             }
 
@@ -214,7 +250,8 @@ Manages Network Functions
                 return wifiMode != other.wifiMode
                     || stations
                     || apSettings != other.apSettings
-                    || netCheckSettings != other.netCheckSettings;
+                    || netCheckSettings != other.netCheckSettings
+                    || dnsSettings != other.dnsSettings;
 
             }
 
@@ -267,19 +304,17 @@ Manages Network Functions
             bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
             NetworkStatus ICACHE_FLASH_ATTR getNetworkStatus();
 
-            void ICACHE_FLASH_ATTR setNetChecker() { InitializeNetCheck(); }
+            void ICACHE_FLASH_ATTR setNetChecker() { StartNetCheck(); }
 
 
         protected:
 
             void handleWiFi(const bool force = false);
-
-            bool handleWiFiStation(const bool force = false);
-            bool ICACHE_FLASH_ATTR startWiFiAccessPoint();
-
             bool handleWiFiAP(const bool force = false);
+            bool handleWiFiStation(const bool force = false);
 
-            void ICACHE_FLASH_ATTR InitializeWiFi();
+            bool ICACHE_FLASH_ATTR startWiFiAccessPoint();
+            void ICACHE_FLASH_ATTR StartWiFi();
 
             void ICACHE_FLASH_ATTR ResetConnectedStatus() {
                 for( int i = 0; i < MAX_SSIDS; i++ ) _stationConnected[i] = false;
@@ -302,9 +337,16 @@ Manages Network Functions
             static bool _doNetCheck;        // TODO - does this need to be static ?
 
             static void TriggerNetCheck();
-            void ICACHE_FLASH_ATTR InitializeNetCheck();
+            void ICACHE_FLASH_ATTR StartNetCheck();
             void HandleNetCheck();
             bool ICACHE_FLASH_ATTR NetCheck();
+
+            void ICACHE_FLASH_ATTR StartDNS();
+            void handleDNS();
+            DNSServer _dnsServer;
+            bool _dnsStarted = false;
+            char _hostname[DNS_MAX_HOSTNAME_LEN];
+
    
         private:
 

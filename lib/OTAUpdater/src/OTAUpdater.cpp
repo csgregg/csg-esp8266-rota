@@ -62,6 +62,7 @@ https://arduinojson.org/v6/assistant/
 #include "Device.h"
 #include "Logger.h"
 #include "OTAUpdater.h"
+#include "NetworkManager.h"
 
 
 
@@ -300,7 +301,7 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
 
 void OTAUpdater::handle() {
 
-    if ( _doUpdateCheck && WiFi.status() == WL_CONNECTED ) {
+    if ( _doUpdateCheck && network.isInternetConnected() ) {
 
         _doUpdateCheck = false;
 
