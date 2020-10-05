@@ -215,30 +215,14 @@ void ICACHE_FLASH_ATTR NetworkManager::StartDNS() {
     _dnsServer.stop();
     MDNS.end();
 
-    if( _settings->dnsSettings.mode ) {             // TODO - Compare use of settings to other libs
+    if( _settings->dnsSettings.mode ) {
 
         LOG(PSTR("(Network) Starting DNS"));
 
         _dnsServer.setTTL(60);      // modify TTL, default is 60 seconds
-        _dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
 
-	    switch ( _settings->wifiMode ) {
-	        case WIFI_AP:
-		        _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
-		        break;
-	        case WIFI_AP_STA:
-		        if( WiFi.status() == WL_CONNECTED ) 
-                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.localIP() );
-                else
-                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
-        		break;
-	        case WIFI_STA:
-		        if( WiFi.status() == WL_CONNECTED ) 
-                    _dnsStarted = _dnsServer.start( DNS_PORT, "*", WiFi.localIP() );
-        		break;
-	        default:
-		        break;
-        }     
+	    if( _settings->wifiMode == WIFI_AP || _settings->wifiMode == WIFI_AP_STA )
+            _dnsStarted = _dnsServer.start( DNS_PORT, PSTR("*"), WiFi.softAPIP() );
 
         if( _settings->dnsSettings.mDNS ) _dnsStarted &= MDNS.begin( _settings->dnsSettings.hostname );
 
@@ -405,7 +389,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
     ResetConnectedStatus();
 
     if( _settings->wifiMode != WIFI_STA &&_settings->wifiMode != WIFI_AP_STA ) {
-        LOG(PSTR("Not in station mode"));
+        LOG_HIGH(PSTR("Not in station mode"));
         return false;
     }
 
@@ -415,7 +399,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
 	bool password = strcmp( _settings->stationSettings[id].password, "") != 0;
 
 	if( !ssid ) {
-        LOG(PSTR("(Network) Station has no SSID"));
+        LOG_HIGH(PSTR("(Network) Station has no SSID"));
         return false;
     }
 
@@ -429,6 +413,8 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
             _settings->stationSettings[id].dns2 );
 
     WiFi.setAutoReconnect(false);
+    WiFi.hostname(_settings->dnsSettings.hostname);
+    LOGF_HIGH(PSTR("(Network) Network name: %s"),_settings->dnsSettings.hostname);
 
     if( !password ) ret = WiFi.begin( _settings->stationSettings[id].SSID );
     else ret = WiFi.begin( _settings->stationSettings[id].SSID,

@@ -54,7 +54,6 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         SUCCESS
     };
 
-    static char emptyArg[] = "";
 
 
     ////////// Additional Element Types //////////
@@ -84,7 +83,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             setChanged();
         }
         void call() {                   // Only require acknowledge for first call, not response from function 
-            _arg = emptyArg;
+            _arg = '\0';            // TODO - change to '\0'
             _status = NONE;
             setChanged();
         }
@@ -209,12 +208,15 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             ESP8266WebServer _server;
             EmbAJAXOutputDriver _ajax;
 
-            void ICACHE_FLASH_ATTR begin();
+            void ICACHE_FLASH_ATTR begin(char* hostname);
             void handle() { _ajax.loopHook(); };
             void ICACHE_FLASH_ATTR postMessage(const char* msg);
             void ICACHE_FLASH_ATTR postMessage(String msg);
 
             void ICACHE_FLASH_ATTR redirectToCaptivePortal();
+            void ICACHE_FLASH_ATTR setHostname(char* hostname) {
+                _hostname = hostname;
+            };
  
             String URL;
             String AjaxID;
@@ -230,10 +232,12 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
             char _message[WEB_MAX_MESSAGE_LEN];                                     // Stored copy of message
 
+            bool ICACHE_FLASH_ATTR checkCaptivePortal();                            // Detect captive portal
+            char * _hostname;
 
         private:
 
-bool apple = false;
+
     };
 
     extern EmbAJAXVarInt net_status;

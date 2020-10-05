@@ -14,7 +14,7 @@ void ICACHE_FLASH_ATTR setup() {
     config.begin();
     logger.begin( network.getWiFiClient(), config.settings.logConfig );  
     network.begin( config.settings.networkConfig );
-    website.begin();
+    website.begin( config.settings.networkConfig.dnsSettings.hostname );
     updater.begin( network.getWiFiClient(), config.settings.otaConfig );
     
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
