@@ -93,7 +93,12 @@ Server-side functions of netsettings.html
             EmbAJAXTextInput<MAX_CHECK_SERVICE_LEN> net_ck_url;
             EmbAJAXServerFunction net_ck_save;
 
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 32] = {
+            EmbAJAXCheckButton dns_mode;
+            EmbAJAXCheckButton dns_mdns;
+            EmbAJAXTextInput<DNS_MAX_HOSTNAME_LEN> dns_name;
+            EmbAJAXServerFunction dns_save;
+
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 36] = {
 
             WEB_PAGE_COMMON_ELEMENTS,
 
@@ -135,6 +140,11 @@ Server-side functions of netsettings.html
             &net_ck_int,
             &net_ck_url,
             &net_ck_save,
+
+            &dns_mode,
+            &dns_mdns,
+            &dns_name,
+            &dns_save,
 
             };
 
@@ -179,6 +189,11 @@ Server-side functions of netsettings.html
                 net_ck_url("net_ck_url"),
                 net_ck_save("net_ck_save"),
 
+                dns_mode("dns_mode",""),
+                dns_mdns("dns_mdns",""),
+                dns_name("dns_name"),
+                dns_save("dns_save"),
+
                 ajax(page_elements, "")
                 {
                     URL = "/netsettings.html";
@@ -209,6 +224,8 @@ Server-side functions of netsettings.html
                 sprintf(ip, "%i.%i.%i.%i", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3] );
                 return ip;
             }
+
+            void ICACHE_FLASH_ATTR saveDNS();
 
     };
     

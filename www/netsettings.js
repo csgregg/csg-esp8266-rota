@@ -269,4 +269,22 @@ function SureYes() {
         disableSave("net_ck_save","net_ck_cancel");
     }
 
+    if( sureAction == "dns_save" ) {
+
+        // Send updates data
+        x = document.getElementById('dns_mode');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        x = document.getElementById('dns_name');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('dns_mdns');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        
+        showLoader(document.getElementById('dns_box'));
+
+        // Send Save command and update AP
+        doRequest(sureAction,1,clearLoader);
+
+        disableSave("dns_save","dns_cancel");
+    }
+
 }

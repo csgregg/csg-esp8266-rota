@@ -222,10 +222,10 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
 
 bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
 
-    char redirectto[DNS_MAX_HOSTNAME_LEN+sizeof("http:///")];
+    char redirectto[DNS_MAX_HOSTNAME_LEN+sizeof("http://.local/")];
     strcpy_P(redirectto, PSTR("http://"));
     strcat(redirectto,_hostname);
-    strcat_P(redirectto,PSTR("/"));
+    strcat_P(redirectto,PSTR(".local/"));
 
     // Windows - redirect
     if( URL.endsWith(PSTR("/ncsi.txt")) ) {
@@ -239,7 +239,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
         return true;
     }
 
-    // Apple - blocl captive pop up                                 // TODO - figure out how to use captive portal
+    // Apple - block captive pop up                                 // TODO - figure out how to use captive portal
     if( URL.endsWith(PSTR("/hotspot-detect.html")) ) {
         _server.send(200, PSTR("text/html"), PSTR("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"));
 

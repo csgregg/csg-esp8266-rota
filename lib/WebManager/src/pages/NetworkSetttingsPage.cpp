@@ -73,6 +73,13 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     net_ck_url.setValue( netStatus.checkService );
     net_ck_save.setEnabled(false);
 
+    // DNS Settings
+    DNSConfig dns = config.settings.networkConfig.dnsSettings;
+    dns_mode.setChecked( dns.mode );
+    dns_mdns.setChecked( dns.mDNS );
+    dns_name.setValue( dns.hostname );
+    dns_save.setEnabled(false);
+
 }
 
 
@@ -99,7 +106,25 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == F("net_ck_save") ) saveNetCheck();
 
+    if( website.AjaxID == F("dns_save") ) saveDNS();
+
 }
+
+
+void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
+    LOG_HIGH(PSTR("(Page) Network Settings - Save DNS"));
+
+    DNSConfig dns;
+
+    dns.mode = dns_mode.isChecked();
+    strncpy(dns.hostname,dns_name.value(),DNS_MAX_HOSTNAME_LEN);
+    dns.mDNS = dns_mdns.isChecked();
+
+    config.settings.networkConfig.dnsSettings = dns;
+    config.Save();
+
+}
+
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
