@@ -83,7 +83,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             setChanged();
         }
         void call() {                   // Only require acknowledge for first call, not response from function 
-            _arg = '\0';            // TODO - change to '\0'
+            _arg = '\0';
             _status = NONE;
             setChanged();
         }
