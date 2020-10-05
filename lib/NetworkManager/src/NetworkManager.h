@@ -345,7 +345,6 @@ Manages Network Functions
             void handleDNS();
             DNSServer _dnsServer;
             bool _dnsStarted = false;
-            char _hostname[DNS_MAX_HOSTNAME_LEN];
 
    
         private:

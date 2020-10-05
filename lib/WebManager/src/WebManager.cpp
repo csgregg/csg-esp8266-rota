@@ -159,7 +159,9 @@ void EmbAJAXStyle::setStyle(const char* style) {
 
 
 // Initialize web manaber
-void ICACHE_FLASH_ATTR WebsiteManager::begin() {
+void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
+
+    _hostname = hostname;
 
      // If the client requests any URI
     _server.onNotFound( 
@@ -169,7 +171,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
             URL = _server.uri();
             AjaxID = _server.arg("id");
             AjaxValue = _server.arg("value");    
-                            DEBUG(URL);
+
             if( URL.endsWith("/") ) URL += F("index.html");         // If a folder is requested, send the index file
             if( !URL.startsWith("/") ) URL =+ "/";
 
@@ -190,33 +192,9 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
             // Page request - send it if it exists otherwise.
             if( handleFileRequest() ) return;
             
-            // Check for captive portal requests
-
-            // Windows
-            if( URL.endsWith("/ncsi.txt") ) {
-                _server.send ( 200, "text/plain", "" );
-                return;
-            }
-            if( URL.endsWith("/redirect") ) {
-                _server.sendHeader("Location", "http://esp-rota-T1/about.html", true);          // TODO - Sort out these hard codes
-                _server.setContentLength(0);
-                _server.send ( 302, "text/plain", "" );
-                return;
-            }
-
-            // Apple
-            if( URL.endsWith("/hotspot-detect.html") ) {
-                if( apple ) {
-                    _server.send(200, "text/html", "<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>");
-
-                }
-                else {
-                    _server.sendHeader("Location", "http://esp-rota-T1/about.html", true);
-                    _server.setContentLength(0);
-                    _server.send ( 302, "text/plain", "" );
-                    apple = true;
-                }
-
+            // Check for captive portal requests and redirecct
+            if( checkCaptivePortal() ) {
+                LOG_HIGH(PSTR("(Website) Captive Portal Detection") );
                 return;
             }
 
@@ -240,6 +218,38 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin() {
         (webpages[i].init)();
 
 }
+
+
+bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
+
+    char redirectto[DNS_MAX_HOSTNAME_LEN+sizeof("http:///")];
+    strcpy_P(redirectto, PSTR("http://"));
+    strcat(redirectto,_hostname);
+    strcat_P(redirectto,PSTR("/"));
+
+    // Windows - redirect
+    if( URL.endsWith(PSTR("/ncsi.txt")) ) {
+        _server.send ( 200, PSTR("text/plain"), PSTR("") );     // TODO - use literals
+        return true;
+    }
+    if( URL.endsWith(PSTR("/redirect")) ) {
+        _server.sendHeader(PSTR("Location"), redirectto, true);
+        _server.setContentLength(0);
+        _server.send ( 302, "text/plain", "" );
+        return true;
+    }
+
+    // Apple - blocl captive pop up                                 // TODO - figure out how to use captive portal
+    if( URL.endsWith(PSTR("/hotspot-detect.html")) ) {
+        _server.send(200, PSTR("text/html"), PSTR("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"));
+
+        return true;
+    }
+
+    // Not captive portal
+    return false;
+}  
+
 
 
 // convert the file extension to the MIME type
