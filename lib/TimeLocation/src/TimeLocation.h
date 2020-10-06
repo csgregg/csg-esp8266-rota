@@ -38,11 +38,10 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
     class Timezone;         // Forward declaration
 
-    #define TLO_IPINFO_MAX_HOSTNAME_LEN 64+1
+    #define TLO_IPINFO_MAX_LOC_LEN 19+1
     #define TLO_IPINFO_MAX_CITY_LEN 16+1
     #define TLO_IPINFO_MAX_REGION_LEN 16+1
     #define TLO_IPINFO_MAX_COUNTRY_LEN 2+1
-    #define TLO_IPINFO_MAX_ORG_LEN 32+1
     #define TLO_IPINFO_MAX_POSTAL_LEN 8+1
     #define TLO_IPINFO_MAX_TIMEZONE_LEN 29+1
     #define TLO_IPINFO_MAX_TOKEN_LEN 14+1
@@ -96,8 +95,8 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = false;              // Service on or off
-            bool autoLocation = false;      // Estimate location, other wise need to set manually
+            bool mode = true;              // Service on or off
+            bool autoLocation = true;      // Estimate location, other wise need to set manually
             char ipinfoToken[TLO_IPINFO_MAX_TOKEN_LEN] = "";
             Location location;
 

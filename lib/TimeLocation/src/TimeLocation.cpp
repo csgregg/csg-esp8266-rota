@@ -55,6 +55,15 @@ https://arduinojson.org/v6/assistant/
 #include "TimeLocation.h"
 
 
+
+void ICACHE_FLASH_ATTR TimeLocationSettings::setDefaults() {
+    mode = true;
+    autoLocation = true;
+    strcpy(ipinfoToken, "4f556b7eaa128a");
+}
+
+
+
 void ICACHE_FLASH_ATTR TimeLocation::begin( WiFiClient &client, TimeLocationSettings &settings ) {
     _client = &client;
     begin(settings);
@@ -62,6 +71,7 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( WiFiClient &client, TimeLocationSett
 void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 
     _settings = &settings;
+    _settings->setDefaults();
 
     if( _settings->mode ) {
 
@@ -76,12 +86,15 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 
 void TimeLocation::handle() {
 
+    if( !_settings->mode ) return;
+
     if( !_locationStatus && _timer < millis() && network.isInternetConnected() ) {
         _timer = millis() + TLO_IPINFO_RETRY;
 
         if( detectLocation() ) {
             LOGF( PSTR("(TimeLoc) Timezone set to: %s"), _location.timezone );
             _timezone->setLocation(_location.timezone);
+            updateNTP();
         }
         else LOG( PSTR("(TimeLoc) Timezone not set, using UTC") );             
     }
@@ -89,15 +102,18 @@ void TimeLocation::handle() {
     events();                       // ezTime handler
 
     _timeStatus = ( timeStatus() != timeNotSet );
+
 }
 
 
 bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
+    LOG_HIGH(PSTR("(TimeLoc) Detecting location"));
+
     _locationStatus = false;
 
     if( _settings->ipinfoToken[0]=='\0' ) {
-        LOG(PSTR("(TimeLoc) Mising IPInfo token"));
+        LOG(PSTR("(TimeLoc) Missing IPInfo token"));
         return false;
     }
 
@@ -116,6 +132,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     StaticJsonDocument<TLO_IPINFO_JSON_RESPONSE_SIZE> json;
     DeserializationError jsonerror = deserializeJson(json, http.getStream());                            // TODO - implement error handling
+
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) LOG_HIGH(PSTR("(TimeLoc) Location received"));
@@ -124,7 +141,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
         return false;
     }
 
-    if (jsonerror) {
+    if(jsonerror) {
         LOGF_CRITICAL( PSTR("(TimeLoc) JSON Error: %s"), jsonerror.c_str() );
         return false;
     }
@@ -133,15 +150,13 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     strcpy(_location.city,json[F("city")].as<char*>());
     strcpy(_location.region,json[F("region")].as<char*>());
     strcpy(_location.country,json[F("country")].as<char*>());
-    
-    std::vector<char*> v;
-    char* array = strtok(_location.country,json[F("loc")].as<char*>());
-    while(array) {
-        v.push_back(array);
-        array = strtok(NULL,",");
-    }
-    _location.loc.lon = atof(v[0]);
-    _location.loc.lat = atof(v[1]);
+
+    char buff[TLO_IPINFO_MAX_LOC_LEN];
+    strcpy(buff,json[F("loc")].as<char*>());
+    int len = (strchr(buff,',')-buff)*sizeof(char);
+    char newbuff[TLO_IPINFO_MAX_LOC_LEN];
+    _location.loc.lon =  atof( strncpy(newbuff, buff, len) );
+    _location.loc.lat =  atof( strcpy(newbuff, buff+len+1) );
 
     strcpy(_location.postal,json[F("postal")].as<char*>());
     strcpy(_location.timezone,json[F("timezone")].as<char*>());
