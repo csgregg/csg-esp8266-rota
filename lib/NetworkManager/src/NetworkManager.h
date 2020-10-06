@@ -329,7 +329,7 @@ Manages Network Functions
            
             uint _disconnectedStation;       // Used to see how long disconnected in station mode
 
-            WiFiClient _client;
+            WiFiClient _client;               // TODO - can this be a pointer to WiFiClient class and then create new instance in begin? Also elsewhere
 
             bool _stationConnected[MAX_SSIDS];   
 

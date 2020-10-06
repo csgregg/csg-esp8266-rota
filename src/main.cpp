@@ -5,6 +5,7 @@
 #include "NetworkManager.h"
 #include "WebManager.h"
 #include "OTAUpdater.h"
+#include "TimeLocation.h"
 
 
 void ICACHE_FLASH_ATTR setup() {
@@ -14,6 +15,7 @@ void ICACHE_FLASH_ATTR setup() {
     config.begin();
     logger.begin( network.getWiFiClient(), config.settings.logConfig );  
     network.begin( config.settings.networkConfig );
+    timelocation.begin( network.getWiFiClient(), config.settings.timelocConfig );
     website.begin( config.settings.networkConfig.dnsSettings.hostname );
     updater.begin( network.getWiFiClient(), config.settings.otaConfig );
     
@@ -30,5 +32,6 @@ void loop() {
     website.handle();
     updater.handle();
     logger.handle();
+    timelocation.handle();
 
 }

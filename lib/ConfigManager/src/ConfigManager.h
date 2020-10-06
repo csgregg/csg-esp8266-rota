@@ -41,11 +41,12 @@ through the settings member.
     #include "NetworkManager.h"
     #include "Logger.h"
     #include "OTAUpdater.h"
+    #include "TimeLocation.h"
 
 
     #define MAX_CONFIG_STRING_LEN 32
     #define CONFIG_START_MARKER_SIZE 16
-    #define CONFIG_START_MARKER "CONFIG_START_09"
+    #define CONFIG_START_MARKER "CONFIG_START_10"
 
 
     // Make marker easy to refer to
@@ -61,18 +62,21 @@ through the settings member.
         NetworkSettings networkConfig;
         LogSettings logConfig;
         OTASettings otaConfig;
+        TimeLocationSettings timelocConfig;
 
         // Create a compare operators
         bool operator==(const deviceSettings& other) const {
             return networkConfig == other.networkConfig
                 && logConfig == other.logConfig
-                && otaConfig == other.otaConfig;
+                && otaConfig == other.otaConfig
+                && timelocConfig == other.timelocConfig;
         }
 
         bool operator!=(const deviceSettings& other) const {
             return networkConfig != other.networkConfig
                 || logConfig != other.logConfig
-                || otaConfig != other.otaConfig;
+                || otaConfig != other.otaConfig
+                || timelocConfig != other.timelocConfig;
         }
 
     };
