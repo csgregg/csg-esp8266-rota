@@ -39,6 +39,8 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     #include <ESP8266WebServer.h>
     #include <EmbAJAX.h>
 
+    #include "TimeLocation.h"
+
     #define WEB_PORT 80
     #define WEB_MAX_MESSAGE_LEN 100
     
@@ -186,8 +188,8 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
 
     // Elements that go on every page and are declared in this lib
-    #define WEB_PAGE_COMMON_ELEMENTS &net_status,&post_message
-    #define WEB_PAGE_COMMON_ELEMENTS_COUNT 2
+    #define WEB_PAGE_COMMON_ELEMENTS &net_status,&post_message,&date_time
+    #define WEB_PAGE_COMMON_ELEMENTS_COUNT 3
 
 
 
@@ -231,6 +233,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             void ICACHE_FLASH_ATTR InitAJAX();                                        // process page initialization
 
             char _message[WEB_MAX_MESSAGE_LEN];                                     // Stored copy of message
+            char _datetime[TLO_MAX_LONG_DATETIME_LEN];                                  // Store the date time string for the footer
 
             bool ICACHE_FLASH_ATTR checkCaptivePortal();                            // Detect captive portal
             char * _hostname;
@@ -242,6 +245,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
     extern EmbAJAXVarInt net_status;
     extern EmbAJAXClientFunction post_message;
+    extern EmbAJAXMutableSpan date_time;
     extern WebsiteManager website;        // Declaring the global instance
 
 #endif

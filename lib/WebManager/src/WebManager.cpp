@@ -38,6 +38,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
 #include "WebManager.h"
 #include "Logger.h"
+#include "TimeLocation.h"
 
 #include "pages/NetworkSetttingsPage.h"
 #include "pages/AboutPage.h"
@@ -177,15 +178,20 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
 
             // AJAX request
             if( _server.method() == HTTP_POST ) {
-                for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
+                if( AjaxID == "" ) {
+                    net_status.setValue( network.getNetworkStatus() );                          // Update status icon
+                    if( post_message.getStatus() == SUCCESS ) post_message.call();              // Clear the message and don't need acknowledgement
+                    if( timelocation.isTimeSet() ) timelocation.getLongTimeDate(_datetime);     // Update date time string
+                    else strcpy_P(_datetime,PSTR("Time not set"));
+                    date_time.setValue(_datetime);
+                }
+                for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ ) {
                     if( URL == webpages[i].URL ) {
-                        if( AjaxID == "" ) {
-                            net_status.setValue( network.getNetworkStatus() );                  // Update status icon
-                            if( post_message.getStatus() == SUCCESS ) post_message.call();      // Clear the message and don't need acknowledgement
-                        }
                         (webpages[i].handler)();            // Call page event handler
                         break;
                     }
+                }
+
                 return;
             }
 
@@ -353,5 +359,6 @@ void ICACHE_FLASH_ATTR WebsiteManager::postMessage(String msg){
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_WEBSITE_MANAGER)
     EmbAJAXVarInt net_status("net_status",0);
     EmbAJAXClientFunction post_message("post_message");
+    EmbAJAXMutableSpan date_time("date_time");
     WebsiteManager website;
 #endif
