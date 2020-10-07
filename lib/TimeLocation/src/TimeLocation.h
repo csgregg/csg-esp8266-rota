@@ -38,15 +38,18 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
     class Timezone;         // Forward declaration
 
-    #define TLO_IPINFO_MAX_LOC_LEN 19+1
-    #define TLO_IPINFO_MAX_CITY_LEN 16+1
-    #define TLO_IPINFO_MAX_REGION_LEN 16+1
-    #define TLO_IPINFO_MAX_COUNTRY_LEN 2+1
-    #define TLO_IPINFO_MAX_POSTAL_LEN 8+1
-    #define TLO_IPINFO_MAX_TIMEZONE_LEN 29+1
-    #define TLO_IPINFO_MAX_TOKEN_LEN 14+1
+    #define TLO_IPINFO_MAX_LOC_LEN (19+1)
+    #define TLO_IPINFO_MAX_CITY_LEN (16+1)
+    #define TLO_IPINFO_MAX_REGION_LEN (16+1)
+    #define TLO_IPINFO_MAX_COUNTRY_LEN (2+1)
+    #define TLO_IPINFO_MAX_POSTAL_LEN (8+1)
+    #define TLO_IPINFO_MAX_TIMEZONE_LEN (29+1)
+    #define TLO_IPINFO_MAX_TOKEN_LEN (14+1)
 
     #define TLO_IPINFO_RETRY (1000*60*1)    // 1 Minute
+
+    #define TLO_MAX_LONG_DATETIME_LEN (36+1)
+    
 
     class Location {
 
@@ -134,6 +137,8 @@ Implements a location and time service using IPInfo.io and ezTime library.
             bool ICACHE_FLASH_ATTR updateTime();
             bool ICACHE_FLASH_ATTR isTimeSet() { return _timeStatus; };
             bool ICACHE_FLASH_ATTR isLocationSet() { return _locationStatus; };
+
+            void ICACHE_FLASH_ATTR getLongTimeDate(char* datetimestring);
 
             void handle();
 

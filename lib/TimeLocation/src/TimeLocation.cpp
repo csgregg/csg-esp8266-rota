@@ -106,6 +106,11 @@ void TimeLocation::handle() {
 }
 
 
+void ICACHE_FLASH_ATTR TimeLocation::getLongTimeDate(char* datetimestring) {
+    strncpy(datetimestring, _timezone->dateTime().c_str(),TLO_MAX_LONG_DATETIME_LEN);
+}
+
+
 bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     LOG_HIGH(PSTR("(TimeLoc) Detecting location"));
@@ -119,7 +124,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     HTTPClient http;
 
-    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof("http://ipinfo.io/json?token=")+1];        // TODO - Build flag?
+    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof("http://ipinfo.io/json?token=")+1];
     strcpy_P(url,"http://ipinfo.io/json?token=");
     strcat(url,_settings->ipinfoToken);
 
@@ -131,7 +136,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     int httpCode = http.GET();                                                         
 
     StaticJsonDocument<TLO_IPINFO_JSON_RESPONSE_SIZE> json;
-    DeserializationError jsonerror = deserializeJson(json, http.getStream());                            // TODO - implement error handling
+    DeserializationError jsonerror = deserializeJson(json, http.getStream());
 
     http.end();
 
