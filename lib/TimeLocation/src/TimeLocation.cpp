@@ -57,9 +57,8 @@ https://arduinojson.org/v6/assistant/
 
 
 void ICACHE_FLASH_ATTR TimeLocationSettings::setDefaults() {
-    mode = true;
-    autoLocation = true;
-    strcpy(ipinfoToken, "4f556b7eaa128a");
+    ntpMode = true;
+    strcpy(ipinfoToken, "4f556b7eaa128a");          // TODO - build flag
 }
 
 
@@ -73,9 +72,9 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
     _settings = &settings;
     _settings->setDefaults();
 
-    if( _settings->mode ) {
+    if( _settings->ntpMode ) {
 
-        LOG(PSTR("(TimeLoc) Starting time and location service"));
+        LOG(PSTR("(TimeLoc) Starting time service"));
 
         _timezone = new Timezone;
 
@@ -86,20 +85,8 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 
 void TimeLocation::handle() {
 
-    if( !_settings->mode ) return;
 
-    if( !_locationStatus && _timer < millis() && network.isInternetConnected() ) {
-        _timer = millis() + TLO_IPINFO_RETRY;
-
-        if( detectLocation() ) {
-            LOGF( PSTR("(TimeLoc) Timezone set to: %s"), _location.timezone );
-            _timezone->setLocation(_location.timezone);
-            updateNTP();
-        }
-        else LOG( PSTR("(TimeLoc) Timezone not set, using UTC") );             
-    }
-
-    events();                       // ezTime handler
+    if( _settings->ntpMode ) events();                       // ezTime handler
 
     _timeStatus = ( timeStatus() != timeNotSet );
 
@@ -124,8 +111,8 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     HTTPClient http;
 
-    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof("http://ipinfo.io/json?token=")+1];
-    strcpy_P(url,"http://ipinfo.io/json?token=");
+    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof("http://ipinfo.io/json?token=")+1];            // TODO - add buildflag
+    strcpy_P(url,PSTR("http://ipinfo.io/json?token="));
     strcat(url,_settings->ipinfoToken);
 
     http.useHTTP10(true);
@@ -166,10 +153,12 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     strcpy(_location.postal,json[F("postal")].as<char*>());
     strcpy(_location.timezone,json[F("timezone")].as<char*>());
 
-    _locationStatus = true;
+    _locationStatus = _timezone->setLocation(_location.timezone);
 
-    return true;            
+    if( _locationStatus ) LOGF_HIGH( PSTR("(TimeLoc) Timezone set to: %s"), _location.timezone );
+    else LOG(PSTR("(TimeLoc) Timezone not set"));
 
+    return _locationStatus;            
 }
 
 

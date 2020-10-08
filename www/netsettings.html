@@ -74,7 +74,7 @@
                             <img class="w3-padding-8" alt="" style="opacity: 0.20;" src="signal32-4.png">
                             <button style="width:150px;" class="w3-button w3-blue w3-padding-small">Network</button>
                         </div>
-                        <div class="w3-row w3-padding-vert w3-small">
+                        <div class="w3-row w3-padding-8 w3-small">
                             Assigned IP: 
                             <span id="wifi_stn_asip"></span>
                         </div>
@@ -164,7 +164,7 @@
                             </div>
 
                             <!-- Save / Cancel -->
-                            <div class="w3-container w3-padding-vert">
+                            <div class="w3-container w3-padding-vert" style="margin-bottom:2px;">
                                 <button id="wifi_ap_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                                 <button id="wifi_ap_cancel" disabled onclick="disableElmt('wifi_ap_save','wifi_ap_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                             </div>
@@ -178,6 +178,7 @@
         <div class="w3-row">
 
             <div class="w3-half">
+
                 <!-- Connectivity -->
                 <div class="w3-container w3-padding-notop">
                     <div id="net_ck_box" class="w3-col w3-border w3-round w3-light-grey w3-text-dark-grey w3-padding-horz">
@@ -217,13 +218,68 @@
                         </div>
 
                         <!-- Save / Cancel -->
-                        <div class="w3-container w3-padding-8">
+                        <div class="w3-container w3-padding-8" style="margin-bottom:6px;">
                             <button id="net_ck_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
                             <button id="net_ck_cancel" disabled onclick="disableElmt('net_ck_save','net_ck_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                         </div>
                         
                     </div>
                 </div> 
+
+                <!-- Location -->
+                <div class="w3-container w3-padding-notop">
+                    <div id="tlo_box" class="w3-col w3-border w3-round w3-light-grey w3-text-dark-grey w3-padding-horz">
+                        <div class="w3-row w3-padding-vert">
+                            <b>Location and Time</b>
+                        </div>
+
+                        <!-- Detect -->
+                        <div class="w3-container w3-padding-8">
+                            <button id="tlo_detect" onclick="DetectLocation();" type="button" class="w3-button w3-blue w3-padding-small">Detect Location</button>  <!-- TODO - Reduce size of all buttons -->
+                        </div>
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-small">
+                                Location: <span id="tlo_loc"></span>
+                            </div>
+                        </div> 
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-small">
+                                Timezone: <span id="tlo_tz"></span>
+                            </div>
+                        </div> 
+
+                        <div class="w3-container w3-padding-horz">
+                            <div class="w3-col" style="line-height: 40px;width:100px;">
+                                IPInfo Token
+                            </div>
+                            <div class="w3-col w3-padding-small" style="width:150px">
+                                <input id="tlo_token" class="w3-input w3-border w3-padding-small" type="text" maxlength="35" onchange="enableElmt('tlo_save','tlo_cancel');">
+                            </div>
+                        </div>
+
+                        <div class="w3-row">
+                            <div class="w3-cell w3-padding-8">
+                                <label class="switch">
+                                    <input id="tlo_ntp" type="checkbox" value="t" onchange="enableElmt('tlo_save','tlo_cancel');">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="w3-cell w3-padding-small">
+                                Auto detect time
+                            </div>
+                        </div>  
+
+                        <!-- Save / Cancel -->
+                        <div class="w3-container w3-padding-8" style="margin-bottom:6px;">
+                            <button id="tlo_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
+                            <button id="tlo_cancel" disabled onclick="disableElmt('tlo_save','tlo_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
+                        </div>
+                        
+                    </div>
+                </div> 
+
             </div>
 
             <div class="w3-half">

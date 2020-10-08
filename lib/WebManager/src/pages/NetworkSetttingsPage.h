@@ -98,7 +98,14 @@ Server-side functions of netsettings.html
             EmbAJAXTextInput<DNS_MAX_HOSTNAME_LEN> dns_name;
             EmbAJAXServerFunction dns_save;
 
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 36] = {
+            EmbAJAXServerFunction tlo_detect;
+            EmbAJAXTextInput<TLO_IPINFO_MAX_TOKEN_LEN> tlo_token;
+            EmbAJAXMutableSpan tlo_loc;
+            EmbAJAXMutableSpan tlo_tz;
+            EmbAJAXCheckButton tlo_ntp;
+            EmbAJAXServerFunction tlo_save;
+
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 42] = {
 
             WEB_PAGE_COMMON_ELEMENTS,
 
@@ -145,6 +152,13 @@ Server-side functions of netsettings.html
             &dns_mdns,
             &dns_name,
             &dns_save,
+
+            &tlo_detect,
+            &tlo_token,
+            &tlo_loc,
+            &tlo_tz,
+            &tlo_ntp,
+            &tlo_save,
 
             };
 
@@ -194,6 +208,13 @@ Server-side functions of netsettings.html
                 dns_name("dns_name"),
                 dns_save("dns_save"),
 
+                tlo_detect("tlo_auto"),
+                tlo_token("tlo_token"),
+                tlo_loc("tlo_loc"),
+                tlo_tz("tlo_tz"),
+                tlo_ntp("tlo_ntp",""),
+                tlo_save("tlo_save"),
+
                 ajax(page_elements, "")
                 {
                     URL = "/netsettings.html";
@@ -226,6 +247,10 @@ Server-side functions of netsettings.html
             }
 
             void ICACHE_FLASH_ATTR saveDNS();
+
+            void ICACHE_FLASH_ATTR saveTimeLocation();
+            void ICACHE_FLASH_ATTR loadTimeLocation();
+            void ICACHE_FLASH_ATTR detectLocation();
 
     };
     
