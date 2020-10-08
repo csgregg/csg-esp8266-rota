@@ -46,8 +46,6 @@ Implements a location and time service using IPInfo.io and ezTime library.
     #define TLO_IPINFO_MAX_TIMEZONE_LEN (29+1)
     #define TLO_IPINFO_MAX_TOKEN_LEN (14+1)
 
-    #define TLO_IPINFO_RETRY (1000*60*1)    // 1 Minute
-
     #define TLO_MAX_LONG_DATETIME_LEN (36+1)
     
 
@@ -98,21 +96,18 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = true;              // Service on or off
-            bool autoLocation = true;      // Estimate location, other wise need to set manually
+            bool ntpMode = true;           // Service on or off
             char ipinfoToken[TLO_IPINFO_MAX_TOKEN_LEN] = "";
             Location location;
 
              // Create a compare operators
             bool operator==(const TimeLocationSettings& other) const {
-                return mode == other.mode
-                    && autoLocation == other.autoLocation
+                return ntpMode == other.ntpMode
                     && (strcmp(ipinfoToken,other.ipinfoToken)==0)
                     && location == other.location;
             }
             bool operator!=(const TimeLocationSettings& other) const {
-                return mode != other.mode
-                    || autoLocation != other.autoLocation
+                return ntpMode != other.ntpMode
                     || (strcmp(ipinfoToken,other.ipinfoToken)!=0)
                     || location != other.location;
             }
@@ -137,6 +132,8 @@ Implements a location and time service using IPInfo.io and ezTime library.
             bool ICACHE_FLASH_ATTR updateTime();
             bool ICACHE_FLASH_ATTR isTimeSet() { return _timeStatus; };
             bool ICACHE_FLASH_ATTR isLocationSet() { return _locationStatus; };
+            char* ICACHE_FLASH_ATTR getLocation() { return _location.region; };
+            char* ICACHE_FLASH_ATTR getTimeZone() { return _location.timezone; };
 
             void ICACHE_FLASH_ATTR strcpyTimeDate(char* datetimestring);
 

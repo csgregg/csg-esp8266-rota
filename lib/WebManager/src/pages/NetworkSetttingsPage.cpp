@@ -80,6 +80,13 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     dns_name.setValue( dns.hostname );
     dns_save.setEnabled(false);
 
+    // Time and Location Settings
+    TimeLocationSettings tlo = config.settings.timelocConfig;
+    tlo_ntp.setChecked( tlo.ntpMode );
+    tlo_token.setValue( tlo.ipinfoToken );
+    loadTimeLocation();
+    tlo_save.setEnabled(false);
+
 }
 
 
@@ -88,25 +95,57 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
     LOG_HIGH(PSTR("(Page) Network Settings - Handle AJAX"));
 
-    if( website.AjaxID == F("wifi_stn_save") ) saveWifiStation(website.AjaxValue.toInt());
+    if( website.AjaxID == F("wifi_stn_save") ) {
+        saveWifiStation(website.AjaxValue.toInt());
+        return;                                             // TODO - change all other handlers for this
+    }
     
     // Used to send back basic details of a specific wifi station
     if( website.AjaxID == F("wifi_stn_id") ) {
         wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.isStationConnected(wifi_stn_id.intValue()));
+        return;
     }
 
-    if( website.AjaxID == F("wifi_stn_btn") ) loadWifiStation(wifi_stn_btn.intValue());
+    if( website.AjaxID == F("wifi_stn_btn") ) {
+        loadWifiStation(wifi_stn_btn.intValue());
+        return;
+    }
 
-    if( website.AjaxID == F("wifi_stn_cnct") ) connectWifiStation(wifi_stn_cnct.intValue());     
+    if( website.AjaxID == F("wifi_stn_cnct") ) {
+        connectWifiStation(wifi_stn_cnct.intValue());     
+        return;
+    }
 
-    if( website.AjaxID == F("wifi_mode_save") ) setWifiMode((WiFiMode)website.AjaxValue.toInt()); 
+    if( website.AjaxID == F("wifi_mode_save") ) {
+        setWifiMode((WiFiMode)website.AjaxValue.toInt()); 
+        return;
+    }
 
-    if( website.AjaxID == F("wifi_ap_save") ) saveAP();
+    if( website.AjaxID == F("wifi_ap_save") ) {
+        saveAP();
+        return;
+    }
 
-    if( website.AjaxID == F("net_ck_save") ) saveNetCheck();
+    if( website.AjaxID == F("net_ck_save") ) {
+        saveNetCheck();
+        return;
+    }
 
-    if( website.AjaxID == F("dns_save") ) saveDNS();
+    if( website.AjaxID == F("dns_save") ) {
+        saveDNS();
+        return;
+    }
+
+    if( website.AjaxID == F("tlo_save") ) {
+        saveTimeLocation();
+        return;
+    }
+
+    if( website.AjaxID == F("tlo_detect") ) {
+        detectLocation();
+        return;
+    }
 
 }
 
@@ -123,6 +162,37 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
     config.settings.networkConfig.dnsSettings = dns;
     config.Save();
 
+}
+
+
+void ICACHE_FLASH_ATTR NetworkSettingsPage::saveTimeLocation() {
+    LOG_HIGH(PSTR("(Page) Network Settings - Save Time/Location"));
+
+    TimeLocationSettings tlo;                   // TODO - standardize naming of config and settings
+
+    strncpy(tlo.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
+    tlo.ntpMode = tlo_ntp.isChecked();
+
+    config.settings.timelocConfig = tlo;
+    config.Save();
+}
+
+
+void ICACHE_FLASH_ATTR NetworkSettingsPage::detectLocation() {
+    if( timelocation.detectLocation() ) loadTimeLocation();
+}
+
+
+void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
+
+    if( timelocation.isLocationSet() ) {
+        tlo_loc.setValue( timelocation.getLocation() );
+        tlo_tz.setValue( timelocation.getTimeZone() );
+    }
+    else {
+        tlo_loc.setValue( "<b>Not set</b>", true );                                                 // TODO - what to do about progmem
+        tlo_tz.setValue( "<b>Not set</b> <span class=\"w3-small\">(Using UTC)</span>", true );
+    }
 }
 
 

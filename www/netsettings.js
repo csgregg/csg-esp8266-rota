@@ -157,6 +157,8 @@ function SureNo() {
 
     if( sureAction == "wifi_ap_save" ) disableElmt("wifi_ap_save","wifi_ap_cancel");
     if( sureAction == "net_ck_save" ) disableElmt("net_ck_save","net_ck_cancel");
+    if( sureAction == "dns_save" ) disableElmt("dns_save","dns_cancel");
+    if( sureAction == "tlo_save" ) disableElmt("tlo_save","tlo_cancel");
 
     doRequestAll();
 }
@@ -289,4 +291,27 @@ function SureYes() {
         disableElmt("dns_save","dns_cancel");
     }
 
+    if( sureAction == "tlo_save" ) {
+
+        // Send updates data
+        x = document.getElementById('tlo_token');
+        doRequestWait(x.id, x.value);
+        x = document.getElementById('tlo_ntp');
+        doRequestWait(x.id, x.checked ? 't' : 'f');
+        
+        showLoader(document.getElementById('tlo_box'));
+
+        // Send Save command and update AP
+        doRequest(sureAction,1,clearLoader);
+
+        disableElmt("tlo_save","tlo_cancel");
+    }
+
+}
+
+
+function DetectLocation() {
+    showLoader(document.getElementById('tlo_box'));
+    enableElmt("tlo_save","tlo_cancel");
+    doRequest("tlo_detect",1,clearLoader);
 }
