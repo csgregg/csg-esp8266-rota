@@ -14,7 +14,7 @@ function updatePage() {
 
 function SureNo() {
     document.getElementById('sure_dlg').style.display='none';
-    if( sureAction == "log_save" ) disableSave("log_save","log_cancel");
+    if( sureAction == "log_save" ) disableElmt("log_save","log_cancel");
     doRequestAll();
  }
 
@@ -49,7 +49,7 @@ function SureYes() {
 
         doRequest(sureAction,1,clearLoader);
 
-        disableSave("log_save","log_cancel");
+        disableElmt("log_save","log_cancel");
     }
 
     if( sureAction == "ota_save" ) {
@@ -73,7 +73,7 @@ function SureYes() {
 
         doRequest(sureAction,1,clearLoader);
 
-        disableSave("ota_save","ota_cancel");
+        disableElmt("ota_save","ota_cancel");
     }
 
     if( sureAction == "btn_restart" ) {

@@ -105,10 +105,10 @@
                         <div class="w3-row w3-padding-small">
                             
                             <!-- AP Details -->
-                            <input id="wifi_ap_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-user" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                            <input id="wifi_ap_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-user" onchange="enableElmt('wifi_ap_save','wifi_ap_cancel');">
                     
                             <div class="w3-display-container">
-                                <input id="wifi_ap_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                <input id="wifi_ap_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password" onchange="enableElmt('wifi_ap_save','wifi_ap_cancel');">
                                 <img class="w3-display-right w3-padding-small" alt="" src="eye-16.png"  onclick="visiblePwd('wifi_ap_pwd')">
                             </div>
 
@@ -117,7 +117,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid IP Address')) enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid IP Address')) enableElmt('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>        
 
@@ -126,7 +126,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Subnet')) enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Subnet')) enableElmt('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>
                     
@@ -135,7 +135,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Gateway')) enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <input id="wifi_ap_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(ValidateIPaddress(this,'Invalid Gateway')) enableElmt('wifi_ap_save','wifi_ap_cancel');">
                                 </div>
                             </div>
 
@@ -144,7 +144,7 @@
                                     Channel
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <select id="wifi_ap_ch" class="w3-select w3-border w3-padding-small" onchange="enableSave('wifi_ap_save','wifi_ap_cancel');">
+                                    <select id="wifi_ap_ch" class="w3-select w3-border w3-padding-small" onchange="enableElmt('wifi_ap_save','wifi_ap_cancel');">
                                         <option value="" disabled selected>Select</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
@@ -166,7 +166,7 @@
                             <!-- Save / Cancel -->
                             <div class="w3-container w3-padding-vert">
                                 <button id="wifi_ap_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
-                                <button id="wifi_ap_cancel" disabled onclick="disableSave('wifi_ap_save','wifi_ap_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
+                                <button id="wifi_ap_cancel" disabled onclick="disableElmt('wifi_ap_save','wifi_ap_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                             </div>
                         </div>        
                     </form>
@@ -188,7 +188,7 @@
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="net_ck_mode" type="checkbox" value="t" onchange="enableSave('net_ck_save','net_ck_cancel');">
+                                    <input id="net_ck_mode" type="checkbox" value="t" onchange="enableElmt('net_ck_save','net_ck_cancel');">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -200,7 +200,7 @@
                                 Check interval
                             </div>
                             <div class="w3-col w3-padding-small" style="width:75px">
-                                <input id="net_ck_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3"  onchange="enableSave('net_ck_save','net_ck_cancel');">
+                                <input id="net_ck_int" class="w3-input w3-border w3-padding-small" type="text" maxlength="3"  onchange="enableElmt('net_ck_save','net_ck_cancel');">
                             </div>
                             <div class="w3-col" style="line-height: 40px;width:90px;">
                                 (Seconds)
@@ -212,14 +212,14 @@
                                 Check URL
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="net_ck_url" class="w3-input w3-border w3-padding-small" type="text" maxlength="35" onchange="enableSave('net_ck_save','net_ck_cancel');">
+                                <input id="net_ck_url" class="w3-input w3-border w3-padding-small" type="text" maxlength="35" onchange="enableElmt('net_ck_save','net_ck_cancel');">
                             </div>
                         </div>
 
                         <!-- Save / Cancel -->
                         <div class="w3-container w3-padding-8">
                             <button id="net_ck_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
-                            <button id="net_ck_cancel" disabled onclick="disableSave('net_ck_save','net_ck_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
+                            <button id="net_ck_cancel" disabled onclick="disableElmt('net_ck_save','net_ck_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                         </div>
                         
                     </div>
@@ -239,14 +239,14 @@
                                 Host name
                             </div>
                             <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="dns_name" class="w3-input w3-border w3-padding-small" type="text" maxlength="35" onchange="enableSave('dns_save','dns_cancel');">
+                                <input id="dns_name" class="w3-input w3-border w3-padding-small" type="text" maxlength="35" onchange="enableElmt('dns_save','dns_cancel');">
                             </div>
                         </div>
 
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="dns_mode" type="checkbox" value="t" onchange="enableSave('dns_save','dns_cancel');">
+                                    <input id="dns_mode" type="checkbox" value="t" onchange="enableElmt('dns_save','dns_cancel');this.checked?enableElmt('dns_mdnselmt','dns_mdns'):disableElmt('dns_mdnselmt','dns_mdns');">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -256,8 +256,8 @@
                         <div class="w3-row">
                             <div class="w3-cell w3-padding-8">
                                 <label class="switch">
-                                    <input id="dns_mdns" type="checkbox" value="t" onchange="enableSave('dns_save','dns_cancel');">
-                                    <span class="slider round"></span>
+                                    <input id="dns_mdns" type="checkbox" value="t" onchange="enableElmt('dns_save','dns_cancel');">
+                                    <span id="dns_mdnselmt" class="slider round"></span>
                                 </label>
                             </div>
                             <div class="w3-cell w3-padding-small">mDNS (Bonjour)</div>
@@ -266,7 +266,7 @@
                         <!-- Save / Cancel -->
                         <div class="w3-container w3-padding-8">
                             <button id="dns_save" disabled onclick="SureDlg(this);" type="button" class="w3-button w3-green">Save</button>
-                            <button id="dns_cancel" disabled onclick="disableSave('dns_save','dns_net_ck_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
+                            <button id="dns_cancel" disabled onclick="disableElmt('dns_save','dns_cancel');doRequestAll();" type="button" class="w3-button w3-red">Cancel</button>
                         </div>
 
                         <div class="w3-row w3-padding-8 w3-small">
@@ -296,10 +296,10 @@
                         <div class="w3-section">
 
                             <!-- WiFi Details -->
-                            <input id="wifi_stn_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-user" onchange="enableSave('wifi_stn_save');">
+                            <input id="wifi_stn_ssid" class="w3-input w3-border w3-margin-bottom" type="text" minlength="7" maxlength="15" placeholder="Enter network name" required autocomplete="current-user" onchange="enableElmt('wifi_stn_save');">
                     
                             <div class="w3-display-container">
-                                <input id="wifi_stn_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password" onchange="enableSave('wifi_stn_save');">
+                                <input id="wifi_stn_pwd" class="w3-input w3-border w3-margin-bottom" type="password" minlength="7" maxlength="15" placeholder="Enter password" autocomplete="current-password" onchange="enableElmt('wifi_stn_save');">
                                 <img class="w3-display-right w3-padding-small" alt="" src="eye-16.png"  onclick="visiblePwd('wifi_stn_pwd')">
                             </div>
                     
@@ -307,7 +307,7 @@
                             <div class="w3-row">
                                 <div class="w3-cell">
                                     <label class="switch">
-                                        <input id="wifi_stn_dhcp" type="checkbox" value="t" onchange="enableSave('wifi_stn_save');updatePage();">
+                                        <input id="wifi_stn_dhcp" type="checkbox" value="t" onchange="enableElmt('wifi_stn_save');updatePage();">
                                         <span class="slider round"></span>
                                     </label>
                                 </div>
@@ -323,7 +323,7 @@
                                     IP Address
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid IP Address')) this.value=''; else enableSave('wifi_stn_save');">
+                                    <input id="wifi_stn_ip" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid IP Address')) this.value=''; else enableElmt('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -332,7 +332,7 @@
                                     Subnet
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Subnet')) this.value=''; else enableSave('wifi_stn_save');">
+                                    <input id="wifi_stn_snet" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Subnet')) this.value=''; else enableElmt('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -341,7 +341,7 @@
                                     Gateway
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Gateway')) this.value=''; else enableSave('wifi_stn_save');">
+                                    <input id="wifi_stn_gtwy" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid Gateway')) this.value=''; else enableElmt('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -350,7 +350,7 @@
                                     DNS 1
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableSave('wifi_stn_save');">
+                                    <input id="wifi_stn_dns1" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableElmt('wifi_stn_save');">
                                 </div>
                             </div>
                     
@@ -359,7 +359,7 @@
                                     DNS 2
                                 </div>
                                 <div class="w3-col w3-padding-small" style="width:150px">
-                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableSave('wifi_stn_save');">
+                                    <input id="wifi_stn_dns2" class="w3-input w3-border w3-padding-small" type="text" minlength="7" maxlength="15" placeholder="xxx.xxx.xxx.xxx" onchange="if(!ValidateIPaddress(this,'Invalid DNS IP')) this.value=''; else enableElmt('wifi_stn_save');">
                                     <br>
                                 </div>
                             </div>
