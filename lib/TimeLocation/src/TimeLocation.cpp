@@ -106,7 +106,7 @@ void TimeLocation::handle() {
 }
 
 
-void ICACHE_FLASH_ATTR TimeLocation::getLongTimeDate(char* datetimestring) {
+void ICACHE_FLASH_ATTR TimeLocation::strcpyTimeDate(char* datetimestring) {
     strncpy(datetimestring, _timezone->dateTime().c_str(),TLO_MAX_LONG_DATETIME_LEN);
 }
 
