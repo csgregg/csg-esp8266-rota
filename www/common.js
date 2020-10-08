@@ -106,12 +106,18 @@ function clearSure() {
    document.getElementById('sure_dlg').style.display='none';
 }
 
-function enableSave(...btns) {
-   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).disabled = false;
+function enableElmt(...elmts) {
+   for( var i=0; i < elmts.length; i++ ) {
+      document.getElementById(elmts[i]).disabled = false;
+      document.getElementById(elmts[i]).classList.remove('w3-disabled');
+   }
 }
 
-function disableSave(...btns) {
-   for( var i=0; i < btns.length; i++ ) document.getElementById(btns[i]).disabled = true;
+function disableElmt(...elmts) {
+   for( var i=0; i < elmts.length; i++ ) {
+      document.getElementById(elmts[i]).disabled = true;
+      document.getElementById(elmts[i]).classList.add('w3-disabled');
+   }
 }
 
 

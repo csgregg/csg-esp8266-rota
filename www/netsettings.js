@@ -59,6 +59,8 @@ function addWifiStationEntry() {
 function initPage() {
     // console.log("Status - Initialize Page");
 
+    if( !document.getElementById("dns_mode").checked ) disableElmt("dns_mdns","dns_mdnselmt");
+    
     wifiListRevision = 0;
     doRequest("","",loadWifiList);
 
@@ -114,7 +116,7 @@ function loadWifiDialog(value) {
 
     wifiStationID = value;
     doRequest("wifi_stn_btn",value,updatePage);
-    disableSave("wifi_stn_save");
+    disableElmt("wifi_stn_save");
     document.getElementById('wifi_stn_forget').style.display='block';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
@@ -138,7 +140,7 @@ function addWifiDialog() {
     document.getElementById('wifi_stn_dns2').value = '';
     wifiStationID = availWifiStn;
     updatePage();
-    disableSave("wifi_stn_save");
+    disableElmt("wifi_stn_save");
     document.getElementById('wifi_stn_forget').style.display='none';
     document.getElementById('wifi_stn_dlg').style.display='block';
 }
@@ -153,8 +155,8 @@ function SureNo() {
         return;
     }
 
-    if( sureAction == "wifi_ap_save" ) disableSave("wifi_ap_save","wifi_ap_cancel");
-    if( sureAction == "net_ck_save" ) disableSave("net_ck_save","net_ck_cancel");
+    if( sureAction == "wifi_ap_save" ) disableElmt("wifi_ap_save","wifi_ap_cancel");
+    if( sureAction == "net_ck_save" ) disableElmt("net_ck_save","net_ck_cancel");
 
     doRequestAll();
 }
@@ -219,7 +221,7 @@ function SureYes() {
         // Send Save command and update AP
         doRequest(sureAction,1);
 
-        disableSave("wifi_ap_save","wifi_ap_cancel");
+        disableElmt("wifi_ap_save","wifi_ap_cancel");
         
     }
 
@@ -266,7 +268,7 @@ function SureYes() {
         // Send Save command and update AP
         doRequest(sureAction,1,clearLoader);
 
-        disableSave("net_ck_save","net_ck_cancel");
+        disableElmt("net_ck_save","net_ck_cancel");
     }
 
     if( sureAction == "dns_save" ) {
@@ -284,7 +286,7 @@ function SureYes() {
         // Send Save command and update AP
         doRequest(sureAction,1,clearLoader);
 
-        disableSave("dns_save","dns_cancel");
+        disableElmt("dns_save","dns_cancel");
     }
 
 }
