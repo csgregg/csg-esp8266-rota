@@ -138,7 +138,7 @@ Implements a location and time service using IPInfo.io and ezTime library.
             bool ICACHE_FLASH_ATTR isTimeSet() { return _timeStatus; };
             bool ICACHE_FLASH_ATTR isLocationSet() { return _locationStatus; };
 
-            void ICACHE_FLASH_ATTR getLongTimeDate(char* datetimestring);
+            void ICACHE_FLASH_ATTR strcpyTimeDate(char* datetimestring);
 
             void handle();
 
