@@ -55,12 +55,23 @@ https://arduinojson.org/v6/assistant/
 #include "TimeLocation.h"
 
 
-
 void ICACHE_FLASH_ATTR TimeLocationSettings::setDefaults() {
     ntpMode = true;
-    strcpy(ipinfoToken, "4f556b7eaa128a");          // TODO - build flag
+    strcpy_P(ipinfoToken, PSTR("4f556b7eaa128a"));          // TODO - build flag
+    strcpy_P(posix,PSTR("UTC"));
+    location.setDefaults();
 }
 
+
+void ICACHE_FLASH_ATTR Location::setDefaults() {
+    ip = {0,0,0,0};
+    strcpy_P(city,PSTR(""));
+    strcpy_P(region,PSTR(""));
+    strcpy_P(country,PSTR(""));
+    loc = {0,0};
+    strcpy_P(postal,PSTR(""));
+    strcpy_P(timezone,PSTR(""));
+}
 
 
 void ICACHE_FLASH_ATTR TimeLocation::begin( WiFiClient &client, TimeLocationSettings &settings ) {
@@ -69,22 +80,24 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( WiFiClient &client, TimeLocationSett
 }
 void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 
+    LOG(PSTR("(TimeLoc) Starting time and location service"));
+
     _settings = &settings;
-    _settings->setDefaults();
+    _timezone = new Timezone;
 
-    if( _settings->ntpMode ) {
-
-        LOG(PSTR("(TimeLoc) Starting time service"));
-
-        _timezone = new Timezone;
-
+    if( _settings->location.region[0] != '\0' ) {
+        LOGF_HIGH(PSTR("(TimeLoc) Setting timezone to: %s"),_settings->location.timezone);
+        _locationStatus = _timezone->setPosix(_settings->posix);
+    }
+    else {
+        _settings->location.setDefaults();
+        _locationStatus = false;
     }
 
 }
 
 
 void TimeLocation::handle() {
-
 
     if( _settings->ntpMode ) events();                       // ezTime handler
 
@@ -96,6 +109,7 @@ void TimeLocation::handle() {
 void ICACHE_FLASH_ATTR TimeLocation::strcpyTimeDate(char* datetimestring) {
     strncpy(datetimestring, _timezone->dateTime().c_str(),TLO_MAX_LONG_DATETIME_LEN);
 }
+
 
 
 bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
@@ -138,24 +152,25 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
         return false;
     }
 
-    _location.ip.fromString(json[F("ip")].as<char*>());
-    strcpy(_location.city,json[F("city")].as<char*>());
-    strcpy(_location.region,json[F("region")].as<char*>());
-    strcpy(_location.country,json[F("country")].as<char*>());
+    _settings->location.ip.fromString(json[F("ip")].as<char*>());
+    strcpy(_settings->location.city,json[F("city")].as<char*>());
+    strcpy(_settings->location.region,json[F("region")].as<char*>());
+    strcpy(_settings->location.country,json[F("country")].as<char*>());
 
     char buff[TLO_IPINFO_MAX_LOC_LEN];
     strcpy(buff,json[F("loc")].as<char*>());
     int len = (strchr(buff,',')-buff)*sizeof(char);
     char newbuff[TLO_IPINFO_MAX_LOC_LEN];
-    _location.loc.lon =  atof( strncpy(newbuff, buff, len) );
-    _location.loc.lat =  atof( strcpy(newbuff, buff+len+1) );
+    _settings->location.loc.lon =  atof( strncpy(newbuff, buff, len) );
+    _settings->location.loc.lat =  atof( strcpy(newbuff, buff+len+1) );
 
-    strcpy(_location.postal,json[F("postal")].as<char*>());
-    strcpy(_location.timezone,json[F("timezone")].as<char*>());
+    strcpy(_settings->location.postal,json[F("postal")].as<char*>());
+    strcpy(_settings->location.timezone,json[F("timezone")].as<char*>());
 
-    _locationStatus = _timezone->setLocation(_location.timezone);
+    _locationStatus = _timezone->setLocation(_settings->location.timezone);
+    strcpy(_settings->posix,_timezone->getPosix().c_str());
 
-    if( _locationStatus ) LOGF_HIGH( PSTR("(TimeLoc) Timezone set to: %s"), _location.timezone );
+    if( _locationStatus ) LOGF_HIGH( PSTR("(TimeLoc) Timezone set to: %s"), _settings->location.timezone );
     else LOG(PSTR("(TimeLoc) Timezone not set"));
 
     return _locationStatus;            

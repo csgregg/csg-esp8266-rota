@@ -167,13 +167,12 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveTimeLocation() {
     LOG_HIGH(PSTR("(Page) Network Settings - Save Time/Location"));
+                
+    // TODO - standardize naming of config and settings
 
-    TimeLocationSettings tlo;                   // TODO - standardize naming of config and settings
-
-    strncpy(tlo.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
-    tlo.ntpMode = tlo_ntp.isChecked();
-
-    config.settings.timelocConfig = tlo;
+    strncpy(config.settings.timelocConfig.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
+    config.settings.timelocConfig.ntpMode = tlo_ntp.isChecked();
+    // Note location, if updated, is already saved to config.settings.tloconfig by timelocation.detectlocation
     config.Save();
 }
 
@@ -186,8 +185,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::detectLocation() {
 void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
 
     if( timelocation.isLocationSet() ) {
-        tlo_loc.setValue( timelocation.getLocation() );
-        tlo_tz.setValue( timelocation.getTimeZone() );
+        tlo_loc.setValue( config.settings.timelocConfig.location.region );
+        tlo_tz.setValue( config.settings.timelocConfig.location.timezone );
     }
     else {
         tlo_loc.setValue( "<b>Not set</b>", true );                                                 // TODO - what to do about progmem

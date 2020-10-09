@@ -70,7 +70,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
         WriteMarker();
 
         // Reset to defauls
-        ResetToDefaults();
+        setDefaults();
         Save();
 
     }
@@ -86,7 +86,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 
 
 // Saves the default settings to flash
-void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
+void ICACHE_FLASH_ATTR ConfigManager::setDefaults() {
 
     LOG(PSTR("(Config) Reset to defaults"));
 
@@ -99,6 +99,7 @@ void ICACHE_FLASH_ATTR ConfigManager::ResetToDefaults() {
     settings.networkConfig.setDefaults();
     settings.logConfig.setDefaults();
     settings.otaConfig.setDefaults();
+    settings.timelocConfig.setDefaults();
 
     // Save to flash
     Save(true);

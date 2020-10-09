@@ -46,7 +46,7 @@ through the settings member.
 
     #define MAX_CONFIG_STRING_LEN 32
     #define CONFIG_START_MARKER_SIZE 16
-    #define CONFIG_START_MARKER "CONFIG_START_11"
+    #define CONFIG_START_MARKER "CONFIG_START_10"
 
 
     // Make marker easy to refer to
@@ -99,7 +99,7 @@ through the settings member.
             ConfigManager();
 
             void ICACHE_FLASH_ATTR begin(const bool forceInit = false);          // Start the config manager
-            void ICACHE_FLASH_ATTR ResetToDefaults();                                 // Saves the default settings
+            void ICACHE_FLASH_ATTR setDefaults();                                 // Saves the default settings
             void ICACHE_FLASH_ATTR Read();                                            // Reads all the settings
             void ICACHE_FLASH_ATTR Save(const bool force = false);                    // Saves all the settings
 
