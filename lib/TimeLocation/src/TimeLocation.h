@@ -47,6 +47,7 @@ Implements a location and time service using IPInfo.io and ezTime library.
     #define TLO_IPINFO_MAX_TOKEN_LEN (14+1)
 
     #define TLO_MAX_LONG_DATETIME_LEN (36+1)
+    #define TLO_MAX_POSIX_LEN (32+1)                // TODO - needs confirming
     
 
     class Location {
@@ -57,6 +58,8 @@ Implements a location and time service using IPInfo.io and ezTime library.
                 float lon;
                 float lat;
             };
+
+            void setDefaults();
 
             IPAddress ip;
             char city[TLO_IPINFO_MAX_CITY_LEN] = "";
@@ -99,17 +102,20 @@ Implements a location and time service using IPInfo.io and ezTime library.
             bool ntpMode = true;           // Service on or off
             char ipinfoToken[TLO_IPINFO_MAX_TOKEN_LEN] = "";
             Location location;
+            char posix[TLO_MAX_POSIX_LEN] = "";
 
              // Create a compare operators
             bool operator==(const TimeLocationSettings& other) const {
                 return ntpMode == other.ntpMode
                     && (strcmp(ipinfoToken,other.ipinfoToken)==0)
-                    && location == other.location;
+                    && location == other.location
+                    && (strcmp(posix,other.posix)==0);
             }
             bool operator!=(const TimeLocationSettings& other) const {
                 return ntpMode != other.ntpMode
                     || (strcmp(ipinfoToken,other.ipinfoToken)!=0)
-                    || location != other.location;
+                    || location != other.location
+                    || (strcmp(posix,other.posix)!=0);
             }
 
     };
@@ -126,14 +132,9 @@ Implements a location and time service using IPInfo.io and ezTime library.
             void ICACHE_FLASH_ATTR begin( WiFiClient& client, TimeLocationSettings &settings );
 
             bool ICACHE_FLASH_ATTR detectLocation();       // Use IPInfo to detect location
-            void ICACHE_FLASH_ATTR saveLocation() {
-                _settings->location = _location;
-            };
             bool ICACHE_FLASH_ATTR updateTime();
             bool ICACHE_FLASH_ATTR isTimeSet() { return _timeStatus; };
             bool ICACHE_FLASH_ATTR isLocationSet() { return _locationStatus; };
-            char* ICACHE_FLASH_ATTR getLocation() { return _location.region; };
-            char* ICACHE_FLASH_ATTR getTimeZone() { return _location.timezone; };
 
             void ICACHE_FLASH_ATTR strcpyTimeDate(char* datetimestring);
 
@@ -145,10 +146,8 @@ Implements a location and time service using IPInfo.io and ezTime library.
             WiFiClient* _client;
             TimeLocationSettings* _settings;
             Timezone* _timezone;
-            Location _location;
             bool _timeStatus = false;
             bool _locationStatus = false;
-            unsigned long _timer = 0;
 
 
         private:

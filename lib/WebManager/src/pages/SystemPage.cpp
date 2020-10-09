@@ -85,7 +85,7 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     }
 
     if( website.AjaxID == F("btn_rst_all") ){
-        config.ResetToDefaults();
+        config.setDefaults();
         config.Save();
     }
 

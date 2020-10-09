@@ -164,7 +164,7 @@ Server-side functions of netsettings.html
 
             NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
                
-                wifi_mode_ap("wifi_mode_ap",""),
+                wifi_mode_ap("wifi_mode_ap",""),            // TODO - should all these strings be literals in PROGMEM
                 wifi_mode_stn("wifi_mode_stn",""),
                 wifi_mode_save("wifi_mode_save"),
             
@@ -208,7 +208,7 @@ Server-side functions of netsettings.html
                 dns_name("dns_name"),
                 dns_save("dns_save"),
 
-                tlo_detect("tlo_auto"),
+                tlo_detect("tlo_detect"),
                 tlo_token("tlo_token"),
                 tlo_loc("tlo_loc"),
                 tlo_tz("tlo_tz"),
