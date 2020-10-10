@@ -135,8 +135,8 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     HTTPClient http;
 
-    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof("http://ipinfo.io/json?token=")+1];            // TODO - add buildflag
-    strcpy_P(url,PSTR("http://ipinfo.io/json?token="));
+    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof(flag_TLO_IPINFO_SERVICE)+1];
+    strcpy_P(url,flag_TLO_IPINFO_SERVICE);
     strcat(url,_settings->ipinfoToken);
 
     http.useHTTP10(true);
