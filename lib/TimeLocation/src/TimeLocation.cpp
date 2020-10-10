@@ -99,7 +99,17 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 
 void TimeLocation::handle() {
 
-    if( _settings->ntpMode ) events();                       // ezTime handler
+    if( _settings->ntpMode ) {
+        if( network.isInternetConnected() ) {
+            if( !_previousConnected ) {
+                _previousConnected = true;
+                ezt::updateNTP();
+            }
+        }
+        else _previousConnected = false;
+
+        ezt::events();
+    }                   // ezTime handler
 
     _timeStatus = ( timeStatus() != timeNotSet );
 

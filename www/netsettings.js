@@ -58,8 +58,6 @@ function addWifiStationEntry() {
 
 function initPage() {
     // console.log("Status - Initialize Page");
-
-    if( !document.getElementById("dns_mode").checked ) disableElmt("dns_mdns","dns_mdnselmt");
     
     wifiListRevision = 0;
     doRequest("","",loadWifiList);
@@ -67,7 +65,6 @@ function initPage() {
 }
 
 function loadWifiList() {
-
     // console.log("Status - Load WiFi list");
 
     // Clear entries
@@ -108,7 +105,11 @@ function updatePage() {
     document.getElementById("wifi_mode_ap").checked ? 
         document.getElementById("wifi_ap_icon").style = "opacity: 1.0;"
         : document.getElementById("wifi_ap_icon").style = "opacity: 0.2;"
-   
+
+    // Update mDNS switch
+    if( document.getElementById("dns_mode").checked ) enableElmt("dns_mdns","dns_mdnselmt");
+    else disableElmt("dns_mdns","dns_mdnselmt");
+    
 }
 
 function loadWifiDialog(value) {

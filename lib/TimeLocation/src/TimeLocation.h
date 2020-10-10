@@ -148,6 +148,7 @@ Implements a location and time service using IPInfo.io and ezTime library.
             Timezone* _timezone;
             bool _timeStatus = false;
             bool _locationStatus = false;
+            bool _previousConnected = false;
 
 
         private:
