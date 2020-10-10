@@ -57,7 +57,7 @@ https://arduinojson.org/v6/assistant/
 
 void ICACHE_FLASH_ATTR TimeLocationSettings::setDefaults() {
     ntpMode = true;
-    strcpy_P(ipinfoToken, PSTR("4f556b7eaa128a"));          // TODO - build flag
+    strcpy_P(ipinfoToken, flag_TLO_IPINFO_TOKEN);
     strcpy_P(posix,PSTR("UTC"));
     location.setDefaults();
 }

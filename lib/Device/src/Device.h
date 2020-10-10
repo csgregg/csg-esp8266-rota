@@ -131,6 +131,9 @@ Build flags are loaded from platformio.ini
     static const char flag_LOGGER_GLOBAL_TAGS [] PROGMEM = ESCAPEQUOTE(LOGGER_GLOBAL_TAGS);     // Tags to globally apply to logs
     static const uint flag_MONITOR_SPEED = atoi(ESCAPEQUOTE(MONITOR_SPEED));                    // Monitor baud
 
+    // used by Time / Location Library
+    static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
+
 
     // Number of seconds after reset during which a 
     // subseqent reset will be considered a double reset.
