@@ -133,6 +133,7 @@ Build flags are loaded from platformio.ini
 
     // used by Time / Location Library
     static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
+    static const char flag_TLO_IPINFO_SERVICE [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_SERVICE);     // URL for IPInfo.io service
 
 
     // Number of seconds after reset during which a 

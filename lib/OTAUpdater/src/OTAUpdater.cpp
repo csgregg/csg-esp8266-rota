@@ -70,7 +70,7 @@ bool OTAUpdater::_doUpdateCheck = false;
 
 
 void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
-    mode = true;                              // TODO - add build flag
+    mode = true;
     strcpy_P(service, flag_UPDATER_SERVICE);
     strcpy_P(repo, flag_UPDATER_REPO);
     strcpy_P(user, flag_UPDATER_USER);
