@@ -53,6 +53,7 @@ Server-side functions of system.html
             EmbAJAXServerFunction btn_rst_all;
             EmbAJAXServerFunction btn_rst_log;
             EmbAJAXServerFunction btn_rst_ota;
+            EmbAJAXServerFunction btn_rst_tlo;
 
             EmbAJAXCheckButton log_srl;
             EmbAJAXTextInput<7> log_baud;
@@ -75,7 +76,7 @@ Server-side functions of system.html
             EmbAJAXTextInput<4> ota_ck_int;
             EmbAJAXServerFunction ota_save;
 
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 23] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 24] = {
       
                 WEB_PAGE_COMMON_ELEMENTS,
 
@@ -84,6 +85,7 @@ Server-side functions of system.html
                 &btn_rst_all,
                 &btn_rst_log,
                 &btn_rst_ota,
+                &btn_rst_tlo,
 
                 &log_srl,
                 &log_baud,
@@ -114,6 +116,7 @@ Server-side functions of system.html
                 btn_rst_all("btn_rst_all"),
                 btn_rst_log("btn_rst_log"),
                 btn_rst_ota("btn_rst_ota"),
+                btn_rst_tlo("btn_rst_tlo"),
 
                 log_srl("log_srl",""),
                 log_baud("log_baud"),

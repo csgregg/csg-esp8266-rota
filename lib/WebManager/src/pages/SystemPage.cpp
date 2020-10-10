@@ -82,6 +82,7 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     if( website.AjaxID == F("btn_rst_log") ){
         config.settings.logConfig.setDefaults();
         config.Save();
+        logger.begin(config.settings.logConfig);
     }
 
     if( website.AjaxID == F("btn_rst_all") ){
@@ -92,6 +93,13 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     if( website.AjaxID == F("btn_rst_ota") ){
         config.settings.otaConfig.setDefaults();
         config.Save();
+        updater.begin(config.settings.otaConfig);
+    }
+
+    if( website.AjaxID == F("btn_rst_tlo") ) {
+        config.settings.timelocConfig.setDefaults();
+        config.Save();
+        timelocation.begin(config.settings.timelocConfig);
     }
 
     if( website.AjaxID == F("log_save") ) saveLogConfig();
