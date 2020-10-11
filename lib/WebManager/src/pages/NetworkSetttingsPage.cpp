@@ -49,13 +49,13 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
 
-    sprintf(buffer, "%i.%i.%i.%i", wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
+    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
     wifi_ap_ip.setValue(buffer);
 
-    sprintf(buffer, "%i.%i.%i.%i", wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
+    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
     wifi_ap_snet.setValue(buffer);
 
-    sprintf(buffer, "%i.%i.%i.%i", wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
+    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
     wifi_ap_gtwy.setValue(buffer);
 
     wifi_ap_ch.selectOption(wifiAP.channel);
@@ -214,7 +214,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Load Wifi Station"));
 
-    char ipbuffer[15];
+    char ipbuffer[16];
 
     wifiStation = config.settings.networkConfig.stationSettings[id];
 
@@ -222,19 +222,19 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
     wifi_stn_pwd.setValue(wifiStation.password);
 
     // IP Addresses
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
+    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
     wifi_stn_ip.setValue(ipbuffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
+    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
     wifi_stn_snet.setValue(ipbuffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
+    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
     wifi_stn_gtwy.setValue(ipbuffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
+    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
     wifi_stn_dns1.setValue(ipbuffer);
 
-    sprintf(ipbuffer, "%i.%i.%i.%i", wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
+    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
     wifi_stn_dns2.setValue(ipbuffer);
 
     wifi_stn_dhcp.setChecked(wifiStation.DHCPMode == DHCP);

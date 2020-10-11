@@ -44,7 +44,7 @@ String ICACHE_FLASH_ATTR LiteralManager::Get(literalID ID) {
 
 }
 
-char ICACHE_FLASH_ATTR *LiteralManager::pGet(literalID ID) {
+const char ICACHE_FLASH_ATTR *LiteralManager::pGet(literalID ID) {
 
 	return (char*)pgm_read_dword(&(LiteralRefs[ID]));
 

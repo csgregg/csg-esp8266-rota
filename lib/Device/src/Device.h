@@ -135,13 +135,9 @@ Build flags are loaded from platformio.ini
     static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
     static const char flag_TLO_IPINFO_SERVICE [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_SERVICE);     // URL for IPInfo.io service
 
-
-    // Number of seconds after reset during which a 
-    // subseqent reset will be considered a double reset.
-    #define DRD_TIMEOUT 3
-
-    // RTC Memory Address for the DoubleResetDetector to use
-    #define DRD_ADDRESS 0
+    // Detect double reset
+    #define DRD_TIMEOUT 3           // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+    #define DRD_ADDRESS 0           // RTC Memory Address for the DoubleResetDetector to use
 
 
     // Expand the EspClass to add build flags, etc

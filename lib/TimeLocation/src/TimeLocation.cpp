@@ -108,10 +108,10 @@ void TimeLocation::handle() {
         }
         else _previousConnected = false;
 
-        ezt::events();
-    }                   // ezTime handler
+        ezt::events();              // ezTime handler
+    }                   
 
-    _timeStatus = ( timeStatus() != timeNotSet );
+    _timeStatus = ( ezt::timeStatus() != timeNotSet );
 
 }
 
@@ -147,7 +147,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     int httpCode = http.GET();                                                         
 
     StaticJsonDocument<TLO_IPINFO_JSON_RESPONSE_SIZE> json;
-    DeserializationError jsonerror = deserializeJson(json, http.getStream());
+    DeserializationError jsonerror = deserializeJson(json, http.getStream());           // TODO - deserialize with stream in pther places too
 
     http.end();
 

@@ -95,7 +95,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 
     if( _settings->serviceMode || _settings->tickMode ) {
 
-        strcpy_P(_FullServiceURL,PSTR("http://"));
+        strcpy_P(_FullServiceURL, PSTR("http://"));
         strcat(_FullServiceURL, _settings->serviceURL);
         strcat_P(_FullServiceURL, PSTR("/"));
         strcat(_FullServiceURL, _settings->serviceKey);
@@ -352,7 +352,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf(buffer, PSTR("(Build) %s: %i"), name, flag);
+    sprintf_P(buffer, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -422,7 +422,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
     strcat(loggingURL,thistag);
-    strcat(loggingURL,"/");
+    strcat_P(loggingURL,PSTR("/"));
    
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
@@ -488,8 +488,8 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         }
     }
 
-    http.setUserAgent(PSTR("ESP8266-http-logger"));
-    http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
+    http.setUserAgent(PSTR("ESP8266-http-logger"));                 // TODO - use device code
+    http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
     int httpCode = http.POST(jsonMessage);
     String payload = http.getString();
@@ -567,7 +567,7 @@ bool LogClient::handleTick( ){
         String tempSSID = WiFi.SSID();
         Device_Network[F("SSID")] = tempSSID.c_str();
 
-    char jsonMessage[438+1];
+    char jsonMessage[438+1];    // TODO - #define for size
 
     serializeJson(jsonLog, jsonMessage);
 
@@ -582,8 +582,8 @@ bool LogClient::handleTick( ){
         }
     }
     
-    http.setUserAgent(PSTR("ESP8266-http-logger"));
-    http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
+    http.setUserAgent(PSTR("ESP8266-http-logger"));     // TODO - Are these needed
+    http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
     int httpCode = http.POST(jsonMessage);
     http.end();

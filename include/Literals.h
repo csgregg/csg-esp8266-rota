@@ -15,8 +15,7 @@ Max lenght of liternal stings is set by MAX_LITERAL_SIZE
 */
 
 #define LITERAL_TABLE \
-	LITERAL(litMessage, "Message") \
-
+	LITERAL(litTEST, "test") \
 
 
 

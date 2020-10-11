@@ -44,8 +44,8 @@ Manages Network Functions
 
 void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 
-    strcpy( SSID, "" );
-    strcpy( password, "" );
+    strcpy_P( SSID, PSTR("") );
+    strcpy_P( password, PSTR("") );
     DHCPMode = DEFAULT_DHCPMODE;
     ip = uint32_t(0x00000000);
     subnet = uint32_t(0x00000000);
@@ -173,7 +173,7 @@ void NetworkManager::HandleNetCheck() {
             http.begin( _client, url );
 
             http.setUserAgent(PSTR("ESP8266-http-Update"));                            // TODO - Change all instances to literals
-            http.addHeader(PSTR("Content-Type"), PSTR("content-type:text/plain"));
+            http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
             int httpresponse = http.GET();
 
@@ -316,7 +316,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
 
     bool anystns = false;
     for( int i = 0; i < MAX_SSIDS && !anystns; i++ ) {
-        if( strcmp( _settings->stationSettings[i].SSID, "" ) != 0 ) anystns = true;
+        if( _settings->stationSettings[i].SSID[0] != '\0' ) anystns = true;
     }
     if( !anystns ) {
         LOG(PSTR("(Network) No saved WiFi Stations"));
@@ -363,8 +363,8 @@ bool ICACHE_FLASH_ATTR NetworkManager::startWiFiAccessPoint() {
 
     if( !ret ) return false;
 
-    bool ssid = strcmp( _settings->apSettings.SSID, "") != 0;
-	bool password = strcmp( _settings->apSettings.password, "") != 0;
+    bool ssid = _settings->apSettings.SSID[0] != '\0';
+	bool password = _settings->apSettings.password[0] != '\0';
 
     WiFi.softAPConfig( _settings->apSettings.ip, _settings->apSettings.gateway, _settings->apSettings.subnet );
 
@@ -424,9 +424,9 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
 		int i = 0;
 		while( WiFi.status() != WL_CONNECTED && i++ <= STATION_TRY_TIME ) {
 			delay(500);
-			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(".");
+			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
 		}
-        if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print("\n");
+        if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
 
 		ret = (WiFi.status() == WL_CONNECTED);
 

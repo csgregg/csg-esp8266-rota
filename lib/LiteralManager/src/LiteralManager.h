@@ -64,9 +64,9 @@ Based on ideas from https://github.com/jjssoftware/iD8266
 
         public:
 
-            String ICACHE_FLASH_ATTR Get(literalID ID);           // Retrieve literal by ID
-            char* ICACHE_FLASH_ATTR pGet(literalID ID);          // Retrieve literal ptr by ID
-
+            String Get(literalID ID);                // Retrieve literal by ID
+            const char* pGet(literalID ID);          // Retrieve literal ptr by ID
+	        size_t Size(literalID ID) { return strlen(LiteralRefs[ID]) ; };
 
         protected:
 
@@ -80,5 +80,6 @@ Based on ideas from https://github.com/jjssoftware/iD8266
 
     #define sLIT(name) literals.Get(name)       // Returns String for literal
     #define cLIT(name) literals.pGet(name)      // Returns char* to literal
+    #define zLIT(name) literals.Size(name)      // Returns size of literal
 
 #endif
