@@ -174,7 +174,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
             AjaxValue = _server.arg("value");    
 
             if( URL.endsWith("/") ) URL += F("index.html");         // If a folder is requested, send the index file
-            if( !URL.startsWith("/") ) URL =+ "/";
+            if( !URL.startsWith("/") ) URL =+ F("/");
 
             // AJAX request
             if( _server.method() == HTTP_POST ) {
@@ -229,7 +229,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
 bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
 
     char redirectto[DNS_MAX_HOSTNAME_LEN+sizeof("http://.local/")];
-    strcpy_P(redirectto, PSTR("http://"));
+    strcpy(redirectto, PSTR("http://"));
     strcat(redirectto,_hostname);
     strcat_P(redirectto,PSTR(".local/"));
 
@@ -241,13 +241,13 @@ bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
     if( URL.endsWith(PSTR("/redirect")) ) {
         _server.sendHeader(PSTR("Location"), redirectto, true);
         _server.setContentLength(0);
-        _server.send ( 302, "text/plain", "" );
+        _server.send ( 302, PSTR("text/plain"), PSTR("") );
         return true;
     }
 
     // Apple - block captive pop up                                 // TODO - figure out how to use captive portal
     if( URL.endsWith(PSTR("/hotspot-detect.html")) ) {
-        _server.send(200, PSTR("text/html"), PSTR("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"));
+        _server.send(200, PSTR("text/plain"), PSTR("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"));
 
         return true;
     }
@@ -288,7 +288,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 
             _server.sendHeader(PSTR("Content-Encoding"),PSTR("gzip"));
             _server.setContentLength(websiteFiles[i].len);
-            _server.send(200,contentType,"");
+            _server.send(200,contentType,PSTR(""));
 
             WiFiClient client = _server.client();
             
@@ -337,9 +337,9 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 void ICACHE_FLASH_ATTR WebsiteManager::redirectToCaptivePortal() {
     LOG(PSTR("(Website) Request redirected to captive portal"));
 
-    _server.sendHeader("Location", "http://esp-rota-T1", true);
+    _server.sendHeader(PSTR("Location"), PSTR("http://esp-rota-T1"), true);     // TODO - Change to hostname
     _server.setContentLength(0);
-    _server.send ( 302, "text/plain", "");
+    _server.send ( 302, PSTR("text/plain"), PSTR(""));
 }
 
 

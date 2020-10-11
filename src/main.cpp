@@ -1,4 +1,3 @@
-#include "LiteralManager.h"
 #include "Device.h"
 #include "ConfigManager.h"
 #include "Logger.h"

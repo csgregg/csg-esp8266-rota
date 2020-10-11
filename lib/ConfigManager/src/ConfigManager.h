@@ -51,7 +51,7 @@ through the settings member.
 
     // Make marker easy to refer to
     struct startMarker {
-	    char marker[CONFIG_START_MARKER_SIZE];
+	    char marker[CONFIG_START_MARKER_SIZE];          // TODO - Move to class?
     };
 
 

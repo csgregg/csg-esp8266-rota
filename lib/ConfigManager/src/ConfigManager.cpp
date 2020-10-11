@@ -74,13 +74,7 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
         Save();
 
     }
-    else {
-
-        // Flash is already set up and ready to use
-        LOG_HIGH(PSTR("(Config) Flash ready"));
-
-        Read();         // Get the settings for the first time
-    }
+    else Read();         // Get the settings for the first time
 
 }
 
@@ -89,11 +83,6 @@ void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
 void ICACHE_FLASH_ATTR ConfigManager::setDefaults() {
 
     LOG(PSTR("(Config) Reset to defaults"));
-
-    if( !_IsInitialized ) {
-        LOG_CRITICAL(PSTR("(Config) Flash not yet initialized - cannot save"));
-        return;
-    }
 
     // Default settings
     settings.networkConfig.setDefaults();
@@ -139,7 +128,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
         // Check to see what is there first and only save if different 
         if( readset == settings ) {
 
-            LOG(PSTR("(Config) Settings unchanged - not saving"));
+            LOG_HIGH(PSTR("(Config) Settings unchanged - not saving"));
 
             return;
         }
@@ -161,8 +150,6 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 	startMarker markerData = EEPROM.get(0, markerData);
-
-    LOGF_DETAIL( PSTR("(Config) Marker from flash: %s"), markerData.marker );
     
     // Return if it is there
     return (strcmp(markerData.marker, CONFIG_START_MARKER) == 0);
@@ -171,11 +158,7 @@ bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 // Write the marker that shows that the flash is set up
 void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
-
     startMarker markerData;
-
-    LOGF_DETAIL( PSTR("(Config) Writing marker: %s"), markerData.marker );
-
     strncpy(markerData.marker, CONFIG_START_MARKER, sizeof(CONFIG_START_MARKER));
 	markerData = EEPROM.put(0, markerData);
 }
@@ -183,16 +166,12 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
 // Erase the content of the flash to 0
 void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
-
     LOG(PSTR("(Config) Erasing flash"));
 
 	for (uint16_t i = 0 ; i < SPI_FLASH_SEC_SIZE ; i++) {
 		EEPROM.write(i, 0);
 		yield();
 	}
-
-    LOG(PSTR("(Config) Flash erased"));
-
 }
 
 

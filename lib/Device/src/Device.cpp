@@ -37,9 +37,9 @@ Build flags are loaded from platformio.ini
 void ICACHE_FLASH_ATTR IOTDevice::begin() {
 
     // Need to do this because these flags seem to get defined at differnet time to the rest
-    sprintf(_build_no,"%i",flag_BUILD_NO);                      // TODO - search for all string consts in RAM and move to PROGMEM
+    sprintf_P(_build_no,PSTR("%i"),flag_BUILD_NO);
     strcpy_P(_build_time, flag_BUILD_TIMESTAMP);
-    sprintf(_chipID, "%0X", EspClass::getChipId());
+    sprintf_P(_chipID,PSTR("%0X"),EspClass::getChipId());
     strcpy_P(_buildEnv,flag_BUILD_ENV);
 
     if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
