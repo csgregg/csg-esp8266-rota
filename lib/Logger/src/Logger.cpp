@@ -157,17 +157,9 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
     if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
 
-        char func[MAX_MESSAGE_LEN];
-
-        size_t contextsize =  ( strlen_P( PSTR("(Context: %s %s %i) %s")) - 8 ) + strlen(file) + strlen(func);
-
-        char shortened[MAX_MESSAGE_LEN];
-        strncpy( shortened, message, MAX_MESSAGE_LEN - contextsize );        // Truncate if too long
-        shortened[(MAX_MESSAGE_LEN - contextsize)-1] = 0;
-
         char str[MAX_MESSAGE_LEN];
-        sprintf_P(str, PSTR("(Context: %s %s %i) %s"), file, func_P, line, shortened);
-        str[MAX_MESSAGE_LEN-1] = 0;
+        snprintf_P(str, MAX_MESSAGE_LEN, PSTR("(Context: %s %s %i) %s"), file, func_P, line, message);
+
         println(type, tag, str);
     }
     else println(type, tag, message);
@@ -298,7 +290,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 }
 
 
-// Formatted log function
+// Formatted log function with context
 void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * file, const char * func_P, const int line, const char * format, ... ) {
 
 #ifndef NO_LOGGING
@@ -339,7 +331,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf_P(buffer, PSTR("(Build) %s: %s"), name, FPSTR(flag));
+    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %s"), name, FPSTR(flag));
 
     println(type, tag, buffer);
 
@@ -352,7 +344,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf_P(buffer, PSTR("(Build) %s: %i"), name, flag);
+    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -365,7 +357,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #ifndef NO_LOGGING
 
     char buffer[MAX_MESSAGE_LEN];
-    sprintf_P(buffer, PSTR("(Build) %s: %i"), name, flag);
+    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -413,15 +405,12 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     if( WiFi.status() != WL_CONNECTED ) return;
 
-    char thistag[MAX_TAG_DESC_LEN];
-    strcpy_P(thistag, c_log_tag_descript[tag]);
-
     char thistype[MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[type]);
 
     char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
-    strcat(loggingURL,thistag);
+    strcat_P(loggingURL,c_log_tag_descript[tag]);
     strcat_P(loggingURL,PSTR("/"));
    
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
@@ -441,7 +430,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     char shortened[MAX_MESSAGE_LEN];
 
     strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
-    shortened[MAX_MESSAGE_LEN-1]=0;
 
     jsonLog[F("message")] = shortened;
 
@@ -466,7 +454,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         String tempSSID = WiFi.SSID();
         Device_Network[F("SSID")] = tempSSID.c_str();
 
-    char jsonMessage[712+1];
+    char jsonMessage[712+1];        // TODO - check this    
 
     serializeJson(jsonLog, jsonMessage);
 
@@ -492,7 +480,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
     int httpCode = http.POST(jsonMessage);
-    String payload = http.getString();
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
@@ -520,22 +507,19 @@ bool LogClient::handleTick( ){
 
 #ifndef NO_LOGGING
 
+    if( WiFi.status() != WL_CONNECTED ) return false;
+
     if( _settings->serialMode && _settings->level >= LOGGING_LEVEL_NORMAL ) {
         LogPrefix(NORMAL_LOG, STATUS_TAG);
         Serial.println(PSTR("(Logger) Logging a tick")); 
     }
-
-    if( WiFi.status() != WL_CONNECTED ) return false;
-
-    char thistag[MAX_TAG_DESC_LEN];
-    strcpy_P(thistag, c_log_tag_descript[STATUS_TAG]);
 
     char thistype[MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[NORMAL_LOG]);
 
     char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
-    strcat(loggingURL,thistag);
+    strcat_P(loggingURL,c_log_tag_descript[STATUS_TAG]);
     strcat_P(loggingURL,PSTR("/"));
 
     // Build JSON
