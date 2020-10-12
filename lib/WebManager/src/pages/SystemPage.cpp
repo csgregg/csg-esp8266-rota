@@ -128,6 +128,8 @@ void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
 
     logger.begin(config.settings.logConfig);
 
+    // TODO - loader is in the wrong place on log save
+
 }
 
 
