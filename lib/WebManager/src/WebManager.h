@@ -181,7 +181,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
         void setStyle(const char* style);
-        enum Property {                                                     // TODO - check if this is right and working
+        enum Property {                                                     // Adds a new property to the EMBAjaxBase
             Style = EmbAJAXBase::FirstElementSpecificProperty
         };
     private:
