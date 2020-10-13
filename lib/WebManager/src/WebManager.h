@@ -44,18 +44,12 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     #define WEB_PORT 80
     #define WEB_MAX_MESSAGE_LEN 100
     
+
     struct PageHandler {
         const char* URL;
         void (*handler)();
         void (*init)();
     };
-
-    enum funcStatus : int {
-        NONE,
-        SENT,
-        SUCCESS
-    };
-
 
 
     ////////// Additional Element Types //////////
@@ -64,6 +58,13 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     /** Client returns "" on success **/
     class EmbAJAXClientFunction : public EmbAJAXElement {
     public:
+
+        enum funcStatus : int {
+            NONE,
+            SENT,
+            SUCCESS
+        };
+
         EmbAJAXClientFunction(const char* id) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);
             _arg = 0;
@@ -97,6 +98,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             if( _status == SENT && buff[0]==0 ) _status = SUCCESS;         // Function should return "" to acknowledge
         }
         funcStatus getStatus() { return _status; }
+
 
 
     private:
@@ -179,7 +181,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
         const char* value(uint8_t which = EmbAJAXBase::Value) const override;
         const char* valueProperty(uint8_t which = EmbAJAXBase::Value) const override;
         void setStyle(const char* style);
-        enum Property {
+        enum Property {                                                     // TODO - check if this is right and working
             Style = EmbAJAXBase::FirstElementSpecificProperty
         };
     private:
@@ -194,9 +196,6 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
 
     ////////// Website Manager Class ///////////
-
-
-    #define STATUS_FLASH_SPEED  4       // 4 Seconds
 
     class WebsiteManager {
 

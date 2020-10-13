@@ -55,8 +55,8 @@ Server-side functions of netsettings.html
             EmbAJAXServerFunction wifi_mode_save;
 
             EmbAJAXServerFunction wifi_ap_save;
-            EmbAJAXTextInput<MAX_SSID_LEN> wifi_ap_ssid;
-            EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi_ap_pwd;
+            EmbAJAXTextInput<NET_MAX_SSID_LEN> wifi_ap_ssid;
+            EmbAJAXTextInput<NET_MAX_PASSWORD_LEN> wifi_ap_pwd;
             EmbAJAXTextInput<16> wifi_ap_ip;
             EmbAJAXTextInput<16> wifi_ap_snet;
             EmbAJAXTextInput<16> wifi_ap_gtwy;
@@ -72,12 +72,12 @@ Server-side functions of netsettings.html
             EmbAJAXServerFunction wifi_stn_cnct;
 
             EmbAJAXVarInt wifi_stn_count;
-            EmbAJAXVarChar<MAX_SSID_LEN> wifi_stn_name;
+            EmbAJAXVarChar<NET_MAX_SSID_LEN> wifi_stn_name;
             EmbAJAXVarBool wifi_stn_on;
             EmbAJAXClientFunction loadWifiList;
 
-            EmbAJAXTextInput<MAX_SSID_LEN> wifi_stn_ssid;
-            EmbAJAXTextInput<MAX_PASSWORD_LEN> wifi_stn_pwd;
+            EmbAJAXTextInput<NET_MAX_SSID_LEN> wifi_stn_ssid;
+            EmbAJAXTextInput<NET_MAX_PASSWORD_LEN> wifi_stn_pwd;
             EmbAJAXCheckButton wifi_stn_dhcp;
             EmbAJAXTextInput<16> wifi_stn_ip;
             EmbAJAXTextInput<16> wifi_stn_snet;
@@ -90,7 +90,7 @@ Server-side functions of netsettings.html
 
             EmbAJAXCheckButton net_ck_mode;
             EmbAJAXTextInput<4> net_ck_int;
-            EmbAJAXTextInput<MAX_CHECK_SERVICE_LEN> net_ck_url;
+            EmbAJAXTextInput<NETCHECK_MAX_SERVICE_LEN> net_ck_url;
             EmbAJAXServerFunction net_ck_save;
 
             EmbAJAXCheckButton dns_mode;
@@ -181,7 +181,7 @@ Server-side functions of netsettings.html
                 wifi_stn_btn("wifi_stn_btn"),
                 wifi_stn_cnct("wifi_stn_cnct"),
                     
-                wifi_stn_count("wifi_stn_count",MAX_SSIDS),
+                wifi_stn_count("wifi_stn_count",NET_MAX_SSIDS),
                 wifi_stn_name("wifi_stn_name",""),
                 wifi_stn_on("wifi_stn_on",false),
                 loadWifiList("loadWifiList"),

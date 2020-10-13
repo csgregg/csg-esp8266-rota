@@ -12,11 +12,11 @@ void ICACHE_FLASH_ATTR setup() {
     // Services started in the proper order
     device.begin();
     config.begin();
-    logger.begin( network.getWiFiClient(), config.settings.logConfig );  
-    network.begin( config.settings.networkConfig );
-    timelocation.begin( network.getWiFiClient(), config.settings.timelocConfig );
-    website.begin( config.settings.networkConfig.dnsSettings.hostname );
-    updater.begin( network.getWiFiClient(), config.settings.otaConfig );
+    logger.begin( network.getWiFiClient(), config.settings.logSettings );  
+    network.begin( config.settings.networkSettings );
+    timelocation.begin( network.getWiFiClient(), config.settings.timelocsettings );
+    website.begin( config.settings.networkSettings.dnsSettings.hostname );
+    updater.begin( network.getWiFiClient(), config.settings.otaSettings );
     
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     

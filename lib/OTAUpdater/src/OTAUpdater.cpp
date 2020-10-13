@@ -130,6 +130,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
     http.setReuse(false);
     http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
+    http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.useHTTP10(true);
     
     http.begin( *_client, _assetRequestURL );
@@ -194,7 +195,7 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
  
 
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
+t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
     char littleFSFileRequest[OTA_MAX_IMAGE_URL_LEN];
@@ -209,39 +210,38 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
     LOG(PSTR("(Updater) Updating File System"));
     LOGF_HIGH(  PSTR("(Updater) File system image request: %s"), littleFSFileRequest );
 
-    HTTPUpdateResult ret;
-
     if( _settings->skipUpdates ) {
 
         LOG(PSTR("(Updater) Skipping update"));
-        ret = HTTP_UPDATE_NO_UPDATES;
-
+        return UPDATE_SKIPPED;
     }
-    else ret = ESPhttpUpdate.updateFS( *_client, littleFSFileRequest );
-
-    switch(ret) {
-
-    case HTTP_UPDATE_FAILED: {
-            LOGF_CRITICAL(  PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-        }
-        break;
-
-    case HTTP_UPDATE_NO_UPDATES:
-        LOG(PSTR("(Updater) No new file system update"));
-        break;
+    else {
         
-    case HTTP_UPDATE_OK:
-        LOG(PSTR("(Updater) File system updated successfully"));
-        break;
+        HTTPUpdateResult ret;
+        ret = ESPhttpUpdate.updateFS( *_client, littleFSFileRequest );
+
+        switch(ret) {
+
+            case HTTP_UPDATE_FAILED:
+                LOGF_CRITICAL(  PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                return FS_UPDATE_FAILED;
+
+            case HTTP_UPDATE_NO_UPDATES:
+                LOG(PSTR("(Updater) No new file system update"));
+                return NO_UPDATES;
+                
+            default:
+                LOG(PSTR("(Updater) File system updated successfully"));
+
+        }
+
+        return UPDATE_OK;
     }
-
-    return ret;
-
 }
 #endif
 
 
-HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
+t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
     char imageFileRequest[OTA_MAX_IMAGE_URL_LEN];
@@ -256,44 +256,40 @@ HTTPUpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, 
     LOG(PSTR("(Updater) Updating Program"));
     LOGF_HIGH( PSTR("(Updater) Program image request: %s"), imageFileRequest );
 
-    HTTPUpdateResult ret;
-
     if( _settings->skipUpdates ) {
 
         LOG(PSTR("(Updater) Skipping update"));
-        ret = HTTP_UPDATE_NO_UPDATES;
+        return UPDATE_SKIPPED;
 
     }
     else {
         
         ESPhttpUpdate.rebootOnUpdate(false);
+        HTTPUpdateResult ret;
         ret = ESPhttpUpdate.update( *_client, imageFileRequest );
-    }
 
-    switch(ret) {
+        switch(ret) {
 
-    case HTTP_UPDATE_FAILED: {
-            LOGF_CRITICAL( PSTR("(Updater) Program update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
+            case HTTP_UPDATE_FAILED:
+                LOGF_CRITICAL( PSTR("(Updater) Program update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
+                return PROG_UPDATE_FAILED;
+
+            case HTTP_UPDATE_NO_UPDATES:
+                LOG(PSTR("(Updater) No new program update"));
+                return NO_UPDATES;
+                
+            default:
+                LOG(PSTR("(Updater) Program updated successfully"));
         }
-        break;
 
-    case HTTP_UPDATE_NO_UPDATES:
-        LOG(PSTR("(Updater) No new program update"));
-        break;
-        
-    case HTTP_UPDATE_OK:
-        LOG(PSTR("(Updater) Program updated successfully"));
-        break;
+        if( restart ) {
+            LOG_CRITICAL(PSTR("(Updater) Rebooting in 5 sec"));
+            delay(5000);
+            ESP.restart();
+        }
+
+        return UPDATE_OK;
     }
-
-    if( ret == HTTP_UPDATE_OK && restart ) {
-        LOG_CRITICAL(PSTR("(Updater) Rebooting in 5 sec"));
-        delay(5000);
-        ESP.restart();
-
-    }
-
-    return ret;
 
 }
 

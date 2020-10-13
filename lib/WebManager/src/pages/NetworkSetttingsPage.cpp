@@ -44,7 +44,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     wifi_stn_asip.setValue(getAssignedIP());
 
     // AP Settings
-    APConfig wifiAP = config.settings.networkConfig.apSettings;
+    APConfig wifiAP = config.settings.networkSettings.apSettings;
 
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
@@ -62,26 +62,26 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
     wifi_ap_save.setEnabled(false);
 
-    WiFiMode wifimode =  config.settings.networkConfig.wifiMode;
+    WiFiMode wifimode =  config.settings.networkSettings.wifiMode;
     wifi_mode_stn.setChecked( wifimode == WIFI_STA || wifimode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( wifimode == WIFI_AP || wifimode == WIFI_AP_STA );
 
     // Connectivity Settings
-    NetCheckConfig netStatus = config.settings.networkConfig.netCheckSettings;
+    NetCheckConfig netStatus = config.settings.networkSettings.netCheckSettings;
     net_ck_mode.setChecked( netStatus.mode );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
     net_ck_url.setValue( netStatus.checkService );
     net_ck_save.setEnabled(false);
 
     // DNS Settings
-    DNSConfig dns = config.settings.networkConfig.dnsSettings;
+    DNSConfig dns = config.settings.networkSettings.dnsSettings;
     dns_mode.setChecked( dns.mode );
     dns_mdns.setChecked( dns.mDNS );
     dns_name.setValue( dns.hostname );
     dns_save.setEnabled(false);
 
     // Time and Location Settings
-    TimeLocationSettings tlo = config.settings.timelocConfig;
+    TimeLocationSettings tlo = config.settings.timelocsettings;
     tlo_ntp.setChecked( tlo.ntpMode );
     tlo_token.setValue( tlo.ipinfoToken );
     loadTimeLocation();
@@ -102,7 +102,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
     
     // Used to send back basic details of a specific wifi station
     if( website.AjaxID == F("wifi_stn_id") ) {
-        wifi_stn_name.setValue(config.settings.networkConfig.stationSettings[wifi_stn_id.intValue()].SSID);
+        wifi_stn_name.setValue(config.settings.networkSettings.stationSettings[wifi_stn_id.intValue()].SSID);
         wifi_stn_on.setValue(network.isStationConnected(wifi_stn_id.intValue()));
         return;
     }
@@ -159,7 +159,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
     strncpy(dns.hostname,dns_name.value(),DNS_MAX_HOSTNAME_LEN);
     dns.mDNS = dns_mdns.isChecked();
 
-    config.settings.networkConfig.dnsSettings = dns;
+    config.settings.networkSettings.dnsSettings = dns;
     config.Save();
 
 }
@@ -167,11 +167,9 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveTimeLocation() {
     LOG_HIGH(PSTR("(Page) Network Settings - Save Time/Location"));
-                
-    // TODO - standardize naming of config and settings
 
-    strncpy(config.settings.timelocConfig.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
-    config.settings.timelocConfig.ntpMode = tlo_ntp.isChecked();
+    strncpy(config.settings.timelocsettings.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
+    config.settings.timelocsettings.ntpMode = tlo_ntp.isChecked();
     // Note location, if updated, is already saved to config.settings.tloconfig by timelocation.detectlocation
     config.Save();
 }
@@ -185,8 +183,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::detectLocation() {
 void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
 
     if( timelocation.isLocationSet() ) {
-        tlo_loc.setValue( config.settings.timelocConfig.location.region );
-        tlo_tz.setValue( config.settings.timelocConfig.location.timezone );
+        tlo_loc.setValue( config.settings.timelocsettings.location.region );
+        tlo_tz.setValue( config.settings.timelocsettings.location.timezone );
     }
     else {
         tlo_loc.setValue( "<b>Not set</b>", true );                                                 // TODO - what to do about progmem
@@ -216,7 +214,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
     char ipbuffer[16];
 
-    wifiStation = config.settings.networkConfig.stationSettings[id];
+    wifiStation = config.settings.networkSettings.stationSettings[id];
 
     wifi_stn_ssid.setValue(wifiStation.SSID);
     wifi_stn_pwd.setValue(wifiStation.password);
@@ -248,8 +246,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
     
     APConfig ap;
 
-    strncpy(ap.SSID, wifi_ap_ssid.value(), MAX_SSID_LEN);
-    strncpy(ap.password, wifi_ap_pwd.value(), MAX_PASSWORD_LEN);
+    strncpy(ap.SSID, wifi_ap_ssid.value(), NET_MAX_SSID_LEN);
+    strncpy(ap.password, wifi_ap_pwd.value(), NET_MAX_PASSWORD_LEN);
     
     bool valid = true;
     valid = valid && ap.ip.fromString(wifi_ap_ip.value());
@@ -258,7 +256,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
     ap.channel = atoi(wifi_ap_ch.value());
 
     if( valid ) {
-        config.settings.networkConfig.apSettings = ap;
+        config.settings.networkSettings.apSettings = ap;
         config.Save();
 
         network.reconnectWifi();
@@ -277,10 +275,10 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
     NetCheckConfig netStatus;
 
     netStatus.mode = net_ck_mode.isChecked();
-    strncpy(netStatus.checkService,net_ck_url.value(),MAX_CHECK_SERVICE_LEN);
+    strncpy(netStatus.checkService,net_ck_url.value(),NETCHECK_MAX_SERVICE_LEN);
     netStatus.interval = atoi(net_ck_int.value());
 
-    config.settings.networkConfig.netCheckSettings = netStatus;
+    config.settings.networkSettings.netCheckSettings = netStatus;
     config.Save();
 
     network.setNetChecker();
@@ -292,8 +290,8 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Save Wifi Station"));
 
-    strncpy(wifiStation.SSID, wifi_stn_ssid.value(), MAX_SSID_LEN);
-    strncpy(wifiStation.password, wifi_stn_pwd.value(), MAX_PASSWORD_LEN);
+    strncpy(wifiStation.SSID, wifi_stn_ssid.value(), NET_MAX_SSID_LEN);
+    strncpy(wifiStation.password, wifi_stn_pwd.value(), NET_MAX_PASSWORD_LEN);
  
     bool valid = true;
     valid = valid && wifiStation.ip.fromString(wifi_stn_ip.value());
@@ -305,7 +303,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
     wifiStation.DHCPMode = (wifi_stn_dhcp.isChecked() ? DHCP : STATIC);
 
     if( valid || wifiStation.DHCPMode == DHCP ) {
-        config.settings.networkConfig.stationSettings[id] = wifiStation;
+        config.settings.networkSettings.stationSettings[id] = wifiStation;
         config.Save();
 
         if( network.getConnectedStation() == id ) network.reconnectWifi();    

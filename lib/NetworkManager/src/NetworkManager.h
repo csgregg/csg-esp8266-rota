@@ -39,9 +39,10 @@ Manages Network Functions
     #include <Ticker.h>
     #include <DNSServer.h>
 
-    #define MAX_SSIDS 3                     // TODO - Prefix all defines
-    #define MAX_SSID_LEN 32
-    #define MAX_PASSWORD_LEN 16
+    #define NET_MAX_SSIDS 3
+    #define NET_MAX_SSID_LEN 32
+    #define NET_MAX_PASSWORD_LEN 16
+
 
     enum DHCPModes { DHCP, STATIC };         // DHCP Mode
 
@@ -52,9 +53,9 @@ Manages Network Functions
     };
 
     // Defaults
-    #define STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
-    #define STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
-    #define STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
+    #define NET_STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
+    #define NET_STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
+    #define NET_STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
 
 
     // Client network config
@@ -64,8 +65,8 @@ Manages Network Functions
 
             void setDefaults();
 
-            char SSID[MAX_SSID_LEN];
-            char password[MAX_PASSWORD_LEN];
+            char SSID[NET_MAX_SSID_LEN];
+            char password[NET_MAX_PASSWORD_LEN];
             DHCPModes DHCPMode;
             IPAddress ip;
             IPAddress subnet;
@@ -101,12 +102,12 @@ Manages Network Functions
 
 
     // Defaults
-    #define DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
-    #define DEFAULT_DHCPMODE DHCP
-    #define DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
-    #define DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
-    #define DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
-    #define DEFAULT_CHANNEL 11
+    #define NET_DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+    #define NET_DEFAULT_DHCPMODE DHCP
+    #define NET_DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
+    #define NET_DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
+    #define NET_DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
+    #define NET_DEFAULT_CHANNEL 11
 
 
     // AP network config
@@ -116,8 +117,8 @@ Manages Network Functions
 
             void setDefaults();
 
-            char SSID[MAX_SSID_LEN];
-            char password[MAX_PASSWORD_LEN];
+            char SSID[NET_MAX_SSID_LEN];
+            char password[NET_MAX_PASSWORD_LEN];
             byte channel;
             IPAddress ip;
             IPAddress subnet;
@@ -147,8 +148,8 @@ Manages Network Functions
 
 
     // Defaults
-    #define DEFAULT_NETCHECK_INTERVAL 10        // 10 sec - how often to check connected to the internet
-    #define MAX_CHECK_SERVICE_LEN 36            // Max length of generate_204 check URL
+    #define NETCHECK_DEFAULT_INTERVAL 10        // 10 sec - how often to check connected to the internet
+    #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
      
 
     class NetCheckConfig {
@@ -158,8 +159,8 @@ Manages Network Functions
             void ICACHE_FLASH_ATTR setDefaults();
 
             bool mode = false;
-            char checkService[MAX_CHECK_SERVICE_LEN] = "";
-            uint interval = DEFAULT_NETCHECK_INTERVAL;
+            char checkService[NETCHECK_MAX_SERVICE_LEN] = "";
+            uint interval = NETCHECK_DEFAULT_INTERVAL;
 
             bool operator==(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)==0)
@@ -216,7 +217,7 @@ Manages Network Functions
             WiFiMode wifiMode;          
 
             // Save multiple networks
-            StationConfig stationSettings[MAX_SSIDS];
+            StationConfig stationSettings[NET_MAX_SSIDS];
             int lastStation = 0;
 
             // Access point mode settings
@@ -232,7 +233,7 @@ Manages Network Functions
             bool operator==(const NetworkSettings& other) const {
 
                 bool stations = true;
-                for( int i = 0; i < MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
+                for( int i = 0; i < NET_MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
 
                 return wifiMode == other.wifiMode
                     && stations
@@ -245,7 +246,7 @@ Manages Network Functions
             bool operator!=(const NetworkSettings& other) const {
 
                 bool stations = false;
-                for( int i = 0; i < MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
+                for( int i = 0; i < NET_MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
 
                 return wifiMode != other.wifiMode
                     || stations
@@ -287,14 +288,14 @@ Manages Network Functions
             WiFiClient& ICACHE_FLASH_ATTR getWiFiClient() { return _client; };
           
             uint ICACHE_FLASH_ATTR getConnectedStation() {
-                for( int i = 0; i < MAX_SSIDS; i++ ) {
+                for( int i = 0; i < NET_MAX_SSIDS; i++ ) {
                     if( _stationConnected[i] ) return i;
                 }
                 return 0;
             };
             bool ICACHE_FLASH_ATTR isStationConnected(uint id) { return _stationConnected[id]; };
             bool ICACHE_FLASH_ATTR isStationConnected() {
-                for( int i = 0; i < MAX_SSIDS; i++ ) {
+                for( int i = 0; i < NET_MAX_SSIDS; i++ ) {
                     if( _stationConnected[i] ) return true;
                 }
                 return false;
@@ -305,6 +306,8 @@ Manages Network Functions
             NetworkStatus ICACHE_FLASH_ATTR getNetworkStatus();
 
             void ICACHE_FLASH_ATTR setNetChecker() { StartNetCheck(); }
+
+            const char* ICACHE_FLASH_ATTR getHostName() { return _settings->dnsSettings.hostname; };
 
 
         protected:
@@ -317,7 +320,7 @@ Manages Network Functions
             void ICACHE_FLASH_ATTR StartWiFi();
 
             void ICACHE_FLASH_ATTR ResetConnectedStatus() {
-                for( int i = 0; i < MAX_SSIDS; i++ ) _stationConnected[i] = false;
+                for( int i = 0; i < NET_MAX_SSIDS; i++ ) _stationConnected[i] = false;
             };
 
             NetworkSettings *_settings;
@@ -331,7 +334,7 @@ Manages Network Functions
 
             WiFiClient _client;               // TODO - can this be a pointer to WiFiClient class and then create new instance in begin? Also elsewhere
 
-            bool _stationConnected[MAX_SSIDS];   
+            bool _stationConnected[NET_MAX_SSIDS];   
 
             Ticker _netCheck;
             static bool _doNetCheck;        // TODO - does this need to be static ?

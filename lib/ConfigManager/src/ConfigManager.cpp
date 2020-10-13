@@ -39,11 +39,6 @@ through the settings member.
 
 // Public:
 
-// Consructor
-ICACHE_FLASH_ATTR ConfigManager::ConfigManager() {
-    _IsInitialized = false;             // Don't do anything until flash is initialized   
-}
-
 
 // Initialize the flash
 void ICACHE_FLASH_ATTR ConfigManager::begin( const bool forceInit ) {
@@ -84,11 +79,7 @@ void ICACHE_FLASH_ATTR ConfigManager::setDefaults() {
 
     LOG(PSTR("(Config) Reset to defaults"));
 
-    // Default settings
-    settings.networkConfig.setDefaults();
-    settings.logConfig.setDefaults();
-    settings.otaConfig.setDefaults();
-    settings.timelocConfig.setDefaults();
+    settings.setDefaults();
 
     // Save to flash
     Save(true);
@@ -107,7 +98,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Read() {
     }
 
     // Get the settings
-	settings = EEPROM.get(markerDataSize, settings);
+	settings = EEPROM.get(sizeof(ConfigManager::startMarker), settings);
 }
 
 
@@ -123,7 +114,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 
     if( !force ) {
 
-        deviceSettings readset = EEPROM.get(markerDataSize, readset);
+        deviceSettings readset = EEPROM.get(sizeof(ConfigManager::startMarker), readset);
 
         // Check to see what is there first and only save if different 
         if( readset == settings ) {
@@ -136,7 +127,7 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 
     // Different so save
 
-    EEPROM.put(markerDataSize, settings);
+    EEPROM.put(sizeof(ConfigManager::startMarker), settings);
 	EEPROM.commit();
 
     LOG(PSTR("(Config) New sttings saved"));
