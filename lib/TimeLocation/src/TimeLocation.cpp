@@ -42,7 +42,7 @@ https://arduinojson.org/v6/assistant/
 
 */
 
-#define TLO_IPINFO_JSON_RESPONSE_SIZE (JSON_OBJECT_SIZE(9) + 280)          // TODO - Do #defines for others like this.
+#define TLO_IPINFO_JSON_RESPONSE_SIZE (JSON_OBJECT_SIZE(9) + 280)
 
 
 #include <ArduinoJson.h>

@@ -77,34 +77,45 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     if( website.AjaxID == F("btn_rst_net") ){
         config.settings.networkSettings.setDefaults();
         config.Save();
+        return;
     }
 
     if( website.AjaxID == F("btn_rst_log") ){
         config.settings.logSettings.setDefaults();
         config.Save();
         logger.begin(config.settings.logSettings);
+        return;
     }
 
     if( website.AjaxID == F("btn_rst_all") ){
         config.setDefaults();
         config.Save();
+        return;
     }
 
     if( website.AjaxID == F("btn_rst_ota") ){
         config.settings.otaSettings.setDefaults();
         config.Save();
         updater.begin(config.settings.otaSettings);
+        return;
     }
 
     if( website.AjaxID == F("btn_rst_tlo") ) {
         config.settings.timelocsettings.setDefaults();
         config.Save();
         timelocation.begin(config.settings.timelocsettings);
+        return;
     }
 
-    if( website.AjaxID == F("log_save") ) saveLogConfig();
+    if( website.AjaxID == F("log_save") ) {
+        saveLogConfig();
+        return;
+    }
 
-    if( website.AjaxID == F("ota_save") ) saveOTAConfig();
+    if( website.AjaxID == F("ota_save") ) {
+        saveOTAConfig();
+        return;
+    }
 
 }
 
