@@ -39,27 +39,16 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) Network Settings - Initialize AJAX"));
 
-    char buffer[16];
-
-    wifi_stn_asip.setValue(getAssignedIP());
+    wifi_stn_asip.setValue(network.getAssignedIP());
 
     // AP Settings
     APConfig wifiAP = config.settings.networkSettings.apSettings;
-
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
-
-    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.ip[0], wifiAP.ip[1], wifiAP.ip[2], wifiAP.ip[3] );
-    wifi_ap_ip.setValue(buffer);
-
-    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.subnet[0], wifiAP.subnet[1], wifiAP.subnet[2], wifiAP.subnet[3] );
-    wifi_ap_snet.setValue(buffer);
-
-    sprintf_P(buffer, PSTR("%i.%i.%i.%i"), wifiAP.gateway[0], wifiAP.gateway[1], wifiAP.gateway[2], wifiAP.gateway[3] );
-    wifi_ap_gtwy.setValue(buffer);
-
+    wifi_ap_ip.setValue(wifiAP.ip.toString().c_str());
+    wifi_ap_snet.setValue(wifiAP.subnet.toString().c_str());
+    wifi_ap_gtwy.setValue(wifiAP.gateway.toString().c_str());
     wifi_ap_ch.selectOption(wifiAP.channel);
-
     wifi_ap_save.setEnabled(false);
 
     WiFiMode wifimode =  config.settings.networkSettings.wifiMode;
@@ -67,6 +56,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     wifi_mode_ap.setChecked( wifimode == WIFI_AP || wifimode == WIFI_AP_STA );
 
     // Connectivity Settings
+    char buffer[5];
     NetCheckConfig netStatus = config.settings.networkSettings.netCheckSettings;
     net_ck_mode.setChecked( netStatus.mode );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
@@ -200,7 +190,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
     network.setWiFiMode(mode);
     config.Save();
 
-    wifi_stn_asip.setValue(getAssignedIP());
+    wifi_stn_asip.setValue(network.getAssignedIP());
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
     clearLoader.call();
@@ -212,29 +202,15 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadWifiStation(uint id) {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Load Wifi Station"));
 
-    char ipbuffer[16];
-
     wifiStation = config.settings.networkSettings.stationSettings[id];
 
     wifi_stn_ssid.setValue(wifiStation.SSID);
     wifi_stn_pwd.setValue(wifiStation.password);
-
-    // IP Addresses
-    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.ip[0], wifiStation.ip[1], wifiStation.ip[2], wifiStation.ip[3] );
-    wifi_stn_ip.setValue(ipbuffer);
-
-    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.subnet[0], wifiStation.subnet[1], wifiStation.subnet[2], wifiStation.subnet[3] );
-    wifi_stn_snet.setValue(ipbuffer);
-
-    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.gateway[0], wifiStation.gateway[1], wifiStation.gateway[2], wifiStation.gateway[3] );
-    wifi_stn_gtwy.setValue(ipbuffer);
-
-    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.dns1[0], wifiStation.dns1[1], wifiStation.dns1[2], wifiStation.dns1[3] );
-    wifi_stn_dns1.setValue(ipbuffer);
-
-    sprintf_P(ipbuffer, PSTR("%i.%i.%i.%i"), wifiStation.dns2[0], wifiStation.dns2[1], wifiStation.dns2[2], wifiStation.dns2[3] );
-    wifi_stn_dns2.setValue(ipbuffer);
-
+    wifi_stn_ip.setValue(wifiStation.ip.toString().c_str());
+    wifi_stn_snet.setValue(wifiStation.subnet.toString().c_str());
+    wifi_stn_gtwy.setValue(wifiStation.gateway.toString().c_str());
+    wifi_stn_dns1.setValue(wifiStation.dns1.toString().c_str());
+    wifi_stn_dns2.setValue(wifiStation.dns2.toString().c_str());
     wifi_stn_dhcp.setChecked(wifiStation.DHCPMode == DHCP);
 
 }
@@ -313,7 +289,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
     }
 
     // Make the client reload the wifi list
-    wifi_stn_asip.setValue(getAssignedIP());
+    wifi_stn_asip.setValue(network.getAssignedIP());
     loadWifiList.call();
 
 }
@@ -326,7 +302,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
     else network.reconnectWifi();
 
     // Make the client reload the wifi list
-    wifi_stn_asip.setValue(getAssignedIP());
+    wifi_stn_asip.setValue(network.getAssignedIP());
     loadWifiList.call();
 
 }
