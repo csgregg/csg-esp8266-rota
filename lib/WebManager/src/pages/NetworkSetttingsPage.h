@@ -240,12 +240,6 @@ Server-side functions of netsettings.html
 
             void ICACHE_FLASH_ATTR saveNetCheck();
 
-            char* ICACHE_FLASH_ATTR getAssignedIP() {
-                static char ip[15];
-                sprintf(ip, "%i.%i.%i.%i", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3] );
-                return ip;
-            }
-
             void ICACHE_FLASH_ATTR saveDNS();
 
             void ICACHE_FLASH_ATTR saveTimeLocation();

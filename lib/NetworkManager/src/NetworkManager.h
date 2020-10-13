@@ -309,6 +309,11 @@ Manages Network Functions
 
             const char* ICACHE_FLASH_ATTR getHostName() { return _settings->dnsSettings.hostname; };
 
+            char* ICACHE_FLASH_ATTR getAssignedIP() {
+                static char ip[16];
+                strcpy(ip, WiFi.localIP().toString().c_str());
+                return ip;
+            }
 
         protected:
 
@@ -332,7 +337,7 @@ Manages Network Functions
            
             uint _disconnectedStation;       // Used to see how long disconnected in station mode
 
-            WiFiClient _client;               // TODO - can this be a pointer to WiFiClient class and then create new instance in begin? Also elsewhere
+            WiFiClient _client;
 
             bool _stationConnected[NET_MAX_SSIDS];   
 
