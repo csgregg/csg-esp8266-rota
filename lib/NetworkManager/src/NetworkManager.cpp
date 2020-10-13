@@ -260,8 +260,6 @@ void NetworkManager::handle() {
 // Handle WiFi Connectivity
 void NetworkManager::handleWiFi(const bool force) {
 
-    // TODO - Mode handling for disconnects, portal, etc
-
     if( force ) ResetConnectedStatus();
 
     switch( _settings->wifiMode ) {
