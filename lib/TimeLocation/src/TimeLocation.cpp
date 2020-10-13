@@ -139,6 +139,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     strcpy_P(url,flag_TLO_IPINFO_SERVICE);
     strcat(url,_settings->ipinfoToken);
 
+    http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.useHTTP10(true);
     if( !http.begin(*_client,url) ) {
         LOG(PSTR("(TimeLoc) HTTP error getting location"));

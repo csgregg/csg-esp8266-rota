@@ -39,6 +39,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 #include "WebManager.h"
 #include "Logger.h"
 #include "TimeLocation.h"
+#include "NetworkManager.h"
 
 #include "pages/NetworkSetttingsPage.h"
 #include "pages/AboutPage.h"
@@ -61,18 +62,6 @@ PageHandler webpages[] = {
     {indexpage.URL, indexpage.handler, indexpage.init},
     {systempage.URL, systempage.handler, systempage.init},
 };
-
-
-
-//////////////////////// EmbAJAXClientFunction /////////////////////////////
-
-
-
-
-
-
-
-
 
 
 
@@ -180,7 +169,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
             if( _server.method() == HTTP_POST ) {
                 if( AjaxID == "" ) {
                     net_status.setValue( network.getNetworkStatus() );                          // Update status icon
-                    if( post_message.getStatus() == SUCCESS ) post_message.call();              // Clear the message and don't need acknowledgement
+                    if( post_message.getStatus() == EmbAJAXClientFunction::SUCCESS ) post_message.call();              // Clear the message and don't need acknowledgement
                     if( timelocation.isTimeSet() ) timelocation.strcpyTimeDate(_datetime);     // Update date time string
                     else strcpy_P(_datetime,PSTR("Time not set"));
                     date_time.setValue(_datetime);
@@ -235,7 +224,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::checkCaptivePortal() {
 
     // Windows - redirect
     if( URL.endsWith(PSTR("/ncsi.txt")) ) {
-        _server.send ( 200, PSTR("text/plain"), PSTR("") );     // TODO - use literals
+        _server.send ( 200, PSTR("text/plain"), PSTR("") );
         return true;
     }
     if( URL.endsWith(PSTR("/redirect")) ) {
@@ -337,7 +326,11 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
 void ICACHE_FLASH_ATTR WebsiteManager::redirectToCaptivePortal() {
     LOG(PSTR("(Website) Request redirected to captive portal"));
 
-    _server.sendHeader(PSTR("Location"), PSTR("http://esp-rota-T1"), true);     // TODO - Change to hostname
+    char buffer[DNS_MAX_HOSTNAME_LEN+sizeof("http://")];
+    strcpy_P(buffer,PSTR("http://"));
+    strncat(buffer,network.getHostName(),sizeof(buffer));
+
+    _server.sendHeader(PSTR("Location"), buffer, true);
     _server.setContentLength(0);
     _server.send ( 302, PSTR("text/plain"), PSTR(""));
 }

@@ -39,7 +39,7 @@ binaries built by Travis-CI.
     #include <ESP8266httpUpdate.h>
     #include <Ticker.h>
 
-    #define DEFAULT_UPDATE_INTERVAL 300
+    #define OTA_DEFAULT_UPDATE_INTERVAL 300
 
     // Define Sizes
     #define OTA_MAX_SERVICE_LEN 48
@@ -49,14 +49,16 @@ binaries built by Travis-CI.
     #define OTA_MAX_CODE_LEN 16
     #define OTA_MAX_TAG_LEN 12
     #define OTA_MAX_DATE_LEN 22
-    #define OTA_MAX_URL_LEN  OTA_MAX_SERVICE_LEN + OTA_MAX_REPO_LEN + OTA_MAX_USER_LEN + OTA_MAX_TOKEN_LEN + OTA_MAX_CODE_LEN + OTA_MAX_TAG_LEN + (sizeof("http://")-1) + (sizeof("?repo=")-1) + (sizeof("&user=")-1) + (sizeof("&token=")-1) + 1
-    #define OTA_MAX_IMAGE_URL_LEN OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof(_progSuffix)-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1)
+    #define OTA_MAX_URL_LEN  (OTA_MAX_SERVICE_LEN + OTA_MAX_REPO_LEN + OTA_MAX_USER_LEN + OTA_MAX_TOKEN_LEN + OTA_MAX_CODE_LEN + OTA_MAX_TAG_LEN + (sizeof("http://")-1) + (sizeof("?repo=")-1) + (sizeof("&user=")-1) + (sizeof("&token=")-1) + 1)
+    #define OTA_MAX_IMAGE_URL_LEN (OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof(_progSuffix)-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1))
+
 
     typedef enum : int {
-        REMOTE_FS_UPDATE_FAILED,
-        REMOTE_IMG_UPDATE_FAILED,
-        REMOTE_UPDATE_NO_UPDATES,
-        REMOTE_UPDATE_OK
+        FS_UPDATE_FAILED,
+        PROG_UPDATE_FAILED,
+        NO_UPDATES,
+        UPDATE_SKIPPED,
+        UPDATE_OK
     } t_update_result;
 
 
@@ -71,7 +73,7 @@ binaries built by Travis-CI.
             char repo[OTA_MAX_REPO_LEN] = "";
             char user[OTA_MAX_USER_LEN] = "";
             char token[OTA_MAX_TOKEN_LEN] = "";
-            uint interval = DEFAULT_UPDATE_INTERVAL;
+            uint interval = OTA_DEFAULT_UPDATE_INTERVAL;
             bool skipUpdates = true;
 
              // Create a compare operators
@@ -136,9 +138,9 @@ binaries built by Travis-CI.
             static void TriggerUpdateCheck();
 
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-            HTTPUpdateResult ICACHE_FLASH_ATTR UpdateFS( const bin_type type );
+            t_update_result ICACHE_FLASH_ATTR UpdateFS( const bin_type type );
 #endif
-            HTTPUpdateResult ICACHE_FLASH_ATTR UpdateProg( const bin_type type, const bool restart = false );
+            t_update_result ICACHE_FLASH_ATTR UpdateProg( const bin_type type, const bool restart = false );
 
         private:
         

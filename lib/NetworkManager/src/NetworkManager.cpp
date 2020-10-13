@@ -46,7 +46,7 @@ void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 
     strcpy_P( SSID, PSTR("") );
     strcpy_P( password, PSTR("") );
-    DHCPMode = DEFAULT_DHCPMODE;
+    DHCPMode = NET_DEFAULT_DHCPMODE;
     ip = uint32_t(0x00000000);
     subnet = uint32_t(0x00000000);
     gateway = uint32_t(0x00000000);
@@ -60,10 +60,10 @@ void ICACHE_FLASH_ATTR APConfig::setDefaults() {
 
     strcpy_P( SSID, flag_DEVICE_CODE );
     strcpy_P( password, flag_DEVICE_CODE );
-    channel = DEFAULT_CHANNEL;
-    ip = uint32_t(DEFAULT_STATICIP);
-    subnet = uint32_t(DEFAULT_SUBNET);
-    gateway = uint32_t(DEFAULT_GATEWAY);
+    channel = NET_DEFAULT_CHANNEL;
+    ip = uint32_t(NET_DEFAULT_STATICIP);
+    subnet = uint32_t(NET_DEFAULT_SUBNET);
+    gateway = uint32_t(NET_DEFAULT_GATEWAY);
 
 }
 
@@ -88,10 +88,10 @@ void ICACHE_FLASH_ATTR DNSConfig::setDefaults() {
 
 void ICACHE_FLASH_ATTR NetworkSettings::setDefaults() {
 
-    wifiMode = DEFAULT_WIFIMODE;
+    wifiMode = NET_DEFAULT_WIFIMODE;
     lastStation = 0;
     apSettings.setDefaults();
-    for( int i = 0; i<MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
+    for( int i = 0; i<NET_MAX_SSIDS; i++ ) stationSettings[i].setDefaults();
     netCheckSettings.setDefaults();
     dnsSettings.setDefaults();
 
@@ -166,13 +166,13 @@ void NetworkManager::HandleNetCheck() {
 
             LOG_HIGH(PSTR("(Network) Checking for internet"));
 
-            char url[MAX_CHECK_SERVICE_LEN+sizeof("http://")];          // TODO - Move to class member. Elsewhere too
+            char url[NETCHECK_MAX_SERVICE_LEN+sizeof("http://")];
             strcpy_P(url,PSTR("http://"));
-            strcat(url, _settings->netCheckSettings.checkService);
+            strncat(url, _settings->netCheckSettings.checkService,sizeof(url));
 
             http.begin( _client, url );
 
-            http.setUserAgent(PSTR("ESP8266-http-Update"));                            // TODO - Change all instances to literals
+            http.setUserAgent(FPSTR(flag_DEVICE_CODE));
             http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
             int httpresponse = http.GET();
@@ -315,7 +315,7 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     }
 
     bool anystns = false;
-    for( int i = 0; i < MAX_SSIDS && !anystns; i++ ) {
+    for( int i = 0; i < NET_MAX_SSIDS && !anystns; i++ ) {
         if( _settings->stationSettings[i].SSID[0] != '\0' ) anystns = true;
     }
     if( !anystns ) {
@@ -332,12 +332,12 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     }
 
     // Are we waiting for SDK to try to retry for a period
-    if( _disconnectedStation != 0 && (millis()-_disconnectedStation < STATION_DISCONNECT_TIME) && !force ) {
+    if( _disconnectedStation != 0 && (millis()-_disconnectedStation < NET_STATION_DISCONNECT_TIME) && !force ) {
         return false;  
     }
 
     // Turn on AP if we have waited too long
-    if(_disconnectedStation != 0 && (millis()-_disconnectedStation > STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
+    if(_disconnectedStation != 0 && (millis()-_disconnectedStation > NET_STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
         LOG(PSTR("(Network) - Cannot connect to WiFi. Starting AP"));
         _settings->wifiMode = WIFI_AP;
         return false;
@@ -346,8 +346,8 @@ bool NetworkManager::handleWiFiStation(const bool force) {
     // Try each of the stored stations, starting with last
     bool success = false;
     
-    for( int i = 0; i < MAX_SSIDS && !success; i++ ) {
-        int trystation = (i + _settings->lastStation) % MAX_SSIDS;
+    for( int i = 0; i < NET_MAX_SSIDS && !success; i++ ) {
+        int trystation = (i + _settings->lastStation) % NET_MAX_SSIDS;
         success = connectWiFiStation( trystation );
     }
 
@@ -422,7 +422,7 @@ bool ICACHE_FLASH_ATTR NetworkManager::connectWiFiStation( const int id ) {
 
 	if( ret ) {
 		int i = 0;
-		while( WiFi.status() != WL_CONNECTED && i++ <= STATION_TRY_TIME ) {
+		while( WiFi.status() != WL_CONNECTED && i++ <= NET_STATION_TRY_TIME ) {
 			delay(500);
 			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
 		}

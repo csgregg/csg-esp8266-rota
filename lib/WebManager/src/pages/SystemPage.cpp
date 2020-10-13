@@ -41,8 +41,8 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) System - Initialize AJAX"));
 
-    LogSettings logger = config.settings.logConfig;
-    OTASettings ota = config.settings.otaConfig;
+    LogSettings logger = config.settings.logSettings;
+    OTASettings ota = config.settings.otaSettings;
 
     static char buffer[8];
 
@@ -75,14 +75,14 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     if( website.AjaxID == F("btn_restart") ) device.restart();
 
     if( website.AjaxID == F("btn_rst_net") ){
-        config.settings.networkConfig.setDefaults();
+        config.settings.networkSettings.setDefaults();
         config.Save();
     }
 
     if( website.AjaxID == F("btn_rst_log") ){
-        config.settings.logConfig.setDefaults();
+        config.settings.logSettings.setDefaults();
         config.Save();
-        logger.begin(config.settings.logConfig);
+        logger.begin(config.settings.logSettings);
     }
 
     if( website.AjaxID == F("btn_rst_all") ){
@@ -91,15 +91,15 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     }
 
     if( website.AjaxID == F("btn_rst_ota") ){
-        config.settings.otaConfig.setDefaults();
+        config.settings.otaSettings.setDefaults();
         config.Save();
-        updater.begin(config.settings.otaConfig);
+        updater.begin(config.settings.otaSettings);
     }
 
     if( website.AjaxID == F("btn_rst_tlo") ) {
-        config.settings.timelocConfig.setDefaults();
+        config.settings.timelocsettings.setDefaults();
         config.Save();
-        timelocation.begin(config.settings.timelocConfig);
+        timelocation.begin(config.settings.timelocsettings);
     }
 
     if( website.AjaxID == F("log_save") ) saveLogConfig();
@@ -116,17 +116,17 @@ void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
     log.serialMode = log_srl.isChecked();   
     log.serialBaud = atoi(log_baud.value());
     log.serviceMode = log_ser.isChecked();
-    strncpy(log.serviceURL,log_url.value(),MAX_SERVICE_LEN);
-    strncpy(log.serviceKey,log_key.value(),MAX_KEY_LEN);
+    strncpy(log.serviceURL,log_url.value(),LOG_MAX_SERVICE_LEN);
+    strncpy(log.serviceKey,log_key.value(),LOG_MAX_KEY_LEN);
     log.tickMode = log_tick.isChecked();
     log.tickInterval = atoi(log_tick_int.value());
-    strncpy(log.globalTags,log_tags.value(),MAX_GLOBAL_TAG_LEN);
+    strncpy(log.globalTags,log_tags.value(),LOG_MAX_GLOBAL_TAG_LEN);
     log.level = (logLevel)atoi(log_level.value());
 
-    config.settings.logConfig = log;
+    config.settings.logSettings = log;
     config.Save();
 
-    logger.begin(config.settings.logConfig);
+    logger.begin(config.settings.logSettings);
 
     // TODO - loader is in the wrong place on log save
 
@@ -145,10 +145,10 @@ void ICACHE_FLASH_ATTR SystemPage::saveOTAConfig() {
     ota.skipUpdates = ota_skip.isChecked();
     ota.interval = atoi(ota_ck_int.value());
 
-    config.settings.otaConfig = ota;
+    config.settings.otaSettings = ota;
     config.Save();
 
-    updater.begin(config.settings.otaConfig);           
+    updater.begin(config.settings.otaSettings);           
 
 }
 

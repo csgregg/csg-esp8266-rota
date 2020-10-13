@@ -157,8 +157,8 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
     if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
 
-        char str[MAX_MESSAGE_LEN];
-        snprintf_P(str, MAX_MESSAGE_LEN, PSTR("(Context: %s %s %i) %s"), file, func_P, line, message);
+        char str[LOG_MAX_MESSAGE_LEN];
+        snprintf_P(str, LOG_MAX_MESSAGE_LEN, PSTR("(Context: %s %s %i) %s"), file, func_P, line, message);
 
         println(type, tag, str);
     }
@@ -263,7 +263,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 
     va_list arg;
     va_start(arg, format);
-    char temp[MAX_MESSAGE_LEN];
+    char temp[LOG_MAX_MESSAGE_LEN];
     char* buffer = temp;
 
     size_t len = vsnprintf(temp, sizeof(temp), format, arg);
@@ -297,7 +297,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 
     va_list arg;
     va_start(arg, format);
-    char temp[MAX_MESSAGE_LEN];
+    char temp[LOG_MAX_MESSAGE_LEN];
     char* buffer = temp;
 
     size_t len = vsnprintf(temp, sizeof(temp), format, arg);
@@ -330,8 +330,8 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 
 #ifndef NO_LOGGING
 
-    char buffer[MAX_MESSAGE_LEN];
-    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %s"), name, FPSTR(flag));
+    char buffer[LOG_MAX_MESSAGE_LEN];
+    snprintf_P(buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %s"), name, FPSTR(flag));
 
     println(type, tag, buffer);
 
@@ -343,8 +343,8 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 
 #ifndef NO_LOGGING
 
-    char buffer[MAX_MESSAGE_LEN];
-    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
+    char buffer[LOG_MAX_MESSAGE_LEN];
+    snprintf_P(buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -356,8 +356,8 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 
 #ifndef NO_LOGGING
 
-    char buffer[MAX_MESSAGE_LEN];
-    snprintf_P(buffer, MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
+    char buffer[LOG_MAX_MESSAGE_LEN];
+    snprintf_P(buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag);
 
     println(type, tag, buffer);
 
@@ -386,9 +386,9 @@ void ICACHE_FLASH_ATTR LogClient::LogToSerial( logType type, logTag tag, const c
 
 #ifndef NO_LOGGING
 
-    char shortened[MAX_MESSAGE_LEN+1];
+    char shortened[LOG_MAX_MESSAGE_LEN+1];
 
-    strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
+    strncpy( shortened, message, LOG_MAX_MESSAGE_LEN );        // Truncate if too long
 
     LogPrefix(type, tag);
     Serial.println(shortened);
@@ -405,10 +405,10 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     if( WiFi.status() != WL_CONNECTED ) return;
 
-    char thistype[MAX_TYPE_DESC_LEN];
+    char thistype[LOG_MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[type]);
 
-    char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
+    char loggingURL[strlen(_FullServiceURL)+LOG_MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
     strcat_P(loggingURL,c_log_tag_descript[tag]);
     strcat_P(loggingURL,PSTR("/"));
@@ -427,9 +427,9 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     jsonLog[F("localtime")] = millis();
 
-    char shortened[MAX_MESSAGE_LEN];
+    char shortened[LOG_MAX_MESSAGE_LEN];
 
-    strncpy( shortened, message, MAX_MESSAGE_LEN );        // Truncate if too long
+    strncpy( shortened, message, LOG_MAX_MESSAGE_LEN );        // Truncate if too long
 
     jsonLog[F("message")] = shortened;
 
@@ -476,7 +476,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         }
     }
 
-    http.setUserAgent(PSTR("ESP8266-http-logger"));                 // TODO - use device code
+    http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
     int httpCode = http.POST(jsonMessage);
@@ -514,10 +514,10 @@ bool LogClient::handleTick( ){
         Serial.println(PSTR("(Logger) Logging a tick")); 
     }
 
-    char thistype[MAX_TYPE_DESC_LEN];
+    char thistype[LOG_MAX_TYPE_DESC_LEN];
     strcpy_P(thistype, c_log_type_descript[NORMAL_LOG]);
 
-    char loggingURL[strlen(_FullServiceURL)+MAX_TAG_DESC_LEN+2];
+    char loggingURL[strlen(_FullServiceURL)+LOG_MAX_TAG_DESC_LEN+2];
     strcpy(loggingURL,_FullServiceURL);
     strcat_P(loggingURL,c_log_tag_descript[STATUS_TAG]);
     strcat_P(loggingURL,PSTR("/"));
@@ -566,7 +566,7 @@ bool LogClient::handleTick( ){
         }
     }
     
-    http.setUserAgent(PSTR("ESP8266-http-logger"));     // TODO - Are these needed
+    http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
 
     int httpCode = http.POST(jsonMessage);

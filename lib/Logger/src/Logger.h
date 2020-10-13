@@ -86,31 +86,30 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     #endif
 
-    // TODO - Prefix these defines with 'LOG_' and all others
+
     // Sizes
-    #define MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
-    #define MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
-    #define MAX_TAG_TYPES 2
-    #define MAX_GLOBAL_TAG_LEN 8    // Max length of global tag string
-    #define MAX_KEY_LEN 40          // Max length of service key string
-    #define MAX_SERVICE_LEN 32      // Max length of service URL
+    #define LOG_MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
+    #define LOG_MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
+    #define LOG_MAX_TAG_TYPES 2
+    #define LOG_MAX_GLOBAL_TAG_LEN 8    // Max length of global tag string
+    #define LOG_MAX_KEY_LEN 40          // Max length of service key string
+    #define LOG_MAX_SERVICE_LEN 32      // Max length of service URL
 
     // Defaults
-    #define DEFAULT_MONITOR_BAUD 115200
-    #define DEFAULT_TICK_INTERVAL 60
+    #define LOG_DEFAULT_MONITOR_BAUD 115200
+    #define LOG_DEFAULT_TICK_INTERVAL 60
 
     // Define max JSON key sizes
-    #define JSON_SIZE_LOCALTIME 10
-    #define JSON_SIZE_MESSAGE MAX_MESSAGE_LEN
-    #define JSON_SIZE_BOARD 20
-    #define JSON_SIZE_MAC 17
-    #define JSON_SIZE_NAME 30
-    #define JSON_SIZE_CODE 20
-    #define JSON_SIZE_BUILD 8
-    #define JSON_SIZE_HEAP 10
-    #define JSON_SIZE_IP 15
-    #define JSON_SIZE_SSID 32
-
+    #define LOG_JSON_SIZE_LOCALTIME 10
+    #define LOG_JSON_SIZE_MESSAGE MAX_MESSAGE_LEN
+    #define LOG_JSON_SIZE_BOARD 20
+    #define LOG_JSON_SIZE_MAC 17
+    #define LOG_JSON_SIZE_NAME 30
+    #define LOG_JSON_SIZE_CODE 20
+    #define LOG_JSON_SIZE_BUILD 8
+    #define LOG_JSON_SIZE_HEAP 10
+    #define LOG_JSON_SIZE_IP 15
+    #define LOG_JSON_SIZE_SSID 32
 
 
     // Logging level to filter logs 
@@ -143,12 +142,12 @@ debug of code. Macros are defined for to simplifiy common usage.
     static const char cNormal[] PROGMEM = "Normal";
     static const char cHigh[] PROGMEM = "High";
     static const char cVerbose[] PROGMEM = "Verbose";
-    #define MAX_TYPE_DESC_LEN 9
+    #define LOG_MAX_TYPE_DESC_LEN 9
 
     // Tag names
     static const char cDebug[] PROGMEM = "DEBUG ";
     static const char cStatus[] PROGMEM = "Status";
-    #define MAX_TAG_DESC_LEN 7
+    #define LOG_MAX_TAG_DESC_LEN 7
 
     // Logger settings
     class LogSettings {
@@ -157,17 +156,17 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            uint serialBaud = DEFAULT_MONITOR_BAUD;
-            char serviceURL[MAX_SERVICE_LEN] = "";
-            char serviceKey[MAX_KEY_LEN] = "";
+            uint serialBaud = LOG_DEFAULT_MONITOR_BAUD;
+            char serviceURL[LOG_MAX_SERVICE_LEN] = "";
+            char serviceKey[LOG_MAX_KEY_LEN] = "";
 
             bool serialMode = false;
             bool serviceMode = false;
 
             bool tickMode = false;
-            uint tickInterval = DEFAULT_TICK_INTERVAL;
+            uint tickInterval = LOG_DEFAULT_TICK_INTERVAL;
 
-            char globalTags[MAX_GLOBAL_TAG_LEN] = "";
+            char globalTags[LOG_MAX_GLOBAL_TAG_LEN] = "";
             logLevel level = LOGGING_LEVEL_NORMAL;
 
              // Create a compare operators
@@ -242,7 +241,7 @@ debug of code. Macros are defined for to simplifiy common usage.
             WiFiClient* _client;
             LogSettings* _settings;
 
-            char _FullServiceURL[MAX_GLOBAL_TAG_LEN+MAX_KEY_LEN+MAX_SERVICE_LEN+16];
+            char _FullServiceURL[LOG_MAX_GLOBAL_TAG_LEN+LOG_MAX_KEY_LEN+LOG_MAX_SERVICE_LEN+16];
 
             void inline LogPrefix(const logType type, const logTag tag);
 
@@ -254,8 +253,8 @@ debug of code. Macros are defined for to simplifiy common usage.
             static bool _doTick;
             static void TriggerTick();
 
-            const char* const c_log_type_descript[MAX_LOG_TYPES] = {cCritical,cNormal,cHigh,cVerbose};
-            const char* const c_log_tag_descript[MAX_TAG_TYPES] = {cDebug,cStatus};
+            const char* const c_log_type_descript[LOG_MAX_LOG_TYPES] = {cCritical,cNormal,cHigh,cVerbose};
+            const char* const c_log_tag_descript[LOG_MAX_TAG_TYPES] = {cDebug,cStatus};
 
             LogSettings _preSettings;
 

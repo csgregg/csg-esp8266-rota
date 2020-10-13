@@ -58,11 +58,11 @@ Server-side functions of system.html
             EmbAJAXCheckButton log_srl;
             EmbAJAXTextInput<7> log_baud;
             EmbAJAXCheckButton log_ser;
-            EmbAJAXTextInput<MAX_SERVICE_LEN> log_url;
-            EmbAJAXTextInput<MAX_KEY_LEN> log_key;
+            EmbAJAXTextInput<LOG_MAX_SERVICE_LEN> log_url;
+            EmbAJAXTextInput<LOG_MAX_KEY_LEN> log_key;
             EmbAJAXCheckButton log_tick;
             EmbAJAXTextInput<4> log_tick_int;
-            EmbAJAXTextInput<MAX_GLOBAL_TAG_LEN> log_tags;
+            EmbAJAXTextInput<LOG_MAX_GLOBAL_TAG_LEN> log_tags;
             EmbAJAXOptionSelect<5> log_level;
             const char* logLevels[5] = {"0","1","2","3","4"};
             EmbAJAXServerFunction log_save;

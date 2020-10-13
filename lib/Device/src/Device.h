@@ -96,6 +96,8 @@ Build flags are loaded from platformio.ini
         #define BUILD_TIMESTAMP None
     #endif
    
+    // TODO - clean up build flag naming and remove uncessary
+
     // Physical board
     static const char flag_BOARD [] PROGMEM = ESCAPEQUOTE(BOARD);                               // Specific board
 
@@ -149,7 +151,7 @@ Build flags are loaded from platformio.ini
                 _drd(DRD_TIMEOUT, DRD_ADDRESS)
             {};
 
-            enum StartMode {                    // TODO - Move all other enums into classes
+            enum StartMode {
                 NORMAL,
                 DOUBLERESET,
             };

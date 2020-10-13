@@ -44,50 +44,48 @@ through the settings member.
     #include "TimeLocation.h"
 
 
-    #define MAX_CONFIG_STRING_LEN 32
     #define CONFIG_START_MARKER_SIZE 16
     #define CONFIG_START_MARKER "CONFIG_START_10"
 
 
-    // Make marker easy to refer to
-    struct startMarker {
-	    char marker[CONFIG_START_MARKER_SIZE];          // TODO - Move to class?
-    };
 
 
     // Configuration Definitions
 
-    struct deviceSettings
+
+    class deviceSettings
     {
-        NetworkSettings networkConfig;
-        LogSettings logConfig;
-        OTASettings otaConfig;
-        TimeLocationSettings timelocConfig;
+        public:
+            NetworkSettings networkSettings;
+            LogSettings logSettings;
+            OTASettings otaSettings;
+            TimeLocationSettings timelocsettings;
 
-        // Create a compare operators
-        bool operator==(const deviceSettings& other) const {
-            return networkConfig == other.networkConfig
-                && logConfig == other.logConfig
-                && otaConfig == other.otaConfig
-                && timelocConfig == other.timelocConfig;
-        }
+            void ICACHE_FLASH_ATTR setDefaults() {
+                // Default settings
+                networkSettings.setDefaults();
+                logSettings.setDefaults();
+                otaSettings.setDefaults();
+                timelocsettings.setDefaults();
+            };
 
-        bool operator!=(const deviceSettings& other) const {
-            return networkConfig != other.networkConfig
-                || logConfig != other.logConfig
-                || otaConfig != other.otaConfig
-                || timelocConfig != other.timelocConfig;
-        }
+            // Create a compare operators
+            bool operator==(const deviceSettings& other) const {
+                return networkSettings == other.networkSettings
+                    && logSettings == other.logSettings
+                    && otaSettings == other.otaSettings
+                    && timelocsettings == other.timelocsettings;
+            }
+
+            bool operator!=(const deviceSettings& other) const {
+                return networkSettings != other.networkSettings
+                    || logSettings != other.logSettings
+                    || otaSettings != other.otaSettings
+                    || timelocsettings != other.timelocsettings;
+            }
 
     };
     
-
-    // How big is everything
-    const size_t markerDataSize = sizeof(startMarker);
-    const size_t settingsDataSize = sizeof(deviceSettings);
-    const size_t configFlashSize = (markerDataSize + settingsDataSize);
-
-    static_assert( configFlashSize < SPI_FLASH_SEC_SIZE, "Config too large for EEPROM sector of Flash");
 
 
     // Configuration Manager Class
@@ -96,7 +94,10 @@ through the settings member.
 
         public:
 
-            ConfigManager();
+            ConfigManager() ICACHE_FLASH_ATTR {
+                _IsInitialized = false;             // Don't do anything until flash is initialized   
+                static_assert( (sizeof(ConfigManager::startMarker) + sizeof(deviceSettings) ) < SPI_FLASH_SEC_SIZE, "Config too large for EEPROM sector of Flash");
+            };
 
             void ICACHE_FLASH_ATTR begin(const bool forceInit = false);          // Start the config manager
             void ICACHE_FLASH_ATTR setDefaults();                                 // Saves the default settings
@@ -114,6 +115,12 @@ through the settings member.
             void ICACHE_FLASH_ATTR EraseFlash();
 
             bool _IsInitialized;
+
+            // Make marker easy to refer to
+            struct startMarker {
+                char marker[CONFIG_START_MARKER_SIZE];
+            };
+
 
         private:
 
