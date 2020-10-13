@@ -56,6 +56,9 @@ https://arduinojson.org/v6/assistant/
 
 */
 
+#define OTA_CHECK_JSON_RESPONSE_SIZE (JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797)
+
+
 
 #include <ArduinoJson.h>
 
@@ -144,9 +147,8 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     }
 
     // Expecting JSON back with latest release details
-    const size_t capacity = JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797; 
 
-    DynamicJsonDocument responseJSON(capacity);
+    DynamicJsonDocument responseJSON(OTA_CHECK_JSON_RESPONSE_SIZE);
 
     DeserializationError jsonerror = deserializeJson( responseJSON, http.getStream() );
     http.end();

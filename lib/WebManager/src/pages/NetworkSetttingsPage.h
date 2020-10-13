@@ -164,7 +164,7 @@ Server-side functions of netsettings.html
 
             NetworkSettingsPage( void(*phandler)(), void(*pinit)() ) : 
                
-                wifi_mode_ap("wifi_mode_ap",""),            // TODO - should all these strings be literals in PROGMEM
+                wifi_mode_ap("wifi_mode_ap",""),
                 wifi_mode_stn("wifi_mode_stn",""),
                 wifi_mode_save("wifi_mode_save"),
             

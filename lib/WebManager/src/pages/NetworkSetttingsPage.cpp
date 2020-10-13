@@ -87,7 +87,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 
     if( website.AjaxID == F("wifi_stn_save") ) {
         saveWifiStation(website.AjaxValue.toInt());
-        return;                                             // TODO - change all other handlers for this
+        return;
     }
     
     // Used to send back basic details of a specific wifi station
@@ -177,7 +177,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
         tlo_tz.setValue( config.settings.timelocsettings.location.timezone );
     }
     else {
-        tlo_loc.setValue( "<b>Not set</b>", true );                                                 // TODO - what to do about progmem
+        tlo_loc.setValue( "<b>Not set</b>", true );
         tlo_tz.setValue( "<b>Not set</b> <span class=\"w3-small\">(Using UTC)</span>", true );
     }
 }

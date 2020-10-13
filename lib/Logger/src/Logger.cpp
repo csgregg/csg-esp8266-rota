@@ -56,6 +56,9 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
 */
 
+#define LOG_TICK_JSON_SIZE (3*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 244)
+#define LOG_SERVICE_JSON_SIZE (2*JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 509)
+
 
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
@@ -420,10 +423,8 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     }
 
     // Build JSON
-    // Use https://arduinojson.org/v6/assistant/
-    
-    const size_t capacity = 2*JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 509;
-    DynamicJsonDocument jsonLog(capacity);
+
+    DynamicJsonDocument jsonLog(LOG_SERVICE_JSON_SIZE);
 
     jsonLog[F("localtime")] = millis();
 
@@ -436,23 +437,19 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     JsonObject Device = jsonLog.createNestedObject(F("Device"));
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
-        String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
+            Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
+            String tempMAC = WiFi.macAddress(); Device_Hardware[F("MAC")] =  tempMAC.c_str();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
-        Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
-        Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
-        Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
-        Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
-        Device_Env[F("Heap")] = system_get_free_heap_size();
+            Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
+            Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
+            Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
+            Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
+            Device_Env[F("Heap")] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject(F("Network"));
-
-        String tempIP = WiFi.localIP().toString();
-        Device_Network[F("IPAddress")] = tempIP.c_str();
-
-        String tempSSID = WiFi.SSID();
-        Device_Network[F("SSID")] = tempSSID.c_str();
+            String tempIP = WiFi.localIP().toString(); Device_Network[F("IPAddress")] = tempIP.c_str();
+            String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
     char jsonMessage[712+1];        // TODO - check this    
 
@@ -463,7 +460,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         Serial.print(PSTR("(Logger) Log (JSON): "));
         Serial.println(jsonMessage); 
     }
-
 
     // Start the connection
     
@@ -478,7 +474,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
-
     int httpCode = http.POST(jsonMessage);
     http.end();
 
@@ -523,33 +518,27 @@ bool LogClient::handleTick( ){
     strcat_P(loggingURL,PSTR("/"));
 
     // Build JSON
-    // Use https://arduinojson.org/v6/assistant/
     
-    const size_t capacity = 3*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 244;
-    DynamicJsonDocument jsonLog(capacity);
+    DynamicJsonDocument jsonLog(LOG_TICK_JSON_SIZE);
 
     jsonLog[F("localtime")] = millis();
 
     JsonObject Device = jsonLog.createNestedObject(F("Device"));
 
         JsonObject Device_Hardware = Device.createNestedObject(F("Hardware"));
-        Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
-        Device_Hardware[F("MAC")] = WiFi.macAddress();
+            Device_Hardware[F("Board")] = FPSTR(flag_BOARD);
+            Device_Hardware[F("MAC")] = WiFi.macAddress();
 
         JsonObject Device_Env = Device.createNestedObject(F("Env"));
-        Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
-        Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
-        Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
-        Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
-        Device_Env[F("Heap")] = system_get_free_heap_size();
+            Device_Env[F("Name")] = FPSTR(flag_DEVICE_NAME);
+            Device_Env[F("Code")] = FPSTR(flag_DEVICE_CODE);
+            Device_Env[F("Build")] = FPSTR(flag_BUILD_ENV);
+            Device_Env[F("Tag")] = FPSTR(flag_BUILD_TAG);
+            Device_Env[F("Heap")] = system_get_free_heap_size();
 
         JsonObject Device_Network = Device.createNestedObject(F("Network"));
-
-        String tempIP = WiFi.localIP().toString();
-        Device_Network[F("IPAddress")] = tempIP.c_str();
-
-        String tempSSID = WiFi.SSID();
-        Device_Network[F("SSID")] = tempSSID.c_str();
+            String tempIP = WiFi.localIP().toString(); Device_Network[F("IPAddress")] = tempIP.c_str();
+            String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
     char jsonMessage[438+1];    // TODO - #define for size
 
@@ -568,7 +557,6 @@ bool LogClient::handleTick( ){
     
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
-
     int httpCode = http.POST(jsonMessage);
     http.end();
 
