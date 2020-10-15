@@ -62,12 +62,12 @@ Implements a location and time service using IPInfo.io and ezTime library.
             void setDefaults();
 
             IPAddress ip;
-            char city[TLO_IPINFO_MAX_CITY_LEN] = "";
-            char region[TLO_IPINFO_MAX_REGION_LEN] = "";
-            char country[TLO_IPINFO_MAX_COUNTRY_LEN] = "";
-            coords loc = {0,0};
-            char postal[TLO_IPINFO_MAX_POSTAL_LEN] = "";
-            char timezone[TLO_IPINFO_MAX_TIMEZONE_LEN] = "";
+            char city[TLO_IPINFO_MAX_CITY_LEN];
+            char region[TLO_IPINFO_MAX_REGION_LEN];
+            char country[TLO_IPINFO_MAX_COUNTRY_LEN];
+            coords loc;
+            char postal[TLO_IPINFO_MAX_POSTAL_LEN];
+            char timezone[TLO_IPINFO_MAX_TIMEZONE_LEN];
 
              // Create a compare operators
             bool operator==(const Location& other) const {
@@ -99,10 +99,10 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool ntpMode = true;           // Service on or off
-            char ipinfoToken[TLO_IPINFO_MAX_TOKEN_LEN] = "";
+            bool ntpMode;
+            char ipinfoToken[TLO_IPINFO_MAX_TOKEN_LEN];
             Location location;
-            char posix[TLO_MAX_POSIX_LEN] = "";
+            char posix[TLO_MAX_POSIX_LEN];
 
              // Create a compare operators
             bool operator==(const TimeLocationSettings& other) const {

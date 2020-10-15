@@ -135,8 +135,9 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
 
     HTTPClient http;
 
-    char url[TLO_IPINFO_MAX_TOKEN_LEN+sizeof(flag_TLO_IPINFO_SERVICE)+1];
-    strcpy_P(url,flag_TLO_IPINFO_SERVICE);
+    char url[sizeof("http://")+sizeof(flag_TLO_IPINFO_SERVICE)+TLO_IPINFO_MAX_TOKEN_LEN];
+    strcpy_P(url,PSTR("http://"));
+    strcat_P(url,flag_TLO_IPINFO_SERVICE);
     strcat(url,_settings->ipinfoToken);
 
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
@@ -148,7 +149,7 @@ bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
     int httpCode = http.GET();                                                         
 
     StaticJsonDocument<TLO_IPINFO_JSON_RESPONSE_SIZE> json;
-    DeserializationError jsonerror = deserializeJson(json, http.getStream());           // TODO - deserialize with stream in pther places too
+    DeserializationError jsonerror = deserializeJson(json, http.getStream());
 
     http.end();
 

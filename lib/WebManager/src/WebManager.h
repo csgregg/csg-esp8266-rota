@@ -26,7 +26,7 @@ SOFTWARE.
 
 Builds on EmbAJAX Library - https://github.com/tfry-git/EmbAJAX
 
-Uses either inlined flash files or LittleFS to server web files, and hangles AJAX calls
+Uses either inlined flash files or LittleFS to server web files, and handles AJAX calls
 
 */
 
@@ -37,6 +37,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
     #define WEBSITE_MANAGER_H
 
     #include <ESP8266WebServer.h>
+    #include <ESP8266WiFi.h>
     #include <EmbAJAX.h>
 
     #include "TimeLocation.h"
@@ -209,7 +210,7 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
             ESP8266WebServer _server;
             EmbAJAXOutputDriver _ajax;
 
-            void ICACHE_FLASH_ATTR begin(char* hostname);
+            void ICACHE_FLASH_ATTR begin( WiFiClient &client, char* hostname);
             void handle() { _ajax.loopHook(); };
             void ICACHE_FLASH_ATTR postMessage(const char* msg);
             void ICACHE_FLASH_ATTR postMessage(String msg);
@@ -236,6 +237,8 @@ Uses either inlined flash files or LittleFS to server web files, and hangles AJA
 
             bool ICACHE_FLASH_ATTR checkCaptivePortal();                            // Detect captive portal
             char * _hostname;
+
+            WiFiClient* _client;
 
         private:
 

@@ -89,27 +89,11 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     // Sizes
     #define LOG_MAX_MESSAGE_LEN 256     // Longest message to be processed. Truncated otherwise
-    #define LOG_MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
-    #define LOG_MAX_TAG_TYPES 2
     #define LOG_MAX_GLOBAL_TAG_LEN 8    // Max length of global tag string
     #define LOG_MAX_KEY_LEN 40          // Max length of service key string
     #define LOG_MAX_SERVICE_LEN 32      // Max length of service URL
-
-    // Defaults
-    #define LOG_DEFAULT_MONITOR_BAUD 115200
-    #define LOG_DEFAULT_TICK_INTERVAL 60
-
-    // Define max JSON key sizes
-    #define LOG_JSON_SIZE_LOCALTIME 10
-    #define LOG_JSON_SIZE_MESSAGE MAX_MESSAGE_LEN
-    #define LOG_JSON_SIZE_BOARD 20
-    #define LOG_JSON_SIZE_MAC 17
-    #define LOG_JSON_SIZE_NAME 30
-    #define LOG_JSON_SIZE_CODE 20
-    #define LOG_JSON_SIZE_BUILD 8
-    #define LOG_JSON_SIZE_HEAP 10
-    #define LOG_JSON_SIZE_IP 15
-    #define LOG_JSON_SIZE_SSID 32
+    #define LOG_MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
+    #define LOG_MAX_TAG_TYPES 2
 
 
     // Logging level to filter logs 
@@ -156,17 +140,17 @@ debug of code. Macros are defined for to simplifiy common usage.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            uint serialBaud = LOG_DEFAULT_MONITOR_BAUD;
-            char serviceURL[LOG_MAX_SERVICE_LEN] = "";
-            char serviceKey[LOG_MAX_KEY_LEN] = "";
+            uint serialBaud;
+            char serviceURL[LOG_MAX_SERVICE_LEN];
+            char serviceKey[LOG_MAX_KEY_LEN];
 
-            bool serialMode = false;
-            bool serviceMode = false;
+            bool serialMode;
+            bool serviceMode;
 
-            bool tickMode = false;
-            uint tickInterval = LOG_DEFAULT_TICK_INTERVAL;
+            bool tickMode;
+            uint tickInterval;
 
-            char globalTags[LOG_MAX_GLOBAL_TAG_LEN] = "";
+            char globalTags[LOG_MAX_GLOBAL_TAG_LEN];
             logLevel level = LOGGING_LEVEL_NORMAL;
 
              // Create a compare operators

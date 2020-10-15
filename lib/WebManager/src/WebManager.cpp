@@ -149,8 +149,9 @@ void EmbAJAXStyle::setStyle(const char* style) {
 
 
 // Initialize web manaber
-void ICACHE_FLASH_ATTR WebsiteManager::begin(char* hostname) {
+void ICACHE_FLASH_ATTR WebsiteManager::begin( WiFiClient &client, char* hostname) {
 
+    _client = &client;
     _hostname = hostname;
 
      // If the client requests any URI
@@ -279,9 +280,7 @@ bool ICACHE_FLASH_ATTR WebsiteManager::handleFileRequest() {
             _server.setContentLength(websiteFiles[i].len);
             _server.send(200,contentType,PSTR(""));
 
-            WiFiClient client = _server.client();
-            
-            client.write_P((const char*)FPSTR(websiteFiles[i].content),websiteFiles[i].len);
+            _client->write_P((const char*)FPSTR(websiteFiles[i].content),websiteFiles[i].len);
 
             // Initialize Ajax on page load
             for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )

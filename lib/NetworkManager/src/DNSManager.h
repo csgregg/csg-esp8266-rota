@@ -1,4 +1,4 @@
-/* Demonstration ESP Base Platform
+/* DNS Manager Library
 
 MIT License
 
@@ -24,44 +24,56 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-Setup and Loop
+Manages DNS Functions
 
 */
 
 
-#include "Device.h"
-#include "ConfigManager.h"
-#include "Logger.h"
-#include "NetworkManager.h"
-#include "WebManager.h"
-#include "OTAUpdater.h"
-#include "TimeLocation.h"
+#ifndef DNS_MANAGER_H
+
+    #define DNS_MANAGER_H
+
+    #include <ESP8266mDNS.h>
+    #include <DNSServer.h>
 
 
-void ICACHE_FLASH_ATTR setup() {
 
-    // Services started in the proper order
-    device.begin();
-    config.begin();
-    logger.begin( network.getWiFiClient(), config.settings.logSettings );  
-    network.begin( config.settings.networkSettings );
-    timelocation.begin( network.getWiFiClient(), config.settings.timelocsettings );
-    website.begin( network.getWiFiClient(), config.settings.networkSettings.dnsSettings.hostname );
-    updater.begin( network.getWiFiClient(), config.settings.otaSettings );
-    
-    LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
-    
-}
+    #define DNS_MAX_HOSTNAME_LEN 16
+    #define DNS_DEFAULT_MODE true
+    #define DNS_DEFAULT_MDNS true
+    #define DNS_PORT 53
+
+    class DNSConfig {
+
+        public:
+
+            void ICACHE_FLASH_ATTR setDefaults();
+
+            bool mode;
+            bool mDNS;
+            char hostname[DNS_MAX_HOSTNAME_LEN];
+
+            bool operator==(const DNSConfig& other) const {
+                return (strcmp(hostname, other.hostname)==0)
+                    && mode == other.mode
+                    && mDNS == other.mDNS;
+            }
+
+            bool operator!=(const DNSConfig& other) const {
+                return (strcmp(hostname, other.hostname)!=0)
+                    || mode != other.mode
+                    || mDNS != other.mDNS;
+            }
+
+    };
 
 
-void loop() {
 
-    // Handle each service set
-    device.handle();
-    network.handle();
-    website.handle();
-    updater.handle();
-    logger.handle();
-    timelocation.handle();
+    class DNSManager {
+        
+        public:
 
-}
+    }
+
+
+#endif
