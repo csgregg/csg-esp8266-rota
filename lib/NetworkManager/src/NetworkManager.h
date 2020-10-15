@@ -147,8 +147,7 @@ Manages Network Functions
     };
 
 
-    // Defaults
-    #define NETCHECK_DEFAULT_INTERVAL 10        // 10 sec - how often to check connected to the internet
+    // Sizes
     #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
      
 
@@ -158,9 +157,9 @@ Manages Network Functions
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = false;
-            char checkService[NETCHECK_MAX_SERVICE_LEN] = "";
-            uint interval = NETCHECK_DEFAULT_INTERVAL;
+            bool mode;
+            char checkService[NETCHECK_MAX_SERVICE_LEN];
+            uint interval;
 
             bool operator==(const NetCheckConfig& other) const {
                 return (strcmp(checkService, other.checkService)==0)
@@ -188,9 +187,9 @@ Manages Network Functions
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = false;
-            bool mDNS = false;
-            char hostname[DNS_MAX_HOSTNAME_LEN] = "";
+            bool mode;
+            bool mDNS;
+            char hostname[DNS_MAX_HOSTNAME_LEN];
 
             bool operator==(const DNSConfig& other) const {
                 return (strcmp(hostname, other.hostname)==0)
@@ -337,7 +336,7 @@ Manages Network Functions
            
             uint _disconnectedStation;       // Used to see how long disconnected in station mode
 
-            WiFiClient _client;
+            WiFiClient _client;             // The only instance of the WiFi Client
 
             bool _stationConnected[NET_MAX_SSIDS];   
 

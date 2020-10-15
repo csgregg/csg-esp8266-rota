@@ -95,8 +95,15 @@ Build flags are loaded from platformio.ini
     #ifndef BUILD_TIMESTAMP
         #define BUILD_TIMESTAMP None
     #endif
-   
-    // TODO - clean up build flag naming and remove uncessary
+
+
+    // Sizes
+    #define FLAG_MAX_BUILD_NO_LEN (5+1)
+    #define FLAG_MAX_BUILD_TIMESTAMP_LEN (24+1)
+    #define FLAG_MAX_CHIPIN_LEN (8+1)
+    #define FLAG_MAX_BUILDENV_LEN (32+1)
+
+
 
     // Physical board
     static const char flag_BOARD [] PROGMEM = ESCAPEQUOTE(BOARD);                               // Specific board
@@ -127,13 +134,13 @@ Build flags are loaded from platformio.ini
     static const bool flag_LOGGER_AS_SERVICE = atoi(ESCAPEQUOTE(LOGGER_AS_SERVICE));            // 0 - 1 to turn on logging to Loggly service
     static const bool flag_LOGGER_TICKER = atoi(ESCAPEQUOTE(LOGGER_TICKER));                    // 0 - 1 to turn on ticking to Loggly service
     static const uint flag_LOGGER_TICK_INTERVAL = atoi(ESCAPEQUOTE(LOGGER_TICK_INTERVAL));      // Internal between ticks (sec)
-    static const uint flag_LOGGER_LEVEL = atoi(ESCAPEQUOTE(LOGGER_LEVEL));                      // 0 - 3 to set log level
+    static const uint flag_LOGGER_LEVEL = atoi(ESCAPEQUOTE(LOGGER_LEVEL));                      // 0 - 4 to set log level
     static const char flag_LOGGER_SERVICE [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE);             // Path to Loggly API
     static const char flag_LOGGER_SERVICE_KEY [] PROGMEM = ESCAPEQUOTE(LOGGER_SERVICE_KEY);     // Loggly API key - stored in credentials.h for privacy
     static const char flag_LOGGER_GLOBAL_TAGS [] PROGMEM = ESCAPEQUOTE(LOGGER_GLOBAL_TAGS);     // Tags to globally apply to logs
     static const uint flag_MONITOR_SPEED = atoi(ESCAPEQUOTE(MONITOR_SPEED));                    // Monitor baud
 
-    // used by Time / Location Library
+    // Used by Time / Location Library
     static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
     static const char flag_TLO_IPINFO_SERVICE [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_SERVICE);     // URL for IPInfo.io service
 
@@ -181,10 +188,10 @@ Build flags are loaded from platformio.ini
             };
 
         protected:
-            char _build_no[5];
-            char _build_time[24+1];
-            char _chipID[9];
-            char _buildEnv[32];
+            char _build_no[FLAG_MAX_BUILD_NO_LEN];
+            char _build_time[FLAG_MAX_BUILD_TIMESTAMP_LEN];
+            char _chipID[FLAG_MAX_CHIPIN_LEN];
+            char _buildEnv[FLAG_MAX_BUILDENV_LEN];
 
             DoubleResetDetector _drd;
             StartMode _startMode = NORMAL;

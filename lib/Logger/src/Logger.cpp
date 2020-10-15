@@ -390,7 +390,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToSerial( logType type, logTag tag, const c
 #ifndef NO_LOGGING
 
     char shortened[LOG_MAX_MESSAGE_LEN+1];
-
     strncpy( shortened, message, LOG_MAX_MESSAGE_LEN );        // Truncate if too long
 
     LogPrefix(type, tag);
@@ -429,7 +428,6 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     jsonLog[F("localtime")] = millis();
 
     char shortened[LOG_MAX_MESSAGE_LEN];
-
     strncpy( shortened, message, LOG_MAX_MESSAGE_LEN );        // Truncate if too long
 
     jsonLog[F("message")] = shortened;
@@ -451,15 +449,15 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
             String tempIP = WiFi.localIP().toString(); Device_Network[F("IPAddress")] = tempIP.c_str();
             String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
-    char jsonMessage[712+1];        // TODO - check this    
-
-    serializeJson(jsonLog, jsonMessage);
-
     if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(PSTR("(Logger) Log (JSON): "));
-        Serial.println(jsonMessage); 
+        serializeJson(jsonLog, Serial); 
     }
+
+    size_t jsonSize = measureJson(jsonLog);
+    char jsonMessage[jsonSize]; 
+    serializeJson(jsonLog, jsonMessage, jsonSize);
 
     // Start the connection
     
@@ -540,9 +538,9 @@ bool LogClient::handleTick( ){
             String tempIP = WiFi.localIP().toString(); Device_Network[F("IPAddress")] = tempIP.c_str();
             String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
-    char jsonMessage[438+1];    // TODO - #define for size
-
-    serializeJson(jsonLog, jsonMessage);
+    size_t jsonSize = measureJson(jsonLog);
+    char jsonMessage[jsonSize]; 
+    serializeJson(jsonLog, jsonMessage, jsonSize);
 
     // Start the connection
     

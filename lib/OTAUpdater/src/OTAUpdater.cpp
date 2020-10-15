@@ -73,7 +73,7 @@ bool OTAUpdater::_doUpdateCheck = false;
 
 
 void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
-    mode = true;
+    mode = OTA_DEFAULT_MODE;
     strcpy_P(service, flag_UPDATER_SERVICE);
     strcpy_P(repo, flag_UPDATER_REPO);
     strcpy_P(user, flag_UPDATER_USER);
@@ -200,11 +200,11 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
     // Update file system
-    char littleFSFileRequest[OTA_MAX_IMAGE_URL_LEN];
+    char littleFSFileRequest[OTA_MAX_IMG_URL_LEN];
     strcpy(littleFSFileRequest, _assetRequestURL);
     strcat_P(littleFSFileRequest, PSTR("&asset="));
     strcat_P(littleFSFileRequest,  flag_DEVICE_CODE);
-    strcat(littleFSFileRequest, _FSSuffix);
+    strcat_P(littleFSFileRequest, PSTR("-Fv"));
     strcat_P(littleFSFileRequest, PSTR("&tag="));
     strcat(littleFSFileRequest, _latestTag);
     strcat_P(littleFSFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
@@ -246,17 +246,17 @@ t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
 
     // Update program image
-    char imageFileRequest[OTA_MAX_IMAGE_URL_LEN];
-    strcpy(imageFileRequest, _assetRequestURL);
-    strcat_P(imageFileRequest, PSTR("&asset="));
-    strcat_P(imageFileRequest,  flag_DEVICE_CODE);
-    strcat(imageFileRequest, _progSuffix);
-    strcat_P(imageFileRequest, PSTR("&tag="));
-    strcat(imageFileRequest, _latestTag);
-    strcat_P(imageFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
+    char progFileRequest[OTA_MAX_IMG_URL_LEN];
+    strcpy(progFileRequest, _assetRequestURL);
+    strcat_P(progFileRequest, PSTR("&asset="));
+    strcat_P(progFileRequest,  flag_DEVICE_CODE);
+    strcat_P(progFileRequest, PSTR("-Pv"));
+    strcat_P(progFileRequest, PSTR("&tag="));
+    strcat(progFileRequest, _latestTag);
+    strcat_P(progFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
     
     LOG(PSTR("(Updater) Updating Program"));
-    LOGF_HIGH( PSTR("(Updater) Program image request: %s"), imageFileRequest );
+    LOGF_HIGH( PSTR("(Updater) Program image request: %s"), progFileRequest );
 
     if( _settings->skipUpdates ) {
 
@@ -268,7 +268,7 @@ t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, b
         
         ESPhttpUpdate.rebootOnUpdate(false);
         HTTPUpdateResult ret;
-        ret = ESPhttpUpdate.update( *_client, imageFileRequest );
+        ret = ESPhttpUpdate.update( *_client, progFileRequest );
 
         switch(ret) {
 

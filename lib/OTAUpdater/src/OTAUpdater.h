@@ -39,7 +39,6 @@ binaries built by Travis-CI.
     #include <ESP8266httpUpdate.h>
     #include <Ticker.h>
 
-    #define OTA_DEFAULT_UPDATE_INTERVAL 300
 
     // Define Sizes
     #define OTA_MAX_SERVICE_LEN 48
@@ -50,8 +49,9 @@ binaries built by Travis-CI.
     #define OTA_MAX_TAG_LEN 12
     #define OTA_MAX_DATE_LEN 22
     #define OTA_MAX_URL_LEN  (OTA_MAX_SERVICE_LEN + OTA_MAX_REPO_LEN + OTA_MAX_USER_LEN + OTA_MAX_TOKEN_LEN + OTA_MAX_CODE_LEN + OTA_MAX_TAG_LEN + (sizeof("http://")-1) + (sizeof("?repo=")-1) + (sizeof("&user=")-1) + (sizeof("&token=")-1) + 1)
-    #define OTA_MAX_IMAGE_URL_LEN (OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof(_progSuffix)-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1))
+    #define OTA_MAX_IMG_URL_LEN (OTA_MAX_URL_LEN + (sizeof("&asset=")-1) + (sizeof(flag_DEVICE_CODE)-1) + (sizeof("-Pv")-1) + (sizeof("&tag=")-1) + OTA_MAX_TAG_LEN + (sizeof("&type=gz")-1))
 
+    #define OTA_DEFAULT_MODE true
 
     typedef enum : int {
         FS_UPDATE_FAILED,
@@ -68,13 +68,13 @@ binaries built by Travis-CI.
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode = false;
-            char service[OTA_MAX_SERVICE_LEN] = "";
-            char repo[OTA_MAX_REPO_LEN] = "";
-            char user[OTA_MAX_USER_LEN] = "";
-            char token[OTA_MAX_TOKEN_LEN] = "";
-            uint interval = OTA_DEFAULT_UPDATE_INTERVAL;
-            bool skipUpdates = true;
+            bool mode;
+            char service[OTA_MAX_SERVICE_LEN];
+            char repo[OTA_MAX_REPO_LEN];
+            char user[OTA_MAX_USER_LEN];
+            char token[OTA_MAX_TOKEN_LEN];
+            uint interval;
+            bool skipUpdates;
 
              // Create a compare operators
 
@@ -121,9 +121,6 @@ binaries built by Travis-CI.
             };
 
         protected:
-
-            const char* _progSuffix = "-Pv";
-            const char* _FSSuffix = "-Fv";
 
             char _assetRequestURL[OTA_MAX_URL_LEN];    
             char _latestTag[OTA_MAX_TAG_LEN];
