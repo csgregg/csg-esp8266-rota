@@ -12,7 +12,7 @@
 | 2. Variable names must be in mixed case starting with lower case. |
 | --- |
 |line, savingsAccount |
-|  |
+| - |
 
 3. Named constants (including enumeration values) must be all uppercase using underscore to separate words. |
 --- |
