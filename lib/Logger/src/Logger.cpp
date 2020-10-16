@@ -456,8 +456,11 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     }
 
     size_t jsonSize = measureJson(jsonLog);
-    char jsonMessage[jsonSize]; 
-    serializeJson(jsonLog, jsonMessage, jsonSize);
+    char jsonMessage[jsonSize+1]; 
+    if( serializeJson(jsonLog, jsonMessage, sizeof(jsonMessage)) != jsonSize ) {
+        LogPrefix(CRITICAL_LOG, STATUS_TAG);
+        Serial.print(PSTR("(Logger) Logging to service: JSON Error "));
+    };
 
     // Start the connection
     
@@ -467,6 +470,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
         if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
+            http.end();
         }
     }
 
@@ -539,8 +543,12 @@ bool LogClient::handleTick( ){
             String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
     size_t jsonSize = measureJson(jsonLog);
-    char jsonMessage[jsonSize]; 
-    serializeJson(jsonLog, jsonMessage, jsonSize);
+    char jsonMessage[jsonSize+1]; 
+    if( serializeJson(jsonLog, jsonMessage, sizeof(jsonMessage)) != jsonSize ) {
+        LogPrefix(CRITICAL_LOG, STATUS_TAG);
+        Serial.print(PSTR("(Logger) Logging tick: JSON Error "));
+        return false;
+    };
 
     // Start the connection
     
@@ -549,7 +557,9 @@ bool LogClient::handleTick( ){
     if( !http.begin(*_client, loggingURL) ) {
         if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
-            Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
+            Serial.print(PSTR("(Logger) Logging tick: HTTP Client Error "));
+            http.end();
+            return false;
         }
     }
     

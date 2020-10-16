@@ -210,7 +210,7 @@ Uses either inlined flash files or LittleFS to server web files, and handles AJA
             ESP8266WebServer _server;
             EmbAJAXOutputDriver _ajax;
 
-            void ICACHE_FLASH_ATTR begin( WiFiClient &client, char* hostname);
+            void ICACHE_FLASH_ATTR begin( char* hostname);
             void handle() { _ajax.loopHook(); };
             void ICACHE_FLASH_ATTR postMessage(const char* msg);
             void ICACHE_FLASH_ATTR postMessage(String msg);
