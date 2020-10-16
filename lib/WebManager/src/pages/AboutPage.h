@@ -33,7 +33,8 @@ Server-side functions of about.html
 
     #define ABOUT_H
 
-
+    #include <Arduino.h>
+    
     #include "WebManager.h"
 
 

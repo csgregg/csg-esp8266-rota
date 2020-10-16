@@ -34,6 +34,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     #define LOGGER_H
 
+    #include <Arduino.h>
     #include <ESP8266WiFi.h>
     #include <Ticker.h>
 

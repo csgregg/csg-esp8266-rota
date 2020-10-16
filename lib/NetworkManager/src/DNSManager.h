@@ -33,7 +33,7 @@ Manages DNS Functions
 
     #define DNS_MANAGER_H
 
-    #include <Arduino.h>                    // TODO - Include in all headers?
+    #include <Arduino.h>
     #include <ESP8266mDNS.h>
     #include <DNSServer.h>
 
@@ -44,7 +44,7 @@ Manages DNS Functions
     #define DNS_TTL 60
 
 
-    class DNSConfig {
+    class DNSSettings {
 
         public:
 
@@ -54,12 +54,12 @@ Manages DNS Functions
             bool mDNS;
             char hostname[DNS_MAX_HOSTNAME_LEN];
 
-            bool operator==(const DNSConfig& other) const {
+            bool operator==(const DNSSettings& other) const {
                 return (strcmp(hostname, other.hostname)==0)
                     && mode == other.mode
                     && mDNS == other.mDNS;
             }
-            bool operator!=(const DNSConfig& other) const {
+            bool operator!=(const DNSSettings& other) const {
                 return (strcmp(hostname, other.hostname)!=0)
                     || mode != other.mode
                     || mDNS != other.mDNS;
@@ -73,13 +73,13 @@ Manages DNS Functions
         
         public:
 
-            void ICACHE_FLASH_ATTR begin(DNSConfig &settings, bool apMode);
+            void ICACHE_FLASH_ATTR begin(DNSSettings &settings, bool apMode);
             void handle();
 
 
         protected:
 
-            DNSConfig* _settings;
+            DNSSettings* _settings;
             DNSServer _dnsServer;
             bool _dnsStarted = false;
 

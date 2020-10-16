@@ -35,6 +35,7 @@ binaries built by Travis-CI.
 
     #define ESP_REMOTE_UPDATER_H
 
+    #include <Arduino.h>
     #include <ESP8266WiFi.h>
     #include <ESP8266httpUpdate.h>
     #include <Ticker.h>

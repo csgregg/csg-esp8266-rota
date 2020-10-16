@@ -34,7 +34,7 @@ Manages DNS Functions
 #include "Device.h"
 
 
-void ICACHE_FLASH_ATTR DNSConfig::setDefaults() {
+void ICACHE_FLASH_ATTR DNSSettings::setDefaults() {
     mode = DNS_DEFAULT_MODE;
     strcpy_P( hostname, flag_DEVICE_CODE );
     mDNS = DNS_DEFAULT_MDNS;
@@ -43,7 +43,7 @@ void ICACHE_FLASH_ATTR DNSConfig::setDefaults() {
 
 
 
-void ICACHE_FLASH_ATTR DNSManager::begin(DNSConfig &settings, bool apMode) {
+void ICACHE_FLASH_ATTR DNSManager::begin(DNSSettings &settings, bool apMode) {
 
     _settings = &settings;
     _dnsStarted = false;

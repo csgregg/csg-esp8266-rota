@@ -39,7 +39,7 @@ WiFi Network Functions
 
 // Network Settings 
 
-void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
+void ICACHE_FLASH_ATTR StationSettings::setDefaults() {
 
     strcpy_P( SSID, PSTR("") );
     strcpy_P( password, PSTR("") );
@@ -53,7 +53,7 @@ void ICACHE_FLASH_ATTR StationConfig::setDefaults() {
 }
 
 
-void ICACHE_FLASH_ATTR APConfig::setDefaults() {
+void ICACHE_FLASH_ATTR APSettings::setDefaults() {
 
     strcpy_P( SSID, flag_DEVICE_CODE );
     strcpy_P( password, flag_DEVICE_CODE );
@@ -73,7 +73,7 @@ void ICACHE_FLASH_ATTR APConfig::setDefaults() {
 
 // Public:
 
-void ICACHE_FLASH_ATTR WiFiManager::begin( StationConfig* const &stnSettings, APConfig &apSettings, WiFiMode &wifiMode ) {
+void ICACHE_FLASH_ATTR WiFiManager::begin( StationSettings* const &stnSettings, APSettings &apSettings, WiFiMode &wifiMode ) {
 
     LOG(PSTR("(Network) Starting WiFi"));
 

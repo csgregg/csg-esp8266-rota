@@ -36,6 +36,7 @@ Uses either inlined flash files or LittleFS to server web files, and handles AJA
 
     #define WEBSITE_MANAGER_H
 
+    #include <Arduino.h>
     #include <ESP8266WebServer.h>
     #include <ESP8266WiFi.h>
     #include <EmbAJAX.h>

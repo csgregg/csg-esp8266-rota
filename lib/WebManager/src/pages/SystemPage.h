@@ -34,6 +34,8 @@ Server-side functions of system.html
     #define SYSTEM_PAGE_H
 
 
+    #include <Arduino.h>
+
     #include "WebManager.h"
     #include "Logger.h"
     #include "OTAUpdater.h"

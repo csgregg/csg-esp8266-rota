@@ -59,7 +59,7 @@ Manages WiFi Functions
 
 
     // Client network config
-    class StationConfig {
+    class StationSettings {
 
         public:
 
@@ -76,7 +76,7 @@ Manages WiFi Functions
 
             // Create a compare operators
 
-            bool operator==(const StationConfig& other) const {
+            bool operator==(const StationSettings& other) const {
                 return (strcmp(SSID, other.SSID)==0)
                     && (strcmp(password, other.password)==0)
                     && DHCPMode == other.DHCPMode
@@ -87,7 +87,7 @@ Manages WiFi Functions
                     && dns2 == other.dns2;
             }
 
-            bool operator!=(const StationConfig& other) const {
+            bool operator!=(const StationSettings& other) const {
                 return (strcmp(SSID, other.SSID)!=0)
                     || (strcmp(password, other.password)!=0)
                     || DHCPMode != other.DHCPMode
@@ -111,7 +111,7 @@ Manages WiFi Functions
 
 
     // AP network config
-    class APConfig {
+    class APSettings {
 
         public:
 
@@ -126,7 +126,7 @@ Manages WiFi Functions
 
             // Create a compare operators
 
-            bool operator==(const APConfig& other) const {
+            bool operator==(const APSettings& other) const {
                 return (strcmp(SSID, other.SSID)==0)
                     && (strcmp(password, other.password)==0)
                     && channel == other.channel
@@ -134,7 +134,7 @@ Manages WiFi Functions
                     && subnet == other.subnet
                     && gateway == other.gateway;
             }
-            bool operator!=(const APConfig& other) const {
+            bool operator!=(const APSettings& other) const {
                 return (strcmp(SSID, other.SSID)!=0)
                     || (strcmp(password, other.password)!=0)
                     || channel != other.channel
@@ -159,7 +159,7 @@ Manages WiFi Functions
                 _APConnections = 0;
             }
 
-            void ICACHE_FLASH_ATTR begin( StationConfig* const &stationSettings, APConfig &apSettings, WiFiMode &wifiMode );            // TODO - const this elsewhere?
+            void ICACHE_FLASH_ATTR begin( StationSettings* const &stationSettings, APSettings &apSettings, WiFiMode &wifiMode );
 
             WiFiClient* ICACHE_FLASH_ATTR getClient() { return &_client; };
 
@@ -218,12 +218,12 @@ Manages WiFi Functions
 
             WiFiMode* _wifiMode;              // WiFi Mode
 
-            StationConfig* const * _stationSettings;
+            StationSettings* const * _stationSettings;
             int _lastStation = 0;
             uint _disconnectedStation;       // Used to see how long disconnected in station mode
             bool _stationConnected[NET_MAX_STATIONS];   
 
-            APConfig* _apSettings;
+            APSettings* _apSettings;
             bool _APRunning;                // Is the AP running
             uint _APConnections;            // How many clients are connected
    

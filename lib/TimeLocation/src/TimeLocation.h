@@ -34,6 +34,7 @@ Implements a location and time service using IPInfo.io and ezTime library.
 
     #define TIME_LOCATION_H
 
+    #include <Arduino.h>
     #include <ESP8266WiFi.h>
 
     class Timezone;         // Forward declaration

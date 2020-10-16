@@ -37,7 +37,7 @@ Manages Internet Checking Functions
 
 
 
-void ICACHE_FLASH_ATTR NetCheckConfig::setDefaults() {
+void ICACHE_FLASH_ATTR NetCheckSettings::setDefaults() {
     mode = flag_NET_CHECKER;
     strcpy_P( checkService, flag_NET_CHECK_SERVICE );
     interval = flag_NET_CHECK_INTERVAL;
@@ -52,7 +52,7 @@ bool NetCheckManager::_doNetCheck = false;
 
 
 
-void ICACHE_FLASH_ATTR NetCheckManager::begin(WiFiClient &client, NetCheckConfig &settings) {
+void ICACHE_FLASH_ATTR NetCheckManager::begin(WiFiClient &client, NetCheckSettings &settings) {
 
     _settings = &settings;
     _client = &client;

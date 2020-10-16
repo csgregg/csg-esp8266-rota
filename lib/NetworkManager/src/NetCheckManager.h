@@ -42,7 +42,7 @@ Manages Internet Checking Functions
     #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
      
 
-    class NetCheckConfig {
+    class NetCheckSettings {
 
         public:
 
@@ -52,12 +52,12 @@ Manages Internet Checking Functions
             char checkService[NETCHECK_MAX_SERVICE_LEN];
             uint interval;
 
-            bool operator==(const NetCheckConfig& other) const {
+            bool operator==(const NetCheckSettings& other) const {
                 return (strcmp(checkService, other.checkService)==0)
                     && mode == other.mode
                     && interval == other.interval;
             }
-            bool operator!=(const NetCheckConfig& other) const {
+            bool operator!=(const NetCheckSettings& other) const {
                 return (strcmp(checkService, other.checkService)!=0)
                     || mode != other.mode
                     || interval != other.interval;
@@ -71,7 +71,7 @@ Manages Internet Checking Functions
         
         public:
 
-            void ICACHE_FLASH_ATTR begin(WiFiClient &client, NetCheckConfig &settings);
+            void ICACHE_FLASH_ATTR begin(WiFiClient &client, NetCheckSettings &settings);
             void handle();
 
             bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
@@ -79,7 +79,7 @@ Manages Internet Checking Functions
 
         protected:
 
-            NetCheckConfig* _settings;
+            NetCheckSettings* _settings;
             WiFiClient* _client;
 
             bool _ConnectedToInternet;      // Is there a route to the internet
