@@ -2,10 +2,12 @@
 
 ## 1.1 General Naming Conventions
 
+
 1. Names representing types must be in mixed case starting with upper case. |
 --- |
 Line, SavingsAccount |
  |
+
 
 2. Variable names must be in mixed case starting with lower case. |
 --- |
