@@ -42,7 +42,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     wifi_stn_asip.setValue(network.getAssignedIP());
 
     // AP Settings
-    APConfig wifiAP = config.settings.networkSettings.apSettings;
+    APSettings wifiAP = config.settings.networkSettings.apSettings;
     wifi_ap_ssid.setValue(wifiAP.SSID);
     wifi_ap_pwd.setValue(wifiAP.password);
     wifi_ap_ip.setValue(wifiAP.ip.toString().c_str());
@@ -57,14 +57,14 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
     // Connectivity Settings
     char buffer[5];
-    NetCheckConfig netStatus = config.settings.networkSettings.netCheckSettings;
+    NetCheckSettings netStatus = config.settings.networkSettings.netCheckSettings;
     net_ck_mode.setChecked( netStatus.mode );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
     net_ck_url.setValue( netStatus.checkService );
     net_ck_save.setEnabled(false);
 
     // DNS Settings
-    DNSConfig dns = config.settings.networkSettings.dnsSettings;
+    DNSSettings dns = config.settings.networkSettings.dnsSettings;
     dns_mode.setChecked( dns.mode );
     dns_mdns.setChecked( dns.mDNS );
     dns_name.setValue( dns.hostname );
@@ -143,7 +143,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
     LOG_HIGH(PSTR("(Page) Network Settings - Save DNS"));
 
-    DNSConfig dns;
+    DNSSettings dns;
 
     dns.mode = dns_mode.isChecked();
     strncpy(dns.hostname,dns_name.value(),DNS_MAX_HOSTNAME_LEN);
@@ -220,7 +220,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Save AP"));
     
-    APConfig ap;
+    APSettings ap;
 
     strncpy(ap.SSID, wifi_ap_ssid.value(), NET_MAX_SSID_LEN);
     strncpy(ap.password, wifi_ap_pwd.value(), NET_MAX_PASSWORD_LEN);
@@ -248,7 +248,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Save Connection Checker"));
 
-    NetCheckConfig netStatus;
+    NetCheckSettings netStatus;
 
     netStatus.mode = net_ck_mode.isChecked();
     strncpy(netStatus.checkService,net_ck_url.value(),NETCHECK_MAX_SERVICE_LEN);

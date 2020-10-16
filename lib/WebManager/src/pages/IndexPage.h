@@ -33,6 +33,7 @@ Server-side functions of index.html
 
     #define INDEX_PAGE_H
 
+    #include <Arduino.h>
 
     #include "WebManager.h"
 

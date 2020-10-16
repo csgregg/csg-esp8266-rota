@@ -33,6 +33,9 @@ Server-side functions of netsettings.html
 
     #define NETWORK_SETTINGS_PAGE_H
 
+
+    #include <Arduino.h>
+
     #include "WebManager.h"
     #include "NetworkManager.h"
 
@@ -46,7 +49,7 @@ Server-side functions of netsettings.html
             void (*init)();
 
 
-            StationConfig wifiStation;
+            StationSettings wifiStation;
 
             // Wifi AP Elements
 

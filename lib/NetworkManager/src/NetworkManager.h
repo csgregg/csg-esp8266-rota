@@ -50,11 +50,11 @@ Manages Network Functions
             void ICACHE_FLASH_ATTR setDefaults();
 
             WiFiMode wifiMode;                                          // WiFi Mode        
-            StationConfig stationSettings[NET_MAX_STATIONS];            // Multiple stations settings
+            StationSettings stationSettings[NET_MAX_STATIONS];            // Multiple stations settings
             int lastStation = 0;                                        // Last connected station            
-            APConfig apSettings;                                        // Access point mode settings
-            NetCheckConfig netCheckSettings;                            // Connectivity checker settings
-            DNSConfig dnsSettings;                                      // DNS settings
+            APSettings apSettings;                                        // Access point mode settings
+            NetCheckSettings netCheckSettings;                            // Connectivity checker settings
+            DNSSettings dnsSettings;                                      // DNS settings
         
             // Create a compare operators
             bool operator==(const NetworkSettings& other) const {
@@ -104,7 +104,7 @@ Manages Network Functions
 
 
         protected:
-// TODO - check class naming consistency
+
             NetworkSettings* _settings;     // Network settings
 
             // The only instances of the network services
