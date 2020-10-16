@@ -475,7 +475,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     }
 
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
-    http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
+    http.addHeader(PSTR("Content-Type"), PSTR("application/json"));
     int httpCode = http.POST(jsonMessage);
     http.end();
 
@@ -500,11 +500,11 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 
 // Send tick to Loggly Service
-bool LogClient::handleTick( ){
+void LogClient::handleTick( ){
 
 #ifndef NO_LOGGING
 
-    if( WiFi.status() != WL_CONNECTED ) return false;
+    if( WiFi.status() != WL_CONNECTED ) return;             // TODO - Use isconnected? Elsewhere too
 
     if( _settings->serialMode && _settings->level >= LOGGING_LEVEL_NORMAL ) {
         LogPrefix(NORMAL_LOG, STATUS_TAG);
@@ -547,7 +547,7 @@ bool LogClient::handleTick( ){
     if( serializeJson(jsonLog, jsonMessage, sizeof(jsonMessage)) != jsonSize ) {
         LogPrefix(CRITICAL_LOG, STATUS_TAG);
         Serial.print(PSTR("(Logger) Logging tick: JSON Error "));
-        return false;
+        return;
     };
 
     // Start the connection
@@ -559,19 +559,30 @@ bool LogClient::handleTick( ){
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging tick: HTTP Client Error "));
             http.end();
-            return false;
+            return;
         }
     }
     
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
-    http.addHeader(PSTR("Content-Type"), PSTR("text/plain"));
+    http.addHeader(PSTR("Content-Type"), PSTR("application/json"));
     int httpCode = http.POST(jsonMessage);
     http.end();
 
-    return (httpCode == HTTP_CODE_OK );
+    if( httpCode == HTTP_CODE_OK ) {
+        if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
+            LogPrefix(DETAIL_LOG, STATUS_TAG);
+            Serial.println(PSTR("(Logger) Logging tick: SUCCESS "));
+        }
+    }
+    else {
+        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+            LogPrefix(CRITICAL_LOG, STATUS_TAG);
+            Serial.print(PSTR("(Logger) Logging to tick: ERROR "));
+            if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
+            else Serial.println( httpCode );
+        }
+    }
 
-#else
-    return false;
 #endif
 
 }
