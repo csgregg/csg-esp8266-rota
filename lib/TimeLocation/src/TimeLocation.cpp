@@ -100,7 +100,7 @@ void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
 void TimeLocation::handle() {
 
     if( _settings->ntpMode ) {
-        if( network.isInternetConnected() ) {
+        if( network.getNetworkStatus()==NetworkStatus::NORMAL ) {
             if( !_previousConnected ) {
                 _previousConnected = true;
                 ezt::updateNTP();

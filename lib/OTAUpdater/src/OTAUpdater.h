@@ -109,7 +109,7 @@ binaries built by Travis-CI.
         public:
             
             void ICACHE_FLASH_ATTR begin( OTASettings &settings );
-            void ICACHE_FLASH_ATTR begin( WiFiClient& client, OTASettings &settings );
+            void ICACHE_FLASH_ATTR begin( WiFiClient &client, OTASettings &settings );
 
             void handle();
 

@@ -34,177 +34,14 @@ Manages Network Functions
 
     #define NETWORK_MANAGER_H
 
+    #include <Arduino.h>
     #include <ESP8266WiFi.h>
-    #include <ESP8266mDNS.h>
-    #include <Ticker.h>
-    #include <DNSServer.h>
 
-    #define NET_MAX_SSIDS 3
-    #define NET_MAX_SSID_LEN 32
-    #define NET_MAX_PASSWORD_LEN 16
+    #include "WiFiManager.h"
+    #include "DNSManager.h"
+    #include "NetCheckManager.h"
 
-
-    enum DHCPModes { DHCP, STATIC };         // DHCP Mode
-
-    enum NetworkStatus : uint {
-        DISCONNECTED = 0,
-        NORMAL = 1,                         // Connected to WiFi and internet
-        NOINETERNET = 2
-    };
-
-    // Defaults
-    #define NET_STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
-    #define NET_STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
-    #define NET_STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
-
-
-    // Client network config
-    class StationConfig {
-
-        public:
-
-            void setDefaults();
-
-            char SSID[NET_MAX_SSID_LEN];
-            char password[NET_MAX_PASSWORD_LEN];
-            DHCPModes DHCPMode;
-            IPAddress ip;
-            IPAddress subnet;
-            IPAddress gateway;
-            IPAddress dns1;
-            IPAddress dns2;
-
-            // Create a compare operators
-
-            bool operator==(const StationConfig& other) const {
-                return (strcmp(SSID, other.SSID)==0)
-                    && (strcmp(password, other.password)==0)
-                    && DHCPMode == other.DHCPMode
-                    && ip == other.ip
-                    && subnet == other.subnet
-                    && gateway == other.gateway
-                    && dns1 == other.dns1
-                    && dns2 == other.dns2;
-            }
-
-            bool operator!=(const StationConfig& other) const {
-                return (strcmp(SSID, other.SSID)!=0)
-                    || (strcmp(password, other.password)!=0)
-                    || DHCPMode != other.DHCPMode
-                    || ip != other.ip
-                    || subnet != other.subnet
-                    || gateway != other.gateway
-                    || dns1 != other.dns1
-                    || dns2 != other.dns2;
-            }
-
-    };
-
-
-    // Defaults
-    #define NET_DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
-    #define NET_DEFAULT_DHCPMODE DHCP
-    #define NET_DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
-    #define NET_DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
-    #define NET_DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
-    #define NET_DEFAULT_CHANNEL 11
-
-
-    // AP network config
-    class APConfig {
-
-        public:
-
-            void setDefaults();
-
-            char SSID[NET_MAX_SSID_LEN];
-            char password[NET_MAX_PASSWORD_LEN];
-            byte channel;
-            IPAddress ip;
-            IPAddress subnet;
-            IPAddress gateway;
-
-            // Create a compare operators
-
-            bool operator==(const APConfig& other) const {
-                return (strcmp(SSID, other.SSID)==0)
-                    && (strcmp(password, other.password)==0)
-                    && channel == other.channel
-                    && ip == other.ip
-                    && subnet == other.subnet
-                    && gateway == other.gateway;
-            }
-
-            bool operator!=(const APConfig& other) const {
-                return (strcmp(SSID, other.SSID)!=0)
-                    || (strcmp(password, other.password)!=0)
-                    || channel != other.channel
-                    || ip != other.ip
-                    || subnet != other.subnet
-                    || gateway != other.gateway;
-            }
-
-    };
-
-
-    // Sizes
-    #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
-     
-
-    class NetCheckConfig {
-
-        public:
-
-            void ICACHE_FLASH_ATTR setDefaults();
-
-            bool mode;
-            char checkService[NETCHECK_MAX_SERVICE_LEN];
-            uint interval;
-
-            bool operator==(const NetCheckConfig& other) const {
-                return (strcmp(checkService, other.checkService)==0)
-                    && mode == other.mode
-                    && interval == other.interval;
-            }
-
-            bool operator!=(const NetCheckConfig& other) const {
-                return (strcmp(checkService, other.checkService)!=0)
-                    || mode != other.mode
-                    || interval != other.interval;
-            }
-
-    };
-
-
-    #define DNS_MAX_HOSTNAME_LEN 16
-    #define DNS_DEFAULT_MODE true
-    #define DNS_DEFAULT_MDNS true
-    #define DNS_PORT 53
-
-    class DNSConfig {
-
-        public:
-
-            void ICACHE_FLASH_ATTR setDefaults();
-
-            bool mode;
-            bool mDNS;
-            char hostname[DNS_MAX_HOSTNAME_LEN];
-
-            bool operator==(const DNSConfig& other) const {
-                return (strcmp(hostname, other.hostname)==0)
-                    && mode == other.mode
-                    && mDNS == other.mDNS;
-            }
-
-            bool operator!=(const DNSConfig& other) const {
-                return (strcmp(hostname, other.hostname)!=0)
-                    || mode != other.mode
-                    || mDNS != other.mDNS;
-            }
-
-    };
-
+ 
 
     class NetworkSettings {
 
@@ -212,47 +49,31 @@ Manages Network Functions
 
             void ICACHE_FLASH_ATTR setDefaults();
 
-            // WiFi Mode
-            WiFiMode wifiMode;          
-
-            // Save multiple networks
-            StationConfig stationSettings[NET_MAX_SSIDS];
-            int lastStation = 0;
-
-            // Access point mode settings
-            APConfig apSettings;
-
-            // Connectivity checker settings
-            NetCheckConfig netCheckSettings;
-
-            // DNS settings
-            DNSConfig dnsSettings;
+            WiFiMode wifiMode;                                          // WiFi Mode        
+            StationConfig stationSettings[NET_MAX_STATIONS];            // Multiple stations settings
+            int lastStation = 0;                                        // Last connected station            
+            APConfig apSettings;                                        // Access point mode settings
+            NetCheckConfig netCheckSettings;                            // Connectivity checker settings
+            DNSConfig dnsSettings;                                      // DNS settings
         
             // Create a compare operators
             bool operator==(const NetworkSettings& other) const {
-
                 bool stations = true;
-                for( int i = 0; i < NET_MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
-
+                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
                 return wifiMode == other.wifiMode
                     && stations
                     && apSettings == other.apSettings
                     && netCheckSettings == other.netCheckSettings
                     && dnsSettings == other.dnsSettings;
-
             }
-
             bool operator!=(const NetworkSettings& other) const {
-
                 bool stations = false;
-                for( int i = 0; i < NET_MAX_SSIDS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
-
+                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
                 return wifiMode != other.wifiMode
                     || stations
                     || apSettings != other.apSettings
                     || netCheckSettings != other.netCheckSettings
                     || dnsSettings != other.dnsSettings;
-
             }
 
     };
@@ -265,93 +86,31 @@ Manages Network Functions
 
         public:
 
-            NetworkManager()  {
-                _APRunning = false;
-                _APConnections = 0;
-                _ConnectedToInternet = false;
-            }
-
             void ICACHE_FLASH_ATTR begin( NetworkSettings &settings );
-
-            bool ICACHE_FLASH_ATTR setWiFiStation();
-            bool ICACHE_FLASH_ATTR setWiFiAP();
-            void ICACHE_FLASH_ATTR reconnectWifi();
-            bool ICACHE_FLASH_ATTR connectWiFiStation( const int id = 0 );
-            void ICACHE_FLASH_ATTR setWiFiMode( WiFiMode mode ) {
-                _settings->wifiMode = mode;
-                handleWiFi(true);
-            };            
-
             void handle();
 
-            WiFiClient& ICACHE_FLASH_ATTR getWiFiClient() { return _client; };
-          
-            uint ICACHE_FLASH_ATTR getConnectedStation() {
-                for( int i = 0; i < NET_MAX_SSIDS; i++ ) {
-                    if( _stationConnected[i] ) return i;
-                }
-                return 0;
-            };
-            bool ICACHE_FLASH_ATTR isStationConnected(uint id) { return _stationConnected[id]; };
-            bool ICACHE_FLASH_ATTR isStationConnected() {
-                for( int i = 0; i < NET_MAX_SSIDS; i++ ) {
-                    if( _stationConnected[i] ) return true;
-                }
-                return false;
-            };
+            void ICACHE_FLASH_ATTR reconnectWifi() { _wifi.reconnectWifi(); };
+            bool ICACHE_FLASH_ATTR connectWiFiStation( const int id = 0 ) { return _wifi.connectWiFiStation( id ); };
+            void ICACHE_FLASH_ATTR setWiFiMode( WiFiMode mode ) { _wifi.setWiFiMode(mode); };
+            WiFiClient& ICACHE_FLASH_ATTR getWiFiClient() { return _wifi.getWiFiClient(); };
+            uint ICACHE_FLASH_ATTR getConnectedStation() { return _wifi.getConnectedStation(); };
+            bool ICACHE_FLASH_ATTR isStationConnected(uint id) { return _wifi.isStationConnected(id); };
+            char* ICACHE_FLASH_ATTR getAssignedIP() { return _wifi.getAssignedIP(); }
 
-            bool ICACHE_FLASH_ATTR isAPRunning( ) { return _APRunning; };
-            bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
             NetworkStatus ICACHE_FLASH_ATTR getNetworkStatus();
 
-            void ICACHE_FLASH_ATTR setNetChecker() { StartNetCheck(); }
-
             const char* ICACHE_FLASH_ATTR getHostName() { return _settings->dnsSettings.hostname; };
+            void ICACHE_FLASH_ATTR restartDNS() { _dns.begin( _settings->dnsSettings, _wifi.isAPRunning() ); };
 
-            char* ICACHE_FLASH_ATTR getAssignedIP() {
-                static char ip[16];
-                strcpy(ip, WiFi.localIP().toString().c_str());
-                return ip;
-            }
 
         protected:
+// TODO - check class naming consistency
+            NetworkSettings* _settings;     // Network settings
 
-            void handleWiFi(const bool force = false);
-            bool handleWiFiAP(const bool force = false);
-            bool handleWiFiStation(const bool force = false);
-
-            bool ICACHE_FLASH_ATTR startWiFiAccessPoint();
-            void ICACHE_FLASH_ATTR StartWiFi();
-
-            void ICACHE_FLASH_ATTR ResetConnectedStatus() {
-                for( int i = 0; i < NET_MAX_SSIDS; i++ ) _stationConnected[i] = false;
-            };
-
-            NetworkSettings *_settings;
-
-            bool _APRunning;                // Is the AP running
-            uint _APConnections;            // How many clients are connected
-
-            bool _ConnectedToInternet;      // Is there a route to the internet
-           
-            uint _disconnectedStation;       // Used to see how long disconnected in station mode
-
-            WiFiClient _client;             // The only instance of the WiFi Client
-
-            bool _stationConnected[NET_MAX_SSIDS];   
-
-            Ticker _netCheck;
-            static bool _doNetCheck;        // TODO - does this need to be static ?
-
-            static void TriggerNetCheck();
-            void ICACHE_FLASH_ATTR StartNetCheck();
-            void HandleNetCheck();
-            bool ICACHE_FLASH_ATTR NetCheck();
-
-            void ICACHE_FLASH_ATTR StartDNS();
-            void handleDNS();
-            DNSServer _dnsServer;
-            bool _dnsStarted = false;
+            // The only instances of the network services
+            WiFiManager _wifi;              // WiFi service
+            DNSManager _dns;                // DNS service
+            NetCheckManager _netCheck;      // Net Check service
 
    
         private:
@@ -359,7 +118,7 @@ Manages Network Functions
 
     };
 
-    extern NetworkManager network;        // Declaring the global instance
+    extern NetworkManager network;        // Global instance of the network services
 
 
 
