@@ -181,7 +181,7 @@ Server-side functions of netsettings.html
                 wifi_stn_btn("wifi_stn_btn"),
                 wifi_stn_cnct("wifi_stn_cnct"),
                     
-                wifi_stn_count("wifi_stn_count",NET_MAX_SSIDS),
+                wifi_stn_count("wifi_stn_count",NET_MAX_STATIONS),
                 wifi_stn_name("wifi_stn_name",""),
                 wifi_stn_on("wifi_stn_on",false),
                 loadWifiList("loadWifiList"),

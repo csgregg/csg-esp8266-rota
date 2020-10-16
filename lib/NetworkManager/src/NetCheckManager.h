@@ -1,4 +1,4 @@
-/* DNS Manager Library
+/* Internet Check Manager Library
 
 MIT License
 
@@ -24,66 +24,72 @@ SOFTWARE.
 
 -----------------------------------------------------------------------------
 
-Manages DNS Functions
+Manages Internet Checking Functions
 
 */
 
 
-#ifndef DNS_MANAGER_H
+#ifndef NET_CHECK_MANAGER_H
 
-    #define DNS_MANAGER_H
+    #define NET_CHECK_MANAGER_H
 
-    #include <Arduino.h>                    // TODO - Include in all headers?
-    #include <ESP8266mDNS.h>
-    #include <DNSServer.h>
-
-    #define DNS_MAX_HOSTNAME_LEN 16
-    #define DNS_DEFAULT_MODE true
-    #define DNS_DEFAULT_MDNS true
-    #define DNS_PORT 53
-    #define DNS_TTL 60
+    #include <Arduino.h>
+    #include <ESP8266WiFi.h>
+    #include <Ticker.h>
 
 
-    class DNSConfig {
+    // Sizes
+    #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
+     
+
+    class NetCheckConfig {
 
         public:
 
             void ICACHE_FLASH_ATTR setDefaults();
 
             bool mode;
-            bool mDNS;
-            char hostname[DNS_MAX_HOSTNAME_LEN];
+            char checkService[NETCHECK_MAX_SERVICE_LEN];
+            uint interval;
 
-            bool operator==(const DNSConfig& other) const {
-                return (strcmp(hostname, other.hostname)==0)
+            bool operator==(const NetCheckConfig& other) const {
+                return (strcmp(checkService, other.checkService)==0)
                     && mode == other.mode
-                    && mDNS == other.mDNS;
+                    && interval == other.interval;
             }
-            bool operator!=(const DNSConfig& other) const {
-                return (strcmp(hostname, other.hostname)!=0)
+            bool operator!=(const NetCheckConfig& other) const {
+                return (strcmp(checkService, other.checkService)!=0)
                     || mode != other.mode
-                    || mDNS != other.mDNS;
+                    || interval != other.interval;
             }
 
     };
 
 
 
-    class DNSManager {
+    class NetCheckManager {
         
         public:
 
-            void ICACHE_FLASH_ATTR begin(DNSConfig &settings, bool apMode);
+            void ICACHE_FLASH_ATTR begin(WiFiClient &client, NetCheckConfig &settings);
             void handle();
+
+            bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
 
 
         protected:
 
-            DNSConfig* _settings;
-            DNSServer _dnsServer;
-            bool _dnsStarted = false;
+            NetCheckConfig* _settings;
+            WiFiClient* _client;
+
+            bool _ConnectedToInternet;      // Is there a route to the internet
+            Ticker _netCheck;
+            static bool _doNetCheck;        // TODO - does this need to be static ?
+
+            static void TriggerNetCheck() { _doNetCheck = true; };
+            bool ICACHE_FLASH_ATTR NetCheck();
+
 
     };
-
 
 #endif

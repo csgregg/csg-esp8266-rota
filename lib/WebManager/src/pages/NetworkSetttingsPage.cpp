@@ -257,7 +257,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
     config.settings.networkSettings.netCheckSettings = netStatus;
     config.Save();
 
-    network.setNetChecker();
+    network.restartDNS();
 
 }
 
