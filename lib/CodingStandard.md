@@ -564,17 +564,14 @@ catch ( Exception& exception ) {
 }
 ```
 
-| Single statement *if-else*, *for* or *while* statements can be written without brackets. |
+| Single statement *if-else*, *for* or *while* statements can be written without brackets on one line. |
 | --- |
 ``` 
-if( condition )
-    statement;
+if( condition ) statement;
 
-while( condition )
-    statement;
+while( condition ) statement;
 
-for( initialization; condition; update )
-    statement;
+for( initialization; condition; update ) statement;
 ```
 
 | Class declarations should have the following form. Methods should be grouped and members should be grouped. |
@@ -584,17 +581,35 @@ class SomeClass : public BaseClass
 {
     public:
 
+        /** Brief description */
+        enum Mode {                 // Start with class enums
+            ON,
+            OFF
+        };
+
+        /** Brief description */
+        SomeClass();                // Place constructor first
+
+        /** Brief description */
         void doThis();
+        /** Brief description
+         *  @param name     Description of parameter.
+         *  @returns        The return value */ 
         String getThat( int size );
         
 
     protected:
 
+        /** Brief description
+         *  @param name     Description of parameter.
+         *  @returns        The return */ 
         size_t calcSize( String name );
+        /** Brief description
+         *  @param name     Description of parameter. */ 
         void startFile( String name );
 
-        String _storedName;
-        bool _isOpen;
+        String _storedName;     // Brief description
+        bool _isOpen;           // Brief description
 
 
     private:

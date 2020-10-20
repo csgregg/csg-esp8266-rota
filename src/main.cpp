@@ -41,7 +41,7 @@ Setup and Loop
 void ICACHE_FLASH_ATTR setup() {
 
     // Services started in the proper order
-    device.begin();
+    device.Begin();
     config.Begin();
     logger.begin( network.getWiFiClient(), config.settings.logSettings );  
     network.begin( config.settings.networkSettings );
@@ -57,7 +57,7 @@ void ICACHE_FLASH_ATTR setup() {
 void loop() {
 
     // Handle each service set
-    device.handle();
+    device.Handle();
     network.handle();
     website.handle();
     updater.handle();

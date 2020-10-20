@@ -60,7 +60,7 @@ void ICACHE_FLASH_ATTR NetworkManager::begin( NetworkSettings &settings ) {
 
     _settings = &settings;
 
-    if( device.getStartMode() == IOTDevice::DOUBLERESET ) {
+    if( device.GetStartMode() == IOTDevice::DOUBLERESET ) {
         LOG(PSTR("(Network) Double Reset - starting in AP Mode"));
         _settings->wifiMode = WIFI_AP;
     }

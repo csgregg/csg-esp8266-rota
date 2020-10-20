@@ -1,6 +1,4 @@
-/* Device Library
-
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,25 +18,27 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
------------------------------------------------------------------------------
-
-Defines the physical attributes of the IOT device and the build environment.
-
-Build flags are loaded from platformio.ini
-
-*/
+/** Defines the physical attributes of the IOT device and the build environment.
+ *  Build flags are loaded from platformio.ini
+ *  @file   Device.h                                    // TODO - Rename to match classname
+ *  @author Chris Gregg
+ *  @date   2020
+ *  @version
+ */
 
 
 #ifndef DEVICE_H
 
     #define DEVICE_H
 
+    // Global Libraries
     #include <Arduino.h>
     #include <DoubleResetDetector.h>
     
-    #include "Credentials.h"            // Contains private definitions (excluded from repo)
+    // Project Libraries
+    #include "Credentials.h"                // Contains private definitions (excluded from repo)
 
     #ifndef BUILD_NUMBER
         #include "Version.h"                // Defines local build number
@@ -46,7 +46,8 @@ Build flags are loaded from platformio.ini
 
 
     // Used to stringify debug flags
-    #define TEXTIFY(...) #__VA_ARGS__
+
+    #define TEXTIFY(...) #__VA_ARGS__                   
     #define ESCAPEQUOTE(...) TEXTIFY(__VA_ARGS__)
     
 
@@ -103,6 +104,9 @@ Build flags are loaded from platformio.ini
     #define FLAG_MAX_CHIPIN_LEN (8+1)
     #define FLAG_MAX_BUILDENV_LEN (32+1)
 
+   // Detect double reset
+    #define DRD_TIMEOUT 3           // Number of seconds after reset during which a subseqent reset will be considered a double reset.
+    #define DRD_ADDRESS 0           // RTC Memory Address for the DoubleResetDetector to use
 
 
     // Physical board
@@ -144,59 +148,64 @@ Build flags are loaded from platformio.ini
     static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
     static const char flag_TLO_IPINFO_SERVICE [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_SERVICE);     // URL for IPInfo.io service
 
-    // Detect double reset
-    #define DRD_TIMEOUT 3           // Number of seconds after reset during which a subseqent reset will be considered a double reset.
-    #define DRD_ADDRESS 0           // RTC Memory Address for the DoubleResetDetector to use
 
-
-    // Expand the EspClass to add build flags, etc
-    class IOTDevice : public EspClass {
+    /** @class IOT Device Class
+     * 
+     *  @brief Expand the EspClass to add build flags, and contains any hardware specifics. */
+    class IOTDevice : public EspClass
+    {
 
         public:
-
-            IOTDevice() : 
-                _drd(DRD_TIMEOUT, DRD_ADDRESS)
-            {};
 
             enum StartMode {
                 NORMAL,
                 DOUBLERESET,
             };
 
-            void ICACHE_FLASH_ATTR begin();
+            /** Constructor */
+            IOTDevice() : 
+                _drd( DRD_TIMEOUT, DRD_ADDRESS )        // Set up double reset detection
+            {};
 
-            // Get build number and time stamp
-            char* ICACHE_FLASH_ATTR getBuildNo() {
-                return _build_no;
-            };
-            char* ICACHE_FLASH_ATTR getBuildTime() {
-                return _build_time;
-            };
-            char* ICACHE_FLASH_ATTR getChipId() {
-                return _chipID;
-            };
-            char* ICACHE_FLASH_ATTR getBuildEnv() {
-                return _buildEnv;
-            };
+            /** Sets up the device hardware and build environment */
+            void ICACHE_FLASH_ATTR Begin();
 
-            StartMode ICACHE_FLASH_ATTR getStartMode() {
-                return _startMode;
-            };
+            /** Get the build number
+             *  @returns String containing the number of the build */
+            char* ICACHE_FLASH_ATTR GetBuildNo() { return _build_no; };
 
-            void handle(){
-                _drd.loop();
-            };
+            /** Get the build time stamp
+             *  @returns String containing the date and time of the build */
+            char* ICACHE_FLASH_ATTR GetBuildTime() { return _build_time; };
+
+            /** Get the chip ID
+             *  @returns String containing the chip ID */            
+            char* ICACHE_FLASH_ATTR GetChipId() { return _chipID; };
+
+            /** Get the build environment
+             *  @returns String containing the build environment */     
+            char* ICACHE_FLASH_ATTR GetBuildEnv() { return _buildEnv; };
+
+            /** Get the mode the device was started in
+             *  @returns StartMode */         
+            StartMode ICACHE_FLASH_ATTR GetStartMode() { return _startMode; };
+
+            /** Handles any repeating device actions */    
+            void Handle(){ _drd.loop(); };
+
 
         protected:
-            char _build_no[FLAG_MAX_BUILD_NO_LEN];
-            char _build_time[FLAG_MAX_BUILD_TIMESTAMP_LEN];
-            char _chipID[FLAG_MAX_CHIPIN_LEN];
-            char _buildEnv[FLAG_MAX_BUILDENV_LEN];
 
-            DoubleResetDetector _drd;
-            StartMode _startMode = NORMAL;
+            char _build_no[FLAG_MAX_BUILD_NO_LEN];              // Stores the build number as char array                // TODO - this is double storage. Must be a better way.
+            char _build_time[FLAG_MAX_BUILD_TIMESTAMP_LEN];     // Stores the build time stamp as char array
+            char _chipID[FLAG_MAX_CHIPIN_LEN];                  // Stores the chip ID as char array
+            char _buildEnv[FLAG_MAX_BUILDENV_LEN];              // Stores build environment as char array
+
+            DoubleResetDetector _drd;                           // Creating the double reset detector
+            StartMode _startMode = NORMAL;                      // The mode the device was started in. Defaults to NORMAL
     };
 
-    extern IOTDevice device;
+
+    extern IOTDevice device;        // Declaring the global instance
 
 #endif

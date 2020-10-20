@@ -1,6 +1,4 @@
-/* Device Library
-
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,32 +18,36 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
------------------------------------------------------------------------------
+/** Defines the physical attributes of the IOT device and the build environment.
+ *  Build flags are loaded from platformio.ini
+ *  @file   Device.cpp
+ *  @author Chris Gregg
+ *  @date   2020
+ *  @version
+ */
 
-Defines the physical attributes of the IOT device and the build environment.
 
-Build flags are loaded from platformio.ini
-
-*/
-
+// Project Libraries
 #include "Device.h"
 
 
-// Need to do this because these flags seem to get defined at differnet time to the rest
-void ICACHE_FLASH_ATTR IOTDevice::begin() {
+// Sets up the device hardware and build environment
+void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 
     // Need to do this because these flags seem to get defined at differnet time to the rest
-    sprintf_P(_build_no,PSTR("%i"),flag_BUILD_NO);
-    strcpy_P(_build_time, flag_BUILD_TIMESTAMP);
-    sprintf_P(_chipID,PSTR("%0X"),EspClass::getChipId());
-    strcpy_P(_buildEnv,flag_BUILD_ENV);
+    sprintf_P( _build_no, PSTR("%i"), flag_BUILD_NO );
+    strcpy_P( _build_time, flag_BUILD_TIMESTAMP );
+    sprintf_P( _chipID, PSTR("%0X") ,EspClass::getChipId() );
+    strcpy_P( _buildEnv, flag_BUILD_ENV );
 
     if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
     
-};
+}
 
+
+// Create the global instance
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_DEVICE)
     IOTDevice device;
 #endif
