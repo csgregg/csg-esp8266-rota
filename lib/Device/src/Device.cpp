@@ -1,4 +1,4 @@
-/* IOT Device Library
+/* Device Library
 
 MIT License
 
