@@ -32,7 +32,7 @@ Manages Network Functions
 
 #include "NetworkManager.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 

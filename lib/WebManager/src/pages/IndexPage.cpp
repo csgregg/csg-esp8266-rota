@@ -31,7 +31,7 @@ Server-side functions of index.html
 
 #include "IndexPage.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 #include "NetworkManager.h"
 
 

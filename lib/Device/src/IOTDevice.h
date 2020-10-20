@@ -23,16 +23,16 @@ SOFTWARE. */
 /** Defines the physical attributes of the IOT device and the build environment.
  *  Build flags are loaded from platformio.ini
  * 
- *  @file   Device.h                                    // TODO - Rename to match classname
+ *  @file   IOTDevice.h                                    // TODO - Rename to match classname
  *  @author Chris Gregg
  *  @date   2020
  *  @version
  */
 
 
-#ifndef DEVICE_H
+#ifndef IOT_DEVICE_H
 
-    #define DEVICE_H
+    #define IOT_DEVICE_H
 
     // Global Libraries
     #include <Arduino.h>
@@ -209,4 +209,4 @@ SOFTWARE. */
 
     extern IOTDevice device;        // Declaring the global instance
 
-#endif      // DEVICE_H
+#endif      // IOT_DEVICE_H

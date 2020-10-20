@@ -32,7 +32,7 @@ Manages Internet Checking Functions
 
 #include "NetCheckManager.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 

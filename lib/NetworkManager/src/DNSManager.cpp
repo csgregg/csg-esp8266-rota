@@ -31,7 +31,7 @@ Manages DNS Functions
 
 #include "DNSManager.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 void ICACHE_FLASH_ATTR DNSSettings::setDefaults() {

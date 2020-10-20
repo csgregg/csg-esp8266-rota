@@ -64,7 +64,7 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 #include <ArduinoJson.h>
 
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 bool LogClient::_doTick = false;
