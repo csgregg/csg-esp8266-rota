@@ -785,7 +785,7 @@ bool ExampleClass::ExampleMethod2( int paramexample )
 }
 ```
 
-| Class members should be followed with a comment describing purpose |
+| Class members should be followed with a comment describing purpose. |
 | --- |
 ```
     int _exampleMember;             // Description of member
@@ -800,6 +800,45 @@ bool ExampleClass::ExampleMethod2( int paramexample )
         @returns                 Ture or false */
     bool ExampleMethod( int paramexample = 1 );
 ```
+
+# 5. ESP Specifics
+
+## 5.1 Hardware Defintion
+
+| Place all hardware defintions and build parameters into header file named *device.h*. |
+| --- |
+```
+#define DEVICE_RED_LED D1
+
+static const char flag_BOARD [] PROGMEM = ESCAPEQUOTE(BOARD);
+```
+
+## 5.2 Memory Use
+
+| Use PROGMEM where at all possible to move strings to program memory. |
+| --- |
+```
+    static const char tagName [] PROGMEM = "This is a tag";
+
+    Serial.println( PSTR("Hello World!") );
+```
+
+| Use FlashStrings where FlashString helpers are avaiable. |
+| --- |
+```
+    String name;
+    name += F("suffix);
+```
+
+| Make functions and methods be loaded at runtime, not preloaded into flash. The execptions are frequently run function or those in an interrupt. |
+| --- |
+```
+bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate()
+{
+    ...
+}
+```
+
 
 # References
 http://geosoft.no/development/cppstyle.html
