@@ -40,26 +40,26 @@ SOFTWARE. */
 ////////////////////////////////////////////
 //// Example Class
 
-// Public
+// Public:
 
+// Brief Description
 ExampleClass::ExampleClass() {
 
 }
 
 
+// Brief Description
 bool ExampleClass::ExampleMethod( int paramexample ) {
 
 }
 
 
-// Protected
+// Protected:
 
+// Brief Description
 bool ExampleClass::ExampleMethod2( int paramexample ) {
 
 }
-
-
-// Private
 
 
 // Create the global instance

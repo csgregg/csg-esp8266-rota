@@ -682,7 +682,7 @@ matrix.setElement( 2, 1, -sinAngle );
 matrix.setElement( 2, 2,  cosAngle );
 ``` 
 
-| Methods should be separated by two blank lines. |
+| Methods definitions should be separated by two blank lines. |
 | --- |
 ``` 
 
@@ -732,9 +732,6 @@ for (int tableNo = 0; tableNo < nTables;
 | Class declaration comments should be in the following format. |
 | --- |
 ```
-    ////////////////////////////////////////////
-    //// Example Class
-
     // Sizes
     #define FOR_THIS_CLASS_MAX 1            // Description 
 
@@ -747,8 +744,7 @@ for (int tableNo = 0; tableNo < nTables;
      *  @brief Brief description of class.
      *
      *  Full description of class
-     *  continued
-     */
+     *  continued */
     class ExampleClass {
 
         public:
@@ -763,22 +759,25 @@ for (int tableNo = 0; tableNo < nTables;
 ////////////////////////////////////////////
 //// Example Class
 
-// Public
+// Public:
 
+// Brief Description
 ExampleClass::ExampleClass()
 {
 
 }
 
 
+// Brief Description
 bool ExampleClass::ExampleMethod( int paramexample )
 {
 
 }
 
 
-// Protected
+// Protected:
 
+// Brief Description
 bool ExampleClass::ExampleMethod2( int paramexample )
 {
 
@@ -800,6 +799,13 @@ bool ExampleClass::ExampleMethod2( int paramexample )
         @returns                 Ture or false */
     bool ExampleMethod( int paramexample = 1 );
 ```
+
+| Reserve *TODO* for work still in progress. |
+| --- |
+```
+    int getTime();             // TODO - change to return long
+```
+
 
 # 5. ESP Specifics
 
@@ -836,6 +842,13 @@ static const char flag_BOARD [] PROGMEM = ESCAPEQUOTE(BOARD);
 bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate()
 {
     ...
+}
+
+class myClass {
+
+        public:
+
+            myClass() ICACHE_FLASH_ATTR;        // Don't forget constructors
 }
 ```
 

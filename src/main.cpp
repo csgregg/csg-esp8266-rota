@@ -42,7 +42,7 @@ void ICACHE_FLASH_ATTR setup() {
 
     // Services started in the proper order
     device.begin();
-    config.begin();
+    config.Begin();
     logger.begin( network.getWiFiClient(), config.settings.logSettings );  
     network.begin( config.settings.networkSettings );
     timelocation.begin( network.getWiFiClient(), config.settings.timelocsettings );

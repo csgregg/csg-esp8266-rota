@@ -1,6 +1,4 @@
-/* Config Manager Library
-
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,63 +18,64 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
------------------------------------------------------------------------------
-
-Manages saving a configuration set to the EEPROM section of the flash (First
-sector before file system). Settings are read and write on block and accessed
-through the settings member.
-
-*/
-
+/** Manages saving a configuration set to the EEPROM section of the flash (First
+    sector before file system). Settings are read and write on block and accessed
+    through the 'settings' member.
+ *  @file   ConfigManager.h
+ *  @author Chris Gregg
+ *  @date   2020
+ *  @version
+ */
 
 
 #ifndef CONFIG_MANAGER_H
 
     #define CONFIG_MANAGER_H
 
+    // Global Libraries
     #include <Arduino.h>
 
+    // Project Libraries
     #include "NetworkManager.h"
     #include "Logger.h"
     #include "OTAUpdater.h"
     #include "TimeLocation.h"
 
 
+    #define CONFIG_START_MARKER "CONFIG_START_10"               // Marker used to confirm presence of configs in EEPROM
     #define CONFIG_START_MARKER_SIZE 16
-    #define CONFIG_START_MARKER "CONFIG_START_10"
 
 
-
-    // Configuration Definitions
-
-
-    class deviceSettings
+    /** @class DeviceSettings
+     * 
+     *  @brief A data structure class that contains all the settings for the device. */
+    class DeviceSettings
     {
-        public:
-            NetworkSettings networkSettings;
-            LogSettings logSettings;
-            OTASettings otaSettings;
-            TimeLocationSettings timelocsettings;
 
-            void ICACHE_FLASH_ATTR setDefaults() {
-                // Default settings
+        public:
+
+            NetworkSettings networkSettings;            // Settings for Network Manager Class
+            LogSettings logSettings;                    // Settings for Logger Class
+            OTASettings otaSettings;                    // Settings for OTA Update Manager Class
+            TimeLocationSettings timelocsettings;       // Settings Time and Location Manager Class
+
+            /** Resets all the settings to the default values */
+            void ICACHE_FLASH_ATTR SetDefaults() {
                 networkSettings.setDefaults();
                 logSettings.setDefaults();
                 otaSettings.setDefaults();
                 timelocsettings.setDefaults();
             };
 
-            // Create a compare operators
-            bool operator==(const deviceSettings& other) const {
+            bool operator==( const DeviceSettings& other ) const {
                 return networkSettings == other.networkSettings
                     && logSettings == other.logSettings
                     && otaSettings == other.otaSettings
                     && timelocsettings == other.timelocsettings;
             }
-
-            bool operator!=(const deviceSettings& other) const {
+            bool operator!=( const DeviceSettings& other ) const {
                 return networkSettings != other.networkSettings
                     || logSettings != other.logSettings
                     || otaSettings != other.otaSettings
@@ -86,45 +85,50 @@ through the settings member.
     };
     
 
-
-    // Configuration Manager Class
-
-    class ConfigManager {
+    /** @class ConfigManager
+     * 
+     *  @brief Manages the creation, reading and writing of settings for the device. */
+    class ConfigManager
+    {                   
 
         public:
 
             ConfigManager() ICACHE_FLASH_ATTR {
-                _IsInitialized = false;             // Don't do anything until flash is initialized   
-                static_assert( (sizeof(ConfigManager::startMarker) + sizeof(deviceSettings) ) < SPI_FLASH_SEC_SIZE, "Config too large for EEPROM sector of Flash");
+                _isInitialized = false;             // Don't do anything until flash is initialized   
+                static_assert( (sizeof(ConfigManager::startMarker) + sizeof(DeviceSettings)) < SPI_FLASH_SEC_SIZE, "Config too large for EEPROM sector of Flash" );
             };
 
-            void ICACHE_FLASH_ATTR begin(const bool forceInit = false);          // Start the config manager
-            void ICACHE_FLASH_ATTR setDefaults();                                 // Saves the default settings
-            void ICACHE_FLASH_ATTR Read();                                            // Reads all the settings
-            void ICACHE_FLASH_ATTR Save(const bool force = false);                    // Saves all the settings
+            /** Start the config manager
+             * @param forceInit         Is the flash to be reset as well.
+             *                          Default = false */
+            void ICACHE_FLASH_ATTR Begin( const bool forceInit = false );
+            void ICACHE_FLASH_ATTR SetDefaults();       /** Saves the default settings */
+            void ICACHE_FLASH_ATTR Read();              /** Reads all the settings */
 
-            // Make the settings set accessible
-            deviceSettings settings;
+            /** Saves all the settings
+             * @param force     Force save if no changes, otherwise
+             *                  will only be saved if different.
+             *                  Default = false */
+            void ICACHE_FLASH_ATTR Save( const bool force = false );
+            
+            DeviceSettings settings;            // Make the settings set accessible
 
 
         protected:
 
-            bool ICACHE_FLASH_ATTR CheckMarker();
-            void ICACHE_FLASH_ATTR WriteMarker();
-            void ICACHE_FLASH_ATTR EraseFlash();
+            bool ICACHE_FLASH_ATTR CheckMarker();       /** Check for presence of marker in flash */
+            void ICACHE_FLASH_ATTR WriteMarker();       /** Write the marker to flash */
+            void ICACHE_FLASH_ATTR EraseFlash();        /** Erase the flash entirely with zeros */
 
-            bool _IsInitialized;
+            bool _isInitialized;        // Has the settings manager been initalized yet?
 
             // Make marker easy to refer to
             struct startMarker {
                 char marker[CONFIG_START_MARKER_SIZE];
             };
 
-
-        private:
-
-
     };
+
 
     extern ConfigManager config;        // Declaring the global instance
 
