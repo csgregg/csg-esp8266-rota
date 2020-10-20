@@ -38,9 +38,7 @@ SOFTWARE. */
 
 
 ////////////////////////////////////////////
-//// Class Declarations
-
-//// Example Class ////
+//// Example Class
 
 // Public
 
@@ -65,6 +63,6 @@ bool ExampleClass::ExampleMethod2( int paramexample ) {
 
 
 // Create the global instance
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_LIBRARY_NAME)
+#if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_LIBRARY_NAME )
     ExampleClass exampleclass;
 #endif
