@@ -1,6 +1,4 @@
-/* Literal Manager Library
-
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,40 +18,46 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
------------------------------------------------------------------------------
+/** Manages the storage of string literals in program memory
+ *  Based on ideas from https://github.com/jjssoftware/iD8266
+ * 
+ *  @file   LiteralManager.cpp
+ *  @author Chris Gregg
+ *  @date   2020
+ *  @version
+ */
 
-Based on ideas from https://github.com/jjssoftware/iD8266
 
-*/
-
-
+// Global Libraries
 #include <Arduino.h>
 
+// Project Libraries
 #include "LiteralManager.h"
 
 
-// Public :
+////////////////////////////////////////////
+//// Literal Manager Class
 
-// Retrieve the literal by ID
-String ICACHE_FLASH_ATTR LiteralManager::Get(literalID ID) {
+// Public:
 
-	strcpy_P( _Buffer, (char*)pgm_read_dword(&(LiteralRefs[ID])) );
+// Retrieve the literal by ID - return String
+String ICACHE_FLASH_ATTR LiteralManager::GetString( literalID id )
+{
+	strcpy_P( _Buffer, (char*)pgm_read_dword(&(LiteralRefs[id])) );
 	return String(_Buffer);
-
-}
-
-const char ICACHE_FLASH_ATTR *LiteralManager::pGet(literalID ID) {
-
-	return (char*)pgm_read_dword(&(LiteralRefs[ID]));
-
 }
 
 
+// Retrieve the literal by ID - return char pointer
+const char ICACHE_FLASH_ATTR *LiteralManager::GetChar( literalID id )
+{
+	return (char*)pgm_read_dword(&(LiteralRefs[id]));
+}
 
-// Create the global config instance
 
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_LITERALS)
+// Create the global instance
+#if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_LITERALS )
     LiteralManager literals;
 #endif

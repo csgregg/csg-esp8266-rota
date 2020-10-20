@@ -21,8 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 /** Manages saving a configuration set to the EEPROM section of the flash (First
-    sector before file system). Settings are read and write on block and accessed
-    through the 'settings' member.
+ *  sector before file system). Settings are read and write on block and accessed
+ *  through the 'settings' member.
+ * 
  *  @file   ConfigManager.h
  *  @author Chris Gregg
  *  @date   2020
@@ -133,4 +134,4 @@ SOFTWARE. */
 
     extern ConfigManager config;        // Declaring the global instance
 
-#endif
+#endif      // CONFIG_MANAGER_H

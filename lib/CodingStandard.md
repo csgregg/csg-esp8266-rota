@@ -760,7 +760,8 @@ for (int tableNo = 0; tableNo < nTables;
      *
      *  Full description of class
      *  continued */
-    class ExampleClass {
+    class ExampleClass
+    {
 
         public:
 
@@ -859,7 +860,8 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate()
     ...
 }
 
-class myClass {
+class myClass
+{
 
         public:
 

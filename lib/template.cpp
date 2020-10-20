@@ -20,13 +20,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-/**
-    <<Description of the library>>
-    @file template.cpp
-    @author Chris Gregg
-    @version
-    @date 2020
-*/
+/** Description of the file
+ *
+ *  @file template.cpp
+ *  @author Chris Gregg
+ *  @version
+ *  @date 2020
+ */
 
 
 // Global Libraries
@@ -43,13 +43,15 @@ SOFTWARE. */
 // Public:
 
 // Brief Description
-ExampleClass::ExampleClass() {
+ExampleClass::ExampleClass()
+{
 
 }
 
 
 // Brief Description
-bool ExampleClass::ExampleMethod( int paramexample ) {
+bool ExampleClass::ExampleMethod( int paramexample )
+{
 
 }
 
@@ -57,7 +59,8 @@ bool ExampleClass::ExampleMethod( int paramexample ) {
 // Protected:
 
 // Brief Description
-bool ExampleClass::ExampleMethod2( int paramexample ) {
+bool ExampleClass::ExampleMethod2( int paramexample )
+{
 
 }
 

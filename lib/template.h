@@ -20,7 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-/** Description of the library
+/** Description of the file
+ * 
  *  @file   template.h
  *  @author Chris Gregg
  *  @date   2020
@@ -51,9 +52,6 @@ SOFTWARE. */
     class OtherClass;
 
 
-    ////////////////////////////////////////////
-    //// Example Class
-
     // Sizes
     #define FOR_THIS_CLASS_MAX 1            // Description 
 
@@ -67,7 +65,8 @@ SOFTWARE. */
      *
      *  Full description of class
      *  continued */
-    class ExampleClass {
+    class ExampleClass
+    {
 
         public:
 
@@ -101,7 +100,7 @@ SOFTWARE. */
 
             /** Brief description
              *  @param paramexample      Description of parameter
-             *   @returns                 Ture or false */
+             *  @returns                 Ture or false */
             bool ExampleMethod2( int paramexample );
 
             /** Brief description
@@ -121,6 +120,6 @@ SOFTWARE. */
     };
 
 
-    extern ExampleClass exampleclass;        // Global instance of the libary name
+    extern ExampleClass exampleclass;        // Declaring the global instance
 
 #endif      // LIBRARY_NAME_H
