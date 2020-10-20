@@ -52,9 +52,7 @@ SOFTWARE. */
 
 
     ////////////////////////////////////////////
-    //// Class Declarations
-
-    //// Example Class ////
+    //// Example Class
 
     // Sizes
     #define FOR_THIS_CLASS_MAX 1            // Description 
@@ -74,7 +72,7 @@ SOFTWARE. */
 
         public:
 
-            /* Constructor */
+            /** Constructor */
             ExampleClass();
 
             /** Brief description
