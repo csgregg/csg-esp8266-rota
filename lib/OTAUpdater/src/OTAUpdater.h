@@ -64,7 +64,7 @@ binaries built by Travis-CI.
 
 
 
-    class OTASettings {
+    class OTASettings {             // TODO - Rename to OTAUpdaterSettings
         public:
 
             void ICACHE_FLASH_ATTR setDefaults();

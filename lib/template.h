@@ -66,8 +66,7 @@ SOFTWARE. */
      *  @brief Brief description of class.
      *
      *  Full description of class
-     *  continued
-     */
+     *  continued */
     class ExampleClass {
 
         public:
@@ -81,10 +80,10 @@ SOFTWARE. */
              * @returns                 Ture or false */
             bool ExampleMethod( int paramexample = 1 );
 
-            bool operator==(const ExampleClass& other) const {
+            bool operator==( const ExampleClass& other ) const {
                 return _exampleMember == other._exampleMember;
             }
-            bool operator!=(const ExampleClass& other) const {
+            bool operator!=( const ExampleClass& other ) const {
                 return _exampleMember != other._exampleMember;
             }
 

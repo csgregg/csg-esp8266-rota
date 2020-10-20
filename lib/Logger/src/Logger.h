@@ -135,7 +135,7 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define LOG_MAX_TAG_DESC_LEN 7
 
     // Logger settings
-    class LogSettings {
+    class LogSettings {             // TODO - Rename to LoggerSettings
 
         public:
 
