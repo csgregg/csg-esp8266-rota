@@ -71,13 +71,22 @@ SOFTWARE. */
 
         public:
 
+            /** Brief description */
+            enum Mode {
+                ON,
+                OFF
+            };
+
             /** Constructor */
-            ExampleClass();
+            ExampleClass()
+            {
+                ...
+            };
 
             /** Brief description
-             * @param paramexample      Description of parameter
+             *  @param paramexample      Description of parameter
              *                          continued. Default = 1
-             * @returns                 Ture or false */
+             *  @returns                 Ture or false */
             bool ExampleMethod( int paramexample = 1 );
 
             bool operator==( const ExampleClass& other ) const {
@@ -91,13 +100,13 @@ SOFTWARE. */
         protected:
 
             /** Brief description
-             * @param paramexample      Description of parameter
-             * @returns                 Ture or false */
+             *  @param paramexample      Description of parameter
+             *   @returns                 Ture or false */
             bool ExampleMethod2( int paramexample );
 
             /** Brief description
-             * @param paramexample      Description of parameter
-             * @returns                 Ture or false */
+             *  @param paramexample      Description of parameter
+             *  @returns                 Ture or false */
             bool ExampleMethod3( int paramexample ) {
                 return true;
             };

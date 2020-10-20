@@ -73,14 +73,14 @@ void ICACHE_FLASH_ATTR ConfigManager::Begin( const bool forceInit )
         Save();
 
     }
-    else
-        Read();         // Get the settings for the first time
+    else Read();         // Get the settings for the first time
 
 }
 
 
 // Saves the default settings to flash
-void ICACHE_FLASH_ATTR ConfigManager::SetDefaults() {
+void ICACHE_FLASH_ATTR ConfigManager::SetDefaults()
+{
 
     LOG( PSTR("(Config) Reset to defaults") );
 
@@ -92,7 +92,8 @@ void ICACHE_FLASH_ATTR ConfigManager::SetDefaults() {
 
 
 // Read settings from flash 
-void ICACHE_FLASH_ATTR ConfigManager::Read() {
+void ICACHE_FLASH_ATTR ConfigManager::Read()
+{
 
     LOG_HIGH( PSTR("(Config) Reading settings") );
 
@@ -107,7 +108,8 @@ void ICACHE_FLASH_ATTR ConfigManager::Read() {
 }
 
 
-void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
+void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force )
+{
 
     LOG(PSTR("(Config) Saving settings"));
 
@@ -143,7 +145,8 @@ void ICACHE_FLASH_ATTR ConfigManager::Save( const bool force ) {
 // Protected:
 
 // Look for the marker that was placed when the flash was set up
-bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
+bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker()
+{
 
 	startMarker markerData = EEPROM.get( 0, markerData );
     
@@ -153,7 +156,8 @@ bool ICACHE_FLASH_ATTR ConfigManager::CheckMarker() {
 
 
 // Write the marker that shows that the flash is set up
-void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
+void ICACHE_FLASH_ATTR ConfigManager::WriteMarker()
+{
     startMarker markerData;
     strncpy( markerData.marker, CONFIG_START_MARKER, sizeof(CONFIG_START_MARKER) );
 	markerData = EEPROM.put( 0, markerData );
@@ -161,7 +165,8 @@ void ICACHE_FLASH_ATTR ConfigManager::WriteMarker() {
 
 
 // Erase the content of the flash to 0
-void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
+void ICACHE_FLASH_ATTR ConfigManager::EraseFlash()
+{
     LOG( PSTR("(Config) Erasing flash") );
 
 	for( uint16_t i = 0 ; i < SPI_FLASH_SEC_SIZE ; i++ ) {
@@ -171,7 +176,7 @@ void ICACHE_FLASH_ATTR ConfigManager::EraseFlash() {
 }
 
 
-// Create the global config instance
+// Create the global instance
 #if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_CONFIG_SETTINGS )
     ConfigManager config;
 #endif

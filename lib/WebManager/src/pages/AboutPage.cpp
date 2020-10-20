@@ -39,10 +39,10 @@ void ICACHE_FLASH_ATTR AboutPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) About - Initialize AJAX"));
 
-    device_id.setValue(device.getChipId());
-    build_env.setValue(device.getBuildEnv());
-    build_no.setValue(device.getBuildNo());
-    build_time.setValue(device.getBuildTime());
+    device_id.setValue(device.GetChipId());
+    build_env.setValue(device.GetBuildEnv());
+    build_no.setValue(device.GetBuildNo());
+    build_time.setValue(device.GetBuildTime());
 
 }
 

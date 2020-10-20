@@ -93,20 +93,21 @@ SOFTWARE. */
 
         public:
 
-            ConfigManager() ICACHE_FLASH_ATTR {
+            ConfigManager() ICACHE_FLASH_ATTR
+            {
                 _isInitialized = false;             // Don't do anything until flash is initialized   
                 static_assert( (sizeof(ConfigManager::startMarker) + sizeof(DeviceSettings)) < SPI_FLASH_SEC_SIZE, "Config too large for EEPROM sector of Flash" );
             };
 
             /** Start the config manager
-             * @param forceInit         Is the flash to be reset as well.
+             *  @param forceInit        Is the flash to be reset as well.
              *                          Default = false */
             void ICACHE_FLASH_ATTR Begin( const bool forceInit = false );
             void ICACHE_FLASH_ATTR SetDefaults();       /** Saves the default settings */
             void ICACHE_FLASH_ATTR Read();              /** Reads all the settings */
 
             /** Saves all the settings
-             * @param force     Force save if no changes, otherwise
+             *  @param force    Force save if no changes, otherwise
              *                  will only be saved if different.
              *                  Default = false */
             void ICACHE_FLASH_ATTR Save( const bool force = false );
