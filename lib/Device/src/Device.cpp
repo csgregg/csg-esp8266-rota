@@ -22,6 +22,7 @@ SOFTWARE. */
 
 /** Defines the physical attributes of the IOT device and the build environment.
  *  Build flags are loaded from platformio.ini
+ * 
  *  @file   Device.cpp
  *  @author Chris Gregg
  *  @date   2020
@@ -33,12 +34,17 @@ SOFTWARE. */
 #include "Device.h"
 
 
+////////////////////////////////////////////
+//// Device Manager Class
+
+// Public:
+
 // Sets up the device hardware and build environment
 void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 
-    // Need to do this because these flags seem to get defined at differnet time to the rest
-    sprintf_P( _build_no, PSTR("%i"), flag_BUILD_NO );
-    strcpy_P( _build_time, flag_BUILD_TIMESTAMP );
+    // Need to do this because these preprocessor defines seem to get defined at differnet time to the rest
+    sprintf_P( _buildNo, PSTR("%i"), flag_BUILD_NO );
+    strcpy_P( _buildTime, flag_BUILD_TIMESTAMP );
     sprintf_P( _chipID, PSTR("%0X") ,EspClass::getChipId() );
     strcpy_P( _buildEnv, flag_BUILD_ENV );
 
@@ -48,6 +54,6 @@ void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 
 
 // Create the global instance
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_DEVICE)
+#if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_DEVICE )
     IOTDevice device;
 #endif

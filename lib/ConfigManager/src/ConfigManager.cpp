@@ -21,8 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 /** Manages saving a configuration set to the EEPROM section of the flash (First
-    sector before file system). Settings are read and write on block and accessed
-    through the settings member.
+ *  sector before file system). Settings are read and write on block and accessed
+ *  through the settings member.
+ * 
  *  @file   ConfigManager.cpp
  *  @author Chris Gregg
  *  @date   2020
@@ -39,9 +40,9 @@ SOFTWARE. */
 
 
 ////////////////////////////////////////////
-//// Example Class
+//// Config Manager Class
 
-// Public
+// Public:
 
 // Start the configuraiton manager
 void ICACHE_FLASH_ATTR ConfigManager::Begin( const bool forceInit )

@@ -1,6 +1,4 @@
-/* Literal Manager Library
-
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,66 +18,88 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
------------------------------------------------------------------------------
-
-Based on ideas from https://github.com/jjssoftware/iD8266
-
-*/
+/** Manages the storage of string literals in program memory
+ *  Based on ideas from https://github.com/jjssoftware/iD8266
+ * 
+ *  @file   LiteralManager.h
+ *  @author Chris Gregg
+ *  @date   2020
+ *  @version
+ */
 
 
 #ifndef LITERAL_MANAGER_H
 
     #define LITERAL_MANAGER_H
 
-    #define MAX_LITERAL_SIZE    48          // Largest allowed literal size
-
+    // Global Libraries
     #include <Arduino.h>
 
+    // Project Libraries
     #include "Literals.h"
+
 
     // Enumerate the IDs for the literals
     enum literalID {
-    #define LITERAL(enumVal, str) enumVal,
+    #define LITERAL( enumVal, str ) enumVal,
         LITERAL_TABLE
     #undef LITERAL
     };
 
+
+    #define MAX_LITERAL_SIZE    48          // Largest allowed literal size
+
     // Put the literals in flash, checking they are not too large along the way
-    #define LITERAL(enumVal, str) const char LIT_REF_ ## enumVal[] PROGMEM = str; static_assert( sizeof(str) <= MAX_LITERAL_SIZE, "Literal too large");
+    #define LITERAL( enumVal, str ) const char LIT_REF_ ## enumVal[] PROGMEM = str; static_assert( sizeof(str) <= MAX_LITERAL_SIZE, "Literal too large");
         LITERAL_TABLE
     #undef LITERAL
 
     // Create array of references 
     const char* const LiteralRefs[] PROGMEM = {
-    #define LITERAL(enumVal, str) LIT_REF_ ## enumVal,
+    #define LITERAL( enumVal, str ) LIT_REF_ ## enumVal,
         LITERAL_TABLE
     #undef LITERAL
     };
 
 
-    // Literal Manager Class
-    class LiteralManager {
+    /** @class Literal Manager Class
+     * 
+     *  @brief Manages fetching the strings from program memory */
+    class LiteralManager
+    {
 
         public:
 
-            String Get(literalID ID);                // Retrieve literal by ID
-            const char* pGet(literalID ID);          // Retrieve literal ptr by ID
-	        size_t Size(literalID ID) { return strlen(LiteralRefs[ID]) ; };
+            /** Retrieve literal by ID
+             *  @param id      The ID of the literal
+             *  @returns       String class for the literal */
+            String GetString( literalID id );
+            
+            /** Retrieve literal by ID
+             *  @param id      The ID of the literal
+             *  @returns       Char pointer to the literal */
+            const char* GetChar( literalID id );
+
+            /** Retrieve literal by ID
+             *  @param id      The ID of the literal
+             *  @returns       Size of the literal */
+	        size_t GetSize( literalID id ) { return strlen( LiteralRefs[id] ); };
+
 
         protected:
 
-            char _Buffer[MAX_LITERAL_SIZE];
+            char _Buffer[MAX_LITERAL_SIZE];         // Buffer to hold literal for return reference
 
 
     };
     
     
-    extern LiteralManager literals;             // Declaring the global instance
+    extern LiteralManager literals;                     // Declaring the global instance
 
-    #define sLIT(name) literals.Get(name)       // Returns String for literal
-    #define cLIT(name) literals.pGet(name)      // Returns char* to literal
-    #define zLIT(name) literals.Size(name)      // Returns size of literal
+    #define sLIT( name ) literals.GetString( name )     // Returns String for literal
+    #define cLIT( name ) literals.GetChar( name )       // Returns char* to literal
+    #define zLIT( name ) literals.GetSize( name )       // Returns size of literal
 
 #endif

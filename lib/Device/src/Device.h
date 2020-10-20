@@ -22,6 +22,7 @@ SOFTWARE. */
 
 /** Defines the physical attributes of the IOT device and the build environment.
  *  Build flags are loaded from platformio.ini
+ * 
  *  @file   Device.h                                    // TODO - Rename to match classname
  *  @author Chris Gregg
  *  @date   2020
@@ -172,11 +173,11 @@ SOFTWARE. */
 
             /** Get the build number
              *  @returns String containing the number of the build */
-            char* ICACHE_FLASH_ATTR GetBuildNo() { return _build_no; };
+            char* ICACHE_FLASH_ATTR GetBuildNo() { return _buildNo; };
 
             /** Get the build time stamp
              *  @returns String containing the date and time of the build */
-            char* ICACHE_FLASH_ATTR GetBuildTime() { return _build_time; };
+            char* ICACHE_FLASH_ATTR GetBuildTime() { return _buildTime; };
 
             /** Get the chip ID
              *  @returns String containing the chip ID */            
@@ -191,13 +192,13 @@ SOFTWARE. */
             StartMode ICACHE_FLASH_ATTR GetStartMode() { return _startMode; };
 
             /** Handles any repeating device actions */    
-            void Handle(){ _drd.loop(); };
+            void Handle() { _drd.loop(); };
 
 
         protected:
 
-            char _build_no[FLAG_MAX_BUILD_NO_LEN];              // Stores the build number as char array                // TODO - this is double storage. Must be a better way.
-            char _build_time[FLAG_MAX_BUILD_TIMESTAMP_LEN];     // Stores the build time stamp as char array
+            char _buildNo[FLAG_MAX_BUILD_NO_LEN];               // Stores the build number as char array                // TODO - this is double storage. Must be a better way.
+            char _buildTime[FLAG_MAX_BUILD_TIMESTAMP_LEN];      // Stores the build time stamp as char array
             char _chipID[FLAG_MAX_CHIPIN_LEN];                  // Stores the chip ID as char array
             char _buildEnv[FLAG_MAX_BUILDENV_LEN];              // Stores build environment as char array
 
@@ -208,4 +209,4 @@ SOFTWARE. */
 
     extern IOTDevice device;        // Declaring the global instance
 
-#endif
+#endif      // DEVICE_H
