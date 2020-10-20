@@ -36,7 +36,7 @@ SOFTWARE. */
 // Project Libraries
 #include "ConfigManager.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 ////////////////////////////////////////////

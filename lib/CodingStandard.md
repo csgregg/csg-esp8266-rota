@@ -827,7 +827,7 @@ bool ExampleClass::ExampleMethod2( int paramexample )
 
 ## 5.1 Hardware Defintion
 
-| Place all hardware defintions and build parameters into header file named *device.h*. |
+| Place all hardware defintions and build parameters into header file named *IOTDevice.h*. |
 | --- |
 ```
 #define DEVICE_RED_LED D1

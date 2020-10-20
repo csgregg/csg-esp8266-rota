@@ -49,7 +49,7 @@ https://arduinojson.org/v6/assistant/
 #include <ESP8266HTTPClient.h>
 #include <ezTime.h>
 
-#include "Device.h"
+#include "IOTDevice.h"
 #include "Logger.h"
 #include "NetworkManager.h"
 #include "TimeLocation.h"

@@ -30,7 +30,7 @@ Server-side functions of system.html
 
 
 #include "SystemPage.h"
-#include "Device.h"
+#include "IOTDevice.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkManager.h"

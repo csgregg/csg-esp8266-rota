@@ -33,7 +33,7 @@ WiFi Network Functions
 
 #include "WiFiManager.h"
 #include "Logger.h"
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 

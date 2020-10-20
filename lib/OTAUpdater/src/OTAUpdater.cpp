@@ -62,7 +62,7 @@ https://arduinojson.org/v6/assistant/
 
 #include <ArduinoJson.h>
 
-#include "Device.h"
+#include "IOTDevice.h"
 #include "Logger.h"
 #include "OTAUpdater.h"
 #include "NetworkManager.h"

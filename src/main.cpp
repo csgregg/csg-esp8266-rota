@@ -29,7 +29,7 @@ Setup and Loop
 */
 
 
-#include "Device.h"
+#include "IOTDevice.h"
 #include "ConfigManager.h"
 #include "Logger.h"
 #include "NetworkManager.h"

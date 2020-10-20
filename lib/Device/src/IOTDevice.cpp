@@ -23,7 +23,7 @@ SOFTWARE. */
 /** Defines the physical attributes of the IOT device and the build environment.
  *  Build flags are loaded from platformio.ini
  * 
- *  @file   Device.cpp
+ *  @file   IOTDevice.cpp
  *  @author Chris Gregg
  *  @date   2020
  *  @version
@@ -31,7 +31,7 @@ SOFTWARE. */
 
 
 // Project Libraries
-#include "Device.h"
+#include "IOTDevice.h"
 
 
 ////////////////////////////////////////////
