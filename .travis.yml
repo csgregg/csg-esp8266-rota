@@ -5,6 +5,7 @@ sudo: false
 cache:
   directories:
   - "~/.platformio"
+if: branch = master
 env:
   matrix:
   - PLATFORMIO_CI_SRC=src/
