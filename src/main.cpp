@@ -43,7 +43,7 @@ void ICACHE_FLASH_ATTR setup() {
     // Services started in the proper order
     device.Begin();
     config.Begin();
-    logger.begin( network.getWiFiClient(), config.settings.logSettings );  
+    logger.Begin( network.getWiFiClient(), config.settings.logSettings );  
     network.begin( config.settings.networkSettings );
     timelocation.begin( network.getWiFiClient(), config.settings.timelocsettings );
     website.begin( config.settings.networkSettings.dnsSettings.hostname );

@@ -51,21 +51,22 @@ SOFTWARE. */
 
     /** @class DeviceSettings
      * 
-     *  @brief A data structure class that contains all the settings for the device. */
+     *  @brief A data structure class that contains all the settings for the device.
+     */
     class DeviceSettings
     {
 
         public:
 
             NetworkSettings networkSettings;            // Settings for Network Manager Class
-            LogSettings logSettings;                    // Settings for Logger Class
+            LoggerSettings logSettings;                 // Settings for Logger Class
             OTASettings otaSettings;                    // Settings for OTA Update Manager Class
             TimeLocationSettings timelocsettings;       // Settings Time and Location Manager Class
 
             /** Resets all the settings to the default values */
             void ICACHE_FLASH_ATTR SetDefaults() {
                 networkSettings.setDefaults();
-                logSettings.setDefaults();
+                logSettings.SetDefaults();
                 otaSettings.setDefaults();
                 timelocsettings.setDefaults();
             };
@@ -88,7 +89,8 @@ SOFTWARE. */
 
     /** @class ConfigManager
      * 
-     *  @brief Manages the creation, reading and writing of settings for the device. */
+     *  @brief Manages the creation, reading and writing of settings for the device.
+     */
     class ConfigManager
     {                   
 
@@ -102,7 +104,8 @@ SOFTWARE. */
 
             /** Start the config manager
              *  @param forceInit        Is the flash to be reset as well.
-             *                          Default = false */
+             *                          Default = false
+             */
             void ICACHE_FLASH_ATTR Begin( const bool forceInit = false );
             void ICACHE_FLASH_ATTR SetDefaults();       /** Saves the default settings */
             void ICACHE_FLASH_ATTR Read();              /** Reads all the settings */
@@ -110,7 +113,8 @@ SOFTWARE. */
             /** Saves all the settings
              *  @param force    Force save if no changes, otherwise
              *                  will only be saved if different.
-             *                  Default = false */
+             *                  Default = false
+             */
             void ICACHE_FLASH_ATTR Save( const bool force = false );
             
             DeviceSettings settings;            // Make the settings set accessible
@@ -118,7 +122,10 @@ SOFTWARE. */
 
         protected:
 
-            bool ICACHE_FLASH_ATTR CheckMarker();       /** Check for presence of marker in flash */
+            /** Check for presence of marker in flash
+             *  @return     true if exists
+             */
+            bool ICACHE_FLASH_ATTR CheckMarker();
             void ICACHE_FLASH_ATTR WriteMarker();       /** Write the marker to flash */
             void ICACHE_FLASH_ATTR EraseFlash();        /** Erase the flash entirely with zeros */
 

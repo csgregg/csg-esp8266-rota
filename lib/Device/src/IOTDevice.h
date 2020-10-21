@@ -158,9 +158,9 @@ SOFTWARE. */
 
         public:
 
-            enum StartMode {
-                NORMAL,
-                DOUBLERESET,
+            enum StartMode {            // Mode the devices starts in
+                NORMAL,                 // Normal
+                DOUBLERESET,            // If the device has been reset twice within the double reset detect interval
             };
 
             /** Constructor */
@@ -168,31 +168,34 @@ SOFTWARE. */
                 _drd( DRD_TIMEOUT, DRD_ADDRESS )        // Set up double reset detection
             {};
 
-            /** Sets up the device hardware and build environment */
-            void ICACHE_FLASH_ATTR Begin();
+            void ICACHE_FLASH_ATTR Begin();             /** Sets up the device hardware and build environment */
 
             /** Get the build number
-             *  @returns String containing the number of the build */
+             *  @returns String containing the number of the build
+             */
             char* ICACHE_FLASH_ATTR GetBuildNo() { return _buildNo; };
 
             /** Get the build time stamp
-             *  @returns String containing the date and time of the build */
+             *  @returns String containing the date and time of the build
+             */
             char* ICACHE_FLASH_ATTR GetBuildTime() { return _buildTime; };
 
             /** Get the chip ID
-             *  @returns String containing the chip ID */            
+             *  @returns String containing the chip ID
+             */            
             char* ICACHE_FLASH_ATTR GetChipId() { return _chipID; };
 
             /** Get the build environment
-             *  @returns String containing the build environment */     
+             *  @returns String containing the build environment
+             */     
             char* ICACHE_FLASH_ATTR GetBuildEnv() { return _buildEnv; };
 
             /** Get the mode the device was started in
-             *  @returns StartMode */         
+             *  @returns StartMode
+             */         
             StartMode ICACHE_FLASH_ATTR GetStartMode() { return _startMode; };
-
-            /** Handles any repeating device actions */    
-            void Handle() { _drd.loop(); };
+   
+            void Handle() { _drd.loop(); };         /** Handles any repeating device actions */ 
 
 
         protected:

@@ -110,7 +110,7 @@ Uses either inlined flash files or LittleFS to server web files, and handles AJA
 
 
       /** @brief A global char variable that can be updated from the server (not the client) */
-    template <size_t SIZE> class EmbAJAXVarChar : public EmbAJAXElement {
+    template<size_t SIZE> class EmbAJAXVarChar : public EmbAJAXElement {
     public:
         EmbAJAXVarChar(const char* id, const char* initial) : EmbAJAXElement(id) {
             setBasicProperty(EmbAJAXBase::HTMLAllowed, false);

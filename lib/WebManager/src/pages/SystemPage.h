@@ -48,7 +48,7 @@ Server-side functions of system.html
             void (*handler)();
             void (*init)();
 
-            LogSettings loggerSettings;
+            LoggerSettings loggerSettings;
 
             EmbAJAXServerFunction btn_restart;
             EmbAJAXServerFunction btn_rst_net;

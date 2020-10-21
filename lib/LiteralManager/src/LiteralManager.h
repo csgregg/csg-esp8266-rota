@@ -66,7 +66,8 @@ SOFTWARE. */
 
     /** @class Literal Manager Class
      * 
-     *  @brief Manages fetching the strings from program memory */
+     *  @brief Manages fetching the strings from program memory
+     */
     class LiteralManager
     {
 
@@ -74,17 +75,20 @@ SOFTWARE. */
 
             /** Retrieve literal by ID
              *  @param id      The ID of the literal
-             *  @returns       String class for the literal */
+             *  @returns       String class for the literal
+             */
             String GetString( literalID id );
             
             /** Retrieve literal by ID
              *  @param id      The ID of the literal
-             *  @returns       Char pointer to the literal */
+             *  @returns       Char pointer to the literal
+             */
             const char* GetChar( literalID id );
 
             /** Retrieve literal by ID
              *  @param id      The ID of the literal
-             *  @returns       Size of the literal */
+             *  @returns       Size of the literal
+             */
 	        size_t GetSize( literalID id ) { return strlen( LiteralRefs[id] ); };
 
 

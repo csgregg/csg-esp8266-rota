@@ -266,9 +266,9 @@ bool ICACHE_FLASH_ATTR WiFiManager::connectWiFiStation( const int id ) {
 		int i = 0;
 		while( WiFi.status() != WL_CONNECTED && i++ <= NET_STATION_TRY_TIME ) {
 			delay(500);
-			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
+			if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
 		}
-        if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
+        if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
 
 		ret = (WiFi.status() == WL_CONNECTED);
 
@@ -282,7 +282,7 @@ bool ICACHE_FLASH_ATTR WiFiManager::connectWiFiStation( const int id ) {
             _stationSettings[id]->dns1 = WiFi.dnsIP(0);
             _stationSettings[id]->dns2 = WiFi.dnsIP(1);
 
-    		if( logger.SerialOn() ) {
+    		if( logger.IsSerialOn() ) {
                 IPAddress ip;
                 ip = _stationSettings[id]->ip; LOGF( PSTR("(Network) WiFi station connected - IP: %s"), ip.toString().c_str());   
                 ip = _stationSettings[id]->subnet; LOGF_HIGH( PSTR("(Network) Subnet: %s"), ip.toString().c_str());         

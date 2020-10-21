@@ -64,7 +64,8 @@ SOFTWARE. */
      *  @brief Brief description of class.
      *
      *  Full description of class
-     *  continued */
+     *  continued
+     */
     class ExampleClass
     {
 
@@ -85,7 +86,8 @@ SOFTWARE. */
             /** Brief description
              *  @param paramexample      Description of parameter
              *                          continued. Default = 1
-             *  @returns                 Ture or false */
+             *  @returns                 Ture or false
+             */
             bool ExampleMethod( int paramexample = 1 );
 
             bool operator==( const ExampleClass& other ) const {
@@ -100,12 +102,14 @@ SOFTWARE. */
 
             /** Brief description
              *  @param paramexample      Description of parameter
-             *  @returns                 Ture or false */
+             *  @returns                 Ture or false
+             */
             bool ExampleMethod2( int paramexample );
 
             /** Brief description
              *  @param paramexample      Description of parameter
-             *  @returns                 Ture or false */
+             *  @returns                 Ture or false
+             */
             bool ExampleMethod3( int paramexample ) {
                 return true;
             };

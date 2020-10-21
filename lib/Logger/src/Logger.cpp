@@ -70,15 +70,15 @@ Use https://arduinojson.org/v6/assistant/ to determine size of file.
 bool LogClient::_doTick = false;
 
 
-void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
+void ICACHE_FLASH_ATTR LoggerSettings::SetDefaults() {
     serialBaud = flag_MONITOR_SPEED;
-    strcpy_P(serviceURL,flag_LOGGER_SERVICE);
-    strcpy_P(serviceKey,flag_LOGGER_SERVICE_KEY);
-    serialMode = flag_LOGGER_AS_SERIAL;
-    serviceMode = flag_LOGGER_AS_SERVICE;
-    strcpy_P(globalTags,flag_LOGGER_GLOBAL_TAGS);
-    level = logLevel(flag_LOGGER_LEVEL);
-    tickMode = flag_LOGGER_TICKER;
+    strcpy_P( serviceURL, flag_LOGGER_SERVICE );
+    strcpy_P( serviceKey, flag_LOGGER_SERVICE_KEY );
+    serialModeOn = flag_LOGGER_AS_SERIAL;
+    serviceModeOn = flag_LOGGER_AS_SERVICE;
+    strcpy_P( globalTags, flag_LOGGER_GLOBAL_TAGS );
+    level = LogLevel(flag_LOGGER_LEVEL);
+    tickModeOn = flag_LOGGER_TICKER;
     tickInterval = flag_LOGGER_TICK_INTERVAL;
 }
 
@@ -86,8 +86,9 @@ void ICACHE_FLASH_ATTR LogSettings::setDefaults() {
 
 // Public:
 
-// Sets up logger
-void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
+
+void ICACHE_FLASH_ATTR LogClient::Restart( LoggerSettings& settings )
+{
 
      _settings = &settings;
 
@@ -96,7 +97,7 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
     _doTick = false;
     if( _tickCheck.active() ) _tickCheck.detach();
 
-    if( _settings->serviceMode || _settings->tickMode ) {
+    if( _settings->serviceModeOn || _settings->tickModeOn ) {
 
         strcpy_P(_FullServiceURL, PSTR("http://"));
         strcat(_FullServiceURL, _settings->serviceURL);
@@ -107,17 +108,17 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
         strcat_P(_FullServiceURL, PSTR("/"));
     }
 
-    if( _settings->serialMode ) {
+    if( _settings->serialModeOn ) {
         delay(1000);
         Serial.begin(_settings->serialBaud);             
-        Serial.println(PSTR("LOG: (Logger) Starting Logging"));
+        Serial.println( PSTR("LOG: (Logger) Starting Logging") );
     }
 
     LOGF_HIGH( PSTR("(Logger) Logging set at level: %i"), _settings->level );
 
-    if( _settings->serviceMode ) LOG_HIGH(PSTR("(Logger) Logging Service: ON"));
+    if( _settings->serviceModeOn ) LOG_HIGH(PSTR("(Logger) Logging Service: ON"));
 
-    if( _settings->tickMode ) {
+    if( _settings->tickModeOn ) {
         LOG_HIGH(PSTR("(Logger) Tick Service: ON"));
         _tickCheck.attach( _settings->tickInterval, TriggerTick );
     }
@@ -125,38 +126,35 @@ void ICACHE_FLASH_ATTR LogClient::begin( LogSettings &settings ) {
 #endif
 
 }
-void ICACHE_FLASH_ATTR LogClient::begin( WiFiClient &client, LogSettings &settings ) {
 
+
+void ICACHE_FLASH_ATTR LogClient::Begin( WiFiClient& client, LoggerSettings& settings )
+{
     _client = &client;
-    begin(settings);
-   
+    Restart(settings);
 }
 
 
 
-// Main log function - char[]
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const char * message ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const char* message ) {
 
 #ifndef NO_LOGGING
 
-    if( !_settings ) begin( _preSettings );
-
     if( uint(type) >= uint(_settings->level) ) return;
 
-    if( _settings->serialMode ) LogToSerial(type, tag, message);
-    if( _settings->serviceMode ) LogToService(type, tag, message);
+    if( _settings->serialModeOn ) LogToSerial(type, tag, message);
+    if( _settings->serviceModeOn ) LogToService(type, tag, message);
 
 #endif
 
 }
 
 
-// Overload - with context
-void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const char* message, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
-
-    if( !_settings ) begin( _preSettings );
 
     if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
 
@@ -173,8 +171,8 @@ void ICACHE_FLASH_ATTR LogClient::println(const logType type, const logTag tag, 
 
 
 
-// Overload println() - char
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, int i ) {
 
 #ifndef NO_LOGGING
 
@@ -187,8 +185,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 }
 
 
-// Overload println() - char with context
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, int i, const char * file, const char * func_P, const int line ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, int i, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -202,8 +200,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 
 
 
-// Overload println() - char
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, char c ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, char c ) {
 
 #ifndef NO_LOGGING
 
@@ -218,8 +216,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 }
 
 
-// Overload println() - char with context
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, char c, const char * file, const char * func_P, const int line ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, char c, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -234,8 +232,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 }
 
 
-// Overload println() - string
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const String &s ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const String& s ) {
 
 #ifndef NO_LOGGING
 
@@ -246,8 +244,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 }
 
 
-// Overload println() - string with context
-void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag, const String &s, const char * file, const char * func_P, const int line ) {
+
+void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const String& s, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
 
@@ -259,8 +257,8 @@ void ICACHE_FLASH_ATTR LogClient::println( const logType type, const logTag tag,
 
 
 
-// Formatted log function
-void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * format, ... ) {
+
+void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, const char* format, ... ) {
 
 #ifndef NO_LOGGING
 
@@ -293,8 +291,8 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 }
 
 
-// Formatted log function with context
-void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, const char * file, const char * func_P, const int line, const char * format, ... ) {
+
+void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, const char* file, const char* func_P, const int line, const char* format, ... ) {
 
 #ifndef NO_LOGGING
 
@@ -328,8 +326,8 @@ void ICACHE_FLASH_ATTR LogClient::printf( const logType type, const logTag tag, 
 
 
 
-// Prints build flag - overload char[]
-void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const char* flag) {
+
+void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const char* flag ) {
 
 #ifndef NO_LOGGING
 
@@ -341,8 +339,8 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #endif
 }
 
-// Prints build flag - overload bool
-void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const bool flag) {
+
+void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const bool flag ) {
 
 #ifndef NO_LOGGING
 
@@ -354,8 +352,8 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 #endif
 }
 
-// Prints build flag - overload uint
-void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag, const char* name, const uint flag) {
+
+void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const uint flag ) {
 
 #ifndef NO_LOGGING
 
@@ -372,7 +370,7 @@ void ICACHE_FLASH_ATTR LogClient::printFlag(const logType type, const logTag tag
 // Protected:
 
 // Create and log prefix - needs to be followed by message using Serial.println()
-void LogClient::LogPrefix( const logType type, const logTag tag ){
+void LogClient::LogPrefix( const LogType type, const LogTag tag ){
 
 #ifndef NO_LOGGING
 
@@ -385,7 +383,7 @@ void LogClient::LogPrefix( const logType type, const logTag tag ){
 
 
 // Log message to serial
-void ICACHE_FLASH_ATTR LogClient::LogToSerial( logType type, logTag tag, const char * message ){
+void ICACHE_FLASH_ATTR LogClient::LogToSerial( LogType type, LogTag tag, const char* message ){
 
 #ifndef NO_LOGGING
 
@@ -401,7 +399,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToSerial( logType type, logTag tag, const c
 
 
 // Log message to Loggly Service
-void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag tag, const char * message ){
+void ICACHE_FLASH_ATTR LogClient::LogToService( const LogType type, const LogTag tag, const char* message ){
 
 #ifndef NO_LOGGING
 
@@ -415,7 +413,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     strcat_P(loggingURL,c_log_tag_descript[tag]);
     strcat_P(loggingURL,PSTR("/"));
    
-    if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
+    if( _settings->serialModeOn && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(PSTR("(Logger) Logging to: "));
         Serial.println(loggingURL);
@@ -449,7 +447,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
             String tempIP = WiFi.localIP().toString(); Device_Network[F("IPAddress")] = tempIP.c_str();
             String tempSSID = WiFi.SSID(); Device_Network[F("SSID")] = tempSSID.c_str();
 
-    if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
+    if( _settings->serialModeOn && _settings->level == LOGGING_LEVEL_VERBOSE ) {
         LogPrefix(DETAIL_LOG, STATUS_TAG);
         Serial.print(PSTR("(Logger) Log (JSON): "));
         serializeJson(jsonLog, Serial); 
@@ -467,7 +465,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     HTTPClient http;
 
     if( !http.begin(*_client, loggingURL) ) {
-        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+        if( _settings->serialModeOn && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging to servce: HTTP Client Error "));
             http.end();
@@ -480,13 +478,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
-        if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
+        if( _settings->serialModeOn && _settings->level == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(DETAIL_LOG, STATUS_TAG);
             Serial.println(PSTR("(Logger) Logging to servce: SUCCESS "));
         }
     }
     else {
-        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+        if( _settings->serialModeOn && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging to servce: ERROR "));
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
@@ -500,13 +498,13 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const logType type, const logTag
 
 
 // Send tick to Loggly Service
-void LogClient::handleTick( ){
+void LogClient::handleTick( ) {
 
 #ifndef NO_LOGGING
 
     if( WiFi.status() != WL_CONNECTED ) return;             // TODO - Use isconnected? Elsewhere too
 
-    if( _settings->serialMode && _settings->level >= LOGGING_LEVEL_NORMAL ) {
+    if( _settings->serialModeOn && _settings->level >= LOGGING_LEVEL_NORMAL ) {
         LogPrefix(NORMAL_LOG, STATUS_TAG);
         Serial.println(PSTR("(Logger) Logging a tick")); 
     }
@@ -555,7 +553,7 @@ void LogClient::handleTick( ){
     HTTPClient http;
 
     if( !http.begin(*_client, loggingURL) ) {
-        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+        if( _settings->serialModeOn && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging tick: HTTP Client Error "));
             http.end();
@@ -569,13 +567,13 @@ void LogClient::handleTick( ){
     http.end();
 
     if( httpCode == HTTP_CODE_OK ) {
-        if( _settings->serialMode && _settings->level == LOGGING_LEVEL_VERBOSE ) {
+        if( _settings->serialModeOn && _settings->level == LOGGING_LEVEL_VERBOSE ) {
             LogPrefix(DETAIL_LOG, STATUS_TAG);
             Serial.println(PSTR("(Logger) Logging tick: SUCCESS "));
         }
     }
     else {
-        if( _settings->serialMode && _settings->level > LOGGING_LEVEL_CRITICAL ) {
+        if( _settings->serialModeOn && _settings->level > LOGGING_LEVEL_CRITICAL ) {
             LogPrefix(CRITICAL_LOG, STATUS_TAG);
             Serial.print(PSTR("(Logger) Logging to tick: ERROR "));
             if( httpCode < 0 ) Serial.println( http.errorToString(httpCode).c_str() );
@@ -597,7 +595,7 @@ void LogClient::handle() {
 
 #ifndef NO_LOGGING
 
-    if ( _settings->tickMode && _doTick && WiFi.status() == WL_CONNECTED ) {
+    if ( _settings->tickModeOn && _doTick && WiFi.status() == WL_CONNECTED ) {
 
         _doTick = false;
 
