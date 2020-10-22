@@ -5,6 +5,8 @@ sudo: false
 cache:
   directories:
   - "~/.platformio"
+if: branch = master
+
 env:
   matrix:
   - PLATFORMIO_CI_SRC=src/
@@ -15,6 +17,7 @@ env:
   - secure: eH/05bke8IHGNSSRK/H9ioAXIhIhf3o2Guk7V0mU7rBTeftS/nzPVMG9Kg7L+Qz+i1Z6aXG4LHeMn8KCX8rLZ/2Xw5x5Enq18cW0X9kysLmXE2k/rm0WBnJpxr5DJIvHyYOHxqbi86GzuGQ7196ps8CXQzD0kbxoKnNFowXREMrMUWfjY4SwaMgFYyTUIsn7OtRhcO9slzUwl/26hMbYgn4uGTwoNiwOYrn35IxlJnByamQKUTSAo/LVLBaa5vDCfjgNOR5K+7j92aPdmpXuwsQELWLfT8nzYRpSd3bK5NMQidyYmmWu6DeJ3WhNIAtdwqq0l5fD6T/H/5Io3S3hXC4s9Cg27a6WVr+5UoaJ9YHate1vxvGfj2lmaMwk7m7GPZMJRIRxug/bBcaa8ijauSTasPNTd/iubNgff98djhbooELX95mX178oC2hoZNeIigVv6zi/Y+XMMIyLwmDu56f3KceerDEIPR/S7Hzeqg8ul67OUj2fwqSOceeH+gHxBpunp9yRmgr8d23vxkzhKiLhd8+eggmxzIa/tQATbGp8itMryLUxH5pjUXURXyPnpE2zHJUUs59kN1qmimQXf0P7fbKXNOnOABae7MXjfYTYmO4OZAwmniphJ0SRFX3e1pUeYYsHvQQTkIDWt6Xbq9GhPg1azTTiRxfEQqleNWY=
   # IPInfo - Token
   - secure: mCWzjmcBJ/CwKtT0ZfBbl9G1ILzZGI3hlQHrWNM9ed3tbb79pBI7CXz6gNLqijrhyi+/PNm2QFPilqShZGsRSuLSw/WFnvb9J198IptXzd15Obk2Sv4CqKDB5y16DM3jfteSzbx4Z7GfET+dAreWJ+W74SIcT6KbCthP4TI/ceOf/8YonvgV9VvWZW+EfGRf6SfhNK23V0oCDJ2scTR7UABTaDF70tfgqLOyh4zVeXMftnSwRVMC8S8WBCk89Haj713FiN80wvPSTXDdcc3J4X+nksXS51fvcm4GzufmvGxa1YtYnxmNsijl5qOa4a+Cc/YgKBrq6lDLuBCjq4tZwnJMNiYbSgCvbOi0GWGKaJvn4oub+NQiwe5E2FuKY+ecTuppMmiadY0luyPCNP5ppD3pAJJp/SUrkozPv5AwbLWJGc/2GqvXlbTlCkk5/GCcwekeH1HGA55fadDwLkkvrtiW/OzWdR3juC00nCweJaZcBIVFtwi6EetyWdF29Jly0BXd8WtVaufU2MVWg7TIkXZE1CxKzzmnLboXU4dySkqkjJh/tTRWNxSG1EhM+l+kg0FM4urXvbjEALpIU8a8viP5uB5T7SQpRIHHmXlFbFJFPt/inxAzvPqDtnGzFSrOpzBlp2ycIHrqkqsRJ/QqmrB/kOQOjcDuFLWYP5HiWqk=
+
 install:
 - pip install -U platformio
 - platformio platform install espressif8266@2.6.2
@@ -22,9 +25,11 @@ install:
 - platformio lib install DoubleResetDetector
 - platformio lib install ezTime
 - platformio lib install https://github.com/tfry-git/EmbAJAX#master
+
 script:
 - platformio run -t buildfs -e travis
 - platformio run -e travis
+
 addons:
   ssh_known_hosts: iot.greggs.org
 # Setup ssh to goDaddy with key
@@ -42,7 +47,6 @@ deploy:
     skip_cleanup: true
     on:
       repo: csgregg/csg-esp8266-rota
-      all_branches: true
       condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
     api_key:
       secure: mz3mvlIOR0kjYIeqRDCCC/JgG9tfJHEs06YrkE/3O7OftcsF777atkiLAesTRb3s+NuGHV29Q115jkzrj+kqgeyUvYs/wOsEZAW0Aq2B8I1mr9nFkccpA5r9DofG0PUbtxGoLFxYmizHBPguQD2lKgZpEIFVbOS81gOlzraJLbmv3hXtvlJhPHShaKYfx4Y+jN4RD6rgU1T301T/kQltBDd5zyCImte0dLp1NXn+No0fcFmvjawDEJt/JZf0yQCU94u8WPTUEwml5t5B46lPtvE+YBz73/WeCT6f+ubnicBlcv73CYtlg5QQjmZCdjJMCDKb2ZQy9cEaq9KA2qERg0ShUxVBQM9G9c0rdvUy0M5QbkUWZHmJU+hX9890ZDDvxL4pkyvlRcpVQ8DFyIuZuAsFFmhlPFaKwES1oy512wDb/J/0CsErogPmdQZDGKn8xn2p8UF6c3HZx5c5y5BDPNaTAa/8Dtd8AhlAamy+R6fj4YD+dQBB9gtoGLM6XUWiew9wCQ2P7w1FtcM7TerQ4KmL9QoCRGjtKopC/tHuPUJ2BhyXTEeRqQ9EckNvQGmUNDe9DjdJXS4xcHlA7Sf1e4NfLUqy2KfwsLya73ezjMruKqIEBbWWEqCq5Ru7SaFec5MWKtwiMLs8lJ+F8gr88WbPFhwqETKWLkoSWQ9utxI=
@@ -60,6 +64,5 @@ deploy:
       - rsync -r --delete-after $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
       - chmod 600 /public_html/tools/*
     on:
-      all_branches: true
       condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
 
