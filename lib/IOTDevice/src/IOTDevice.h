@@ -23,7 +23,7 @@ SOFTWARE. */
 /** Defines the physical attributes of the IOT device and the build environment.
  *  Build flags are loaded from platformio.ini
  * 
- *  @file   IOTDevice.h                                    // TODO - Rename to match classname
+ *  @file   IOTDevice.h
  *  @author Chris Gregg
  *  @date   2020
  *  @version
