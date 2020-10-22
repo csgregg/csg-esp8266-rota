@@ -43,11 +43,11 @@ void ICACHE_FLASH_ATTR setup() {
     // Services started in the proper order
     device.Begin();
     config.Begin();
-    logger.begin( network.getWiFiClient(), config.settings.logSettings );  
-    network.begin( config.settings.networkSettings );
-    timelocation.begin( network.getWiFiClient(), config.settings.timelocsettings );
-    website.begin( config.settings.networkSettings.dnsSettings.hostname );
-    updater.begin( network.getWiFiClient(), config.settings.otaSettings );
+    logger.Begin( network.GetWiFiClient(), config.settings.logSettings );  
+    network.Begin( config.settings.networkSettings );
+    timelocation.begin( network.GetWiFiClient(), config.settings.timelocsettings );
+    website.begin( config.settings.networkSettings.dnsSettings.hostName );
+    updater.begin( network.GetWiFiClient(), config.settings.otaSettings );
     
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     
@@ -58,10 +58,10 @@ void loop() {
 
     // Handle each service set
     device.Handle();
-    network.handle();
+    network.Handle();
     website.handle();
     updater.handle();
-    logger.handle();
+    logger.Handle();
     timelocation.handle();
 
 }

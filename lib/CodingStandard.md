@@ -594,7 +594,8 @@ class SomeClass : public BaseClass
         void doThis();
         /** Brief description
          *  @param name     Description of parameter.
-         *  @returns        The return value */ 
+         *  @returns        The return value
+         */ 
         String getThat( int size );
         
 
@@ -602,10 +603,12 @@ class SomeClass : public BaseClass
 
         /** Brief description
          *  @param name     Description of parameter.
-         *  @returns        The return */ 
+         *  @returns        The return
+         */ 
         size_t calcSize( String name );
         /** Brief description
-         *  @param name     Description of parameter. */ 
+         *  @param name     Description of parameter.
+         */ 
         void startFile( String name );
 
         String _storedName;     // Brief description
@@ -655,6 +658,23 @@ doSomething( currentFile, newFile );    // NOT: doSomething(currentFile, newFile
 void doSomething( String currentFile, String newFile );
 ```
 
+| Type casts, *sizeof* and template parameters should not be surrounded by a space character. |
+| --- |
+``` 
+short a;
+int i = int(a);
+
+int size = sizeof(array);
+
+template<size_t SIZE> class myClass {
+    ...
+}
+
+doSomething( currentFile, newFile );    // NOT: doSomething(currentFile, newFile);
+
+void doSomething( String currentFile, String newFile );
+```
+
 | Logical units within a block should be separated by one blank line. |
 | --- |
 ``` 
@@ -687,6 +707,21 @@ class SomeClass : public BaseClass
         ...
 }
 ```
+
+| Overloaded methods should have blank lines between. |
+| --- |
+``` 
+    /** Sets up logging
+        *  @param client       Reference of global WiFiClient to reuse
+        *  @param settings     The settings struct to use
+        */
+    void Begin( WiFiClient& client, LoggerSettings& settings );
+    /** Sets up logging
+        *  @param client       Reference of global WiFiClient to reuse
+        *  @param settings     The settings struct to use
+        */
+    void Begin( LoggerSettings& settings );
+``` 
 
 | Use limited alignment if it increases readibility. |
 | --- |
@@ -812,7 +847,8 @@ bool ExampleClass::ExampleMethod2( int paramexample )
     /** Brief description
      *  @param paramexample      Description of parameter
      *                           continued. Default = 1
-        @returns                 Ture or false */
+     *  @returns                 Ture or false
+     */
     bool ExampleMethod( int paramexample = 1 );
 ```
 

@@ -1,8 +1,14 @@
-/* Internet Check Manager Library
+/**
+ * @file        NetCheckManager.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages Internet Checking Functions
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +26,14 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Manages Internet Checking Functions
-
-*/
+SOFTWARE. */
 
 
 #ifndef NET_CHECK_MANAGER_H
 
     #define NET_CHECK_MANAGER_H
 
+    // Global Libraries
     #include <Arduino.h>
     #include <ESP8266WiFi.h>
     #include <Ticker.h>
@@ -42,53 +43,68 @@ Manages Internet Checking Functions
     #define NETCHECK_MAX_SERVICE_LEN 36            // Max length of generate_204 check URL
      
 
+    /** @class NetCheckSettings
+     *  @brief Data struct class containings the settings for the internet connectivity checker */
     class NetCheckSettings {
 
         public:
 
+            /** Resets internet checker settings to defaults */
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode;
-            char checkService[NETCHECK_MAX_SERVICE_LEN];
-            uint interval;
+            bool isOn;                                          // Is the checking service on
+            char checkService[NETCHECK_MAX_SERVICE_LEN];        // URL of the check destination
+            uint interval;                                      // Interval between checks (sec)
 
             bool operator==(const NetCheckSettings& other) const {
                 return (strcmp(checkService, other.checkService)==0)
-                    && mode == other.mode
+                    && isOn == other.isOn
                     && interval == other.interval;
             }
             bool operator!=(const NetCheckSettings& other) const {
                 return (strcmp(checkService, other.checkService)!=0)
-                    || mode != other.mode
+                    || isOn != other.isOn
                     || interval != other.interval;
             }
 
     };
 
 
-
+    /** @class  NetCheckManager
+     *  @brief  Checks for connectivity to the internet
+     *          Confirms access to a specific file on a server */
     class NetCheckManager {
         
         public:
 
-            void ICACHE_FLASH_ATTR begin(WiFiClient &client, NetCheckSettings &settings);
-            void handle();
+            /** Starts the net check service
+             * @param client        // Reference of a reusable WiFiClient
+             * @param settings      // Reference of the settings struct */
+            void ICACHE_FLASH_ATTR Begin( WiFiClient& client, NetCheckSettings& settings );
 
-            bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _ConnectedToInternet; };
+            /** Handle repeated net check tasks */
+            void Handle();
+
+            /** Checks status of internet connectivity flag
+             * @return true:         Connected to internet
+             * @return false:        Not connected */
+            bool ICACHE_FLASH_ATTR isInternetConnected( ) { return _isConnectedToInternet; }
 
 
         protected:
 
-            NetCheckSettings* _settings;
-            WiFiClient* _client;
-
-            bool _ConnectedToInternet;      // Is there a route to the internet
-            Ticker _netCheck;
-            static bool _doNetCheck;        // TODO - does this need to be static ?
-
+            /** Function called by Ticker interrupt */
             static void TriggerNetCheck() { _doNetCheck = true; };
+
+            /** Perform internet check */
             bool ICACHE_FLASH_ATTR NetCheck();
 
+            NetCheckSettings* _settings;    // Pointer to the settings struct
+            WiFiClient* _client;            // Pointer to a reuable WiFiClient
+
+            bool _isConnectedToInternet;    // Is there a route to the internet
+            Ticker _netCheck;               // Ticker object to trigger check events
+            static bool _doNetCheck;        // Flag that indicates time to run check            // TODO - does this need to be static ?
 
     };
 

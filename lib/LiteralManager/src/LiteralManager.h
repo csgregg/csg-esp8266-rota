@@ -1,6 +1,15 @@
-/* MIT License
+/**
+ * @file        LiteralManager.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages the storage of string literals in program memory
+ *              Based on ideas from https://github.com/jjssoftware/iD8266
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,15 +28,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-
-/** Manages the storage of string literals in program memory
- *  Based on ideas from https://github.com/jjssoftware/iD8266
- * 
- *  @file   LiteralManager.h
- *  @author Chris Gregg
- *  @date   2020
- *  @version
- */
 
 
 #ifndef LITERAL_MANAGER_H
@@ -65,7 +65,6 @@ SOFTWARE. */
 
 
     /** @class Literal Manager Class
-     * 
      *  @brief Manages fetching the strings from program memory */
     class LiteralManager
     {
@@ -90,7 +89,7 @@ SOFTWARE. */
 
         protected:
 
-            char _Buffer[MAX_LITERAL_SIZE];         // Buffer to hold literal for return reference
+            char _Buffer[MAX_LITERAL_SIZE];             // Buffer to hold literal for return reference
 
 
     };

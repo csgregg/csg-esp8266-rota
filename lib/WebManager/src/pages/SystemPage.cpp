@@ -41,20 +41,20 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) System - Initialize AJAX"));
 
-    LogSettings logger = config.settings.logSettings;
+    LoggerSettings log = config.settings.logSettings;
     OTASettings ota = config.settings.otaSettings;
 
     static char buffer[8];
 
-    log_srl.setChecked( logger.serialMode );
-    log_baud.setValue( itoa(logger.serialBaud,buffer,10) );
-    log_ser.setChecked( logger.serviceMode );
-    log_url.setValue( logger.serviceURL );
-    log_key.setValue( logger.serviceKey );
-    log_tick.setChecked( logger.tickMode );
-    log_tick_int.setValue( itoa(logger.tickInterval,buffer,10) );
-    log_tags.setValue( logger.globalTags );
-    log_level.selectOption( logger.level );
+    log_srl.setChecked( log.serialModeOn );
+    log_baud.setValue( itoa(log.serialBaud,buffer,10) );
+    log_ser.setChecked( log.serviceModeOn );
+    log_url.setValue( log.serviceURL );
+    log_key.setValue( log.serviceKey );
+    log_tick.setChecked( log.tickModeOn );
+    log_tick_int.setValue( itoa(log.tickInterval,buffer,10) );
+    log_tags.setValue( log.globalTags );
+    log_level.selectOption( log.level );
     log_save.setEnabled(false);
 
     ota_mode.setChecked( ota.mode );
@@ -75,15 +75,15 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     if( website.AjaxID == F("btn_restart") ) device.restart();
 
     if( website.AjaxID == F("btn_rst_net") ){
-        config.settings.networkSettings.setDefaults();
+        config.settings.networkSettings.SetDefaults();
         config.Save();
         return;
     }
 
     if( website.AjaxID == F("btn_rst_log") ){
-        config.settings.logSettings.setDefaults();
+        config.settings.logSettings.SetDefaults();
         config.Save();
-        logger.begin(config.settings.logSettings);
+        logger.Restart(config.settings.logSettings);
         return;
     }
 
@@ -122,22 +122,22 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
 
 void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
     
-    LogSettings log;
+    LoggerSettings log;
         
-    log.serialMode = log_srl.isChecked();   
+    log.serialModeOn = log_srl.isChecked();   
     log.serialBaud = atoi(log_baud.value());
-    log.serviceMode = log_ser.isChecked();
+    log.serviceModeOn = log_ser.isChecked();
     strncpy(log.serviceURL,log_url.value(),LOG_MAX_SERVICE_LEN);
     strncpy(log.serviceKey,log_key.value(),LOG_MAX_KEY_LEN);
-    log.tickMode = log_tick.isChecked();
+    log.tickModeOn = log_tick.isChecked();
     log.tickInterval = atoi(log_tick_int.value());
     strncpy(log.globalTags,log_tags.value(),LOG_MAX_GLOBAL_TAG_LEN);
-    log.level = (logLevel)atoi(log_level.value());
+    log.level = LogLevel(atoi(log_level.value()));
 
     config.settings.logSettings = log;
     config.Save();
 
-    logger.begin(config.settings.logSettings);
+    logger.Restart(config.settings.logSettings);
 
 }
 

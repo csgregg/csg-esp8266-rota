@@ -299,7 +299,7 @@ t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, b
 
 void OTAUpdater::handle() {
 
-    if ( _doUpdateCheck && (network.getNetworkStatus()==NetworkStatus::NORMAL) ) {
+    if ( _doUpdateCheck && (network.GetNetworkStatus()==NetworkStatus::NORMAL) ) {
 
         _doUpdateCheck = false;
 

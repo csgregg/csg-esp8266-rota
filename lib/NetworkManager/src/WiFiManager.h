@@ -45,7 +45,7 @@ Manages WiFi Functions
 
     enum DHCPModes { DHCP, STATIC };         // DHCP Mode
 
-    enum NetworkStatus : uint {
+    enum NetworkStatus : uint {             // TODO - should this be in the network manager
         DISCONNECTED = 0,
         NORMAL = 1,                         // Connected to WiFi and internet
         NOINETERNET = 2
@@ -63,7 +63,7 @@ Manages WiFi Functions
 
         public:
 
-            void setDefaults();
+            void SetDefaults();
 
             char SSID[NET_MAX_SSID_LEN];
             char password[NET_MAX_PASSWORD_LEN];
@@ -115,7 +115,7 @@ Manages WiFi Functions
 
         public:
 
-            void setDefaults();
+            void SetDefaults();
 
             char SSID[NET_MAX_SSID_LEN];
             char password[NET_MAX_PASSWORD_LEN];
@@ -159,42 +159,42 @@ Manages WiFi Functions
                 _APConnections = 0;
             }
 
-            void ICACHE_FLASH_ATTR begin( StationSettings* const &stationSettings, APSettings &apSettings, WiFiMode &wifiMode );
+            void ICACHE_FLASH_ATTR Begin( StationSettings* const &stationSettings, APSettings &apSettings, WiFiMode &wifiMode );
 
-            WiFiClient* ICACHE_FLASH_ATTR getClient() { return &_client; };
+            WiFiClient* ICACHE_FLASH_ATTR GetClient() { return &_client; };
 
-            bool ICACHE_FLASH_ATTR setWiFiStation();
-            bool ICACHE_FLASH_ATTR setWiFiAP();
-            void ICACHE_FLASH_ATTR reconnectWifi();
-            bool ICACHE_FLASH_ATTR connectWiFiStation( const int id = 0 );
-            void ICACHE_FLASH_ATTR setWiFiMode( WiFiMode mode ) {
+            bool ICACHE_FLASH_ATTR SetWiFiStation();
+            bool ICACHE_FLASH_ATTR SetWiFiAP();
+            void ICACHE_FLASH_ATTR ReconnectWifi();
+            bool ICACHE_FLASH_ATTR ConnectWiFiStation( const int id = 0 );
+            void ICACHE_FLASH_ATTR SetWiFiMode( WiFiMode mode ) {
                 *_wifiMode = mode;
-                handle(true);
+                Handle(true);
             };            
 
-            void handle(const bool force = false);
+            void Handle(const bool force = false);
 
-            WiFiClient& ICACHE_FLASH_ATTR getWiFiClient() { return _client; };
+            WiFiClient& ICACHE_FLASH_ATTR GetWiFiClient() { return _client; };
           
-            uint ICACHE_FLASH_ATTR getConnectedStation() {
+            uint ICACHE_FLASH_ATTR GetConnectedStation() {
                 for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
                     if( _stationConnected[i] ) return i;
                 }
                 return 0;
             };
-            uint ICACHE_FLASH_ATTR countAPConnections() { return _APConnections; };
-            bool ICACHE_FLASH_ATTR isStationConnected(uint id) { return _stationConnected[id]; };
-            bool ICACHE_FLASH_ATTR isStationConnected() {
+            uint ICACHE_FLASH_ATTR CountAPConnections() { return _APConnections; };
+            bool ICACHE_FLASH_ATTR IsStationConnected(uint id) { return _stationConnected[id]; };
+            bool ICACHE_FLASH_ATTR IsStationConnected() {
                 for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
                     if( _stationConnected[i] ) return true;
                 }
                 return false;
             };
 
-            bool ICACHE_FLASH_ATTR isAPRunning( ) { return _APRunning; };
-            NetworkStatus ICACHE_FLASH_ATTR getNetworkStatus();
+            bool ICACHE_FLASH_ATTR IsAPRunning( ) { return _APRunning; };
+            NetworkStatus ICACHE_FLASH_ATTR GetNetworkStatus();
 
-            char* ICACHE_FLASH_ATTR getAssignedIP() {
+            char* ICACHE_FLASH_ATTR GetAssignedIP() {
                 static char ip[16];
                 strcpy(ip, WiFi.localIP().toString().c_str());
                 return ip;
@@ -203,11 +203,11 @@ Manages WiFi Functions
 
         protected:
 
-            void handleWiFi(const bool force = false);
-            bool handleWiFiAP(const bool force = false);
-            bool handleWiFiStation(const bool force = false);
+            void HandleWiFi(const bool force = false);
+            bool HandleWiFiAP(const bool force = false);
+            bool HandleWiFiStation(const bool force = false);
 
-            bool ICACHE_FLASH_ATTR startWiFiAccessPoint();
+            bool ICACHE_FLASH_ATTR StartWiFiAccessPoint();
             void ICACHE_FLASH_ATTR StartWiFi();
 
             void ICACHE_FLASH_ATTR ResetConnectedStatus() {

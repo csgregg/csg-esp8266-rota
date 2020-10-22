@@ -39,7 +39,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) Network Settings - Initialize AJAX"));
 
-    wifi_stn_asip.setValue(network.getAssignedIP());
+    wifi_stn_asip.setValue(network.GetAssignedIP());
 
     // AP Settings
     APSettings wifiAP = config.settings.networkSettings.apSettings;
@@ -58,16 +58,16 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     // Connectivity Settings
     char buffer[5];
     NetCheckSettings netStatus = config.settings.networkSettings.netCheckSettings;
-    net_ck_mode.setChecked( netStatus.mode );
+    net_ck_mode.setChecked( netStatus.isOn );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
     net_ck_url.setValue( netStatus.checkService );
     net_ck_save.setEnabled(false);
 
     // DNS Settings
     DNSSettings dns = config.settings.networkSettings.dnsSettings;
-    dns_mode.setChecked( dns.mode );
-    dns_mdns.setChecked( dns.mDNS );
-    dns_name.setValue( dns.hostname );
+    dns_mode.setChecked( dns.dnsEnabled );
+    dns_mdns.setChecked( dns.mDnsEnabled );
+    dns_name.setValue( dns.hostName );
     dns_save.setEnabled(false);
 
     // Time and Location Settings
@@ -93,7 +93,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::handleAjax(){
     // Used to send back basic details of a specific wifi station
     if( website.AjaxID == F("wifi_stn_id") ) {
         wifi_stn_name.setValue(config.settings.networkSettings.stationSettings[wifi_stn_id.intValue()].SSID);
-        wifi_stn_on.setValue(network.isStationConnected(wifi_stn_id.intValue()));
+        wifi_stn_on.setValue(network.IsStationConnected(wifi_stn_id.intValue()));
         return;
     }
 
@@ -145,9 +145,9 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
 
     DNSSettings dns;
 
-    dns.mode = dns_mode.isChecked();
-    strncpy(dns.hostname,dns_name.value(),DNS_MAX_HOSTNAME_LEN);
-    dns.mDNS = dns_mdns.isChecked();
+    dns.dnsEnabled = dns_mode.isChecked();
+    strncpy(dns.hostName,dns_name.value(),DNS_MAX_HOSTNAME_LEN);
+    dns.mDnsEnabled = dns_mdns.isChecked();
 
     config.settings.networkSettings.dnsSettings = dns;
     config.Save();
@@ -187,10 +187,10 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
 void ICACHE_FLASH_ATTR NetworkSettingsPage::setWifiMode(WiFiMode mode) {
     LOG(PSTR("(Page) Network Settings - Set WiFi mode"));
     
-    network.setWiFiMode(mode);
+    network.SetWiFiMode(mode);
     config.Save();
 
-    wifi_stn_asip.setValue(network.getAssignedIP());
+    wifi_stn_asip.setValue(network.GetAssignedIP());
     wifi_mode_stn.setChecked( mode == WIFI_STA || mode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( mode == WIFI_AP || mode == WIFI_AP_STA );
     clearLoader.call();
@@ -235,7 +235,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveAP() {
         config.settings.networkSettings.apSettings = ap;
         config.Save();
 
-        network.reconnectWifi();
+        network.ReconnectWifi();
     }
     else {
         website.postMessage(PSTR("Invlaid IP address"));
@@ -250,14 +250,14 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     NetCheckSettings netStatus;
 
-    netStatus.mode = net_ck_mode.isChecked();
+    netStatus.isOn = net_ck_mode.isChecked();
     strncpy(netStatus.checkService,net_ck_url.value(),NETCHECK_MAX_SERVICE_LEN);
     netStatus.interval = atoi(net_ck_int.value());
 
     config.settings.networkSettings.netCheckSettings = netStatus;
     config.Save();
 
-    network.restartDNS();
+    network.RestartDNS();
 
 }
 
@@ -282,14 +282,14 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveWifiStation(uint id) {
         config.settings.networkSettings.stationSettings[id] = wifiStation;
         config.Save();
 
-        if( network.getConnectedStation() == id ) network.reconnectWifi();    
+        if( network.GetConnectedStation() == id ) network.ReconnectWifi();    
     }
     else {
          website.postMessage(PSTR("Invlaid IP address"));
     }
 
     // Make the client reload the wifi list
-    wifi_stn_asip.setValue(network.getAssignedIP());
+    wifi_stn_asip.setValue(network.GetAssignedIP());
     loadWifiList.call();
 
 }
@@ -298,11 +298,11 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::connectWifiStation(uint id) {
 
     LOG_HIGH(PSTR("(Page) Network Settings - Connect Wifi Station"));
     
-    if( network.connectWiFiStation(id) ) config.Save();
-    else network.reconnectWifi();
+    if( network.ConnectWiFiStation(id) ) config.Save();
+    else network.ReconnectWifi();
 
     // Make the client reload the wifi list
-    wifi_stn_asip.setValue(network.getAssignedIP());
+    wifi_stn_asip.setValue(network.GetAssignedIP());
     loadWifiList.call();
 
 }

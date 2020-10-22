@@ -1,8 +1,14 @@
-/* DNS Manager Library
+/**
+ * @file        DNSManager.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages DNS Functions
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,70 +26,76 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Manages DNS Functions
-
-*/
+SOFTWARE. */
 
 
 #ifndef DNS_MANAGER_H
 
     #define DNS_MANAGER_H
 
+    // Global Libraries
     #include <Arduino.h>
     #include <ESP8266mDNS.h>
     #include <DNSServer.h>
 
+    // Sizes
     #define DNS_MAX_HOSTNAME_LEN 16
+
+    // Defaults
     #define DNS_DEFAULT_MODE true
     #define DNS_DEFAULT_MDNS true
     #define DNS_PORT 53
     #define DNS_TTL 60
 
 
+    /** @class DNS settings
+     *  @brief A data structure class that contains the settings for the DNS managers. */
     class DNSSettings {
 
         public:
 
+            /** Resets DNS settings to defaults */
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool mode;
-            bool mDNS;
-            char hostname[DNS_MAX_HOSTNAME_LEN];
+            bool dnsEnabled;                        // Is the DNS dnsEnabled
+            bool mDnsEnabled;                       // Is mDNS dnsEnabled
+            char hostName[DNS_MAX_HOSTNAME_LEN];    // Network name for this device
 
             bool operator==(const DNSSettings& other) const {
-                return (strcmp(hostname, other.hostname)==0)
-                    && mode == other.mode
-                    && mDNS == other.mDNS;
+                return (strcmp(hostName, other.hostName)==0)
+                    && dnsEnabled == other.dnsEnabled
+                    && mDnsEnabled == other.mDnsEnabled;
             }
             bool operator!=(const DNSSettings& other) const {
-                return (strcmp(hostname, other.hostname)!=0)
-                    || mode != other.mode
-                    || mDNS != other.mDNS;
+                return (strcmp(hostName, other.hostName)!=0)
+                    || dnsEnabled != other.dnsEnabled
+                    || mDnsEnabled != other.mDnsEnabled;
             }
 
     };
 
 
-
+    /** @class DNS Manager
+     *  @brief Manages DNS services */
     class DNSManager {
         
         public:
 
-            void ICACHE_FLASH_ATTR begin(DNSSettings &settings, bool apMode);
-            void handle();
+            /** Starts the DNS services. Only runs full DNS if in AP mode
+             * @param settings      Refernce of DNS settings struct 
+             * @param inApMode      Status of AP mode */
+            void ICACHE_FLASH_ATTR Begin( DNSSettings& settings, bool isInApMode );
+
+            /** Handles any repeated DNS tasks */
+            void Handle();
 
 
         protected:
 
-            DNSSettings* _settings;
-            DNSServer _dnsServer;
-            bool _dnsStarted = false;
+            DNSSettings* _settings;         // Pointer to data struct containing DNS settings
+            DNSServer _dnsServer;           // Instance of DNS service
+            bool _dnsStarted = false;       // Is the DNS running
 
     };
-
 
 #endif
