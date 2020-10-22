@@ -1,6 +1,16 @@
-/* MIT License
+/**
+ * @file        ConfigManager.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages saving a configuration set to the EEPROM section of the flash (First
+ *              sector before file system). Settings are read and write on block and accessed
+ *              through the settings member.
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +30,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-/** Manages saving a configuration set to the EEPROM section of the flash (First
- *  sector before file system). Settings are read and write on block and accessed
- *  through the settings member.
- * 
- *  @file   ConfigManager.cpp
- *  @author Chris Gregg
- *  @date   2020
- *  @version
- */
 
 // Global Libraries
 #include <EEPROM.h>

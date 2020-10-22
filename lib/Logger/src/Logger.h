@@ -1,8 +1,14 @@
-/* Logger Library
+/**
+ * @file        Logger.h
+ * @author      Chris Gregg
+ * @brief       Packages debug and logging to the serial port and Loggly.com service for
+ *              simple logging or debug of code. Macros are defined to simplifiy common usage. 
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +26,20 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Packages debug and logging to the Loggly.com service for simple logging or
-debug of code. Macros are defined for to simplifiy common usage. 
-
-*/
+SOFTWARE. */
 
 
 #ifndef LOGGER_H
 
     #define LOGGER_H
 
+    // Global Libraries
     #include <Arduino.h>
     #include <ESP8266WiFi.h>
     #include <Ticker.h>
 
-    // Turn off all debug if necessary
-    // #define NO_LOGGING
+
+    // #define NO_LOGGING               // Turn off all debug if necessary
 
     #ifndef LOGGER_LEVEL
         #define NO_LOGGING
@@ -47,43 +47,45 @@ debug of code. Macros are defined for to simplifiy common usage.
 
     #ifndef NO_LOGGING
 
-      // Macros to simplifiy common usage
+        // Macros to simplifiy common usage
 
-      #define DEBUG(text) logger.println(NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__)
-      #define DEBUGF(...) logger.printf(NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
-      #define DEBUG_STOP Serial.printf("\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__); while(true){yield();};
-      #define DEBUG_RAW(text) Serial.println(text);
+        #define DEBUG( text ) logger.println( NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__ )
+        #define DEBUGF( ... ) logger.printf( NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__ )
+        #define DEBUG_STOP Serial.printf( "\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( true ) { yield(); };
+        #define DEBUG_RAW( text ) Serial.println( text );
 
-      #define LOG(text) logger.println(NORMAL_LOG, STATUS_TAG, text)
-      #define LOG_DETAIL(text) logger.println(DETAIL_LOG, STATUS_TAG, text)
-      #define LOG_HIGH(text) logger.println(HIGH_LOG, STATUS_TAG, text)
-      #define LOG_CRITICAL(text) logger.println(CRITICAL_LOG, STATUS_TAG, text)
+        #define LOG( text ) logger.println( NORMAL_LOG, STATUS_TAG, text )
+        #define LOG_DETAIL( text ) logger.println( DETAIL_LOG, STATUS_TAG, text )
+        #define LOG_HIGH( text ) logger.println( HIGH_LOG, STATUS_TAG, text )
+        #define LOG_CRITICAL( text ) logger.println( CRITICAL_LOG, STATUS_TAG, text )
 
-      #define LOGF(...) logger.printf(NORMAL_LOG, STATUS_TAG, __VA_ARGS__)
-      #define LOGF_DETAIL(...) logger.printf(DETAIL_LOG, STATUS_TAG, __VA_ARGS__)
-      #define LOGF_HIGH(...) logger.printf(HIGH_LOG, STATUS_TAG, __VA_ARGS__)
-      #define LOGF_CRITICAL(...) logger.printf(CRITICAL_LOG, STATUS_TAG, __VA_ARGS__)
-  
-      #define LOG_FLAG(name) logger.printFlag(NORMAL_LOG, STATUS_TAG, #name, name)      // Used to pass flag name as argument to method
+        #define LOGF( ... ) logger.printf( NORMAL_LOG, STATUS_TAG, __VA_ARGS__ )
+        #define LOGF_DETAIL( ... ) logger.printf( DETAIL_LOG, STATUS_TAG, __VA_ARGS__ )
+        #define LOGF_HIGH( ... ) logger.printf( HIGH_LOG, STATUS_TAG, __VA_ARGS__ )
+        #define LOGF_CRITICAL( ... ) logger.printf( CRITICAL_LOG, STATUS_TAG, __VA_ARGS__ )
+
+        #define LOG_FLAG( name ) logger.printFlag( NORMAL_LOG, STATUS_TAG, #name, name )      // Used to pass flag name as argument to method
 
     #else
 
-      #define DEBUG(text)
-      #define DEBUGF(...)
-      #define DEBUG_STOP()
-      #define DEBUG_RAW(text)
-      
-      #define LOG(text)
-      #define LOG_DETAIL(text)
-      #define LOG_HIGH(text)
-      #define LOG_CRITICAL(text)
+        // Empty macros which do nothing when logging fully turned off in build
 
-      #define LOGF(...)
-      #define LOGF_DETAIL(...)
-      #define LOGF_HIGH(...)
-      #define LOGF_CRITICAL(...)
+        #define DEBUG( text )
+        #define DEBUGF( ... )
+        #define DEBUG_STOP()
+        #define DEBUG_RAW( text )
 
-      #define LOG_FLAG(text)
+        #define LOG( text )
+        #define LOG_DETAIL( text )
+        #define LOG_HIGH( text )
+        #define LOG_CRITICAL( text )
+
+        #define LOGF( ... )
+        #define LOGF_DETAIL( ... )
+        #define LOGF_HIGH( ... )
+        #define LOGF_CRITICAL( ... )
+
+        #define LOG_FLAG( text )
 
     #endif
 
@@ -94,11 +96,12 @@ debug of code. Macros are defined for to simplifiy common usage.
     #define LOG_MAX_KEY_LEN 40          // Max length of service key string
     #define LOG_MAX_SERVICE_LEN 32      // Max length of service URL
     #define LOG_MAX_LOG_TYPES 4         // Safety to ensure we don't define more than we can handle
-    #define LOG_MAX_TAG_TYPES 2
+    #define LOG_MAX_TAG_TYPES 2         // Safety to ensure we don't define more than we can handle
+    #define LOG_MAX_TAG_DESC_LEN 7      // Safety to ensure we don't overflow on size
 
 
     // Logging level to filter logs 
-    enum logLevel : uint {
+    enum LogLevel : uint {
         LOGGING_OFF = 0,                // None
         LOGGING_LEVEL_CRITICAL = 1,     // Critical only
         LOGGING_LEVEL_NORMAL = 2,       // Normal and Critical
@@ -108,7 +111,7 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 
     // Type of log - used in the filter of log level and added to message
-    enum logType : uint {
+    enum LogType : uint {
         CRITICAL_LOG = 0,
         NORMAL_LOG = 1,
         HIGH_LOG = 2, 
@@ -117,10 +120,11 @@ debug of code. Macros are defined for to simplifiy common usage.
 
 
     // Tags applied to message
-    enum logTag : uint {
+    enum LogTag : uint {
         DEBUG_TAG,
         STATUS_TAG
     } ;
+
 
     // Type names
     static const char cCritical[] PROGMEM = "CRITICAL";
@@ -132,120 +136,218 @@ debug of code. Macros are defined for to simplifiy common usage.
     // Tag names
     static const char cDebug[] PROGMEM = "DEBUG ";
     static const char cStatus[] PROGMEM = "Status";
-    #define LOG_MAX_TAG_DESC_LEN 7
 
-    // Logger settings
-    class LogSettings {             // TODO - Rename to LoggerSettings
+
+    /** @class Logger settings
+     *  @brief A data structure class that contains the Logger settings. */
+    class LoggerSettings
+    {
 
         public:
 
-            void ICACHE_FLASH_ATTR setDefaults();
+            /** Resets logger settings to defaults */
+            void ICACHE_FLASH_ATTR SetDefaults();
 
-            uint serialBaud;
-            char serviceURL[LOG_MAX_SERVICE_LEN];
-            char serviceKey[LOG_MAX_KEY_LEN];
+            bool serialModeOn;                          // Serial port on or off
+            uint serialBaud;                            // Serial port baud
 
-            bool serialMode;
-            bool serviceMode;
+            bool serviceModeOn;                         // Loggly service on or off           
+            char serviceURL[LOG_MAX_SERVICE_LEN];       // URL for Loggly service (doesn't include 'http://')
+            char serviceKey[LOG_MAX_KEY_LEN];           // Token for Loggy service
+            bool tickModeOn;                            // Loggly tick on or off
+            uint tickInterval;                          // Time interval for Loggly tick
 
-            bool tickMode;
-            uint tickInterval;
+            char globalTags[LOG_MAX_GLOBAL_TAG_LEN];    // Tags used on all Loggly posts
+            LogLevel level = LOGGING_LEVEL_NORMAL;      // Current logging level
 
-            char globalTags[LOG_MAX_GLOBAL_TAG_LEN];
-            logLevel level = LOGGING_LEVEL_NORMAL;
-
-             // Create a compare operators
-
-            bool operator==(const LogSettings& other) const {
+            bool operator==( const LoggerSettings& other ) const {
                 return serialBaud == other.serialBaud
-                    && (strcmp(serviceURL, other.serviceURL)==0)
-                    && (strcmp(serviceKey, other.serviceKey)==0)
-                    && serialMode == other.serialMode
-                    && serviceMode == other.serviceMode
-                    && tickMode == other.tickMode
+                    && ( strcmp( serviceURL, other.serviceURL ) == 0 )
+                    && ( strcmp(serviceKey, other.serviceKey) == 0 )
+                    && serialModeOn == other.serialModeOn
+                    && serviceModeOn == other.serviceModeOn
+                    && tickModeOn == other.tickModeOn
                     && tickInterval == other.tickInterval
-                    && (strcmp(globalTags, other.globalTags)==0)
+                    && ( strcmp( globalTags, other.globalTags ) == 0 )
                     && level == other.level;
             }
-
-            bool operator!=(const LogSettings& other) const {
+            bool operator!=( const LoggerSettings& other ) const {
                 return serialBaud != other.serialBaud
-                    || (strcmp(serviceURL, other.serviceURL)!=0)
-                    || (strcmp(serviceKey, other.serviceKey)!=0)
-                    || serialMode != other.serialMode
-                    || serviceMode != other.serviceMode
-                    || tickMode != other.tickMode
+                    || ( strcmp( serviceURL, other.serviceURL ) != 0 )
+                    || ( strcmp (serviceKey, other.serviceKey ) != 0 )
+                    || serialModeOn != other.serialModeOn
+                    || serviceModeOn != other.serviceModeOn
+                    || tickModeOn != other.tickModeOn
                     || tickInterval != other.tickInterval
-                    || (strcmp(globalTags, other.globalTags)!=0)
+                    || ( strcmp( globalTags, other.globalTags ) != 0 )
                     || level != other.level;
             }
 
     };
 
-
     
-    // Logger Class
-    class LogClient {
+    /** @class LogClient
+     *  @brief Sets up the logger and performs logging actions to serial and Loggly service */
+    class LogClient
+    {
         
         public:
 
-            /// To set up logging
-
-            void ICACHE_FLASH_ATTR begin( WiFiClient &client, LogSettings &settings );
-            void ICACHE_FLASH_ATTR begin( LogSettings &settings );
-            bool ICACHE_FLASH_ATTR SerialOn() { return _settings->serialMode; };
-            logLevel ICACHE_FLASH_ATTR LogLevel() { return _settings->level; };
+            /** Sets up logging service
+             *  @param client    Reference to a WiFiClient to reuse 
+             *  @param settings  The settings struct to use */
+            void ICACHE_FLASH_ATTR Begin( WiFiClient& client, LoggerSettings& settings );
             
- 
-            // Log messages (with overloads)
+            /** Restarts logging service
+             *  @param settings  The settings struct to use */
+            void ICACHE_FLASH_ATTR Restart( LoggerSettings& settings );
 
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char * message);
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char * message, const char * file, const char * func_P, const int line );
+            /** Gets the status of the serial logging mode
+             *  @return true:        Serial logging is on */
+            bool ICACHE_FLASH_ATTR IsSerialOn() { return _settings->serialModeOn; }
+            
+            /** Gets the current logging level
+             *  @return  LogLevel */
+            LogLevel ICACHE_FLASH_ATTR GetLogLevel() { return _settings->level; }
 
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c);
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const char c, const char * file, const char * func_P, const int line );    
+            // Log messages - println function overloads
 
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const int i);
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const int i, const char * file, const char * func_P, const int line );    
+            /** Logs a message
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param message   char array to send as message */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const char* message);
+            /** Logs a message (with context)
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param message   char array to send as message
+             *  @param file      filename of this file - added at compile time 
+             *  @param func_P    name of current function where this has been called from - added at compile time
+             *  @param line      line in file where this has been called from - added at compile time */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const char* message, const char* file, const char* func_P, const int line );
+            /** Logs a message from a single character
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param c         character to send as message */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const char c);
+            /** Logs a message from a single character (with context)
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param c         character to send as message
+             *  @param file      filename of this file - added at compile time 
+             *  @param func_P    name of current function where this has been called from - added at compile time
+             *  @param line      line in file where this has been called from - added at compile time */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const char c, const char* file, const char* func_P, const int line );    
+            /** Logs a message from an int
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log 
+             *  @param i         int to send as message */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const int i);
+            /** Logs a message from an int (with context)
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log 
+             *  @param i         int to send as message
+             *  @param file      filename of this file - added at compile time 
+             *  @param func_P    name of current function where this has been called from - added at compile time
+             *  @param line      line in file where this has been called from - added at compile time */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const int i, const char* file, const char* func_P, const int line );    
+            /** Logs a message from an int
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log 
+             *  @param message   String to send as message */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const String& message );
+            /** Logs a message from an int (with context)
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log 
+             *  @param message   String to send as message
+             *  @param file      filename of this file - added at compile time 
+             *  @param func_P    name of current function where this has been called from - added at compile time
+             *  @param line      line in file where this has been called from - added at compile time */
+            void ICACHE_FLASH_ATTR println( const LogType type, const LogTag tag, const String& message, const char* file, const char* func_P, const int line );      
 
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message);
-            void ICACHE_FLASH_ATTR println(const logType type, const logTag tag, const String &message, const char * file, const char * func_P, const int line );      
+            // Log messages - printf function overloads
 
-            void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * format, ...);
-            void ICACHE_FLASH_ATTR printf(const logType type, const logTag tag, const char * file, const char * func_P, const int line, const char * format, ...);
+            /** Logs a formated message 
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log 
+             *  @param format    standard 'printf' formatting
+             *  @param ...       arguemnts for formating */
+            void ICACHE_FLASH_ATTR printf( const LogType type, const LogTag tag, const char* format, ...);
+            /** Logs a formated message 
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param file      filename of this file - added at compile time 
+             *  @param func_P    name of current function where this has been called from - added at compile time
+             *  @param line      line in file where this has been called from - added at compile time
+             *  @param format    standard 'printf' formatting
+             *  @param ...       arguemnts for formating */           
+            void ICACHE_FLASH_ATTR printf( const LogType type, const LogTag tag, const char* file, const char* func_P, const int line, const char* format, ... );
 
-            // For build flags
-            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const char* flag);
-            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const bool flag);
-            void ICACHE_FLASH_ATTR printFlag(const logType type, const logTag tag, const char* name, const uint flag);
+            //  Log build flags - printFlag function overloads
 
-            void handle();
+            /** Logs build flag
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param name      Name of build flag 
+             *  @param flag      Build flag as a char array */
+            void ICACHE_FLASH_ATTR printFlag( const LogType type, const LogTag tag, const char* name, const char* flag );
+            /** Logs build flag
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param name      Name of build flag 
+             *  @param flag      Build flag as a bool */
+            void ICACHE_FLASH_ATTR printFlag( const LogType type, const LogTag tag, const char* name, const bool flag );
+            /** Logs build flag
+             *  @param type      'type' of log to log
+             *  @param tag       tags to apply to log
+             *  @param name      Name of build flag 
+             *  @param flag      Build flag as a unsigned int */
+            void ICACHE_FLASH_ATTR printFlag( const LogType type, const LogTag tag, const char* name, const uint flag );
+
+            void Handle();      /** Handles any repeating device actions */ 
+
 
         protected:
 
-            WiFiClient* _client;
-            LogSettings* _settings;
+            /** Sends the log type and tag to the serial port
+             *  Also adds timer and head if in verbose mode
+             *  @param type      'type' of log to log    
+             *  @param tag       tags to apply to */
+            void inline LogPrefix(const LogType type, const LogTag tag);
 
-            char _FullServiceURL[LOG_MAX_GLOBAL_TAG_LEN+LOG_MAX_KEY_LEN+LOG_MAX_SERVICE_LEN+16];
+            /** Logs a message to the serial port
+             *  @param type      'type' of log to log    
+             *  @param tag       tags to apply to
+             *  @param message   message to send as a char array */
+            void LogToSerial( const LogType type, const LogTag tag, const char* message );
 
-            void inline LogPrefix(const logType type, const logTag tag);
+            /** Logs a message to the Loggy service
+             *  @param type      'type' of log to log    
+             *  @param tag       tags to apply to
+             *  @param message   message to send asd a char array */
+            void LogToService( const LogType type, const LogTag tag, const char* message );
 
-            void LogToSerial(const logType type, const logTag tag, const char * message);
-            void LogToService(const logType type, const logTag tag, const char * message);
-            void handleTick();      // Send minimum data to logging service
+            /** Logs a tick to the Loggy service containing the minimum data set */
+            void HandleTick();
+            
+            /** Function called by Ticker interrupt */
+            static void TriggerTick() { _doTick = true; }
 
-            Ticker _tickCheck;
-            static bool _doTick;
-            static void TriggerTick();
+            WiFiClient* _client;            // Pointer to reuseable WiFiClient
+            LoggerSettings* _settings;      // Pointer to the data struct holding the logger settings
 
-            const char* const c_log_type_descript[LOG_MAX_LOG_TYPES] = {cCritical,cNormal,cHigh,cVerbose};
-            const char* const c_log_tag_descript[LOG_MAX_TAG_TYPES] = {cDebug,cStatus};
+            char _fullServiceURL[LOG_MAX_GLOBAL_TAG_LEN+LOG_MAX_KEY_LEN+LOG_MAX_SERVICE_LEN+16];    // The URL for the Loggly service, fully prepared
 
-            LogSettings _preSettings;
+            Ticker _tickCheck;              // Ticker object to trigger tick events to Loggly service
+            static bool _doTick;            // Flag that indicates time to do send a tick
 
-        private:
+            // Array of descriptions for the log types
+            const char* const _logTypeDescriptions[LOG_MAX_LOG_TYPES] = { cCritical, cNormal, cHigh, cVerbose };
+            // Array of descriptions for the log tags
+            const char* const _logTagDescriptions[LOG_MAX_TAG_TYPES] = { cDebug, cStatus };
 
     };
+
 
     extern LogClient logger;        // Declaring the global instance
 

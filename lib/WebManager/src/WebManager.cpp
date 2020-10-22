@@ -168,7 +168,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin( char* hostname) {
             // AJAX request
             if( _server.method() == HTTP_POST ) {
                 if( AjaxID == "" ) {
-                    net_status.setValue( network.getNetworkStatus() );                          // Update status icon
+                    net_status.setValue( network.GetNetworkStatus() );                          // Update status icon
                     if( post_message.getStatus() == EmbAJAXClientFunction::SUCCESS ) post_message.call();              // Clear the message and don't need acknowledgement
                     if( timelocation.isTimeSet() ) timelocation.strcpyTimeDate(_datetime);     // Update date time string
                     else strcpy_P(_datetime,PSTR("Time not set"));
@@ -325,7 +325,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::redirectToCaptivePortal() {
 
     char buffer[DNS_MAX_HOSTNAME_LEN+sizeof("http://")];
     strcpy_P(buffer,PSTR("http://"));
-    strncat(buffer,network.getHostName(),sizeof(buffer));
+    strncat(buffer,network.GetHostName(),sizeof(buffer));
 
     _server.sendHeader(PSTR("Location"), buffer, true);
     _server.setContentLength(0);

@@ -157,9 +157,9 @@ SOFTWARE. */
 
         public:
 
-            enum StartMode {
-                NORMAL,
-                DOUBLERESET,
+            enum StartMode {            // Mode the devices starts in
+                NORMAL,                 // Normal
+                DOUBLERESET,            // If the device has been reset twice within the double reset detect interval
             };
 
             /** Constructor */
@@ -167,8 +167,7 @@ SOFTWARE. */
                 _drd( DRD_TIMEOUT, DRD_ADDRESS )        // Set up double reset detection
             {};
 
-            /** Sets up the device hardware and build environment */
-            void ICACHE_FLASH_ATTR Begin();
+            void ICACHE_FLASH_ATTR Begin();             /** Sets up the device hardware and build environment */
 
             /** Get the build number
              *  @returns String containing the number of the build */
@@ -189,9 +188,8 @@ SOFTWARE. */
             /** Get the mode the device was started in
              *  @returns StartMode */         
             StartMode ICACHE_FLASH_ATTR GetStartMode() { return _startMode; };
-
-            /** Handles any repeating device actions */    
-            void Handle() { _drd.loop(); };
+   
+            void Handle() { _drd.loop(); };         /** Handles any repeating device actions */ 
 
 
         protected:

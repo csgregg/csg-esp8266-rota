@@ -1,8 +1,14 @@
-/* DNS Manager Library
+/**
+ * @file        DNSManager.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages DNS Functions
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,46 +26,51 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Manages DNS Functions
-
-*/
+SOFTWARE. */
 
 
+// Project Libraries
 #include "DNSManager.h"
 #include "Logger.h"
 #include "IOTDevice.h"
 
 
+////////////////////////////////////////////
+//// DNS Settings Class
+
+// Public:
+
+// Resets DNS settings to default
 void ICACHE_FLASH_ATTR DNSSettings::setDefaults() {
-    mode = DNS_DEFAULT_MODE;
-    strcpy_P( hostname, flag_DEVICE_CODE );
-    mDNS = DNS_DEFAULT_MDNS;
+    dnsEnabled = DNS_DEFAULT_MODE;
+    strcpy_P( hostName, flag_DEVICE_CODE );
+    mDnsEnabled = DNS_DEFAULT_MDNS;
 }
 
 
+////////////////////////////////////////////
+//// DNS Manager Class
 
+// Public:
 
-void ICACHE_FLASH_ATTR DNSManager::begin(DNSSettings &settings, bool apMode) {
+// Initalizes the DNS services
+void ICACHE_FLASH_ATTR DNSManager::Begin( DNSSettings& settings, bool isInApMode ) {
 
     _settings = &settings;
     _dnsStarted = false;
     _dnsServer.stop();
     MDNS.end();
 
-    if( _settings->mode ) {
+    if( _settings->dnsEnabled ) {
 
         LOG(PSTR("(Network) Starting DNS"));
 
-        if( apMode ) {
-            _dnsServer.setTTL(DNS_TTL);
+        if( isInApMode ) {
+            _dnsServer.setTTL( DNS_TTL );
             _dnsStarted = _dnsServer.start( DNS_PORT, PSTR("*"), WiFi.softAPIP() );
         }
 
-        if( _settings->mDNS ) _dnsStarted &= MDNS.begin( _settings->hostname );
+        if( _settings->mDnsEnabled ) _dnsStarted &= MDNS.begin( _settings->hostName );
 
         if( _dnsStarted ) LOG_HIGH(PSTR("(Network) DNS Started"));
         else LOG_HIGH(PSTR("(Network) DNS Error"));
@@ -69,12 +80,12 @@ void ICACHE_FLASH_ATTR DNSManager::begin(DNSSettings &settings, bool apMode) {
 };
 
 
-
-void DNSManager::handle() {
+// Handle repeating DNS tasks
+void DNSManager::Handle() {
 
     if( _dnsStarted ) {
-        MDNS.update();
-        _dnsServer.processNextRequest();
+        MDNS.update();                          // Handle mDNS
+        _dnsServer.processNextRequest();        // Handle DNS
     }
     
 };

@@ -1,6 +1,14 @@
-/* MIT License
+/**
+ * @file        template.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Description of file
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,14 +27,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-
-/** Description of the file
- * 
- *  @file   template.h
- *  @author Chris Gregg
- *  @date   2020
- *  @version
- */
 
 
 #ifndef LIBRARY_NAME_H
@@ -59,12 +59,10 @@ SOFTWARE. */
     #define FOR_THIS_CLASS_DEFAULT 2        // Description 
 
 
-    /** @class Example Class
-     * 
-     *  @brief Brief description of class.
-     *
-     *  Full description of class
-     *  continued */
+    /** @class  Example Class
+     *  @brief  Brief description of class.
+     *          Full description of class
+     *          continued */
     class ExampleClass
     {
 
@@ -79,7 +77,7 @@ SOFTWARE. */
             /** Constructor */
             ExampleClass()
             {
-                ...
+                //...
             };
 
             /** Brief description

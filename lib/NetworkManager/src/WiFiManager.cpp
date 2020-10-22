@@ -39,7 +39,7 @@ WiFi Network Functions
 
 // Network Settings 
 
-void ICACHE_FLASH_ATTR StationSettings::setDefaults() {
+void ICACHE_FLASH_ATTR StationSettings::SetDefaults() {
 
     strcpy_P( SSID, PSTR("") );
     strcpy_P( password, PSTR("") );
@@ -53,7 +53,7 @@ void ICACHE_FLASH_ATTR StationSettings::setDefaults() {
 }
 
 
-void ICACHE_FLASH_ATTR APSettings::setDefaults() {
+void ICACHE_FLASH_ATTR APSettings::SetDefaults() {
 
     strcpy_P( SSID, flag_DEVICE_CODE );
     strcpy_P( password, flag_DEVICE_CODE );
@@ -73,7 +73,7 @@ void ICACHE_FLASH_ATTR APSettings::setDefaults() {
 
 // Public:
 
-void ICACHE_FLASH_ATTR WiFiManager::begin( StationSettings* const &stnSettings, APSettings &apSettings, WiFiMode &wifiMode ) {
+void ICACHE_FLASH_ATTR WiFiManager::Begin( StationSettings* const &stnSettings, APSettings &apSettings, WiFiMode &wifiMode ) {
 
     LOG(PSTR("(Network) Starting WiFi"));
 
@@ -92,7 +92,7 @@ void ICACHE_FLASH_ATTR WiFiManager::begin( StationSettings* const &stnSettings, 
     // Restart to start fresh
     WiFi.mode(WiFiMode::WIFI_OFF);
 
-    handle(true);   // Initial WiFi start
+    Handle(true);   // Initial WiFi start
 
 }
 
@@ -102,20 +102,20 @@ void ICACHE_FLASH_ATTR WiFiManager::begin( StationSettings* const &stnSettings, 
 // Protected:
 
 // Handle WiFi Connectivity
-void WiFiManager::handle(const bool force) {
+void WiFiManager::Handle(const bool force) {
 
     if( force ) ResetConnectedStatus();
 
     switch( *_wifiMode ) {
         case WIFI_AP:
-            _APRunning = handleWiFiAP(force);
+            _APRunning = HandleWiFiAP(force);
             break;
         case WIFI_AP_STA:
-            _APRunning = handleWiFiAP(force);
-            handleWiFiStation(force);
+            _APRunning = HandleWiFiAP(force);
+            HandleWiFiStation(force);
             break;
         case WIFI_STA:
-            handleWiFiStation(force);
+            HandleWiFiStation(force);
             break;
         default:
             _APRunning = false;
@@ -124,7 +124,7 @@ void WiFiManager::handle(const bool force) {
 }
 
 
-bool WiFiManager::handleWiFiAP(const bool force) {
+bool WiFiManager::HandleWiFiAP(const bool force) {
 
     uint connections = WiFi.softAPgetStationNum();
 
@@ -135,19 +135,19 @@ bool WiFiManager::handleWiFiAP(const bool force) {
 
     if( _APRunning && !force ) return true;
 
-    return startWiFiAccessPoint();
+    return StartWiFiAccessPoint();
 }
 
 
-void ICACHE_FLASH_ATTR WiFiManager::reconnectWifi() {
+void ICACHE_FLASH_ATTR WiFiManager::ReconnectWifi() {
     LOG("(Network) Reconnecting Wifi");
     WiFi.setAutoReconnect(false);
     WiFi.disconnect(false);
-    handle(true);       // Force reconnect
+    Handle(true);       // Force reconnect
 }
 
 
-bool WiFiManager::handleWiFiStation(const bool force) {
+bool WiFiManager::HandleWiFiStation(const bool force) {
 
     bool connected = (WiFi.status() == WL_CONNECTED);
 
@@ -190,7 +190,7 @@ bool WiFiManager::handleWiFiStation(const bool force) {
     
     for( int i = 0; i < NET_MAX_STATIONS && !success; i++ ) {
         int trystation = (i + _lastStation) % NET_MAX_STATIONS;
-        success = connectWiFiStation( trystation );
+        success = ConnectWiFiStation( trystation );
     }
 
     return success;
@@ -198,7 +198,7 @@ bool WiFiManager::handleWiFiStation(const bool force) {
 }
 
 
-bool ICACHE_FLASH_ATTR WiFiManager::startWiFiAccessPoint() {
+bool ICACHE_FLASH_ATTR WiFiManager::StartWiFiAccessPoint() {
     LOG(PSTR("(Network) WiFi mode - Access Point"));
 
     bool ret = WiFi.mode( *_wifiMode );
@@ -225,7 +225,7 @@ bool ICACHE_FLASH_ATTR WiFiManager::startWiFiAccessPoint() {
 }
 
 
-bool ICACHE_FLASH_ATTR WiFiManager::connectWiFiStation( const int id ) {
+bool ICACHE_FLASH_ATTR WiFiManager::ConnectWiFiStation( const int id ) {
     LOG(PSTR("(Network) Connecting Wifi Station"));
 
     ResetConnectedStatus();
@@ -266,9 +266,9 @@ bool ICACHE_FLASH_ATTR WiFiManager::connectWiFiStation( const int id ) {
 		int i = 0;
 		while( WiFi.status() != WL_CONNECTED && i++ <= NET_STATION_TRY_TIME ) {
 			delay(500);
-			if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
+			if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
 		}
-        if( logger.SerialOn() && (logger.LogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
+        if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
 
 		ret = (WiFi.status() == WL_CONNECTED);
 
@@ -282,7 +282,7 @@ bool ICACHE_FLASH_ATTR WiFiManager::connectWiFiStation( const int id ) {
             _stationSettings[id]->dns1 = WiFi.dnsIP(0);
             _stationSettings[id]->dns2 = WiFi.dnsIP(1);
 
-    		if( logger.SerialOn() ) {
+    		if( logger.IsSerialOn() ) {
                 IPAddress ip;
                 ip = _stationSettings[id]->ip; LOGF( PSTR("(Network) WiFi station connected - IP: %s"), ip.toString().c_str());   
                 ip = _stationSettings[id]->subnet; LOGF_HIGH( PSTR("(Network) Subnet: %s"), ip.toString().c_str());         
