@@ -41,8 +41,8 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
 
     LOG_HIGH(PSTR("(Page) System - Initialize AJAX"));
 
-    LoggerSettings log = config.settings.logSettings;
-    OTASettings ota = config.settings.otaSettings;
+    LoggerSettings log = config.settings.loggerSettings;
+    OTAUpdaterSettings ota = config.settings.otaUpdaterSettings;
 
     static char buffer[8];
 
@@ -57,7 +57,7 @@ void ICACHE_FLASH_ATTR SystemPage::initializeAjax(){
     log_level.selectOption( log.level );
     log_save.setEnabled(false);
 
-    ota_mode.setChecked( ota.mode );
+    ota_mode.setChecked( ota.enabled );
     ota_url.setValue( ota.service );
     ota_user.setValue( ota.user );
     ota_repo.setValue( ota.repo );
@@ -81,9 +81,9 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     }
 
     if( website.AjaxID == F("btn_rst_log") ){
-        config.settings.logSettings.SetDefaults();
+        config.settings.loggerSettings.SetDefaults();
         config.Save();
-        logger.Restart(config.settings.logSettings);
+        logger.Restart(config.settings.loggerSettings);
         return;
     }
 
@@ -94,16 +94,16 @@ void ICACHE_FLASH_ATTR SystemPage::handleAjax(){
     }
 
     if( website.AjaxID == F("btn_rst_ota") ){
-        config.settings.otaSettings.setDefaults();
+        config.settings.otaUpdaterSettings.SetDefaults();
         config.Save();
-        updater.begin(config.settings.otaSettings);
+        updater.Restart(config.settings.otaUpdaterSettings);
         return;
     }
 
     if( website.AjaxID == F("btn_rst_tlo") ) {
-        config.settings.timelocsettings.setDefaults();
+        config.settings.timelocSettings.SetDefaults();
         config.Save();
-        timelocation.begin(config.settings.timelocsettings);
+        timelocation.Restart(config.settings.timelocSettings);
         return;
     }
 
@@ -134,19 +134,19 @@ void ICACHE_FLASH_ATTR SystemPage::saveLogConfig() {
     strncpy(log.globalTags,log_tags.value(),LOG_MAX_GLOBAL_TAG_LEN);
     log.level = LogLevel(atoi(log_level.value()));
 
-    config.settings.logSettings = log;
+    config.settings.loggerSettings = log;
     config.Save();
 
-    logger.Restart(config.settings.logSettings);
+    logger.Restart(config.settings.loggerSettings);
 
 }
 
 
 void ICACHE_FLASH_ATTR SystemPage::saveOTAConfig() {
     
-    OTASettings ota;
+    OTAUpdaterSettings ota;
 
-    ota.mode = ota_mode.isChecked();
+    ota.enabled = ota_mode.isChecked();
     strncpy(ota.service,ota_url.value(),OTA_MAX_SERVICE_LEN);
     strncpy(ota.user,ota_user.value(),OTA_MAX_USER_LEN);
     strncpy(ota.repo,ota_repo.value(),OTA_MAX_REPO_LEN);
@@ -154,10 +154,10 @@ void ICACHE_FLASH_ATTR SystemPage::saveOTAConfig() {
     ota.skipUpdates = ota_skip.isChecked();
     ota.interval = atoi(ota_ck_int.value());
 
-    config.settings.otaSettings = ota;
+    config.settings.otaUpdaterSettings = ota;
     config.Save();
 
-    updater.begin(config.settings.otaSettings);           
+    updater.Restart(config.settings.otaUpdaterSettings);           
 
 }
 

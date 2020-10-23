@@ -33,8 +33,10 @@ SOFTWARE. */
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 
+// Project Libraries
 #include "Logger.h"
 #include "IOTDevice.h"
+
 
 /* The Loggly service requires a JSON file :
 
@@ -64,7 +66,6 @@ JSON Loggining Format
 Use https://arduinojson.org/v6/assistant/ to determine size of file.
 
 */
-
 
 #define LOG_TICK_JSON_SIZE (3*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 244)
 #define LOG_SERVICE_JSON_SIZE (2*JSON_OBJECT_SIZE(2) + 2*JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(4) + 509)

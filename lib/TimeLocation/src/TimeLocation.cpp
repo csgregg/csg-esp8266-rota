@@ -1,6 +1,14 @@
-/* Remote Updater Library
+/**
+ * @file        TimeLocation.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Implements a location and time service using IPInfo.io and ezTime library.
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,11 +28,22 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
-Implements a location and time service using IPInfo.io and ezTime library.
 
-JSON response from IPinfo.io is in this format:
+// Global Libraries
+#include <ArduinoJson.h>
+#include <ESP8266HTTPClient.h>
+#include <ezTime.h>
+
+// Project Libraries
+#include "IOTDevice.h"
+#include "Logger.h"
+#include "NetworkManager.h"
+#include "TimeLocation.h"
+
+
+/* JSON response from IPinfo.io is in this format:
 
 {
   "ip": "123.123.123.123",
@@ -45,151 +64,177 @@ https://arduinojson.org/v6/assistant/
 #define TLO_IPINFO_JSON_RESPONSE_SIZE (JSON_OBJECT_SIZE(9) + 280)
 
 
-#include <ArduinoJson.h>
-#include <ESP8266HTTPClient.h>
-#include <ezTime.h>
+////////////////////////////////////////////
+//// TimeLocatinSettings Class
 
-#include "IOTDevice.h"
-#include "Logger.h"
-#include "NetworkManager.h"
-#include "TimeLocation.h"
+// Public:
 
-
-void ICACHE_FLASH_ATTR TimeLocationSettings::setDefaults() {
-    ntpMode = true;
-    strcpy_P(ipinfoToken, flag_TLO_IPINFO_TOKEN);
-    strcpy_P(posix,PSTR("UTC"));
-    location.setDefaults();
+// Resets location to default
+void ICACHE_FLASH_ATTR Location::SetDefaults() {
+    publicIP = { 0, 0, 0, 0 };
+    strcpy_P( city, PSTR("") );
+    strcpy_P( region, PSTR("") );
+    strcpy_P( country, PSTR("") );
+    coords = { 0, 0 };
+    strcpy_P( postal, PSTR("") );
+    strcpy_P( timezone, PSTR("") );
 }
 
 
-void ICACHE_FLASH_ATTR Location::setDefaults() {
-    ip = {0,0,0,0};
-    strcpy_P(city,PSTR(""));
-    strcpy_P(region,PSTR(""));
-    strcpy_P(country,PSTR(""));
-    loc = {0,0};
-    strcpy_P(postal,PSTR(""));
-    strcpy_P(timezone,PSTR(""));
+////////////////////////////////////////////
+//// TimeLocationSettings Class
+
+// Public:
+
+// Resets time and location settings to default
+void ICACHE_FLASH_ATTR TimeLocationSettings::SetDefaults() {
+    enabled = true;
+    strcpy_P( ipInfoToken, flag_TLO_IPINFO_TOKEN );
+    strcpy_P( posix, PSTR("UTC") );
+    location.SetDefaults();
 }
 
 
-void ICACHE_FLASH_ATTR TimeLocation::begin( WiFiClient &client, TimeLocationSettings &settings ) {
+////////////////////////////////////////////
+//// TimeLocationSettings Class
+
+// Public:
+
+// Initializes the Time and Location serices
+void ICACHE_FLASH_ATTR TimeLocationManager::Begin( WiFiClient& client, TimeLocationSettings& settings ) {
     _client = &client;
-    begin(settings);
+    if( _timezone ) delete _timezone;
+    else _timezone = new Timezone;
+    Restart( settings );
 }
-void ICACHE_FLASH_ATTR TimeLocation::begin( TimeLocationSettings &settings ) {
+
+
+// Restart the time and location services
+void ICACHE_FLASH_ATTR TimeLocationManager::Restart( TimeLocationSettings& settings ) {
 
     LOG(PSTR("(TimeLoc) Starting time and location service"));
 
     _settings = &settings;
-    _timezone = new Timezone;
 
     if( _settings->location.region[0] != '\0' ) {
-        LOGF_HIGH(PSTR("(TimeLoc) Setting timezone to: %s"),_settings->location.timezone);
-        _locationStatus = _timezone->setPosix(_settings->posix);
+        LOGF_HIGH( PSTR("(TimeLoc) Setting timezone to: %s"), _settings->location.timezone );
+        _isLocationSet = _timezone->setPosix( _settings->posix );
     }
     else {
-        _settings->location.setDefaults();
-        _locationStatus = false;
+        _settings->location.SetDefaults();
+        _isLocationSet = false;
     }
 
 }
 
 
-void TimeLocation::handle() {
+// Handles any repeasting time and location tasks
+void TimeLocationManager::Handle() {
 
-    if( _settings->ntpMode ) {
-        if( network.GetNetworkStatus()==NetworkStatus::NORMAL ) {
-            if( !_previousConnected ) {
-                _previousConnected = true;
+    if( _settings->enabled ) {
+        if( network.GetNetworkStatus() == NetworkManager::NetworkStatus::NORMAL ) {
+            if( !_wasPreviousConnected ) {
+                _wasPreviousConnected = true;
                 ezt::updateNTP();
             }
         }
-        else _previousConnected = false;
+        else _wasPreviousConnected = false;
 
         ezt::events();              // ezTime handler
     }                   
 
-    _timeStatus = ( ezt::timeStatus() != timeNotSet );
+    _isTimeSet = ( ezt::timeStatus() != timeNotSet );
 
 }
 
 
-void ICACHE_FLASH_ATTR TimeLocation::strcpyTimeDate(char* datetimestring) {
-    strncpy(datetimestring, _timezone->dateTime().c_str(),TLO_MAX_LONG_DATETIME_LEN);
-}
+// Detect location using IPInfo.io
+bool ICACHE_FLASH_ATTR TimeLocationManager::DetectLocation() {
 
+    LOG_HIGH( PSTR("(TimeLoc) Detecting location") );
 
+    _isLocationSet = false;
 
-bool ICACHE_FLASH_ATTR TimeLocation::detectLocation() {
-
-    LOG_HIGH(PSTR("(TimeLoc) Detecting location"));
-
-    _locationStatus = false;
-
-    if( _settings->ipinfoToken[0]=='\0' ) {
-        LOG(PSTR("(TimeLoc) Missing IPInfo token"));
+    if( _settings->ipInfoToken[0] == '\0' ) {
+        LOG( PSTR("(TimeLoc) Missing IPInfo token") );
         return false;
     }
 
-    HTTPClient http;
-
+    // Build URL for IPInfo.io request
     char url[sizeof("http://")+sizeof(flag_TLO_IPINFO_SERVICE)+TLO_IPINFO_MAX_TOKEN_LEN];
     strcpy_P(url,PSTR("http://"));
     strcat_P(url,flag_TLO_IPINFO_SERVICE);
-    strcat(url,_settings->ipinfoToken);
+    strcat(url,_settings->ipInfoToken);
 
-    http.setUserAgent(FPSTR(flag_DEVICE_CODE));
-    http.useHTTP10(true);
-    if( !http.begin(*_client,url) ) {
-        LOG(PSTR("(TimeLoc) HTTP error getting location"));
+    // Start connection
+    HTTPClient http;
+    http.setUserAgent( FPSTR(flag_DEVICE_CODE) );
+    http.useHTTP10( true );
+    if( !http.begin( *_client, url ) ) {
+        LOG( PSTR("(TimeLoc) HTTP error getting location") );
         return false;
     }
     int httpCode = http.GET();                                                         
 
+    // Deserialize response
     StaticJsonDocument<TLO_IPINFO_JSON_RESPONSE_SIZE> json;
-    DeserializationError jsonerror = deserializeJson(json, http.getStream());
-
+    DeserializationError jsonerror = deserializeJson( json, http.getStream() );
     http.end();
 
-    if( httpCode == HTTP_CODE_OK ) LOG_HIGH(PSTR("(TimeLoc) Location received"));
+    // Did we get a response
+    if( httpCode == HTTP_CODE_OK ) LOG_HIGH( PSTR("(TimeLoc) Location received") );
     else {
-        LOG(PSTR("(TimeLoc) HTTP error getting location"));
+        LOG( PSTR("(TimeLoc) HTTP error getting location") );
         return false;
     }
 
-    if(jsonerror) {
+    // Is the JSON valid
+    if( jsonerror ) {
         LOGF_CRITICAL( PSTR("(TimeLoc) JSON Error: %s"), jsonerror.c_str() );
         return false;
     }
 
-    _settings->location.ip.fromString(json[F("ip")].as<char*>());
-    strcpy(_settings->location.city,json[F("city")].as<char*>());
-    strcpy(_settings->location.region,json[F("region")].as<char*>());
-    strcpy(_settings->location.country,json[F("country")].as<char*>());
+    // Get the details from the response
+    _settings->location.publicIP.fromString( json[F("ip")].as<char*>() );
+    strcpy( _settings->location.city, json[F("city")].as<char*>() );
+    strcpy( _settings->location.region, json[F("region")].as<char*>() );
+    strcpy( _settings->location.country, json[F("country")].as<char*>() );
 
     char buff[TLO_IPINFO_MAX_LOC_LEN];
-    strcpy(buff,json[F("loc")].as<char*>());
-    int len = (strchr(buff,',')-buff)*sizeof(char);
+    strcpy( buff, json[F("loc")].as<char*>() );
+    int len = ( strchr( buff, ',' ) - buff ) * sizeof(char);
     char newbuff[TLO_IPINFO_MAX_LOC_LEN];
-    _settings->location.loc.lon =  atof( strncpy(newbuff, buff, len) );
-    _settings->location.loc.lat =  atof( strcpy(newbuff, buff+len+1) );
+    _settings->location.coords.lon =  atof( strncpy( newbuff, buff, len ) );
+    _settings->location.coords.lat =  atof( strcpy( newbuff, buff+len+1 ) );
 
-    strcpy(_settings->location.postal,json[F("postal")].as<char*>());
-    strcpy(_settings->location.timezone,json[F("timezone")].as<char*>());
+    strcpy( _settings->location.postal, json[F("postal")].as<char*>() );
+    strcpy( _settings->location.timezone, json[F("timezone")].as<char*>() );
 
-    _locationStatus = _timezone->setLocation(_settings->location.timezone);
-    strcpy(_settings->posix,_timezone->getPosix().c_str());
+    _isLocationSet = _timezone->setLocation( _settings->location.timezone );
+    strcpy( _settings->posix,_timezone->getPosix().c_str() );
 
-    if( _locationStatus ) LOGF_HIGH( PSTR("(TimeLoc) Timezone set to: %s"), _settings->location.timezone );
-    else LOG(PSTR("(TimeLoc) Timezone not set"));
+    if( _isLocationSet ) LOGF_HIGH( PSTR("(TimeLoc) Timezone set to: %s"), _settings->location.timezone );
+    else LOG( PSTR("(TimeLoc) Timezone not set") );
 
-    return _locationStatus;            
+    return _isLocationSet;            
 }
 
 
+// Update the time using NTP
+void ICACHE_FLASH_ATTR TimeLocationManager::UpdateTime() {
+    ezt::updateNTP();
+}
+
+
+// Copy the time date into a char array
+void ICACHE_FLASH_ATTR TimeLocationManager::StrcpyTimeDate( char* datetimestring ) {
+    strncpy( datetimestring, _timezone->dateTime().c_str(), TLO_MAX_LONG_DATETIME_LEN );
+}
+
+
+// Create the tieme location service global instance
+
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_TIMELOCATION)
-    TimeLocation timelocation;
+    TimeLocationManager timelocation;
 #endif
 

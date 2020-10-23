@@ -100,10 +100,10 @@ SOFTWARE. */
 
 
     // Sizes
-    #define FLAG_MAX_BUILD_NO_LEN (5+1)
-    #define FLAG_MAX_BUILD_TIMESTAMP_LEN (24+1)
-    #define FLAG_MAX_CHIPIN_LEN (8+1)
-    #define FLAG_MAX_BUILDENV_LEN (32+1)
+    #define FLAG_MAX_BUILD_NO_LEN (5+1)                 // Max length of the build no flag
+    #define FLAG_MAX_BUILD_TIMESTAMP_LEN (24+1)         // Max length of the build timestamp flag
+    #define FLAG_MAX_CHIPIN_LEN (8+1)                   // Max length of the chip ID
+    #define FLAG_MAX_BUILDENV_LEN (32+1)                // Max length of the build environment flag
 
    // Detect double reset
     #define DRD_TIMEOUT 3           // Number of seconds after reset during which a subseqent reset will be considered a double reset.

@@ -1,6 +1,14 @@
-/* WiFi Manager Library
+/**
+ * @file        WiFiManager.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages WiFi Functions
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,65 +28,63 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Manages WiFi Functions
-
-*/
-
+SOFTWARE. */
 
 
 #ifndef WIFI_MANAGER_H
 
     #define WIFI_MANAGER_H
 
+    // Global Libraries
     #include <Arduino.h>
     #include <ESP8266WiFi.h>
 
 
-    #define NET_MAX_STATIONS 3
-    #define NET_MAX_SSID_LEN 32
-    #define NET_MAX_PASSWORD_LEN 16
+    enum DHCPModes { DHCP, STATIC };                // DHCP Mode
 
 
-    enum DHCPModes { DHCP, STATIC };         // DHCP Mode
-
-    enum NetworkStatus : uint {             // TODO - should this be in the network manager
-        DISCONNECTED = 0,
-        NORMAL = 1,                         // Connected to WiFi and internet
-        NOINETERNET = 2
-    };
-
+    // Sizes
+    #define NET_MAX_STATIONS 3                      // Maximum number of WiFi stations that can be stored
+    #define NET_MAX_SSID_LEN 32                     // Maximum length of a WiFi station SSID
+    #define NET_MAX_PASSWORD_LEN 16                 // Maximum length of a WiFi station password
 
     // Defaults
+    #define NET_DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
+
     #define NET_STATION_TRY_TIME 20                 // 20 sec - time to allow station to connect
     #define NET_STATION_DISCONNECT_TIME 30000       // 30 Sec - time to allow SDK to retrun before trying different station
     #define NET_STATION_SWITCH_TO_AP_TIME 60000     // 1 min - time to wait before turning on AP mode if no station connected
+    #define NET_DEFAULT_DHCPMODE DHCP               // Default DHCOP mode
+
+    #define NET_DEFAULT_AP_IP 0x0102A8C0            // Default AP IP address- 192.168.2.1
+    #define NET_DEFAULT_AP_SUBNET 0x00FFFFFF        // Default AP IP subnet - 255.255.255.0
+    #define NET_DEFAULT_AP_GATEWAY 0xFE02A8C0       // Default AP gateway - 192.168.2.254
+    #define NET_DEFAULT_AP_CHANNEL 11               //Default AP radion channel
 
 
-    // Client network config
+    /** @class StationSettings
+     *  @brief Data struct class that contains the settings for a WiFi station */
     class StationSettings {
 
         public:
 
+            /** Resets WiFi station settings to defaults */
             void SetDefaults();
 
-            char SSID[NET_MAX_SSID_LEN];
-            char password[NET_MAX_PASSWORD_LEN];
-            DHCPModes DHCPMode;
-            IPAddress ip;
-            IPAddress subnet;
-            IPAddress gateway;
-            IPAddress dns1;
-            IPAddress dns2;
+            char SSID[NET_MAX_SSID_LEN];            // WiFi station SSID
+            char password[NET_MAX_PASSWORD_LEN];    // WiFi station password
+            DHCPModes DHCPMode;                     // DHCP mode
+            IPAddress ip;                           // If static DHCP, IP address
+            IPAddress subnet;                       // If static DHCP, IP subnet
+            IPAddress gateway;                      // If static DHCP, gateway address
+            IPAddress dns1;                         // If static DHCP, DNS server
+            IPAddress dns2;                         // If static DHCP, DNS server
 
             // Create a compare operators
 
-            bool operator==(const StationSettings& other) const {
-                return (strcmp(SSID, other.SSID)==0)
-                    && (strcmp(password, other.password)==0)
+            bool operator== ( const StationSettings& other ) const {
+                return ( strcmp( SSID, other.SSID ) == 0 )
+                    && ( strcmp( password, other.password ) == 0 )
                     && DHCPMode == other.DHCPMode
                     && ip == other.ip
                     && subnet == other.subnet
@@ -86,10 +92,9 @@ Manages WiFi Functions
                     && dns1 == other.dns1
                     && dns2 == other.dns2;
             }
-
-            bool operator!=(const StationSettings& other) const {
-                return (strcmp(SSID, other.SSID)!=0)
-                    || (strcmp(password, other.password)!=0)
+            bool operator!= ( const StationSettings& other ) const {
+                return ( strcmp( SSID, other.SSID ) != 0 )
+                    || ( strcmp( password, other.password ) != 0 )
                     || DHCPMode != other.DHCPMode
                     || ip != other.ip
                     || subnet != other.subnet
@@ -101,42 +106,35 @@ Manages WiFi Functions
     };
 
 
-    // Defaults
-    #define NET_DEFAULT_WIFIMODE WIFI_AP            // Options are : WIFI_OFF = 0, WIFI_STA = 1, WIFI_AP = 2, WIFI_AP_STA = 3
-    #define NET_DEFAULT_DHCPMODE DHCP
-    #define NET_DEFAULT_STATICIP 0x0102A8C0         // 192.168.2.1
-    #define NET_DEFAULT_SUBNET 0x00FFFFFF           // 255.255.255.0
-    #define NET_DEFAULT_GATEWAY 0xFE02A8C0          // 192.168.2.254
-    #define NET_DEFAULT_CHANNEL 11
-
-
-    // AP network config
+    /** @class APSettings
+     *  @brief Data struct class that contains the settings for the WiFi AP */
     class APSettings {
 
         public:
 
+            /** Resets WiFi station settings to defaults */
             void SetDefaults();
 
-            char SSID[NET_MAX_SSID_LEN];
-            char password[NET_MAX_PASSWORD_LEN];
-            byte channel;
-            IPAddress ip;
-            IPAddress subnet;
-            IPAddress gateway;
+            char SSID[NET_MAX_SSID_LEN];                // SSID for WiFi AP
+            char password[NET_MAX_PASSWORD_LEN];        // Password for WiFi AP
+            byte channel;                               // Radio channel used by WiFi AP
+            IPAddress ip;                               // IP address for WiFi AP
+            IPAddress subnet;                           // IP subnet for WiFi AP
+            IPAddress gateway;                          // Gateway for WiFi AP
 
             // Create a compare operators
 
-            bool operator==(const APSettings& other) const {
-                return (strcmp(SSID, other.SSID)==0)
-                    && (strcmp(password, other.password)==0)
+            bool operator== ( const APSettings& other ) const {
+                return ( strcmp( SSID, other.SSID ) == 0 )
+                    && ( strcmp( password, other.password ) == 0 )
                     && channel == other.channel
                     && ip == other.ip
                     && subnet == other.subnet
                     && gateway == other.gateway;
             }
-            bool operator!=(const APSettings& other) const {
-                return (strcmp(SSID, other.SSID)!=0)
-                    || (strcmp(password, other.password)!=0)
+            bool operator!= ( const APSettings& other ) const {
+                return ( strcmp( SSID, other.SSID ) != 0 )
+                    || ( strcmp( password, other.password ) !=0 )
                     || channel != other.channel
                     || ip != other.ip
                     || subnet != other.subnet
@@ -146,90 +144,110 @@ Manages WiFi Functions
     };
 
 
-
-
-    // WiFi Manager Class
-
+    /** @class WiFiManager
+     *  @brief Manages the WiFi services */
     class WiFiManager {
 
         public:
 
+            /** Constructor */
             WiFiManager()  {
-                _APRunning = false;
-                _APConnections = 0;
+                _isAPRunning = false;
+                _nAPConnections = 0;
             }
 
-            void ICACHE_FLASH_ATTR Begin( StationSettings* const &stationSettings, APSettings &apSettings, WiFiMode &wifiMode );
+            /** Initializes the WiFi Manager
+             * @param stationSettings       Reference of an array of station settings
+             * @param apSettings            Reference of the AP settings
+             * @param wifiMode              Reference of the WiFi Mode setting */
+            void ICACHE_FLASH_ATTR Begin( StationSettings* const& stationSettings, APSettings& apSettings, WiFiMode& wifiMode );
 
-            WiFiClient* ICACHE_FLASH_ATTR GetClient() { return &_client; };
+            /** Handle any repeating WiFi tasks
+             *  This detects if WiFi should be connected and if not, reconnects 
+             *  @param force        Forces reconnect */
+            void Handle( const bool force = false );
 
-            bool ICACHE_FLASH_ATTR SetWiFiStation();
-            bool ICACHE_FLASH_ATTR SetWiFiAP();
+            /** Sets the WiFi Mode
+             * @param mode          WiFiMode */
+            void ICACHE_FLASH_ATTR SetWiFiMode( WiFiMode mode );  
+
+            /** Reconnects all WiFi networks */
             void ICACHE_FLASH_ATTR ReconnectWifi();
+
+            /** Connects to a specific WiFi station
+             * @param id            ID of station to connect to
+             * @return true         Success
+             * @return false        Fail */
             bool ICACHE_FLASH_ATTR ConnectWiFiStation( const int id = 0 );
-            void ICACHE_FLASH_ATTR SetWiFiMode( WiFiMode mode ) {
-                *_wifiMode = mode;
-                Handle(true);
-            };            
 
-            void Handle(const bool force = false);
+            /** Checks to see if any stored WiFi station is connected
+             * @return true:        There is one
+             * @return false:       None are connected */
+            bool ICACHE_FLASH_ATTR IsStationConnected();
 
-            WiFiClient& ICACHE_FLASH_ATTR GetWiFiClient() { return _client; };
+            /** Checks if a specific stored station is connected - overload function
+             * @param id            ID of station to check
+             * @return true:        It is connected
+             * @return false:       It is not connected */
+            bool ICACHE_FLASH_ATTR IsStationConnected( uint id ) { return _stationConnected[id]; }
+
+            /** Returns the currently connected WiFi station
+             * @return uint         ID of connected station */
+            uint ICACHE_FLASH_ATTR GetConnectedStation();
+
+            /** Gets a reference to the reusable WiFi Client object
+             *  @return WiFiClient  Reference of the client object */
+            WiFiClient& ICACHE_FLASH_ATTR GetWiFiClient() { return _client; }
+
+            /** Gets the Assigned IP address
+             * @return char*        Returns IP address as a char array pointer */
+            char* ICACHE_FLASH_ATTR GetAssignedIP();
           
-            uint ICACHE_FLASH_ATTR GetConnectedStation() {
-                for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
-                    if( _stationConnected[i] ) return i;
-                }
-                return 0;
-            };
-            uint ICACHE_FLASH_ATTR CountAPConnections() { return _APConnections; };
-            bool ICACHE_FLASH_ATTR IsStationConnected(uint id) { return _stationConnected[id]; };
-            bool ICACHE_FLASH_ATTR IsStationConnected() {
-                for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
-                    if( _stationConnected[i] ) return true;
-                }
-                return false;
-            };
+            /** Checks to see if AP is running 
+             * @return true:         Is is running
+             * @return false:        It is not running */
+            bool ICACHE_FLASH_ATTR IsAPRunning( ) { return _isAPRunning; }
 
-            bool ICACHE_FLASH_ATTR IsAPRunning( ) { return _APRunning; };
-            NetworkStatus ICACHE_FLASH_ATTR GetNetworkStatus();
-
-            char* ICACHE_FLASH_ATTR GetAssignedIP() {
-                static char ip[16];
-                strcpy(ip, WiFi.localIP().toString().c_str());
-                return ip;
-            }
+            /** Returns the number of clients connected to the AP
+             * @return uint         Number of connections */
+            uint ICACHE_FLASH_ATTR CountAPConnections() { return _nAPConnections; }
 
 
         protected:
+        
+            /** Handles any repeating WiFi station tasks
+             * @param force         Force the reconnection of the WiFi stations
+             * @return true         Successfully connected
+             * @return false        Failed to connect */
+            bool HandleWiFiStations( const bool force = false );
 
-            void HandleWiFi(const bool force = false);
-            bool HandleWiFiAP(const bool force = false);
-            bool HandleWiFiStation(const bool force = false);
+            /** Handles any repeating WiFi AP tasks
+             *  Including starting the AP
+             * @param force         Force the restart of the AP
+             * @return true         Successfully started
+             * @return false        Failed to start */
+            bool HandleWiFiAP( const bool force = false );
 
+            /** Start the WiFi Access Point
+             * @return true         Successfully started
+             * @return false        Failed to start */
             bool ICACHE_FLASH_ATTR StartWiFiAccessPoint();
-            void ICACHE_FLASH_ATTR StartWiFi();
 
-            void ICACHE_FLASH_ATTR ResetConnectedStatus() {
-                for( int i = 0; i < NET_MAX_STATIONS; i++ ) _stationConnected[i] = false;
-            };
+            /** Clear all station connection status */
+            void ICACHE_FLASH_ATTR ResetConnectedStatus() { for( int i = 0; i < NET_MAX_STATIONS; i++ ) _stationConnected[i] = false; }
 
-            WiFiClient _client;
+            WiFiClient _client;             // The reusable WiFi client object
 
-            WiFiMode* _wifiMode;              // WiFi Mode
+            WiFiMode* _wifiMode;            // Pointer to WiFi Mode setting
 
-            StationSettings* const * _stationSettings;
-            int _lastStation = 0;
-            uint _disconnectedStation;       // Used to see how long disconnected in station mode
-            bool _stationConnected[NET_MAX_STATIONS];   
+            StationSettings* const* _stationSettings;       // Pointer to array of station settings
+            int _lastStation = 0;                           // ID of last connected station
+            uint _disconnectedStation;                      // Used to see how long disconnected in station mode
+            bool _stationConnected[NET_MAX_STATIONS];       // Array of connected statuses of the WiFi stations
 
-            APSettings* _apSettings;
-            bool _APRunning;                // Is the AP running
-            uint _APConnections;            // How many clients are connected
-   
-
-        private:
-
+            APSettings* _apSettings;        // Pointer to the AP settings
+            bool _isAPRunning;              // Is the AP running
+            uint _nAPConnections;           // How many clients are connected
 
     };
 

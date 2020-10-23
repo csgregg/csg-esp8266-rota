@@ -52,18 +52,20 @@ SOFTWARE. */
             /** Resets internet checker settings to defaults */
             void ICACHE_FLASH_ATTR setDefaults();
 
-            bool isOn;                                          // Is the checking service on
+            bool enabled;                                       // Is the checking service on
             char checkService[NETCHECK_MAX_SERVICE_LEN];        // URL of the check destination
             uint interval;                                      // Interval between checks (sec)
 
-            bool operator==(const NetCheckSettings& other) const {
-                return (strcmp(checkService, other.checkService)==0)
-                    && isOn == other.isOn
+            // Create a compare operators
+            
+            bool operator== ( const NetCheckSettings& other ) const {
+                return ( strcmp( checkService, other.checkService ) == 0 )
+                    && enabled == other.enabled
                     && interval == other.interval;
             }
-            bool operator!=(const NetCheckSettings& other) const {
-                return (strcmp(checkService, other.checkService)!=0)
-                    || isOn != other.isOn
+            bool operator!= ( const NetCheckSettings& other ) const {
+                return ( strcmp( checkService, other.checkService ) != 0 )
+                    || enabled != other.enabled
                     || interval != other.interval;
             }
 

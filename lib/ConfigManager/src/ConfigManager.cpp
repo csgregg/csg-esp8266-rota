@@ -40,6 +40,22 @@ SOFTWARE. */
 #include "IOTDevice.h"
 
 
+
+
+////////////////////////////////////////////
+//// Config Manager Class
+
+// Public:
+
+// Resets all the settings to the default values */
+void ICACHE_FLASH_ATTR DeviceSettings::SetDefaults() {
+    networkSettings.SetDefaults();
+    loggerSettings.SetDefaults();
+    otaUpdaterSettings.SetDefaults();
+    timelocSettings.SetDefaults();
+}
+
+
 ////////////////////////////////////////////
 //// Config Manager Class
 

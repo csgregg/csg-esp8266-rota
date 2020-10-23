@@ -58,7 +58,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     // Connectivity Settings
     char buffer[5];
     NetCheckSettings netStatus = config.settings.networkSettings.netCheckSettings;
-    net_ck_mode.setChecked( netStatus.isOn );
+    net_ck_mode.setChecked( netStatus.enabled );
     net_ck_int.setValue( itoa(netStatus.interval,buffer,10) );
     net_ck_url.setValue( netStatus.checkService );
     net_ck_save.setEnabled(false);
@@ -71,9 +71,9 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::initializeAjax(){
     dns_save.setEnabled(false);
 
     // Time and Location Settings
-    TimeLocationSettings tlo = config.settings.timelocsettings;
-    tlo_ntp.setChecked( tlo.ntpMode );
-    tlo_token.setValue( tlo.ipinfoToken );
+    TimeLocationSettings tlo = config.settings.timelocSettings;
+    tlo_ntp.setChecked( tlo.enabled );
+    tlo_token.setValue( tlo.ipInfoToken );
     loadTimeLocation();
     tlo_save.setEnabled(false);
 
@@ -158,23 +158,23 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveDNS() {
 void ICACHE_FLASH_ATTR NetworkSettingsPage::saveTimeLocation() {
     LOG_HIGH(PSTR("(Page) Network Settings - Save Time/Location"));
 
-    strncpy(config.settings.timelocsettings.ipinfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
-    config.settings.timelocsettings.ntpMode = tlo_ntp.isChecked();
+    strncpy(config.settings.timelocSettings.ipInfoToken,tlo_token.value(),TLO_IPINFO_MAX_TOKEN_LEN);
+    config.settings.timelocSettings.enabled = tlo_ntp.isChecked();
     // Note location, if updated, is already saved to config.settings.tloconfig by timelocation.detectlocation
     config.Save();
 }
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::detectLocation() {
-    if( timelocation.detectLocation() ) loadTimeLocation();
+    if( timelocation.DetectLocation() ) loadTimeLocation();
 }
 
 
 void ICACHE_FLASH_ATTR NetworkSettingsPage::loadTimeLocation() {
 
-    if( timelocation.isLocationSet() ) {
-        tlo_loc.setValue( config.settings.timelocsettings.location.region );
-        tlo_tz.setValue( config.settings.timelocsettings.location.timezone );
+    if( timelocation.IsLocationSet() ) {
+        tlo_loc.setValue( config.settings.timelocSettings.location.region );
+        tlo_tz.setValue( config.settings.timelocSettings.location.timezone );
     }
     else {
         tlo_loc.setValue( "<b>Not set</b>", true );
@@ -250,7 +250,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::saveNetCheck() {
 
     NetCheckSettings netStatus;
 
-    netStatus.isOn = net_ck_mode.isChecked();
+    netStatus.enabled = net_ck_mode.isChecked();
     strncpy(netStatus.checkService,net_ck_url.value(),NETCHECK_MAX_SERVICE_LEN);
     netStatus.interval = atoi(net_ck_int.value());
 

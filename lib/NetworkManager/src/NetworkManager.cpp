@@ -78,7 +78,7 @@ void ICACHE_FLASH_ATTR NetworkManager::Begin( NetworkSettings& settings ) {
 
 
 // Get the status of the network
-NetworkStatus ICACHE_FLASH_ATTR NetworkManager::GetNetworkStatus() {
+NetworkManager::NetworkStatus ICACHE_FLASH_ATTR NetworkManager::GetNetworkStatus() {
     if( _netCheck.isInternetConnected() ) return NetworkStatus::NORMAL;
     else {
         if( _wifi.IsStationConnected() || _wifi.CountAPConnections() > 0 ) return NetworkStatus::NOINETERNET;

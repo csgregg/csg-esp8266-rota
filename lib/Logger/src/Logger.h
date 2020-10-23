@@ -160,10 +160,12 @@ SOFTWARE. */
             char globalTags[LOG_MAX_GLOBAL_TAG_LEN];    // Tags used on all Loggly posts
             LogLevel level = LOGGING_LEVEL_NORMAL;      // Current logging level
 
-            bool operator==( const LoggerSettings& other ) const {
+            // Create a compare operators
+            
+            bool operator== ( const LoggerSettings& other ) const {
                 return serialBaud == other.serialBaud
                     && ( strcmp( serviceURL, other.serviceURL ) == 0 )
-                    && ( strcmp(serviceKey, other.serviceKey) == 0 )
+                    && ( strcmp( serviceKey, other.serviceKey ) == 0 )
                     && serialModeOn == other.serialModeOn
                     && serviceModeOn == other.serviceModeOn
                     && tickModeOn == other.tickModeOn
@@ -171,10 +173,10 @@ SOFTWARE. */
                     && ( strcmp( globalTags, other.globalTags ) == 0 )
                     && level == other.level;
             }
-            bool operator!=( const LoggerSettings& other ) const {
+            bool operator!= ( const LoggerSettings& other ) const {
                 return serialBaud != other.serialBaud
                     || ( strcmp( serviceURL, other.serviceURL ) != 0 )
-                    || ( strcmp (serviceKey, other.serviceKey ) != 0 )
+                    || ( strcmp( serviceKey, other.serviceKey ) != 0 )
                     || serialModeOn != other.serialModeOn
                     || serviceModeOn != other.serviceModeOn
                     || tickModeOn != other.tickModeOn

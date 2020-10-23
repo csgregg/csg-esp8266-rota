@@ -59,7 +59,9 @@ SOFTWARE. */
             NetCheckSettings netCheckSettings;                          // Connectivity checker settings
             DNSSettings dnsSettings;                                    // DNS settings
         
-            bool operator==(const NetworkSettings& other) const {
+            // Create a compare operators
+            
+            bool operator== ( const NetworkSettings& other ) const {
                 bool stations = true;
                 for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
                 return wifiMode == other.wifiMode
@@ -68,7 +70,7 @@ SOFTWARE. */
                     && netCheckSettings == other.netCheckSettings
                     && dnsSettings == other.dnsSettings;
             }
-            bool operator!=(const NetworkSettings& other) const {
+            bool operator!= ( const NetworkSettings& other ) const {
                 bool stations = false;
                 for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
                 return wifiMode != other.wifiMode
@@ -86,6 +88,13 @@ SOFTWARE. */
     class NetworkManager {
 
         public:
+
+            // Status of the network connection
+            enum NetworkStatus : uint {
+                DISCONNECTED = 0,                   // No network connection
+                NORMAL = 1,                         // Connected to WiFi and internet
+                NOINETERNET = 2                     // Connected to WiFi but no internet
+            };
 
             /** Start network services
              * @param settings      Reference to struct containing network settings */

@@ -46,7 +46,7 @@ SOFTWARE. */
 
 // Resets checker settings to defaults
 void ICACHE_FLASH_ATTR NetCheckSettings::setDefaults() {
-    isOn = flag_NET_CHECKER;
+    enabled = flag_NET_CHECKER;
     strcpy_P( checkService, flag_NET_CHECK_SERVICE );
     interval = flag_NET_CHECK_INTERVAL;
 }
@@ -63,12 +63,12 @@ void ICACHE_FLASH_ATTR NetCheckManager::Begin (WiFiClient& client, NetCheckSetti
     _settings = &settings;
     _client = &client;
 
-    _doNetCheck = _settings->isOn;
+    _doNetCheck = _settings->enabled;
     _isConnectedToInternet = false;
 
     if( _netCheck.active() ) _netCheck.detach();
 
-    if( _settings->isOn ) _netCheck.attach( _settings->interval, TriggerNetCheck ); 
+    if( _settings->enabled ) _netCheck.attach( _settings->interval, TriggerNetCheck ); 
 
 };
 

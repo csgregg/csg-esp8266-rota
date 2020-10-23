@@ -57,29 +57,26 @@ SOFTWARE. */
         public:
 
             NetworkSettings networkSettings;            // Settings for Network Manager Class
-            LoggerSettings logSettings;                 // Settings for Logger Class
-            OTASettings otaSettings;                    // Settings for OTA Update Manager Class
-            TimeLocationSettings timelocsettings;       // Settings Time and Location Manager Class
+            LoggerSettings loggerSettings;                 // Settings for Logger Class
+            OTAUpdaterSettings otaUpdaterSettings;      // Settings for OTA Update Manager Class
+            TimeLocationSettings timelocSettings;       // Settings Time and Location Manager Class
 
             /** Resets all the settings to the default values */
-            void ICACHE_FLASH_ATTR SetDefaults() {
-                networkSettings.SetDefaults();
-                logSettings.SetDefaults();
-                otaSettings.setDefaults();
-                timelocsettings.setDefaults();
-            };
+            void ICACHE_FLASH_ATTR SetDefaults();
 
-            bool operator==( const DeviceSettings& other ) const {
+            // Create a compare operators
+            
+            bool operator== ( const DeviceSettings& other ) const {
                 return networkSettings == other.networkSettings
-                    && logSettings == other.logSettings
-                    && otaSettings == other.otaSettings
-                    && timelocsettings == other.timelocsettings;
+                    && loggerSettings == other.loggerSettings
+                    && otaUpdaterSettings == other.otaUpdaterSettings
+                    && timelocSettings == other.timelocSettings;
             }
-            bool operator!=( const DeviceSettings& other ) const {
+            bool operator!= ( const DeviceSettings& other ) const {
                 return networkSettings != other.networkSettings
-                    || logSettings != other.logSettings
-                    || otaSettings != other.otaSettings
-                    || timelocsettings != other.timelocsettings;
+                    || loggerSettings != other.loggerSettings
+                    || otaUpdaterSettings != other.otaUpdaterSettings
+                    || timelocSettings != other.timelocSettings;
             }
 
     };
