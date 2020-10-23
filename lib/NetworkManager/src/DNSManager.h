@@ -61,13 +61,15 @@ SOFTWARE. */
             bool mDnsEnabled;                       // Is mDNS dnsEnabled
             char hostName[DNS_MAX_HOSTNAME_LEN];    // Network name for this device
 
-            bool operator==(const DNSSettings& other) const {
-                return (strcmp(hostName, other.hostName)==0)
+            // Create a compare operators
+            
+            bool operator==( const DNSSettings& other ) const {
+                return ( strcmp( hostName, other.hostName) == 0 )
                     && dnsEnabled == other.dnsEnabled
                     && mDnsEnabled == other.mDnsEnabled;
             }
             bool operator!=(const DNSSettings& other) const {
-                return (strcmp(hostName, other.hostName)!=0)
+                return ( strcmp(hostName, other.hostName ) != 0 )
                     || dnsEnabled != other.dnsEnabled
                     || mDnsEnabled != other.mDnsEnabled;
             }

@@ -170,7 +170,7 @@ void ICACHE_FLASH_ATTR WebsiteManager::begin( char* hostname) {
                 if( AjaxID == "" ) {
                     net_status.setValue( network.GetNetworkStatus() );                          // Update status icon
                     if( post_message.getStatus() == EmbAJAXClientFunction::SUCCESS ) post_message.call();              // Clear the message and don't need acknowledgement
-                    if( timelocation.isTimeSet() ) timelocation.strcpyTimeDate(_datetime);     // Update date time string
+                    if( timelocation.IsTimeSet() ) timelocation.StrcpyTimeDate(_datetime);     // Update date time string
                     else strcpy_P(_datetime,PSTR("Time not set"));
                     date_time.setValue(_datetime);
                 }

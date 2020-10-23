@@ -1,6 +1,14 @@
-/* WiFi Manager Library
+/**
+ * @file        WiFiManager.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Manages WiFi Functions
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,27 +28,22 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-WiFi Network Functions
-
-*/
+SOFTWARE. */
 
 
-
-
+// Project Libraries
 #include "WiFiManager.h"
 #include "Logger.h"
 #include "IOTDevice.h"
 
 
+////////////////////////////////////////////
+//// WiFi Station Settings Class
 
-// Network Settings 
+// Public:
 
+// Resets a WiFi station setting to defaults 
 void ICACHE_FLASH_ATTR StationSettings::SetDefaults() {
-
     strcpy_P( SSID, PSTR("") );
     strcpy_P( password, PSTR("") );
     DHCPMode = NET_DEFAULT_DHCPMODE;
@@ -49,118 +52,216 @@ void ICACHE_FLASH_ATTR StationSettings::SetDefaults() {
     gateway = uint32_t(0x00000000);
     dns1 = uint32_t(0x00000000);
     dns2 = uint32_t(0x00000000);     
-
 }
 
 
-void ICACHE_FLASH_ATTR APSettings::SetDefaults() {
-
-    strcpy_P( SSID, flag_DEVICE_CODE );
-    strcpy_P( password, flag_DEVICE_CODE );
-    channel = NET_DEFAULT_CHANNEL;
-    ip = uint32_t(NET_DEFAULT_STATICIP);
-    subnet = uint32_t(NET_DEFAULT_SUBNET);
-    gateway = uint32_t(NET_DEFAULT_GATEWAY);
-
-}
-
-
-
-
-
-// Network Manager Class
-
+////////////////////////////////////////////
+//// WiFi AP Settings Class
 
 // Public:
 
-void ICACHE_FLASH_ATTR WiFiManager::Begin( StationSettings* const &stnSettings, APSettings &apSettings, WiFiMode &wifiMode ) {
+// Resets the AP settings to defaults 
+void ICACHE_FLASH_ATTR APSettings::SetDefaults() {
+    strcpy_P( SSID, flag_DEVICE_CODE );
+    strcpy_P( password, flag_DEVICE_CODE );
+    channel = NET_DEFAULT_AP_CHANNEL;
+    ip = uint32_t(NET_DEFAULT_AP_IP);
+    subnet = uint32_t(NET_DEFAULT_AP_SUBNET);
+    gateway = uint32_t(NET_DEFAULT_AP_GATEWAY);
+}
 
-    LOG(PSTR("(Network) Starting WiFi"));
 
-    // Initize WiFi
+////////////////////////////////////////////
+//// WiFi Manager Class
 
+// Public:
+
+// Initializes the WiFi Manager
+void ICACHE_FLASH_ATTR WiFiManager::Begin( StationSettings* const& stnSettings, APSettings& apSettings, WiFiMode& wifiMode ) {
+
+    LOG( PSTR("(Network) Starting WiFi") );
+
+    // Initialize WiFi
     _stationSettings = &stnSettings;
     _apSettings = &apSettings;
     _wifiMode = &wifiMode;
-  
     _disconnectedStation = 0;
 
-    WiFi.persistent(false);
+    WiFi.persistent(false);         // TODO - doc why these
     WiFi.setAutoConnect(false);
     WiFi.setAutoReconnect(true);
 
     // Restart to start fresh
     WiFi.mode(WiFiMode::WIFI_OFF);
 
-    Handle(true);   // Initial WiFi start
+    Handle(true);   // Cause initial WiFi start
 
 }
 
 
-
-
-// Protected:
-
 // Handle WiFi Connectivity
-void WiFiManager::Handle(const bool force) {
+void WiFiManager::Handle( const bool force ) {
 
     if( force ) ResetConnectedStatus();
 
     switch( *_wifiMode ) {
         case WIFI_AP:
-            _APRunning = HandleWiFiAP(force);
+            _isAPRunning = HandleWiFiAP( force );
             break;
         case WIFI_AP_STA:
-            _APRunning = HandleWiFiAP(force);
-            HandleWiFiStation(force);
+            _isAPRunning = HandleWiFiAP( force );
+            HandleWiFiStations( force );
             break;
         case WIFI_STA:
-            HandleWiFiStation(force);
+            HandleWiFiStations( force );
             break;
         default:
-            _APRunning = false;
+            _isAPRunning = false;
             break;
     }
 }
 
 
-bool WiFiManager::HandleWiFiAP(const bool force) {
+// Sets the WiFi Mode
+void ICACHE_FLASH_ATTR WiFiManager::SetWiFiMode( WiFiMode mode ) {
+    *_wifiMode = mode;
+    Handle( true );
+}
 
-    uint connections = WiFi.softAPgetStationNum();
 
-    if( connections != _APConnections ) {
-        LOGF( PSTR("(Network) WiFi AP - Clients: %i"), connections );
-        _APConnections = connections;
+// Reconnects all WiFi networks
+void ICACHE_FLASH_ATTR WiFiManager::ReconnectWifi() {
+    LOG( PSTR("(Network) Reconnecting Wifi") );
+    WiFi.setAutoReconnect( false );
+    WiFi.disconnect( false );
+    Handle( true );                 // Force reconnect
+}
+
+
+// Connects to a specific WiFi station
+bool ICACHE_FLASH_ATTR WiFiManager::ConnectWiFiStation( const int id ) {
+
+    LOG( PSTR("(Network) Connecting Wifi Station") );
+
+    ResetConnectedStatus();
+
+    if( *_wifiMode != WIFI_STA && *_wifiMode != WIFI_AP_STA ) {
+        LOG_HIGH( PSTR("Not in station mode") );
+        return false;
     }
 
-    if( _APRunning && !force ) return true;
+    LOGF( PSTR("(Network) WiFi mode - Station %i: %s"), id, _stationSettings[id]->SSID );
 
-    return StartWiFiAccessPoint();
+    bool ssid = strcmp( _stationSettings[id]->SSID, "" ) != 0;
+	bool password = strcmp( _stationSettings[id]->password, "" ) != 0;
+
+	if( !ssid ) {
+        LOG_HIGH( PSTR("(Network) Station has no SSID") );
+        return false;
+    }
+
+    bool ret = WiFi.mode( *_wifiMode );                     // TODO - do these (and in other places) need to be in the connect function, just the mode change area?
+
+    if( _stationSettings[id]->DHCPMode == STATIC ) 
+        ret = WiFi.config( _stationSettings[id]->ip,
+            _stationSettings[id]->gateway,
+            _stationSettings[id]->subnet,
+            _stationSettings[id]->dns1,
+            _stationSettings[id]->dns2 );
+
+    WiFi.setAutoReconnect( false );
+
+ //   WiFi.hostname(_settings->dnsSettings.hostname);                   // TODO - why is this commented out
+ //   LOGF_HIGH(PSTR("(Network) Network name: %s"),_settings->dnsSettings.hostname);
+
+    if( !password ) ret = WiFi.begin( _stationSettings[id]->SSID );
+    else ret = WiFi.begin( _stationSettings[id]->SSID,
+                           _stationSettings[id]->password );
+
+	if( ret ) {
+		int i = 0;
+		while( WiFi.status() != WL_CONNECTED && i++ <= NET_STATION_TRY_TIME ) {
+			delay(500);
+			if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print( PSTR(".") );
+		}
+        if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print( PSTR("\n") );
+
+		ret = ( WiFi.status() == WL_CONNECTED );
+
+        _stationConnected[id] = ret;
+
+        if( ret ) {
+            _lastStation = id;
+            _stationSettings[id]->ip = WiFi.localIP();
+            _stationSettings[id]->subnet = WiFi.subnetMask();
+            _stationSettings[id]->gateway = WiFi.gatewayIP();
+            _stationSettings[id]->dns1 = WiFi.dnsIP(0);
+            _stationSettings[id]->dns2 = WiFi.dnsIP(1);
+
+    		if( logger.IsSerialOn() ) {
+                IPAddress ip;
+                ip = _stationSettings[id]->ip; LOGF( PSTR("(Network) WiFi station connected - IP: %s"), ip.toString().c_str() );   
+                ip = _stationSettings[id]->subnet; LOGF_HIGH( PSTR("(Network) Subnet: %s"), ip.toString().c_str() );         
+                ip = _stationSettings[id]->gateway; LOGF_HIGH( PSTR("(Network) Gateway: %s"), ip.toString().c_str() );
+                ip = _stationSettings[id]->dns1; LOGF_HIGH( PSTR("(Network) DNS 1: %s"), ip.toString().c_str() );
+                ip = _stationSettings[id]->dns2; LOGF_HIGH( PSTR("(Network) DNS 2: %s"), ip.toString().c_str() );
+            }
+        }
+        else LOG( PSTR("(Network) WiFi Station not connected") );
+
+    }
+
+    WiFi.setAutoReconnect( ret );
+
+    return ret;
 }
 
 
-void ICACHE_FLASH_ATTR WiFiManager::ReconnectWifi() {
-    LOG("(Network) Reconnecting Wifi");
-    WiFi.setAutoReconnect(false);
-    WiFi.disconnect(false);
-    Handle(true);       // Force reconnect
+// Checks to see if any stored WiFi station is connected
+bool ICACHE_FLASH_ATTR WiFiManager::IsStationConnected() {
+    for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
+        if( _stationConnected[i] ) return true;
+    }
+    return false;
 }
 
 
-bool WiFiManager::HandleWiFiStation(const bool force) {
+// Returns the currently connected WiFi station
+uint ICACHE_FLASH_ATTR WiFiManager::GetConnectedStation() {
+    for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
+        if( _stationConnected[i] ) return i;
+    }
+    return 0;
+}
 
-    bool connected = (WiFi.status() == WL_CONNECTED);
+
+// Gets the Assigned IP address
+char* ICACHE_FLASH_ATTR WiFiManager::GetAssignedIP() {
+    static char ip[16];                                     // Create a static char array to keep
+    strcpy( ip, WiFi.localIP().toString().c_str() );
+    return ip;
+}
+
+
+// Protected:
+
+// Handles any repeating WiFi station tasks
+bool WiFiManager::HandleWiFiStations( const bool force ) {
+
+    bool connected = ( WiFi.status() == WL_CONNECTED );
 
     if( connected && !force ) {
         _disconnectedStation = 0;
         return true;
     }
 
-    bool anystns = false;
-    for( int i = 0; i < NET_MAX_STATIONS && !anystns; i++ ) {
-        if( _stationSettings[i]->SSID[0] != '\0' ) anystns = true;
+    // Check to see if there any saved stations
+    bool anyStationsSaved = false;
+    for( int i = 0; i < NET_MAX_STATIONS && !anyStationsSaved; i++ ) {
+        if( _stationSettings[i]->SSID[0] != '\0' ) anyStationsSaved = true;
     }
-    if( !anystns ) {
+
+    if( !anyStationsSaved ) {
         LOG(PSTR("(Network) No saved WiFi Stations"));
         *_wifiMode = WIFI_AP;
         return false;
@@ -169,18 +270,16 @@ bool WiFiManager::HandleWiFiStation(const bool force) {
     // Okay, so not connected
     if( _disconnectedStation == 0 && !force ) {
         _disconnectedStation = millis();
-        LOG(PSTR("(Network) WiFi not connected"));
+        LOG( PSTR("(Network) WiFi not connected") );
         return false;
     }
 
     // Are we waiting for SDK to try to retry for a period
-    if( _disconnectedStation != 0 && (millis()-_disconnectedStation < NET_STATION_DISCONNECT_TIME) && !force ) {
-        return false;  
-    }
+    if( _disconnectedStation != 0 && ( millis()-_disconnectedStation < NET_STATION_DISCONNECT_TIME ) && !force ) return false;  
 
     // Turn on AP if we have waited too long
-    if(_disconnectedStation != 0 && (millis()-_disconnectedStation > NET_STATION_SWITCH_TO_AP_TIME) && !_APRunning ) {
-        LOG(PSTR("(Network) - Cannot connect to WiFi. Starting AP"));
+    if( _disconnectedStation != 0 && ( millis()-_disconnectedStation > NET_STATION_SWITCH_TO_AP_TIME ) && !_isAPRunning ) {
+        LOG( PSTR("(Network) - Cannot connect to WiFi. Starting AP") );
         *_wifiMode = WIFI_AP;
         return false;
     }
@@ -198,9 +297,28 @@ bool WiFiManager::HandleWiFiStation(const bool force) {
 }
 
 
-bool ICACHE_FLASH_ATTR WiFiManager::StartWiFiAccessPoint() {
-    LOG(PSTR("(Network) WiFi mode - Access Point"));
+// Handles any repeating WiFi AP tasks
+bool WiFiManager::HandleWiFiAP(const bool force) {
 
+    uint connections = WiFi.softAPgetStationNum();
+
+    if( connections != _nAPConnections ) {
+        LOGF( PSTR("(Network) WiFi AP - Clients: %i"), connections );
+        _nAPConnections = connections;
+    }
+
+    if( _isAPRunning && !force ) return true;
+
+    return StartWiFiAccessPoint();
+}
+
+
+// Start the WiFi Access Point
+bool ICACHE_FLASH_ATTR WiFiManager::StartWiFiAccessPoint() {
+
+    LOG( PSTR("(Network) WiFi mode - Access Point") );
+
+    //
     bool ret = WiFi.mode( *_wifiMode );
 
     if( !ret ) return false;
@@ -216,89 +334,12 @@ bool ICACHE_FLASH_ATTR WiFiManager::StartWiFiAccessPoint() {
                             _apSettings->password,
                             _apSettings->channel );
 
-    if( ret ) {
-        LOGF( PSTR("(Network) Access point started with SSID: %s, IP: %s"), _apSettings->SSID, WiFi.softAPIP().toString().c_str() );
-	}
-    else LOG(PSTR("(Network) WiFi Access point not started"));
+    if( ret ) LOGF( PSTR("(Network) Access point started with SSID: %s, IP: %s"), _apSettings->SSID, WiFi.softAPIP().toString().c_str() );
+    else LOG( PSTR("(Network) WiFi Access point not started") );
 
     return ret;
 }
 
-
-bool ICACHE_FLASH_ATTR WiFiManager::ConnectWiFiStation( const int id ) {
-    LOG(PSTR("(Network) Connecting Wifi Station"));
-
-    ResetConnectedStatus();
-
-    if( *_wifiMode != WIFI_STA && *_wifiMode != WIFI_AP_STA ) {
-        LOG_HIGH(PSTR("Not in station mode"));
-        return false;
-    }
-
-    LOGF( PSTR("(Network) WiFi mode - Station %i: %s"), id, _stationSettings[id]->SSID );
-
-    bool ssid = strcmp( _stationSettings[id]->SSID, "") != 0;
-	bool password = strcmp( _stationSettings[id]->password, "") != 0;
-
-	if( !ssid ) {
-        LOG_HIGH(PSTR("(Network) Station has no SSID"));
-        return false;
-    }
-
-    bool ret = WiFi.mode( *_wifiMode );
-
-    if( _stationSettings[id]->DHCPMode == STATIC ) 
-        ret = WiFi.config( _stationSettings[id]->ip,
-            _stationSettings[id]->gateway,
-            _stationSettings[id]->subnet,
-            _stationSettings[id]->dns1,
-            _stationSettings[id]->dns2 );
-
-    WiFi.setAutoReconnect(false);
- //   WiFi.hostname(_settings->dnsSettings.hostname);
- //   LOGF_HIGH(PSTR("(Network) Network name: %s"),_settings->dnsSettings.hostname);
-
-    if( !password ) ret = WiFi.begin( _stationSettings[id]->SSID );
-    else ret = WiFi.begin( _stationSettings[id]->SSID,
-                           _stationSettings[id]->password );
-
-	if( ret ) {
-		int i = 0;
-		while( WiFi.status() != WL_CONNECTED && i++ <= NET_STATION_TRY_TIME ) {
-			delay(500);
-			if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("."));
-		}
-        if( logger.IsSerialOn() && (logger.GetLogLevel() > LOGGING_LEVEL_NORMAL) ) Serial.print(PSTR("\n"));
-
-		ret = (WiFi.status() == WL_CONNECTED);
-
-        _stationConnected[id] = ret;
-
-        if( ret ) {
-            _lastStation = id;
-            _stationSettings[id]->ip = WiFi.localIP();
-            _stationSettings[id]->subnet = WiFi.subnetMask();
-            _stationSettings[id]->gateway = WiFi.gatewayIP();
-            _stationSettings[id]->dns1 = WiFi.dnsIP(0);
-            _stationSettings[id]->dns2 = WiFi.dnsIP(1);
-
-    		if( logger.IsSerialOn() ) {
-                IPAddress ip;
-                ip = _stationSettings[id]->ip; LOGF( PSTR("(Network) WiFi station connected - IP: %s"), ip.toString().c_str());   
-                ip = _stationSettings[id]->subnet; LOGF_HIGH( PSTR("(Network) Subnet: %s"), ip.toString().c_str());         
-                ip = _stationSettings[id]->gateway; LOGF_HIGH( PSTR("(Network) Gateway: %s"), ip.toString().c_str());
-                ip = _stationSettings[id]->dns1; LOGF_HIGH( PSTR("(Network) DNS 1: %s"), ip.toString().c_str());
-                ip = _stationSettings[id]->dns2; LOGF_HIGH( PSTR("(Network) DNS 2: %s"), ip.toString().c_str());
-            }
-        }
-        else LOG(PSTR("(Network) WiFi Station not connected"));
-
-    }
-
-    WiFi.setAutoReconnect(ret);
-
-    return ret;
-}
 
 
 

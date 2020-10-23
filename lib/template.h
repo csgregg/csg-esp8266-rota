@@ -86,6 +86,8 @@ SOFTWARE. */
              *  @returns                 Ture or false */
             bool ExampleMethod( int paramexample = 1 );
 
+            // Create a compare operators
+            
             bool operator==( const ExampleClass& other ) const {
                 return _exampleMember == other._exampleMember;
             }

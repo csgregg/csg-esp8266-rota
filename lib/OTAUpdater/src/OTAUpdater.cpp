@@ -1,6 +1,15 @@
-/* Remote Updater Library
+/**
+ * @file        OTAUpdater.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Implements a remote update service for ESP using GitHub
+ *              to store code and binaries built by Travis-CI.
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
+/* MIT License
 
 Copyright (c) 2020 Chris Gregg
 
@@ -20,12 +29,20 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+SOFTWARE. */
 
-Implements a remote update service for ESP using GitHub to store code and
-binaries built by Travis-CI.
 
-JSON used to get versioning from GitHub is in this format:
+// Global Libraries
+#include <ArduinoJson.h>
+
+// Project Libraries
+#include "IOTDevice.h"
+#include "Logger.h"
+#include "OTAUpdater.h"
+#include "NetworkManager.h"
+
+
+/* JSON used to get versioning from GitHub is in this format:
 
 {
     "repo": "123456789012345678901234567890",
@@ -59,87 +76,107 @@ https://arduinojson.org/v6/assistant/
 #define OTA_CHECK_JSON_RESPONSE_SIZE (JSON_ARRAY_SIZE(1) + JSON_ARRAY_SIZE(4) + JSON_OBJECT_SIZE(2) + 5*JSON_OBJECT_SIZE(3) + 797)
 
 
+////////////////////////////////////////////
+//// OTA Updater Settings Class
 
-#include <ArduinoJson.h>
+// Public:
 
-#include "IOTDevice.h"
-#include "Logger.h"
-#include "OTAUpdater.h"
-#include "NetworkManager.h"
-
-
-
-bool OTAUpdater::_doUpdateCheck = false;
-
-
-void ICACHE_FLASH_ATTR OTASettings::setDefaults() {
-    mode = OTA_DEFAULT_MODE;
-    strcpy_P(service, flag_UPDATER_SERVICE);
-    strcpy_P(repo, flag_UPDATER_REPO);
-    strcpy_P(user, flag_UPDATER_USER);
-    strcpy_P(token, flag_UPDATER_TOKEN);
+// Resest the OTA updater settings to defaults
+void ICACHE_FLASH_ATTR OTAUpdaterSettings::SetDefaults() {
+    enabled = OTA_DEFAULT_MODE;
+    strcpy_P( service, flag_UPDATER_SERVICE );
+    strcpy_P( repo, flag_UPDATER_REPO );
+    strcpy_P( user, flag_UPDATER_USER );
+    strcpy_P( token, flag_UPDATER_TOKEN );
     interval = flag_UPDATER_INTERVAL;
     skipUpdates = flag_UPDATER_SKIP;
 }
 
 
+////////////////////////////////////////////
+//// OTA Updater Settings Class
 
-void ICACHE_FLASH_ATTR OTAUpdater::begin( WiFiClient &client, OTASettings &settings ) {
+// Public:
+
+// Initializes the OTA updater service
+void ICACHE_FLASH_ATTR OTAUpdater::Begin( WiFiClient& client, OTAUpdaterSettings& settings ) {
     _client = &client;
-    begin(settings);
+    Restart(settings);
 }
-void ICACHE_FLASH_ATTR OTAUpdater::begin( OTASettings &settings ) {
+
+
+// Reloads the settings for the OTA service
+void ICACHE_FLASH_ATTR OTAUpdater::Restart( OTAUpdaterSettings& settings ) {
 
     _settings = &settings;
-
     _doUpdateCheck = false;
 
     if( _updateCheck.active() ) _updateCheck.detach();
 
-    if( _settings->mode ) {
+    if( _settings->enabled ) {
 
-        strcpy_P(_assetRequestURL, PSTR("http://"));
-        strcat(_assetRequestURL, _settings->service);
-        strcat_P(_assetRequestURL, PSTR("?repo="));
-        strcat(_assetRequestURL, _settings->repo);
-        strcat_P(_assetRequestURL, PSTR("&user="));
-        strcat(_assetRequestURL, _settings->user);
+        // Build request URL
+        strcpy_P( _assetRequestURL, PSTR("http://") );
+        strcat( _assetRequestURL, _settings->service );
+        strcat_P( _assetRequestURL, PSTR("?repo=") );
+        strcat( _assetRequestURL, _settings->repo );
+        strcat_P( _assetRequestURL, PSTR("&user=") );
+        strcat( _assetRequestURL, _settings->user );
+
+        // Add token if it is saved
         if( _settings->token[0] != '\0' ) {
-            strcat_P(_assetRequestURL, PSTR("&token="));
-            strcat(_assetRequestURL, _settings->token);
+            strcat_P( _assetRequestURL, PSTR("&token=") );
+            strcat( _assetRequestURL, _settings->token );
         }
 
-        LOG(PSTR("(Updater) Starting auto updater"));
+        LOG( PSTR("(Updater) Starting auto updater") );
 
-        _updateCheck.attach( _settings->interval, TriggerUpdateCheck );
+        _updateCheck.attach( _settings->interval, TriggerUpdateCheck );     // Start timer
     }
 
 }
 
 
-void OTAUpdater::TriggerUpdateCheck() {
-    _doUpdateCheck = true;
+// Handles any repeating tasks for the OTA update service
+void OTAUpdater::Handle() {
+
+    if ( _doUpdateCheck && ( network.GetNetworkStatus() == NetworkManager::NetworkStatus::NORMAL ) ) {
+
+        _doUpdateCheck = false;
+
+        if( !IsUpdateAvailable() ) return;     // No new update
+        
+#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
+        if( UpdateFS( RAW ) == OTAUpdater::UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system
+#else
+        UpdateProg( GZ, true );
+#endif
+        
+    }
 }
 
 
+// Protected:
 
-bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
 
-    LOG(PSTR("(Updater) Checking latest build"));
 
+// Perform the update check
+bool ICACHE_FLASH_ATTR OTAUpdater::IsUpdateAvailable() {
+
+    LOG( PSTR("(Updater) Checking latest build") );
     LOGF_HIGH( PSTR("(Updater) URL: %s"), _assetRequestURL );
 
+    // Fetch the details from the update services
     HTTPClient http;
 
     http.setReuse(false);
     http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
     http.setUserAgent(FPSTR(flag_DEVICE_CODE));
     http.useHTTP10(true);
-    
     http.begin( *_client, _assetRequestURL );
-
     int httpcode = http.GET();
 
+    // Did we get a result?
     if( httpcode != HTTP_CODE_OK ) {
         if( httpcode < 0 ) LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %s"), http.errorToString(httpcode).c_str() );
         else LOGF_CRITICAL( PSTR("(Updater) Error getting latest release: ERROR %i"), httpcode );
@@ -147,33 +184,34 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
     }
 
     // Expecting JSON back with latest release details
-
     DynamicJsonDocument responseJSON(OTA_CHECK_JSON_RESPONSE_SIZE);
-
     DeserializationError jsonerror = deserializeJson( responseJSON, http.getStream() );
     http.end();
 
+    // Did we get clean JSON?
     if (jsonerror) {
         LOGF_CRITICAL( PSTR("(Updater) JSON Error: %s"), jsonerror.c_str() );
         return false;
     }
 
-    const char* repoName = responseJSON[F("repo")];
+    const char* repoName = responseJSON[F("repo")];         // The repo name returned
 
     LOGF_HIGH( PSTR("(Updater) Returned Repo: %s"), repoName );
 
-    if( strcmp( repoName, _settings->repo) != 0 ) {
+    if( strcmp( repoName, _settings->repo ) != 0 ) {
         LOG_CRITICAL(PSTR("(Updater) JSON Error getting latest release"));
         return false;
     }
 
+    // Get the latest release
     JsonObject latestRelease = responseJSON[F("releases")][0];
     char currentTag[OTA_MAX_TAG_LEN];
-    strcpy_P(currentTag,flag_BUILD_TAG);
+    strcpy_P( currentTag,flag_BUILD_TAG );
     const char* latestTag = latestRelease[F("tag")];
     const char* releaseDate = latestRelease[F("date")];
 
-    if( strcmp(latestTag,"") == 0 ) {
+    // Did we get a release?
+    if( latestTag[0] == '\0' ) {
         LOG_CRITICAL(PSTR("(Updater) Error getting latest tag"));
         return false;
     }
@@ -188,32 +226,34 @@ bool ICACHE_FLASH_ATTR OTAUpdater::checkForUpdate() {
         return false;
     }
 
-    strcpy(_latestTag, latestTag);
-    strcpy(_latestReleaseDate, releaseDate);
+    // Store detailed for latest release
+    strcpy( _latestTag, latestTag );
+    strcpy( _latestReleaseDate, releaseDate );
 
-    return true;
+    return true;            // Return success
 
 }
- 
+
 
 #ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
 
-    // Update file system
+// Update the file system firmware from image stored at GitHub
+OTAUpdater::UpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
+
+    // Build file system assest request URL
     char littleFSFileRequest[OTA_MAX_IMG_URL_LEN];
-    strcpy(littleFSFileRequest, _assetRequestURL);
-    strcat_P(littleFSFileRequest, PSTR("&asset="));
-    strcat_P(littleFSFileRequest,  flag_DEVICE_CODE);
-    strcat_P(littleFSFileRequest, PSTR("-Fv"));
-    strcat_P(littleFSFileRequest, PSTR("&tag="));
-    strcat(littleFSFileRequest, _latestTag);
-    strcat_P(littleFSFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
+    strcpy( littleFSFileRequest, _assetRequestURL );
+    strcat_P( littleFSFileRequest, PSTR("&asset=") );
+    strcat_P( littleFSFileRequest,  flag_DEVICE_CODE );
+    strcat_P( littleFSFileRequest, PSTR("-Fv") );
+    strcat_P( littleFSFileRequest, PSTR("&tag=") );
+    strcat( littleFSFileRequest, _latestTag );
+    strcat_P( littleFSFileRequest, ( type == GZ ? PSTR("&type=gz") : PSTR("") ) );
 
-    LOG(PSTR("(Updater) Updating File System"));
+    LOG( PSTR("(Updater) Updating File System") );
     LOGF_HIGH(  PSTR("(Updater) File system image request: %s"), littleFSFileRequest );
 
     if( _settings->skipUpdates ) {
-
         LOG(PSTR("(Updater) Skipping update"));
         return UPDATE_SKIPPED;
     }
@@ -222,70 +262,70 @@ t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
         HTTPUpdateResult ret;
         ret = ESPhttpUpdate.updateFS( *_client, littleFSFileRequest );
 
-        switch(ret) {
+        switch( ret ) {
 
             case HTTP_UPDATE_FAILED:
-                LOGF_CRITICAL(  PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+                LOGF_CRITICAL( PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
                 return FS_UPDATE_FAILED;
 
             case HTTP_UPDATE_NO_UPDATES:
-                LOG(PSTR("(Updater) No new file system update"));
+                LOG( PSTR("(Updater) No new file system update") );
                 return NO_UPDATES;
                 
             default:
-                LOG(PSTR("(Updater) File system updated successfully"));
+                LOG( PSTR("(Updater) File system updated successfully") );
 
         }
 
         return UPDATE_OK;
     }
 }
+
 #endif
 
 
-t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, bool restart ) {
+// Update the program firmware from image stored at GitHub
+OTAUpdater::UpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const BinType type, bool doRestart ) {
 
-    // Update program image
+    // Build program image asset URL
     char progFileRequest[OTA_MAX_IMG_URL_LEN];
-    strcpy(progFileRequest, _assetRequestURL);
-    strcat_P(progFileRequest, PSTR("&asset="));
-    strcat_P(progFileRequest,  flag_DEVICE_CODE);
-    strcat_P(progFileRequest, PSTR("-Pv"));
-    strcat_P(progFileRequest, PSTR("&tag="));
-    strcat(progFileRequest, _latestTag);
-    strcat_P(progFileRequest, (type == GZ ? PSTR("&type=gz") : PSTR("")) );
+    strcpy( progFileRequest, _assetRequestURL );
+    strcat_P( progFileRequest, PSTR("&asset=") );
+    strcat_P( progFileRequest,  flag_DEVICE_CODE);
+    strcat_P( progFileRequest, PSTR("-Pv") );
+    strcat_P( progFileRequest, PSTR("&tag=") );
+    strcat( progFileRequest, _latestTag);
+    strcat_P( progFileRequest, ( type == GZ ? PSTR("&type=gz") : PSTR("") ) );
     
-    LOG(PSTR("(Updater) Updating Program"));
+    LOG( PSTR("(Updater) Updating Program") );
     LOGF_HIGH( PSTR("(Updater) Program image request: %s"), progFileRequest );
 
     if( _settings->skipUpdates ) {
-
         LOG(PSTR("(Updater) Skipping update"));
         return UPDATE_SKIPPED;
-
     }
     else {
         
-        ESPhttpUpdate.rebootOnUpdate(false);
+        ESPhttpUpdate.rebootOnUpdate( false );
         HTTPUpdateResult ret;
         ret = ESPhttpUpdate.update( *_client, progFileRequest );
 
-        switch(ret) {
+        switch( ret ) {
 
             case HTTP_UPDATE_FAILED:
                 LOGF_CRITICAL( PSTR("(Updater) Program update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
                 return PROG_UPDATE_FAILED;
 
             case HTTP_UPDATE_NO_UPDATES:
-                LOG(PSTR("(Updater) No new program update"));
+                LOG( PSTR("(Updater) No new program update") );
                 return NO_UPDATES;
                 
             default:
-                LOG(PSTR("(Updater) Program updated successfully"));
+                LOG( PSTR("(Updater) Program updated successfully") );
         }
 
-        if( restart ) {
-            LOG_CRITICAL(PSTR("(Updater) Rebooting in 5 sec"));
+        if( doRestart ) {
+            LOG_CRITICAL( PSTR("(Updater) Rebooting in 5 sec") );
             delay(5000);
             ESP.restart();
         }
@@ -296,24 +336,7 @@ t_update_result ICACHE_FLASH_ATTR OTAUpdater::UpdateProg( const bin_type type, b
 }
 
 
-
-void OTAUpdater::handle() {
-
-    if ( _doUpdateCheck && (network.GetNetworkStatus()==NetworkStatus::NORMAL) ) {
-
-        _doUpdateCheck = false;
-
-        if( !checkForUpdate() ) return;     // No new update
-        
-#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-        if( UpdateFS( RAW ) == HTTP_UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system
-#else
-        UpdateProg( GZ, true );
-#endif
-        
-    }
-}
-
+bool OTAUpdater::_doUpdateCheck = false;        // Intialize static member
 
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_ESP_REMOTE_UPDATER)
