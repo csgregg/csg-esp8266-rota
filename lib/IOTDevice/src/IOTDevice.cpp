@@ -53,7 +53,4 @@ void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 }
 
 
-// Create the global instance
-#if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_DEVICE )
-    IOTDevice device;
-#endif
+IOTDevice device;           // Create the global instance

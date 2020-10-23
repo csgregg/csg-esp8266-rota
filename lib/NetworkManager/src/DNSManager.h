@@ -100,4 +100,4 @@ SOFTWARE. */
 
     };
 
-#endif
+#endif              // DNS_MANAGER_H

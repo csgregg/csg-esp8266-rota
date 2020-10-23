@@ -101,4 +101,4 @@ SOFTWARE. */
     #define cLIT( name ) literals.GetChar( name )       // Returns char* to literal
     #define zLIT( name ) literals.GetSize( name )       // Returns size of literal
 
-#endif
+#endif              // LITERAL_MANAGER_H

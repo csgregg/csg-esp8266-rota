@@ -612,8 +612,4 @@ void LogClient::HandleTick( ) {
 }
 
 
-// Create the global logger instance
-
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_LOGGER)
-    LogClient logger;
-#endif
+LogClient logger;       // Create the global instance

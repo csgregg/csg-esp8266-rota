@@ -110,4 +110,4 @@ SOFTWARE. */
 
     };
 
-#endif
+#endif              // NET_CHECK_MANAGER_H

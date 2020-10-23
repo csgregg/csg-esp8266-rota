@@ -114,6 +114,6 @@ void NetCheckManager::Handle() {
 
 // Protected:
 
-bool NetCheckManager::_doNetCheck = false;      // Initialize static member
+bool NetCheckManager::_doNetCheck = false;      // Initialize static member         // TODO - are there others to do like this?
 
 

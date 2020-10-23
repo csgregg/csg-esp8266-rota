@@ -162,4 +162,4 @@ SOFTWARE. */
 
     extern NetworkManager network;        // Global instance of the network services
 
-#endif
+#endif              // NETWORK_MANAGER_H

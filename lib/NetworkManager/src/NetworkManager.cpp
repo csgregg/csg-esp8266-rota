@@ -95,7 +95,4 @@ void NetworkManager::Handle() {
 }
 
 
-// Create the global network instance
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_NETWORK_MANAGER)
-    NetworkManager network;
-#endif
+NetworkManager network;         // Create the global instance

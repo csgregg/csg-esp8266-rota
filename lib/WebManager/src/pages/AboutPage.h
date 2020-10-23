@@ -1,8 +1,14 @@
-/* Website Manager Library
+/**
+ * @file        AboutPage.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Server-side functions of about.html
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,39 +26,37 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Server-side functions of about.html
-
-*/
+SOFTWARE. */
 
 
 #ifndef ABOUT_PAGE_H
 
-    #define ABOUT_H
+    #define ABOUT_PAGE_H
 
+    // Global Libraries
     #include <Arduino.h>
     
+    // Project Libraries
     #include "WebManager.h"
 
 
+    /** @class AboutPage
+     *  @brief Server-side functions for about.html page */
     class AboutPage {
+
         public:
 
-            const char* URL;
-            void (*handler)();
-            void (*init)();
+            PageHandler handler;                // Handler for this page
 
-            EmbAJAXMutableSpan device_id;
-            EmbAJAXMutableSpan build_env;
-            EmbAJAXMutableSpan build_no;
-            EmbAJAXMutableSpan build_time;
+            EmbAJAXMutableSpan device_id;       // Span that holds device ID
+            EmbAJAXMutableSpan build_env;       // Span that holds build environment
+            EmbAJAXMutableSpan build_no;        // Span that holds build number
+            EmbAJAXMutableSpan build_time;      // Span that holds build timestamp
 
+            // Array of page elements
             EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 4] = {
       
-                WEB_PAGE_COMMON_ELEMENTS,
+                WEB_PAGE_COMMON_ELEMENTS,       // Add the elements comment to every page
 
                 &device_id,
                 &build_env,
@@ -61,27 +65,35 @@ Server-side functions of about.html
 
             };
 
-           AboutPage( void(*phandler)(), void(*pinit)() ) : 
+            /** Construct a new page object
+             * @param ajaxHander        Pointer to the lamda function that handles ajax for this page
+             * @param initHandler       Pointer to the lamda function that initializes this page */
+            AboutPage( void(*ajaxHander)(), void(*initHandler)() ) : 
                
-                device_id("device_id"),
-                build_env("build_env"),
-                build_no("build_no"),
-                build_time("build_time"),
+                device_id( "device_id" ),
+                build_env( "build_env" ),
+                build_no( "build_no" ),
+                build_time( "build_time" ),
 
-                ajax(page_elements, "")
+                // Setup the EmbAJAX page base
+                ajax( page_elements, "" )
                 {
-                    URL = "/about.html";
-                    handler = phandler;
-                    init = pinit;
+                    handler.URL = "/about.html";
+                    handler.ajaxHander = ajaxHander;
+                    handler.initHandler = initHandler;
                 };
 
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;       // Instance of EmbAJAX for this page
 
-            void ICACHE_FLASH_ATTR handleAjax();
+            /** Function to initialize AJAX on this page */
+            void ICACHE_FLASH_ATTR InitializeAjax();
 
-            void ICACHE_FLASH_ATTR initializeAjax();
+            /** Function to handle AJAX requests for this page */
+            void ICACHE_FLASH_ATTR HandleAjax();
+
     };
     
-    extern AboutPage aboutpage;
 
-#endif
+    extern AboutPage aboutpage;     // Global instance of this page
+
+#endif      // ABOUT_PAGE_H

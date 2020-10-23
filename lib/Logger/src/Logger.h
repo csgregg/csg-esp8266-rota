@@ -353,5 +353,5 @@ SOFTWARE. */
 
     extern LogClient logger;        // Declaring the global instance
 
-#endif
+#endif              // LOGGER_H
 
