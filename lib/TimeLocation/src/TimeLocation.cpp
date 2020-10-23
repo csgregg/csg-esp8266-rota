@@ -10,8 +10,6 @@
 
 /* MIT License
 
-Copyright (c) 2020 Chris Gregg
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -232,9 +230,4 @@ void ICACHE_FLASH_ATTR TimeLocationManager::StrcpyTimeDate( char* datetimestring
 }
 
 
-// Create the tieme location service global instance
-
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_TIMELOCATION)
-    TimeLocationManager timelocation;
-#endif
-
+TimeLocationManager timelocation;           // Create the global instance

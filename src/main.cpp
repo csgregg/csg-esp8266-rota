@@ -46,7 +46,7 @@ void ICACHE_FLASH_ATTR setup() {
     logger.Begin( network.GetWiFiClient(), config.settings.loggerSettings );  
     network.Begin( config.settings.networkSettings );
     timelocation.Begin( network.GetWiFiClient(), config.settings.timelocSettings );
-    website.begin( config.settings.networkSettings.dnsSettings.hostName );
+    website.Begin( config.settings.networkSettings.dnsSettings.hostName );
     updater.Begin( network.GetWiFiClient(), config.settings.otaUpdaterSettings );
     
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
@@ -59,7 +59,7 @@ void loop() {
     // Handle each service set
     device.Handle();
     network.Handle();
-    website.handle();
+    website.Handle();
     updater.Handle();
     logger.Handle();
     timelocation.Handle();

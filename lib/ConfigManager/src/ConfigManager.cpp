@@ -194,7 +194,4 @@ void ICACHE_FLASH_ATTR ConfigManager::EraseFlash()
 }
 
 
-// Create the global instance
-#if !defined( NO_GLOBAL_INSTANCES ) && !defined( NO_GLOBAL_CONFIG_SETTINGS )
-    ConfigManager config;
-#endif
+ConfigManager config;       // Create the global instance

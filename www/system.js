@@ -47,7 +47,7 @@ function SureYes() {
 
         showLoader(document.getElementById('logger_box'));
 
-        doRequest(sureAction,1,clearLoader);
+        doRequest(sureAction,1,ClearLoader);
 
         disableElmt("log_save","log_cancel");
     }
@@ -71,7 +71,7 @@ function SureYes() {
 
         showLoader(document.getElementById('ota_box'));
 
-        doRequest(sureAction,1,clearLoader);
+        doRequest(sureAction,1,ClearLoader);
 
         disableElmt("ota_save","ota_cancel");
     }

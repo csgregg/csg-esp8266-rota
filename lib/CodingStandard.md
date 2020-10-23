@@ -252,7 +252,7 @@ increment/decrement, old/new, begin/end, first/last, up/down, min/max,
 next/previous, old/new, open/close, show/hide, suspend/resume, etc.
 ```
 
-## 2.4 Class Naminng
+## 2.4 Class Naming
 
 | Names representing template types should be a single uppercase letter, or *SIZE*. |
 | --- |
@@ -271,6 +271,15 @@ class SomeClass {
 }
 ```
 
+## 2.5 HTML and CSS element Naming
+
+| Element IDs should be all lowercase using underscore to separate words, and be prefixed with a reference to the use. |
+| --- |
+``` 
+<div id="wifi_save_button">
+
+<div id="wifi_ssid">
+```
 
 # 3. Statements
 

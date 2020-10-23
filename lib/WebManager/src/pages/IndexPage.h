@@ -1,8 +1,14 @@
-/* Website Manager Library
+/**
+ * @file        IndexPage.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Server-side functions of index.html
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,53 +26,57 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Server-side functions of index.html
-
-*/
+SOFTWARE. */
 
 
 #ifndef INDEX_PAGE_H
 
     #define INDEX_PAGE_H
 
+    // Global Libraries
     #include <Arduino.h>
 
+    // Project Libraries
     #include "WebManager.h"
 
-
+    /** @class IndexPage
+     *  @brief Server-side functions for index.html page */
     class IndexPage {
+
         public:
 
-            const char* URL;
-            void (*handler)();
-            void (*init)();
+            PageHandler handler;                // Handler for this page
 
+            // Array of page elements
             EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT] = {
       
-                WEB_PAGE_COMMON_ELEMENTS,
+                WEB_PAGE_COMMON_ELEMENTS,       // Add the elements comment to every page
 
             };
 
-           IndexPage( void(*phandler)(), void(*pinit)() ) : 
+            /** Construct a new page object
+             * @param ajaxHander        Pointer to the lamda function that handles ajax for this page
+             * @param initHandler       Pointer to the lamda function that initializes this page */
+           IndexPage( void(*ajaxHandler)(), void(*initHandler)() ) : 
 
-                ajax(page_elements, "")
+                ajax( page_elements, "" )
                 {
-                    URL = "/index.html";
-                    handler = phandler;
-                    init = pinit;
+                    handler.URL = "/index.html";
+                    handler.ajaxHander = ajaxHandler;
+                    handler.initHandler = initHandler;
                 };
 
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;       // Instance of EmbAJAX for this page
 
-            void ICACHE_FLASH_ATTR handleAjax();
+            /** Function to initialize AJAX on this page */
+            void ICACHE_FLASH_ATTR InitializeAjax();
 
-            void ICACHE_FLASH_ATTR initializeAjax();
+            /** Function to handle AJAX requests for this page */
+            void ICACHE_FLASH_ATTR HandleAjax();
+
     };
     
-    extern IndexPage indexpage;
+    
+    extern IndexPage indexpage;     // Global instance of this page
 
-#endif
+#endif          // INDEX_PAGE_H

@@ -1,8 +1,14 @@
-/* Website Manager Library
+/**
+ * @file        IndexPage.cpp
+ * @author      Chris Gregg
+ * 
+ * @brief       Server-side functions of index.html
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,47 +26,43 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Server-side functions of index.html
-
-*/
+SOFTWARE. */
 
 
+// Project Libraries
 #include "IndexPage.h"
 #include "Logger.h"
 #include "IOTDevice.h"
 #include "NetworkManager.h"
 
 
+////////////////////////////////////////////
+//// Index Page Class
 
-void ICACHE_FLASH_ATTR IndexPage::initializeAjax(){
+// Public:
 
-    LOG_HIGH(PSTR("(Page) Index - Initialize AJAX"));
-
+// Function to initialize AJAX on this page
+void ICACHE_FLASH_ATTR IndexPage::InitializeAjax(){
+    LOG_HIGH( PSTR("(Page) Index - Initialize AJAX") );
 }
 
-void ICACHE_FLASH_ATTR IndexPage::handleAjax(){
 
-    LOG_HIGH(PSTR("(Page) Index - Handle AJAX"));     
-
+// Function to handle AJAX requests for this page
+void ICACHE_FLASH_ATTR IndexPage::HandleAjax(){
+    LOG_HIGH( PSTR("(Page) Index - Handle AJAX") );     
 }
 
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_INDEXPAGE)
 
-    IndexPage indexpage(
-        []() { 
-            indexpage.ajax.handleRequest( 
-                []() {
-                    indexpage.handleAjax();
-                }
-            ); 
-        },
-        []() { 
-            indexpage.initializeAjax();
-        }
-    );
-
-#endif
+// Create instance of page class and wrap methods for EmbAJAX
+IndexPage indexpage(
+    []() { 
+        indexpage.ajax.handleRequest( 
+            []() {
+                indexpage.HandleAjax();
+            }
+        ); 
+    },
+    []() { 
+        indexpage.InitializeAjax();
+    }
+);

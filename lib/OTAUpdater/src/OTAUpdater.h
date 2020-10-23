@@ -11,8 +11,6 @@
 
 /* MIT License
 
-Copyright (c) 2020 Chris Gregg
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -31,9 +29,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-#ifndef ESP_REMOTE_UPDATER_H
 
-    #define ESP_REMOTE_UPDATER_H
+#ifndef OTA_UPDATER_H
+
+    #define OTA_UPDATER_H
 
     // Global Libraries
     #include <Arduino.h>
@@ -182,4 +181,4 @@ SOFTWARE. */
 
     extern OTAUpdater updater;        // Global instance of the OTA update service
 
-#endif
+#endif          // OTA_UPDATER_H

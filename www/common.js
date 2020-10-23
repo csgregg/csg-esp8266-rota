@@ -92,7 +92,7 @@ function reloadPage() {
    location.reload();
 }
 
-function clearLoader() {
+function ClearLoader() {
    document.getElementById('loader').style.display='none';
 }
 

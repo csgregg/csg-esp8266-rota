@@ -1,8 +1,14 @@
-/* Website Manager Library
+/**
+ * @file        SystemPage.h
+ * @author      Chris Gregg
+ * 
+ * @brief       Server-side functions of system.html
+ * 
+ * @copyright   Copyright (c) 2020
+ * 
+ */
 
-MIT License
-
-Copyright (c) 2020 Chris Gregg
+/* MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,67 +26,70 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
------------------------------------------------------------------------------
-
-Server-side functions of system.html
-
-*/
+SOFTWARE. */
 
 
 #ifndef SYSTEM_PAGE_H
 
     #define SYSTEM_PAGE_H
 
-
+    // Global Libraries
     #include <Arduino.h>
 
+    // Project Libraries
     #include "WebManager.h"
     #include "Logger.h"
     #include "OTAUpdater.h"
 
 
+    /** @class SystemPage
+     *  @brief Server-side functions for system.html page */
     class SystemPage {
+
         public:
 
-            const char* URL;
-            void (*handler)();
-            void (*init)();
+            PageHandler handler;                    // Handler for this page
 
-            LoggerSettings loggerSettings;
+            LoggerSettings loggerSettings;          // Holder for logger settings
 
-            EmbAJAXServerFunction btn_restart;
-            EmbAJAXServerFunction btn_rst_net;
-            EmbAJAXServerFunction btn_rst_all;
-            EmbAJAXServerFunction btn_rst_log;
-            EmbAJAXServerFunction btn_rst_ota;
-            EmbAJAXServerFunction btn_rst_tlo;
+            // Restart and reset elements
 
-            EmbAJAXCheckButton log_srl;
-            EmbAJAXTextInput<7> log_baud;
-            EmbAJAXCheckButton log_ser;
-            EmbAJAXTextInput<LOG_MAX_SERVICE_LEN> log_url;
-            EmbAJAXTextInput<LOG_MAX_KEY_LEN> log_key;
-            EmbAJAXCheckButton log_tick;
-            EmbAJAXTextInput<4> log_tick_int;
-            EmbAJAXTextInput<LOG_MAX_GLOBAL_TAG_LEN> log_tags;
-            EmbAJAXOptionSelect<5> log_level;
-            const char* logLevels[5] = {"0","1","2","3","4"};
-            EmbAJAXServerFunction log_save;
+            EmbAJAXServerFunction btn_restart;      // Restart device button
+            EmbAJAXServerFunction btn_rst_net;      // Reset network settings button
+            EmbAJAXServerFunction btn_rst_all;      // Reset all settings button
+            EmbAJAXServerFunction btn_rst_log;      // Reset logger settings button
+            EmbAJAXServerFunction btn_rst_ota;      // Reset OTA updater settings button
+            EmbAJAXServerFunction btn_rst_tlo;      // Reset Time and Location settings button
 
-            EmbAJAXCheckButton ota_mode;
-            EmbAJAXTextInput<OTA_MAX_SERVICE_LEN> ota_url;
-            EmbAJAXTextInput<OTA_MAX_USER_LEN> ota_user;
-            EmbAJAXTextInput<OTA_MAX_REPO_LEN> ota_repo;
-            EmbAJAXTextInput<OTA_MAX_TOKEN_LEN> ota_key;
-            EmbAJAXCheckButton ota_skip;
-            EmbAJAXTextInput<4> ota_ck_int;
-            EmbAJAXServerFunction ota_save;
+            // Logger elements
 
+            EmbAJAXCheckButton log_srl;                             // Check box for serial mode
+            EmbAJAXTextInput<7> log_baud;                           // Input box for serial baud
+            EmbAJAXCheckButton log_ser;                             // Check box for service mode
+            EmbAJAXTextInput<LOG_MAX_SERVICE_LEN> log_url;          // Input box for Loggly URL
+            EmbAJAXTextInput<LOG_MAX_KEY_LEN> log_key;              // Input box for Loggly token
+            EmbAJAXCheckButton log_tick;                            // Check box for tick service
+            EmbAJAXTextInput<4> log_tick_int;                       // Input box for tick interval
+            EmbAJAXTextInput<LOG_MAX_GLOBAL_TAG_LEN> log_tags;      // Input box for global tags
+            EmbAJAXOptionSelect<5> log_level;                       // Dropdown for logging level
+            const char* logLevels[5] = {"0","1","2","3","4"};       // Options for logging level dropdown
+            EmbAJAXServerFunction log_save;                         // Save logger settings button
+
+            /// OTA Updater elements
+
+            EmbAJAXCheckButton ota_mode;                            // Check box for mode
+            EmbAJAXTextInput<OTA_MAX_SERVICE_LEN> ota_url;          // Input box for service URL
+            EmbAJAXTextInput<OTA_MAX_USER_LEN> ota_user;            // Input box for GitHub user
+            EmbAJAXTextInput<OTA_MAX_REPO_LEN> ota_repo;            // Input box for GitHub repo
+            EmbAJAXTextInput<OTA_MAX_TOKEN_LEN> ota_key;            // Input box for GitHub token
+            EmbAJAXCheckButton ota_skip;                            // Check box for update skip
+            EmbAJAXTextInput<4> ota_ck_int;                         // Input box for check interval
+            EmbAJAXServerFunction ota_save;                         // Save udpater settings button
+
+            // Array of page elements
             EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 24] = {
       
-                WEB_PAGE_COMMON_ELEMENTS,
+                WEB_PAGE_COMMON_ELEMENTS,       // Add the elements comment to every page
 
                 &btn_restart,
                 &btn_rst_net,
@@ -111,7 +120,10 @@ Server-side functions of system.html
 
             };
 
-           SystemPage( void(*phandler)(), void(*pinit)() ) : 
+            /** Construct a new page object
+             * @param ajaxHander        Pointer to the lamda function that handles ajax for this page
+             * @param initHandler       Pointer to the lamda function that initializes this page */
+           SystemPage( void(*ajaxHandler)(), void(*initHandler)() ) : 
               
                 btn_restart("btn_restart"),
                 btn_rst_net("btn_rst_net"),
@@ -140,24 +152,34 @@ Server-side functions of system.html
                 ota_ck_int("ota_ck_int"),
                 ota_save("ota_save"),
 
+                // Setup the EmbAJAX page base
                 ajax(page_elements, "")
                 {
-                    URL = "/system.html";
-                    handler = phandler;
-                    init = pinit;
+                    handler.URL = "/system.html";
+                    handler.ajaxHander = ajaxHandler;
+                    handler.initHandler = initHandler;
                 };
 
-            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;
+            EmbAJAXPage<sizeof(page_elements)/sizeof(EmbAJAXBase*)> ajax;       // Instance of EmbAJAX for this page
 
-            void ICACHE_FLASH_ATTR handleAjax();
+            /** Function to initialize AJAX on this page */
+            void ICACHE_FLASH_ATTR InitializeAjax();
 
-            void ICACHE_FLASH_ATTR initializeAjax();
+            /** Function to handle AJAX requests for this page */
+            void ICACHE_FLASH_ATTR HandleAjax();
 
-            void ICACHE_FLASH_ATTR saveLogConfig();
 
-            void ICACHE_FLASH_ATTR saveOTAConfig();
+        protected:
+
+            /** Save the logger settings */
+            void ICACHE_FLASH_ATTR SaveLoggerSettings();
+
+            /** Save OTA Updater settings */
+            void ICACHE_FLASH_ATTR SaveUpdaterSettings();
+
     };
     
-    extern SystemPage systempage;
 
-#endif
+    extern SystemPage systempage;          // Global instance of this page
+
+#endif              // SYSTEM_PAGE_H

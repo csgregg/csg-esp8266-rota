@@ -20,7 +20,7 @@ function addWifiStationEntry() {
     //console.log("Add station")
 
     // Remove loader
-    if( window.wifi_stn_id == window.wifi_stn_count-1 ) clearLoader();
+    if( window.wifi_stn_id == window.wifi_stn_count-1 ) ClearLoader();
 
 
     // If there are any emtpy, then allow add
@@ -60,11 +60,11 @@ function initPage() {
     // console.log("Status - Initialize Page");
     
     wifiListRevision = 0;
-    doRequest("","",loadWifiList);
+    doRequest("","",LoadWifiList);
 
 }
 
-function loadWifiList() {
+function LoadWifiList() {
     // console.log("Status - Load WiFi list");
 
     // Clear entries
@@ -107,7 +107,7 @@ function updatePage() {
         : document.getElementById("wifi_ap_icon").style = "opacity: 0.2;"
 
     // Update mDNS switch
-    if( document.getElementById("dns_mode").checked ) enableElmt("dns_mdns","dns_mdnselmt");
+    if( document.getElementById("dns_enabled").checked ) enableElmt("dns_mdns","dns_mdnselmt");
     else disableElmt("dns_mdns","dns_mdnselmt");
     
 }
@@ -152,7 +152,7 @@ function SureNo() {
 
     if( sureAction == "wifi_mode_stn" || sureAction == "wifi_mode_ap" ) {
         document.getElementById(sureAction).checked = !document.getElementById(sureAction).checked;
-        clearLoader();
+        ClearLoader();
         return;
     }
 
@@ -259,7 +259,7 @@ function SureYes() {
     if( sureAction == "net_ck_save" ) {
 
         // Send updates data
-        x = document.getElementById('net_ck_mode');
+        x = document.getElementById('net_ck_enabled');
         doRequestWait(x.id, x.checked ? 't' : 'f');
         x = document.getElementById('net_ck_int');
         doRequestWait(x.id, x.value);
@@ -269,7 +269,7 @@ function SureYes() {
         showLoader(document.getElementById('net_ck_box'));
 
         // Send Save command and update AP
-        doRequest(sureAction,1,clearLoader);
+        doRequest(sureAction,1,ClearLoader);
 
         disableElmt("net_ck_save","net_ck_cancel");
     }
@@ -277,7 +277,7 @@ function SureYes() {
     if( sureAction == "dns_save" ) {
 
         // Send updates data
-        x = document.getElementById('dns_mode');
+        x = document.getElementById('dns_enabled');
         doRequestWait(x.id, x.checked ? 't' : 'f');
         x = document.getElementById('dns_name');
         doRequestWait(x.id, x.value);
@@ -287,7 +287,7 @@ function SureYes() {
         showLoader(document.getElementById('dns_box'));
 
         // Send Save command and update AP
-        doRequest(sureAction,1,clearLoader);
+        doRequest(sureAction,1,ClearLoader);
 
         disableElmt("dns_save","dns_cancel");
     }
@@ -303,7 +303,7 @@ function SureYes() {
         showLoader(document.getElementById('tlo_box'));
 
         // Send Save command and update AP
-        doRequest(sureAction,1,clearLoader);
+        doRequest(sureAction,1,ClearLoader);
 
         disableElmt("tlo_save","tlo_cancel");
     }
@@ -314,5 +314,5 @@ function SureYes() {
 function DetectLocation() {
     showLoader(document.getElementById('tlo_box'));
     enableElmt("tlo_save","tlo_cancel");
-    doRequest("tlo_detect",1,clearLoader);
+    doRequest("tlo_detect",1,ClearLoader);
 }
