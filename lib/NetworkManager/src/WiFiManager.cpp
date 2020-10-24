@@ -111,7 +111,7 @@ void ICACHE_FLASH_ATTR WiFiManager::Begin( WiFiSettings& settings ) {
 
 // Handle WiFi Connectivity
 void WiFiManager::Handle( const bool force ) {
-
+    
     if( force ) ResetConnectedStatus();
 
     switch( _settings->wifiMode ) {
@@ -227,15 +227,6 @@ bool ICACHE_FLASH_ATTR WiFiManager::ConnectWiFiStation( const int id ) {
 }
 
 
-// Checks to see if any stored WiFi station is connected
-bool ICACHE_FLASH_ATTR WiFiManager::IsStationConnected() {
-    for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
-        if( _stationConnected[i] ) return true;
-    }
-    return false;
-}
-
-
 // Returns the currently connected WiFi station
 uint ICACHE_FLASH_ATTR WiFiManager::GetConnectedStation() {
     for( int i = 0; i < NET_MAX_STATIONS; i++ ) {
@@ -327,7 +318,6 @@ bool ICACHE_FLASH_ATTR WiFiManager::StartWiFiAccessPoint() {
 
     LOG( PSTR("(Network) WiFi mode - Access Point") );
 
-    //
     bool ret = WiFi.mode( _settings->wifiMode );
 
     if( !ret ) return false;

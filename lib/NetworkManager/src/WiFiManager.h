@@ -217,7 +217,7 @@ SOFTWARE. */
             /** Checks to see if any stored WiFi station is connected
              * @return true:        There is one
              * @return false:       None are connected */
-            bool ICACHE_FLASH_ATTR IsStationConnected();
+            bool ICACHE_FLASH_ATTR IsWiFiConnected() { return WiFi.status() != WL_CONNECTED; };
 
             /** Checks if a specific stored station is connected - overload function
              * @param id            ID of station to check

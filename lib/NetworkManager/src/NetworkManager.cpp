@@ -80,7 +80,7 @@ void ICACHE_FLASH_ATTR NetworkManager::Begin( NetworkSettings& settings ) {
 NetworkManager::NetworkStatus ICACHE_FLASH_ATTR NetworkManager::GetNetworkStatus() {
     if( _netCheck.isInternetConnected() ) return NetworkStatus::NORMAL;
     else {
-        if( _wifi.IsStationConnected() || _wifi.CountAPConnections() > 0 ) return NetworkStatus::NOINETERNET;
+        if( _wifi.IsWiFiConnected() || _wifi.CountAPConnections() > 0 ) return NetworkStatus::NOINETERNET;
         else return NetworkStatus::DISCONNECTED;
     }
 }
