@@ -45,7 +45,7 @@ SOFTWARE. */
     #include "TimeLocation.h"
 
 
-    #define CONFIG_START_MARKER "CONFIG_START_10"               // Marker used to confirm presence of configs in EEPROM
+    #define CONFIG_START_MARKER "CONFIG_START_23"               // Marker used to confirm presence of configs in EEPROM
     #define CONFIG_START_MARKER_SIZE 16
 
 

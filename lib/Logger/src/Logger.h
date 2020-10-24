@@ -49,11 +49,15 @@ SOFTWARE. */
 
         // Macros to simplifiy common usage
 
-        #define DEBUG( text ) logger.println( NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__ )
-        #define DEBUGF( ... ) logger.printf( NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__ )
+        #define DEBUG( text ) logger.println( NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__ );
+        #define DEBUGF( ... ) logger.printf( NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__ );
         #define DEBUG_STOP Serial.printf( "\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( true ) { yield(); };
         #define DEBUG_RAW( text ) Serial.println( text );
 
+#define DEBUG_LINE Serial.printf( "(DEBUG) Line: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ );
+#define DEBUG_WAIT Serial.printf( "(DEBUG) Wait: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( Serial.read() != ' ' ) { yield(); };
+
+// TODO - do we need status if all debugs are like above. Do we need the context at all in the LOG ones
         #define LOG( text ) logger.println( NORMAL_LOG, STATUS_TAG, text )
         #define LOG_DETAIL( text ) logger.println( DETAIL_LOG, STATUS_TAG, text )
         #define LOG_HIGH( text ) logger.println( HIGH_LOG, STATUS_TAG, text )
@@ -188,9 +192,9 @@ SOFTWARE. */
     };
 
     
-    /** @class LogClient
+    /** @class LoggerClient
      *  @brief Sets up the logger and performs logging actions to serial and Loggly service */
-    class LogClient
+    class LoggerClient
     {
         
         public:
@@ -351,7 +355,7 @@ SOFTWARE. */
     };
 
 
-    extern LogClient logger;        // Declaring the global instance
+    extern LoggerClient logger;        // Declaring the global instance
 
 #endif              // LOGGER_H
 

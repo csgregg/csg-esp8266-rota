@@ -48,7 +48,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::InitializeAjax(){
     wifi_stn_asip.setValue( network.GetAssignedIP() );
 
     // AP Settings
-    APSettings wifiAP = config.settings.networkSettings.apSettings;
+    APSettings wifiAP = config.settings.networkSettings.wifiSettings.apSettings;
     wifi_ap_ssid.setValue( wifiAP.SSID );
     wifi_ap_pwd.setValue( wifiAP.password );
     wifi_ap_ip.setValue( wifiAP.ip.toString().c_str() );
@@ -57,7 +57,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::InitializeAjax(){
     wifi_ap_ch.selectOption( wifiAP.channel );
     wifi_ap_save.setEnabled( false );
 
-    WiFiMode wifimode =  config.settings.networkSettings.wifiMode;
+    WiFiMode wifimode =  config.settings.networkSettings.wifiSettings.wifiMode;
     wifi_mode_stn.setChecked( wifimode == WIFI_STA || wifimode == WIFI_AP_STA );
     wifi_mode_ap.setChecked( wifimode == WIFI_AP || wifimode == WIFI_AP_STA );
 
@@ -99,7 +99,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::HandleAjax(){
     
     // Used to send back basic details of a specific wifi station
     if( website.AjaxID == F("wifi_stn_id") ) {
-        wifi_stn_name.setValue( config.settings.networkSettings.stationSettings[wifi_stn_id.GetIntValue()].SSID) ;
+        wifi_stn_name.setValue( config.settings.networkSettings.wifiSettings.stationSettings[wifi_stn_id.GetIntValue()].SSID) ;
         wifi_stn_on.setValue( network.IsStationConnected( wifi_stn_id.GetIntValue() ) );
         return;
     }
@@ -178,7 +178,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::LoadWifiStation( uint id ) {
 
     LOG_HIGH( PSTR("(Page) Network Settings - Load Wifi Station") );
 
-    wifiStation = config.settings.networkSettings.stationSettings[id];
+    wifiStation = config.settings.networkSettings.wifiSettings.stationSettings[id];
 
     wifi_stn_ssid.setValue( wifiStation.SSID );
     wifi_stn_pwd.setValue( wifiStation.password );
@@ -210,7 +210,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::SaveWifiStation( uint id ) {
     wifiStation.DHCPMode = ( wifi_stn_dhcp.isChecked() ? DHCP : STATIC );
 
     if( valid || wifiStation.DHCPMode == DHCP ) {
-        config.settings.networkSettings.stationSettings[id] = wifiStation;
+        config.settings.networkSettings.wifiSettings.stationSettings[id] = wifiStation;
         config.Save();
 
         if( network.GetConnectedStation() == id ) network.ReconnectWifi();    
@@ -255,7 +255,7 @@ void ICACHE_FLASH_ATTR NetworkSettingsPage::SaveAP() {
     ap.channel = atoi( wifi_ap_ch.value() );
 
     if( valid ) {
-        config.settings.networkSettings.apSettings = ap;
+        config.settings.networkSettings.wifiSettings.apSettings = ap;
         config.Save();
 
         network.ReconnectWifi();
