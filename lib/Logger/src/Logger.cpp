@@ -128,7 +128,7 @@ void ICACHE_FLASH_ATTR LoggerClient::Restart( LoggerSettings& settings )
     if( _settings->serialModeOn ) {
         delay( 1000 );
         Serial.begin( _settings->serialBaud );             
-        Serial.println( PSTR("LOG: (Logger) Starting Logging") );
+        Serial.println( PSTR("\nStatus: (Logger) Starting Logging") );
     }
 
     LOGF_HIGH( PSTR("(Logger) Logging set at level: %i"), _settings->level );
