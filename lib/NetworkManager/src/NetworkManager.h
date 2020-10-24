@@ -52,30 +52,19 @@ SOFTWARE. */
             /** Resets logger settings to defaults */
             void ICACHE_FLASH_ATTR SetDefaults();
 
-            WiFiMode wifiMode;                                          // WiFi Mode        
-            StationSettings stationSettings[NET_MAX_STATIONS];          // Multiple stations settings
-            int lastStation = 0;                                        // Last connected station            
-            APSettings apSettings;                                      // Access point mode settings
-            NetCheckSettings netCheckSettings;                          // Connectivity checker settings
-            DNSSettings dnsSettings;                                    // DNS settings
+            WiFiSettings wifiSettings;                  // WiFi settings
+            NetCheckSettings netCheckSettings;          // Connectivity checker settings
+            DNSSettings dnsSettings;                    // DNS settings
         
             // Create a compare operators
             
             bool operator== ( const NetworkSettings& other ) const {
-                bool stations = true;
-                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
-                return wifiMode == other.wifiMode
-                    && stations
-                    && apSettings == other.apSettings
+                return wifiSettings == other.wifiSettings
                     && netCheckSettings == other.netCheckSettings
                     && dnsSettings == other.dnsSettings;
             }
             bool operator!= ( const NetworkSettings& other ) const {
-                bool stations = false;
-                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
-                return wifiMode != other.wifiMode
-                    || stations
-                    || apSettings != other.apSettings
+                return wifiSettings != other.wifiSettings
                     || netCheckSettings != other.netCheckSettings
                     || dnsSettings != other.dnsSettings;
             }

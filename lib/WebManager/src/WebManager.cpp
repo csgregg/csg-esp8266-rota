@@ -259,7 +259,8 @@ void ICACHE_FLASH_ATTR WebsiteManager::Begin( char* hostName ) {
 
                 // Find and call AJAX handler
                 for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ ) {
-                    if( URL == webpages[i].URL ) {                                              // TODO - do we need to make it case insensitive?
+                    // TODO - do we need to make it case insensitive?
+                    if( URL == webpages[i].URL ) {                                    
                         (webpages[i].ajaxHander)();            // Call page event handler
                         break;
                     }

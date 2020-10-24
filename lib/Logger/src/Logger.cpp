@@ -96,7 +96,7 @@ void ICACHE_FLASH_ATTR LoggerSettings::SetDefaults() {
 // Public:
 
 // Sets up logging service
-void ICACHE_FLASH_ATTR LogClient::Begin( WiFiClient& client, LoggerSettings& settings )
+void ICACHE_FLASH_ATTR LoggerClient::Begin( WiFiClient& client, LoggerSettings& settings )
 {
     _client = &client;
     Restart( settings );
@@ -104,7 +104,7 @@ void ICACHE_FLASH_ATTR LogClient::Begin( WiFiClient& client, LoggerSettings& set
 
 
 // Restarts the logging service
-void ICACHE_FLASH_ATTR LogClient::Restart( LoggerSettings& settings )
+void ICACHE_FLASH_ATTR LoggerClient::Restart( LoggerSettings& settings )
 {
      _settings = &settings;
 
@@ -147,9 +147,11 @@ void ICACHE_FLASH_ATTR LogClient::Restart( LoggerSettings& settings )
 
 
 // Send log messages - base println function char array
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const char* message ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, const char* message ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;                // TODO - check similar error checked elsewhere
 
     if( uint(type) >= uint(_settings->level) ) return;
 
@@ -162,9 +164,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload char array with context
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const char* message, const char* file, const char* func_P, const int line ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, const char* message, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     if( _settings->level == LOGGING_LEVEL_VERBOSE ) {
         char str[LOG_MAX_MESSAGE_LEN];
@@ -179,9 +183,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload int
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, int i ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, int i ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char buff[12];
     sprintf_P( buff, PSTR("%i"), i );
@@ -193,9 +199,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload int with context
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, int i, const char* file, const char* func_P, const int line ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, int i, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char buff[12];
     sprintf_P( buff, PSTR("%i"), i );
@@ -207,9 +215,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload single char
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, char c ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, char c ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char c_str[2];
     c_str[0] = c;
@@ -223,9 +233,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload single char with context
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, char c, const char* file, const char* func_P, const int line ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, char c, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char c_str[2];
     c_str[0] = c;
@@ -239,9 +251,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload String
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const String& s ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, const String& s ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     println( type, tag, s.c_str() );
 
@@ -251,9 +265,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - println function overload String with context
-void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag, const String& s, const char* file, const char* func_P, const int line ) {
+void ICACHE_FLASH_ATTR LoggerClient::println( const LogType type, const LogTag tag, const String& s, const char* file, const char* func_P, const int line ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     println( type, tag, s.c_str(), file, func_P, line );
 
@@ -263,9 +279,11 @@ void ICACHE_FLASH_ATTR LogClient::println( const LogType type, const LogTag tag,
 
 
 // Send log messages - base printf function
-void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, const char* format, ... ) {
+void ICACHE_FLASH_ATTR LoggerClient::printf( const LogType type, const LogTag tag, const char* format, ... ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     va_list arg;
     va_start(arg, format);
@@ -277,7 +295,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, 
     if( len > sizeof(temp) - 1 ) {
         buffer = new char[len + 1];
         if( !buffer ) {
-            println( CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LogClient: Buffer error") );
+            println( CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LoggerClient: Buffer error") );
             return;
         }
         va_start( arg, format );
@@ -297,9 +315,11 @@ void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, 
 
 
 // Send log messages - printf function overload with context
-void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, const char* file, const char* func_P, const int line, const char* format, ... ) {
+void ICACHE_FLASH_ATTR LoggerClient::printf( const LogType type, const LogTag tag, const char* file, const char* func_P, const int line, const char* format, ... ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     va_list arg;
     va_start( arg, format );
@@ -311,7 +331,7 @@ void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, 
     if( len > sizeof(temp) - 1 ) {
         buffer = new char[len + 1];
         if( !buffer ) {
-            println( CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LogClient: Buffer error") );
+            println( CRITICAL_LOG, STATUS_TAG, PSTR("(Logger) LoggerClient: Buffer error") );
             return;
         }
         va_start( arg, format );
@@ -331,9 +351,11 @@ void ICACHE_FLASH_ATTR LogClient::printf( const LogType type, const LogTag tag, 
 
 
 // Send log messages - base printFlag function char array flag
-void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const char* flag ) {
+void ICACHE_FLASH_ATTR LoggerClient::printFlag( const LogType type, const LogTag tag, const char* name, const char* flag ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char buffer[LOG_MAX_MESSAGE_LEN];
     snprintf_P( buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %s"), name, FPSTR(flag) );
@@ -344,9 +366,11 @@ void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag ta
 
 
 // Send log messages - printFlag function overload bool flag
-void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const bool flag ) {
+void ICACHE_FLASH_ATTR LoggerClient::printFlag( const LogType type, const LogTag tag, const char* name, const bool flag ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char buffer[LOG_MAX_MESSAGE_LEN];
     snprintf_P( buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag );
@@ -357,9 +381,11 @@ void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag ta
 
 
 // Send log messages - printFlag function overload uint flag
-void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag tag, const char* name, const uint flag ) {
+void ICACHE_FLASH_ATTR LoggerClient::printFlag( const LogType type, const LogTag tag, const char* name, const uint flag ) {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     char buffer[LOG_MAX_MESSAGE_LEN];
     snprintf_P( buffer, LOG_MAX_MESSAGE_LEN, PSTR("(Build) %s: %i"), name, flag );
@@ -371,9 +397,11 @@ void ICACHE_FLASH_ATTR LogClient::printFlag( const LogType type, const LogTag ta
 
 
 // Handles any repeating device actions
-void LogClient::Handle() {
+void LoggerClient::Handle() {
 
 #ifndef NO_LOGGING
+
+    if( !_settings ) return;
 
     if ( _settings->tickModeOn && _doTick && WiFi.status() == WL_CONNECTED ) {
         _doTick = false;
@@ -387,10 +415,10 @@ void LogClient::Handle() {
 
 // Protected:
 
-bool LogClient::_doTick = false;        // Initialize the static member
+bool LoggerClient::_doTick = false;        // Initialize the static member
 
 // Create and log prefix - needs to be followed by message using Serial.println()
-void LogClient::LogPrefix( const LogType type, const LogTag tag ){
+void LoggerClient::LogPrefix( const LogType type, const LogTag tag ){
 
 #ifndef NO_LOGGING
 
@@ -403,7 +431,7 @@ void LogClient::LogPrefix( const LogType type, const LogTag tag ){
 
 
 // Log message to serial
-void ICACHE_FLASH_ATTR LogClient::LogToSerial( LogType type, LogTag tag, const char* message ){
+void ICACHE_FLASH_ATTR LoggerClient::LogToSerial( LogType type, LogTag tag, const char* message ){
 
 #ifndef NO_LOGGING
 
@@ -418,7 +446,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToSerial( LogType type, LogTag tag, const c
 
 
 // Log message to Loggly Service
-void ICACHE_FLASH_ATTR LogClient::LogToService( const LogType type, const LogTag tag, const char* message ){
+void ICACHE_FLASH_ATTR LoggerClient::LogToService( const LogType type, const LogTag tag, const char* message ){
 
 #ifndef NO_LOGGING
 
@@ -522,7 +550,7 @@ void ICACHE_FLASH_ATTR LogClient::LogToService( const LogType type, const LogTag
 
 
 // Send tick to Loggly Service
-void LogClient::HandleTick( ) {
+void LoggerClient::HandleTick( ) {
 
 #ifndef NO_LOGGING
 
@@ -612,4 +640,4 @@ void LogClient::HandleTick( ) {
 }
 
 
-LogClient logger;       // Create the global instance
+LoggerClient logger;       // Create the global instance

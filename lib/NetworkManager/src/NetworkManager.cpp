@@ -42,10 +42,7 @@ SOFTWARE. */
 
 // Resets network settings to default
 void ICACHE_FLASH_ATTR NetworkSettings::SetDefaults() {
-    wifiMode = NET_DEFAULT_WIFIMODE;
-    lastStation = 0;
-    apSettings.SetDefaults();
-    for( int i = 0; i<NET_MAX_STATIONS; i++ ) stationSettings[i].SetDefaults();
+    wifiSettings.SetDefaults();
     netCheckSettings.setDefaults();
     dnsSettings.setDefaults();
 }
@@ -66,11 +63,13 @@ void ICACHE_FLASH_ATTR NetworkManager::Begin( NetworkSettings& settings ) {
     // If double reset start in AP mode
     if( device.GetStartMode() == IOTDevice::DOUBLERESET ) {
         LOG( PSTR("(Network) Double Reset - starting in AP Mode") );
-        _settings->wifiMode = WIFI_AP;
+        strcpy_P( _settings->wifiSettings.apSettings.SSID, flag_DEVICE_CODE );
+        strcpy_P( _settings->wifiSettings.apSettings.password, "" );
+        _settings->wifiSettings.wifiMode = WIFI_AP;
     }
 
     // Start all network services
-    _wifi.Begin( _settings->stationSettings, _settings->apSettings, _settings->wifiMode );
+    _wifi.Begin( _settings->wifiSettings );
     _dns.Begin( _settings->dnsSettings, _wifi.IsAPRunning() );
     _netCheck.Begin( _wifi.GetWiFiClient(), _settings->netCheckSettings );
 

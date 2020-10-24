@@ -110,7 +110,7 @@ SOFTWARE. */
 
         public:
 
-            /** Resets WiFi station settings to defaults */
+            /** Resets WiFi AP settings to defaults */
             void SetDefaults();
 
             char SSID[NET_MAX_SSID_LEN];                // SSID for WiFi AP
@@ -142,6 +142,42 @@ SOFTWARE. */
     };
 
 
+    /** @class WiFiSettings
+     *  @brief Data struct class that contains the settings for the WiFi */
+    class WiFiSettings {
+
+        public:
+
+            /** Resets WiFi settings to defaults */
+            void SetDefaults();
+
+            WiFiMode wifiMode;                                          // WiFi Mode        
+            StationSettings stationSettings[NET_MAX_STATIONS];          // Multiple stations settings
+            int lastStation = 0;                                        // Last connected station            
+            APSettings apSettings;                                      // Access point mode settings
+
+            // Create a compare operators
+
+            bool operator== ( const WiFiSettings& other ) const {
+                bool stations = true;
+                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = false;
+                return wifiMode == other.wifiMode
+                    && stations
+                    && lastStation == other.lastStation
+                    && apSettings == other.apSettings;
+            }
+            bool operator!= ( const WiFiSettings& other ) const {
+                bool stations = false;
+                for( int i = 0; i < NET_MAX_STATIONS; i++ ) if( stationSettings[i] != other.stationSettings[i] ) stations = true;
+                return wifiMode != other.wifiMode
+                    && stations
+                    && lastStation != other.lastStation
+                    && apSettings != other.apSettings;
+            }
+
+    };
+
+
     /** @class WiFiManager
      *  @brief Manages the WiFi services */
     class WiFiManager {
@@ -158,7 +194,7 @@ SOFTWARE. */
              * @param stationSettings       Reference of an array of station settings
              * @param apSettings            Reference of the AP settings
              * @param wifiMode              Reference of the WiFi Mode setting */
-            void ICACHE_FLASH_ATTR Begin( StationSettings* const& stationSettings, APSettings& apSettings, WiFiMode& wifiMode );
+            void ICACHE_FLASH_ATTR Begin( WiFiSettings& settings  );
 
             /** Handle any repeating WiFi tasks
              *  This detects if WiFi should be connected and if not, reconnects 
@@ -236,14 +272,11 @@ SOFTWARE. */
 
             WiFiClient _client;             // The reusable WiFi client object
 
-            WiFiMode* _wifiMode;            // Pointer to WiFi Mode setting
+            WiFiSettings* _settings;        // Pointer to the WiFi settings
 
-            StationSettings* const* _stationSettings;       // Pointer to array of station settings
-            int _lastStation = 0;                           // ID of last connected station
             uint _disconnectedStation;                      // Used to see how long disconnected in station mode
             bool _stationConnected[NET_MAX_STATIONS];       // Array of connected statuses of the WiFi stations
 
-            APSettings* _apSettings;        // Pointer to the AP settings
             bool _isAPRunning;              // Is the AP running
             uint _nAPConnections;           // How many clients are connected
 
