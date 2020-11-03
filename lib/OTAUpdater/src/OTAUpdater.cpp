@@ -144,11 +144,7 @@ void OTAUpdater::Handle() {
 
         if( !IsUpdateAvailable() ) return;     // No new update
         
-#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-        if( UpdateFS( RAW ) == OTAUpdater::UPDATE_OK ) UpdateProg( GZ, true );         // Compressed only works for program, not file system
-#else
         UpdateProg( GZ, true );
-#endif
         
     }
 }
@@ -233,53 +229,6 @@ bool ICACHE_FLASH_ATTR OTAUpdater::IsUpdateAvailable() {
 }
 
 
-#ifndef WEB_FLASHFILES      // Are we using flash instead of LittleFS for web files
-
-// Update the file system firmware from image stored at GitHub
-OTAUpdater::UpdateResult ICACHE_FLASH_ATTR OTAUpdater::UpdateFS( const bin_type type ) {
-
-    // Build file system assest request URL
-    char littleFSFileRequest[OTA_MAX_IMG_URL_LEN];
-    strcpy( littleFSFileRequest, _assetRequestURL );
-    strcat_P( littleFSFileRequest, PSTR("&asset=") );
-    strcat_P( littleFSFileRequest,  flag_DEVICE_CODE );
-    strcat_P( littleFSFileRequest, PSTR("-Fv") );
-    strcat_P( littleFSFileRequest, PSTR("&tag=") );
-    strcat( littleFSFileRequest, _latestTag );
-    strcat_P( littleFSFileRequest, ( type == GZ ? PSTR("&type=gz") : PSTR("") ) );
-
-    LOG( PSTR("(Updater) Updating File System") );
-    LOGF_HIGH(  PSTR("(Updater) File system image request: %s"), littleFSFileRequest );
-
-    if( _settings->skipUpdates ) {
-        LOG(PSTR("(Updater) Skipping update"));
-        return UPDATE_SKIPPED;
-    }
-    else {
-        
-        HTTPUpdateResult ret;
-        ret = ESPhttpUpdate.updateFS( *_client, littleFSFileRequest );
-
-        switch( ret ) {
-
-            case HTTP_UPDATE_FAILED:
-                LOGF_CRITICAL( PSTR("(Updater) File system update failed - Error (%d): %s"), ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str() );
-                return FS_UPDATE_FAILED;
-
-            case HTTP_UPDATE_NO_UPDATES:
-                LOG( PSTR("(Updater) No new file system update") );
-                return NO_UPDATES;
-                
-            default:
-                LOG( PSTR("(Updater) File system updated successfully") );
-
-        }
-
-        return UPDATE_OK;
-    }
-}
-
-#endif
 
 
 // Update the program firmware from image stored at GitHub

@@ -229,5 +229,9 @@ void ICACHE_FLASH_ATTR TimeLocationManager::StrcpyTimeDate( char* datetimestring
     strncpy( datetimestring, _timezone->dateTime().c_str(), TLO_MAX_LONG_DATETIME_LEN );
 }
 
+void ICACHE_FLASH_ATTR TimeLocationManager:: StrncpyTimeDate( char* datetimestring, size_t len ) {
+    strncpy( datetimestring, _timezone->dateTime().c_str(), len < TLO_MAX_LONG_DATETIME_LEN ? len : TLO_MAX_LONG_DATETIME_LEN );
+}
+
 
 TimeLocationManager timelocation;           // Create the global instance
