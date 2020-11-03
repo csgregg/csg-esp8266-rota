@@ -172,6 +172,7 @@ SOFTWARE. */
              *  @param datetimestring        Destination */
             void ICACHE_FLASH_ATTR StrcpyTimeDate( char* datetimestring );
 
+            void ICACHE_FLASH_ATTR StrncpyTimeDate( char* datetimestring, size_t len );
 
         protected:
 

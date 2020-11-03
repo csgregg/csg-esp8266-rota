@@ -163,13 +163,6 @@ SOFTWARE. */
             Ticker _updateCheck;                            // Ticker object to trigger check events
             static bool _doUpdateCheck;                     // Flag that indicates time to run update
 
-        #ifndef WEB_FLASHFILES // Are we using flash instead of LittleFS for web files
-            /** Update the file system firmware from image stored at GitHub
-             * @param type              Type of image file, raw or GZipped
-             * @return UpdateResult     Result of the update */
-            UpdateResult ICACHE_FLASH_ATTR UpdateFS( const bin_type type );
-        #endif
-
             /** Update the program firmware from image stored at GitHub
              * @param type              Type of image file, raw or GZipped
              * @param doRestart         Force restart of device after update

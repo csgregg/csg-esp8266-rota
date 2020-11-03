@@ -45,19 +45,16 @@ SOFTWARE. */
         #define NO_LOGGING
     #endif
 
-    #ifndef NO_LOGGING
-
         // Macros to simplifiy common usage
 
-        #define DEBUG( text ) logger.println( NORMAL_LOG, DEBUG_TAG, text, __FILE__, __FUNCTION__, __LINE__ );
-        #define DEBUGF( ... ) logger.printf( NORMAL_LOG, DEBUG_TAG, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__ );
-        #define DEBUG_STOP Serial.printf( "\n\n(DEBUG) STOP: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( true ) { yield(); };
-        #define DEBUG_RAW( text ) Serial.println( text );
+        #define DEBUG( text )   Serial.printf( "DEBUG: %s %s Line: %i - ", __FILE__, __FUNCTION__, __LINE__ ); Serial.println( text );
+        #define DEBUGF( ... )   Serial.printf( "DEBUG: %s %s Line: %i - ", __FILE__, __FUNCTION__, __LINE__ ); Serial.printf( __VA_ARGS__ );
+        #define DEBUG_WAIT      Serial.printf( "DEBUG: (Wait) %s %s Line: %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( Serial.read() != ' ' ) { yield(); };
+        #define DEBUG_LINE      Serial.printf( "DEBUG: (Line) %s %s Line: %i\n", __FILE__, __FUNCTION__, __LINE__ );
+        #define DEBUG_STOP      Serial.printf( "\n\nDEBUG (Stop) %s %s Line: %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( true ) { yield(); };
 
-#define DEBUG_LINE Serial.printf( "(DEBUG) Line: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ );
-#define DEBUG_WAIT Serial.printf( "(DEBUG) Wait: %s %s %i\n", __FILE__, __FUNCTION__, __LINE__ ); while( Serial.read() != ' ' ) { yield(); };
+    #ifndef NO_LOGGING
 
-// TODO - do we need status if all debugs are like above. Do we need the context at all in the LOG ones
         #define LOG( text ) logger.println( NORMAL_LOG, STATUS_TAG, text )
         #define LOG_DETAIL( text ) logger.println( DETAIL_LOG, STATUS_TAG, text )
         #define LOG_HIGH( text ) logger.println( HIGH_LOG, STATUS_TAG, text )
@@ -73,11 +70,6 @@ SOFTWARE. */
     #else
 
         // Empty macros which do nothing when logging fully turned off in build
-
-        #define DEBUG( text )
-        #define DEBUGF( ... )
-        #define DEBUG_STOP()
-        #define DEBUG_RAW( text )
 
         #define LOG( text )
         #define LOG_DETAIL( text )

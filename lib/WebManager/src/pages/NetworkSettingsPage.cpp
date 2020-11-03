@@ -30,7 +30,7 @@ SOFTWARE. */
 
 
 // Project Libraries
-#include "NetworkSetttingsPage.h"
+#include "NetworkSettingsPage.h"
 #include "Logger.h"
 #include "ConfigManager.h"
 

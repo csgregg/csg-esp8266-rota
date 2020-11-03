@@ -33,9 +33,7 @@ SOFTWARE. */
 
 
 // Global Libraries
-#ifndef WEB_FLASHFILES
-#include <LittleFS.h>       // Use LittleFS for web files
-#endif
+
 
 // Project Libraries
 #include "WebManager.h"
@@ -43,14 +41,13 @@ SOFTWARE. */
 #include "TimeLocation.h"
 #include "NetworkManager.h"
 
-#include "pages/NetworkSetttingsPage.h"
+#include "pages/NetworkSettingsPage.h"
 #include "pages/AboutPage.h"
 #include "pages/IndexPage.h"
 #include "pages/SystemPage.h"
 
-#ifdef WEB_FLASHFILES
 #include "WebFiles.h"       // Use flash instead of LittleFS for web files
-#endif
+
 
 
 // Page handlers
@@ -287,9 +284,6 @@ void ICACHE_FLASH_ATTR WebsiteManager::Begin( char* hostName ) {
 
     );
 
-#ifndef WEB_FLASHFILES
-    LittleFS.begin();           // Start LittleFS
-#endif
     _server.begin();            // Start webserver
 
     // Initialize all page Ajax
@@ -351,7 +345,6 @@ bool ICACHE_FLASH_ATTR WebsiteManager::HandleFileRequest() {
 
     String contentType = GetContentType(URL);                  // Get the MIME type
 
-#ifdef WEB_FLASHFILES                   // Are we using flash instead of LittleFS for web files
     // Try from Flash
     for( uint i=0; i<(sizeof(websiteFiles)/sizeof(t_websitefiles)); i++ ) {
         if( strcmp_P( URL.c_str(), websiteFiles[i].path ) == 0 ) {
@@ -373,29 +366,6 @@ bool ICACHE_FLASH_ATTR WebsiteManager::HandleFileRequest() {
             return true;
         }
     }
-#endif
-
-#ifndef WEB_FLASHFILES                  // Are we using flash instead of LittleFS for web files
-    // Try from LittleFS
-    String path = "/www" + URL + ".gz";
-    if( LittleFS.exists(path) ) {                               // If the file exists then send it
-
-        LOGF_HIGH( PSTR("(Website) Web server - file: %s"), URL.c_str() );
-
-        File file = LittleFS.open(path, "r");
-        _server.streamFile(file, contentType);
-        file.close();
-
-        // Re-initialize Ajax on page load
-        for( u_int i = 0; i < sizeof(webpages)/sizeof(PageHandler); i++ )
-            if( URL == webpages[i].URL ) {
-                (webpages[i].init)();
-                break;
-            }
-
-        return true;
-    }
-#endif
 
     return false;                                         // If the file doesn't anywhere, return false
 }
