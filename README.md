@@ -62,3 +62,5 @@ GitHub Desktop
 Git
 Platformio
 
+**Hosting Setup**
+GoDaddy Basic php hosting
