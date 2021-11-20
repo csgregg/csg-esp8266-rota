@@ -54,3 +54,11 @@ kwOTc4NTEsMTk4MjU2NjcxOSw3MTQxMjkxOTYsMjgyNjU0OTMy
 LDkzNTc4MjM0NiwxMDAwODg2NjQwLC01NjgwODg5MjksLTExNz
 UzMTM0NTksLTE2NTE4NTMwXX0=
 -->
+
+
+**PC Setup**
+VSCode
+GitHub Desktop
+Git
+Platformio
+
