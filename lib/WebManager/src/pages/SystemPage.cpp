@@ -35,7 +35,9 @@ SOFTWARE. */
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkManager.h"
-#include "OTAUpdater.h"
+#ifndef UPDATER_DISABLE
+    #include "OTAUpdater.h"
+#endif
 
 
 ////////////////////////////////////////////
@@ -49,7 +51,9 @@ void ICACHE_FLASH_ATTR SystemPage::InitializeAjax(){
     LOG_HIGH( PSTR("(Page) System - Initialize AJAX") );
 
     LoggerSettings log = config.settings.loggerSettings;
-    OTAUpdaterSettings ota = config.settings.otaUpdaterSettings;
+    #ifndef UPDATER_DISABLE
+        OTAUpdaterSettings ota = config.settings.otaUpdaterSettings;
+    #endif
 
     static char buffer[8];
 
@@ -64,15 +68,16 @@ void ICACHE_FLASH_ATTR SystemPage::InitializeAjax(){
     log_level.selectOption( log.level );
     log_save.setEnabled( false) ;
 
-    ota_mode.setChecked( ota.enabled );
-    ota_url.setValue( ota.service );
-    ota_user.setValue( ota.user );
-    ota_repo.setValue( ota.repo );
-    ota_key.setValue( ota.token );
-    ota_skip.setChecked( ota.skipUpdates );
-    ota_ck_int.setValue( itoa( ota.interval, buffer, 10 ) );
-    ota_save.setEnabled( false );
-
+    #ifndef UPDATER_DISABLE
+        ota_mode.setChecked( ota.enabled );
+        ota_url.setValue( ota.service );
+        ota_user.setValue( ota.user );
+        ota_repo.setValue( ota.repo );
+        ota_key.setValue( ota.token );
+        ota_skip.setChecked( ota.skipUpdates );
+        ota_ck_int.setValue( itoa( ota.interval, buffer, 10 ) );
+        ota_save.setEnabled( false );
+    #endif
 }
 
 
@@ -106,13 +111,15 @@ void ICACHE_FLASH_ATTR SystemPage::HandleAjax(){
         return;
     }
 
-    // Reset OTA Update settings
-    if( website.AjaxID == F("btn_rst_ota") ){
-        config.settings.otaUpdaterSettings.SetDefaults();
-        config.Save();
-        updater.Restart( config.settings.otaUpdaterSettings );
-        return;
-    }
+    #ifndef UPDATER_DISABLE
+        // Reset OTA Update settings
+        if( website.AjaxID == F("btn_rst_ota") ){
+            config.settings.otaUpdaterSettings.SetDefaults();
+            config.Save();
+            updater.Restart( config.settings.otaUpdaterSettings );
+            return;
+        }
+    #endif
 
     // Reset time and location settings
     if( website.AjaxID == F("btn_rst_tlo") ) {
@@ -128,11 +135,13 @@ void ICACHE_FLASH_ATTR SystemPage::HandleAjax(){
         return;
     }
 
-    // Save OTA update settings
-    if( website.AjaxID == F("ota_save") ) {
-        SaveUpdaterSettings();
-        return;
-    }
+    #ifndef UPDATER_DISABLE
+        // Save OTA update settings
+        if( website.AjaxID == F("ota_save") ) {
+            SaveUpdaterSettings();
+            return;
+        }
+    #endif
 
 }
 
@@ -158,27 +167,27 @@ void ICACHE_FLASH_ATTR SystemPage::SaveLoggerSettings() {
 
 }
 
+#ifndef UPDATER_DISABLE
+    // Save OTA Updater settings
+    void ICACHE_FLASH_ATTR SystemPage::SaveUpdaterSettings() {
+        
+        OTAUpdaterSettings ota;
 
-// Save OTA Updater settings
-void ICACHE_FLASH_ATTR SystemPage::SaveUpdaterSettings() {
-    
-    OTAUpdaterSettings ota;
+        ota.enabled = ota_mode.isChecked();
+        strncpy( ota.service, ota_url.value(), OTA_MAX_SERVICE_LEN );
+        strncpy( ota.user, ota_user.value(), OTA_MAX_USER_LEN );
+        strncpy( ota.repo, ota_repo.value(), OTA_MAX_REPO_LEN );
+        strncpy( ota.token, ota_key.value(), OTA_MAX_TOKEN_LEN );
+        ota.skipUpdates = ota_skip.isChecked();
+        ota.interval = atoi( ota_ck_int.value() );
 
-    ota.enabled = ota_mode.isChecked();
-    strncpy( ota.service, ota_url.value(), OTA_MAX_SERVICE_LEN );
-    strncpy( ota.user, ota_user.value(), OTA_MAX_USER_LEN );
-    strncpy( ota.repo, ota_repo.value(), OTA_MAX_REPO_LEN );
-    strncpy( ota.token, ota_key.value(), OTA_MAX_TOKEN_LEN );
-    ota.skipUpdates = ota_skip.isChecked();
-    ota.interval = atoi( ota_ck_int.value() );
+        config.settings.otaUpdaterSettings = ota;
+        config.Save();
 
-    config.settings.otaUpdaterSettings = ota;
-    config.Save();
+        updater.Restart( config.settings.otaUpdaterSettings );           
 
-    updater.Restart( config.settings.otaUpdaterSettings );           
-
-}
-
+    }
+#endif
 
 // Create instance of page class and wrap methods for EmbAJAX
 SystemPage systempage(

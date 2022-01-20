@@ -39,7 +39,9 @@ SOFTWARE. */
     // Project Libraries
     #include "WebManager.h"
     #include "Logger.h"
-    #include "OTAUpdater.h"
+    #ifndef UPDATER_DISABLE
+        #include "OTAUpdater.h"
+    #endif
 
 
     /** @class SystemPage
@@ -75,19 +77,25 @@ SOFTWARE. */
             const char* logLevels[5] = {"0","1","2","3","4"};       // Options for logging level dropdown
             EmbAJAXServerFunction log_save;                         // Save logger settings button
 
-            /// OTA Updater elements
+            #ifndef UPDATER_DISABLE
+                /// OTA Updater elements
 
-            EmbAJAXCheckButton ota_mode;                            // Check box for mode
-            EmbAJAXTextInput<OTA_MAX_SERVICE_LEN> ota_url;          // Input box for service URL
-            EmbAJAXTextInput<OTA_MAX_USER_LEN> ota_user;            // Input box for GitHub user
-            EmbAJAXTextInput<OTA_MAX_REPO_LEN> ota_repo;            // Input box for GitHub repo
-            EmbAJAXTextInput<OTA_MAX_TOKEN_LEN> ota_key;            // Input box for GitHub token
-            EmbAJAXCheckButton ota_skip;                            // Check box for update skip
-            EmbAJAXTextInput<4> ota_ck_int;                         // Input box for check interval
-            EmbAJAXServerFunction ota_save;                         // Save udpater settings button
+                EmbAJAXCheckButton ota_mode;                            // Check box for mode
+                EmbAJAXTextInput<OTA_MAX_SERVICE_LEN> ota_url;          // Input box for service URL
+                EmbAJAXTextInput<OTA_MAX_USER_LEN> ota_user;            // Input box for GitHub user
+                EmbAJAXTextInput<OTA_MAX_REPO_LEN> ota_repo;            // Input box for GitHub repo
+                EmbAJAXTextInput<OTA_MAX_TOKEN_LEN> ota_key;            // Input box for GitHub token
+                EmbAJAXCheckButton ota_skip;                            // Check box for update skip
+                EmbAJAXTextInput<4> ota_ck_int;                         // Input box for check interval
+                EmbAJAXServerFunction ota_save;                         // Save udpater settings button
+            #endif
 
             // Array of page elements
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 24] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 16
+                #ifndef UPDATER_DISABLE
+                    + 8
+                #endif
+            ] = {
       
                 WEB_PAGE_COMMON_ELEMENTS,       // Add the elements comment to every page
 
@@ -109,14 +117,16 @@ SOFTWARE. */
                 &log_level,
                 &log_save,
 
-                &ota_mode,
-                &ota_url,
-                &ota_user,
-                &ota_repo,
-                &ota_key,
-                &ota_skip,
-                &ota_ck_int,
-                &ota_save,
+                #ifndef UPDATER_DISABLE
+                    &ota_mode,
+                    &ota_url,
+                    &ota_user,
+                    &ota_repo,
+                    &ota_key,
+                    &ota_skip,
+                    &ota_ck_int,
+                    &ota_save,
+                #endif
 
             };
 
@@ -143,14 +153,16 @@ SOFTWARE. */
                 log_level("log_level",logLevels),
                 log_save("log_save"),
 
-                ota_mode("ota_mode",""),
-                ota_url("ota_url"),
-                ota_user("ota_user"),
-                ota_repo("ota_repo"),
-                ota_key("ota_key"),
-                ota_skip("ota_skip",""),
-                ota_ck_int("ota_ck_int"),
-                ota_save("ota_save"),
+                #ifndef UPDATER_DISABLE
+                    ota_mode("ota_mode",""),
+                    ota_url("ota_url"),
+                    ota_user("ota_user"),
+                    ota_repo("ota_repo"),
+                    ota_key("ota_key"),
+                    ota_skip("ota_skip",""),
+                    ota_ck_int("ota_ck_int"),
+                    ota_save("ota_save"),
+                #endif
 
                 // Setup the EmbAJAX page base
                 ajax(page_elements, "")
@@ -174,8 +186,10 @@ SOFTWARE. */
             /** Save the logger settings */
             void ICACHE_FLASH_ATTR SaveLoggerSettings();
 
-            /** Save OTA Updater settings */
-            void ICACHE_FLASH_ATTR SaveUpdaterSettings();
+            #ifndef UPDATER_DISABLE
+                /** Save OTA Updater settings */
+                void ICACHE_FLASH_ATTR SaveUpdaterSettings();
+            #endif
 
     };
     

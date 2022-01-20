@@ -1,11 +1,10 @@
 /**
- * @file        IOTDevice.cpp
+ * @file        ThingManager.cpp
  * @author      Chris Gregg
  * 
- * @brief       Defines the physical attributes of the IOT device and the build environment.
- *              Build flags are loaded from platformio.ini
+ * @brief       Defines and manages the connection to Thinger.io
  * 
- * @copyright   Copyright (c) 2020
+ * @copyright   Copyright (c) 2022
  * 
  */
 
@@ -29,29 +28,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
-
 // Project Libraries
+#include "ThingManager.h"
 #include "IOTDevice.h"
 
 
 ////////////////////////////////////////////
-//// Device Manager Class
+//// Thinger.io Settings Class
 
 // Public:
 
-// Sets up the device hardware and build environment
-void ICACHE_FLASH_ATTR IOTDevice::Begin() {
+// Resest the Thinger.io settings to defaults
+void ICACHE_FLASH_ATTR ThingerSettings::SetDefaults() {
+    enabled = THINGER_DEFAULT_MODE;
+    strcpy_P( user, flag_THINGER_USER );
+    strcpy_P( device, flag_THINGER_DEVICE );
+    strcpy_P( token, flag_THINGER_TOKEN );
 
-    // Need to do this because these preprocessor defines seem to get defined at differnet time to the rest
-    sprintf_P( _buildNo, PSTR("%i"), flag_BUILD_NO );
-    strcpy_P( _buildTime, flag_BUILD_TIMESTAMP );
-    sprintf_P( _chipID, PSTR("%0X") ,EspClass::getChipId() );
-    strcpy_P( _buildEnv, flag_BUILD_ENV );
-
-    if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
-    
-    pinMode(LED_BUILTIN, OUTPUT);
 }
 
-
-IOTDevice device;           // Create the global instance
+ThingManager thing;

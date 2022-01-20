@@ -53,6 +53,7 @@ void ICACHE_FLASH_ATTR DeviceSettings::SetDefaults() {
     loggerSettings.SetDefaults();
     otaUpdaterSettings.SetDefaults();
     timelocSettings.SetDefaults();
+    thingerSettings.SetDefaults();
 }
 
 
