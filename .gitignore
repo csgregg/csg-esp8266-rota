@@ -13,3 +13,4 @@ lib/EmbAJAX
 
 # Important for Security #
 private
+.DS_Store

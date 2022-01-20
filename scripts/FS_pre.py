@@ -3,6 +3,7 @@ import gzip
 import shutil
 import requests
 import html
+import time
 from SCons.Script import COMMAND_LINE_TARGETS        
 
 Import("env")
@@ -65,6 +66,7 @@ def minify_file(file,url):
     print("Minifying: " + str(file))
     data = {'input': open(file, 'rb').read()}
     response = requests.post(url, data=data)
+    time.sleep(1)
     minified = response.content
     with open(file, 'wb') as f_out:
         f_out.write(minified)
@@ -83,6 +85,20 @@ def replaceBuildFlags(file):
     with open(file,'w') as f_out:
         f_out.write(str(soup))
 
+
+def conditionalElements(file):
+    with open(file, 'rb') as f_in:
+        content = f_in.read()
+        soup = BeautifulSoup(content, 'html')
+        for item in soup.find_all(class_='pre-conditional'):
+            if str(item) != 'None':
+                flag = item['buildflag']
+                if get_build_flag_value(flag) != "None":
+                    print('Removing conditional element ' + flag + ' in ' + file )
+                    item.replaceWith('')
+        f_in.close()
+    with open(file,'w') as f_out:
+        f_out.write(str(soup))
 
 
 def includeHTMLfile(file,sources):
@@ -114,6 +130,7 @@ def parse_replace(sourceFolder,destFolder):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
                 includeHTMLfile(os.path.join(p_destFolder,file),folder)
                 replaceBuildFlags(os.path.join(p_destFolder,file))
+                conditionalElements(os.path.join(p_destFolder,file))
             elif file.endswith('.js'):
                 shutil.copyfile(os.path.join(folder, file), os.path.join(p_destFolder,file))
             elif file.endswith('.css'):

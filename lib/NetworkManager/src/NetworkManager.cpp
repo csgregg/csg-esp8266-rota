@@ -78,11 +78,14 @@ void ICACHE_FLASH_ATTR NetworkManager::Begin( NetworkSettings& settings ) {
 
 // Get the status of the network
 NetworkManager::NetworkStatus ICACHE_FLASH_ATTR NetworkManager::GetNetworkStatus() {
-    if( _netCheck.isInternetConnected() ) return NetworkStatus::NORMAL;
-    else {
+    if( _settings->netCheckSettings.enabled ) {                                             // If we are using NetChecker, then needs to validate before returning normal
+        if( _netCheck.isInternetConnected() ) return NetworkStatus::NORMAL;
         if( _wifi.IsWiFiConnected() || _wifi.CountAPConnections() > 0 ) return NetworkStatus::NOINETERNET;
-        else return NetworkStatus::DISCONNECTED;
     }
+    else {
+        if( _wifi.IsWiFiConnected() ) return NetworkStatus::NORMAL;                         // If we are not using NetChecker, then just check that we are connected as Wifi client
+    }
+    return NetworkStatus::DISCONNECTED;
 }
 
 

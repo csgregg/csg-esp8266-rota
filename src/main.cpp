@@ -34,8 +34,11 @@ Setup and Loop
 #include "Logger.h"
 #include "NetworkManager.h"
 #include "WebManager.h"
-#include "OTAUpdater.h"
+#ifndef UPDATER_DISABLE
+    #include "OTAUpdater.h"
+#endif
 #include "TimeLocation.h"
+#include "ThingManager.h"
 
 
 void ICACHE_FLASH_ATTR setup() {
@@ -47,8 +50,12 @@ void ICACHE_FLASH_ATTR setup() {
     network.Begin( config.settings.networkSettings );
     timelocation.Begin( network.GetWiFiClient(), config.settings.timelocSettings );
     website.Begin( config.settings.networkSettings.dnsSettings.hostName );
+#ifndef UPDATER_DISABLE
     updater.Begin( network.GetWiFiClient(), config.settings.otaUpdaterSettings );
-    
+#endif
+
+    thing.Begin( network.GetWiFiClient() );
+
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     
 }
@@ -59,8 +66,11 @@ void loop() {
     // Handle each service set
     device.Handle();
     network.Handle();
+    thing.Handle();
     website.Handle();
+#ifndef UPDATER_DISABLE
     updater.Handle();
+#endif
     logger.Handle();
     timelocation.Handle();
 

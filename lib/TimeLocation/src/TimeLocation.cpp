@@ -193,20 +193,20 @@ bool ICACHE_FLASH_ATTR TimeLocationManager::DetectLocation() {
     }
 
     // Get the details from the response
-    _settings->location.publicIP.fromString( json[F("ip")].as<char*>() );
-    strcpy( _settings->location.city, json[F("city")].as<char*>() );
-    strcpy( _settings->location.region, json[F("region")].as<char*>() );
-    strcpy( _settings->location.country, json[F("country")].as<char*>() );
+    _settings->location.publicIP.fromString( json[F("ip")].as<const char*>() );
+    strcpy( _settings->location.city, json[F("city")].as<const char*>() );
+    strcpy( _settings->location.region, json[F("region")].as<const char*>() );
+    strcpy( _settings->location.country, json[F("country")].as<const char*>() );
 
     char buff[TLO_IPINFO_MAX_LOC_LEN];
-    strcpy( buff, json[F("loc")].as<char*>() );
+    strcpy( buff, json[F("loc")].as<const char*>() );
     int len = ( strchr( buff, ',' ) - buff ) * sizeof(char);
     char newbuff[TLO_IPINFO_MAX_LOC_LEN];
     _settings->location.coords.lon =  atof( strncpy( newbuff, buff, len ) );
     _settings->location.coords.lat =  atof( strcpy( newbuff, buff+len+1 ) );
 
-    strcpy( _settings->location.postal, json[F("postal")].as<char*>() );
-    strcpy( _settings->location.timezone, json[F("timezone")].as<char*>() );
+    strcpy( _settings->location.postal, json[F("postal")].as<const char*>() );
+    strcpy( _settings->location.timezone, json[F("timezone")].as<const char*>() );
 
     _isLocationSet = _timezone->setLocation( _settings->location.timezone );
     strcpy( _settings->posix,_timezone->getPosix().c_str() );
