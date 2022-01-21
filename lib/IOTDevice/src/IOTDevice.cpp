@@ -32,6 +32,7 @@ SOFTWARE. */
 
 // Project Libraries
 #include "IOTDevice.h"
+#include "ThingManager.h"
 
 
 ////////////////////////////////////////////
@@ -50,7 +51,17 @@ void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 
     if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
     
+    // Physical IO Setup
+
     pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// Completes any final setup before starting the loop
+void ICACHE_FLASH_ATTR IOTDevice::Finalize() {
+
+    // Thinker IO
+    
+    (*thing.io)["led"] << digitalPin(LED_BUILTIN);
 }
 
 

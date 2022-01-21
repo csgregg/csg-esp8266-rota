@@ -175,6 +175,9 @@ SOFTWARE. */
             /** Sets up the device hardware and build environment */
             void ICACHE_FLASH_ATTR Begin();
 
+            /** Completes any final setup before starting the loop */
+            void ICACHE_FLASH_ATTR Finalize();
+
             /** Get the build number
              *  @returns String containing the number of the build */
             char* ICACHE_FLASH_ATTR GetBuildNo() { return _buildNo; };
