@@ -92,7 +92,7 @@ void ICACHE_FLASH_ATTR OTAUpdaterSettings::SetDefaults() {
 
 
 ////////////////////////////////////////////
-//// OTA Updater Settings Class
+//// OTA Updater Manager Class
 
 // Public:
 

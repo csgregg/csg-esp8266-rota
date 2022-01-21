@@ -93,7 +93,7 @@ def conditionalElements(file):
         for item in soup.find_all(class_='pre-conditional'):
             if str(item) != 'None':
                 flag = item['buildflag']
-                if get_build_flag_value(flag) != "None":
+                if str(get_build_flag_value(flag)) != 'None':
                     print('Removing conditional element ' + flag + ' in ' + file )
                     item.replaceWith('')
         f_in.close()

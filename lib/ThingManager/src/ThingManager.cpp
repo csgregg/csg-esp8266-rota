@@ -44,7 +44,44 @@ void ICACHE_FLASH_ATTR ThingerSettings::SetDefaults() {
     strcpy_P( user, flag_THINGER_USER );
     strcpy_P( device, flag_THINGER_DEVICE );
     strcpy_P( token, flag_THINGER_TOKEN );
-
 }
 
-ThingManager thing;
+
+
+////////////////////////////////////////////
+//// Thinger.io Manager Class
+
+// Public:
+
+
+// Initializes the Thinger.io service
+void ICACHE_FLASH_ATTR ThingManager::Begin(Client& client, ThingerSettings& settings ){
+    _client = &client;
+    Restart( settings );
+}
+
+
+// Handles any repeating device actions
+void ICACHE_FLASH_ATTR ThingManager::Handle(){ 
+    if( _settings->enabled && network.GetNetworkStatus() == NetworkManager::NetworkStatus::NORMAL ) io->handle();
+}
+
+/** Restart Thinger functions */
+void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
+    _settings = &settings;
+
+    if( _settings->enabled ){
+
+        LOG( PSTR("(Updater) Starting Thinger.io service") );
+
+        if( NULL == io ){
+            io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
+            (*io)["led"] << digitalPin(LED_BUILTIN);
+        }
+    }
+    else{
+        if( NULL != io ) io->stop();
+    }
+}
+
+ThingManager thing;                             // Create the global instance
