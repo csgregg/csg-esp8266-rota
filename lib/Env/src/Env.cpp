@@ -1,5 +1,5 @@
 /**
- * @file        IOTDevice.cpp
+ * @file        Env.cpp
  * @author      Chris Gregg
  * 
  * @brief       Defines the physical attributes of the IOT device and the build environment.
@@ -34,7 +34,7 @@ SOFTWARE. */
 #include <DoubleResetDetector.h>
 
 // Project Libraries
-#include "IOTDevice.h"
+#include "Env.h"
 
 // Global Objects
 DoubleResetDetector drd( DRD_TIMEOUT, DRD_ADDRESS );
@@ -46,7 +46,7 @@ DoubleResetDetector drd( DRD_TIMEOUT, DRD_ADDRESS );
 // Public:
 
 // Sets up the device hardware and build environment
-void ICACHE_FLASH_ATTR IOTDevice::Begin() {
+void ICACHE_FLASH_ATTR Env::Begin() {
 
     // Need to do this because these preprocessor defines seem to get defined at differnet time to the rest
     sprintf_P( _buildNo, PSTR("%i"), flag_BUILD_NO );
@@ -63,9 +63,9 @@ void ICACHE_FLASH_ATTR IOTDevice::Begin() {
 
 
 // Handles any repeating tasks
-void ICACHE_FLASH_ATTR IOTDevice::Handle(){
+void ICACHE_FLASH_ATTR Env::Handle(){
   drd.loop();
 }
 
 
-IOTDevice device;           // Create the global instance
+Env device;           // Create the global instance
