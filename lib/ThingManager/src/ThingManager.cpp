@@ -74,10 +74,8 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
 
         LOG( PSTR("(Updater) Starting Thinger.io service") );
 
-        if( NULL == io ){
-            io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
-            (*io)["led"] << digitalPin(LED_BUILTIN);
-        }
+        if( NULL == io ) io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
+        
     }
     else{
         if( NULL != io ) io->stop();
