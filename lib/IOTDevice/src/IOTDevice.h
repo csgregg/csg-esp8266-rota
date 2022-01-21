@@ -36,7 +36,6 @@ SOFTWARE. */
 
     // Global Libraries
     #include <Arduino.h>
-    #include <DoubleResetDetector.h>
     
     // Project Libraries
     #include "Credentials.h"                // Contains private definitions (excluded from repo)
@@ -167,16 +166,8 @@ SOFTWARE. */
                 DOUBLERESET,
             };
 
-            /** Constructor */
-            IOTDevice() : 
-                _drd( DRD_TIMEOUT, DRD_ADDRESS )        // Set up double reset detection
-            {};
-
             /** Sets up the device hardware and build environment */
             void ICACHE_FLASH_ATTR Begin();
-
-            /** Completes any final setup before starting the loop */
-            void ICACHE_FLASH_ATTR Finalize();
 
             /** Get the build number
              *  @returns String containing the number of the build */
@@ -199,7 +190,7 @@ SOFTWARE. */
             StartMode ICACHE_FLASH_ATTR GetStartMode() { return _startMode; };
 
             /** Handles any repeating device actions */    
-            void Handle() { _drd.loop(); };
+            void ICACHE_FLASH_ATTR Handle();
 
 
         protected:
@@ -209,11 +200,11 @@ SOFTWARE. */
             char _chipID[FLAG_MAX_CHIPIN_LEN];                  // Stores the chip ID as char array
             char _buildEnv[FLAG_MAX_BUILDENV_LEN];              // Stores build environment as char array
 
-            DoubleResetDetector _drd;                           // Creating the double reset detector
             StartMode _startMode = NORMAL;                      // The mode the device was started in. Defaults to NORMAL
     };
 
+    // Declaring the global instances
 
-    extern IOTDevice device;        // Declaring the global instance
+    extern IOTDevice device;        
 
 #endif      // IOT_DEVICE_H

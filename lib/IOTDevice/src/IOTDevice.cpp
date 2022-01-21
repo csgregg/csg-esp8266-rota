@@ -30,9 +30,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 
+// Global Libraries
+#include <DoubleResetDetector.h>
+
 // Project Libraries
 #include "IOTDevice.h"
-#include "ThingManager.h"
+
+// Global Objects
+DoubleResetDetector drd( DRD_TIMEOUT, DRD_ADDRESS );
 
 
 ////////////////////////////////////////////
@@ -49,19 +54,17 @@ void ICACHE_FLASH_ATTR IOTDevice::Begin() {
     sprintf_P( _chipID, PSTR("%0X") ,EspClass::getChipId() );
     strcpy_P( _buildEnv, flag_BUILD_ENV );
 
-    if( _drd.detectDoubleReset() ) _startMode = DOUBLERESET;
+    if( drd.detectDoubleReset() ) _startMode = DOUBLERESET;
     
     // Physical IO Setup
 
     pinMode(LED_BUILTIN, OUTPUT);
 }
 
-// Completes any final setup before starting the loop
-void ICACHE_FLASH_ATTR IOTDevice::Finalize() {
 
-    // Thinker IO
-    
-    (*thing.io)["led"] << digitalPin(LED_BUILTIN);
+// Handles any repeating tasks
+void ICACHE_FLASH_ATTR IOTDevice::Handle(){
+  drd.loop();
 }
 
 

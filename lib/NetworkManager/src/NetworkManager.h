@@ -35,7 +35,6 @@ SOFTWARE. */
 
     // Global Libraries
     #include <Arduino.h>
-    #include <ESP8266WiFi.h>
 
     // Project Libraries
     #include "WiFiManager.h"

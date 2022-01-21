@@ -28,9 +28,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
+
+// Build flags for Thinger.io client
+#define _DISABLE_TLS_
+
+// Global Libraries
+#include <ThingerClient.h>
+
 // Project Libraries
 #include "ThingManager.h"
 #include "IOTDevice.h"
+#include "Logger.h"
+#include "ConfigManager.h"
+#include "NetworkManager.h"
+#include "OTAUpdater.h"
+#include "TimeLocation.h"
 
 
 ////////////////////////////////////////////
@@ -74,12 +86,12 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
 
         LOG( PSTR("(Updater) Starting Thinger.io service") );
 
-        if( NULL == io ) io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
-        
+        if( NULL == io ){
+            io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
+            (*thing.io)["led"] << digitalPin(LED_BUILTIN);
+        }
     }
-    else{
-        if( NULL != io ) io->stop();
-    }
+
 }
 
 ThingManager thing;                             // Create the global instance

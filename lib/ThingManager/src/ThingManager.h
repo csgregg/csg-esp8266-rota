@@ -33,15 +33,9 @@ SOFTWARE. */
 
     #define THING_MANAGER_H
 
-    // Build flags for Thinger.io client
-    #define _DISABLE_TLS_
-
     // Global Libraries
-    #include <ThingerClient.h>
-
-    // Project Libraries
-    #include "Logger.h"
-    #include "NetworkManager.h"
+    #include <Arduino.h>
+    #include <Client.h>
 
     // Define Sizes
     #define THINGER_USER_MAX_LEN 16
@@ -50,6 +44,9 @@ SOFTWARE. */
 
     // Defaults
     #define THINGER_DEFAULT_MODE true
+
+    // Forward Declarations
+    class ThingerClient;
 
     /** @class OTAUpdaterSettings
      *  @brief Data struct class containing settings for OTA update service */
