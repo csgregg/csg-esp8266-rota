@@ -35,6 +35,7 @@ SOFTWARE. */
 #include "Logger.h"
 #include "ConfigManager.h"
 #include "NetworkManager.h"
+#include "ThingManager.h"
 #ifndef UPDATER_DISABLE
     #include "OTAUpdater.h"
 #endif
@@ -51,6 +52,7 @@ void ICACHE_FLASH_ATTR SystemPage::InitializeAjax(){
     LOG_HIGH( PSTR("(Page) System - Initialize AJAX") );
 
     LoggerSettings log = config.settings.loggerSettings;
+    ThingerSettings thing = config.settings.thingerSettings;
     #ifndef UPDATER_DISABLE
         OTAUpdaterSettings ota = config.settings.otaUpdaterSettings;
     #endif
@@ -66,7 +68,13 @@ void ICACHE_FLASH_ATTR SystemPage::InitializeAjax(){
     log_tick_int.setValue( itoa( log.tickInterval,buffer, 10 ) );
     log_tags.setValue( log.globalTags );
     log_level.selectOption( log.level );
-    log_save.setEnabled( false) ;
+    log_save.setEnabled( false ) ;
+
+    thinger_enabled.setChecked( thing.enabled );
+    thinger_user.setValue( thing.user );
+    thinger_device.setValue( thing.device );
+    thinger_token.setValue( thing.token );
+    thinger_save.setEnabled( false );
 
     #ifndef UPDATER_DISABLE
         ota_mode.setChecked( ota.enabled );
@@ -104,6 +112,14 @@ void ICACHE_FLASH_ATTR SystemPage::HandleAjax(){
         return;
     }
 
+    // Reset thinger settings
+    if( website.AjaxID == F("btn_rst_thinger") ){
+        config.settings.thingerSettings.SetDefaults();
+        config.Save();
+        thing.Restart( config.settings.thingerSettings );
+        return;
+    }
+
     // Reset all settings
     if( website.AjaxID == F("btn_rst_all") ){
         config.SetDefaults();
@@ -132,6 +148,12 @@ void ICACHE_FLASH_ATTR SystemPage::HandleAjax(){
     // Save logger settings
     if( website.AjaxID == F("log_save") ) {
         SaveLoggerSettings();
+        return;
+    }
+
+    // Save Thinger settings
+    if( website.AjaxID == F("thinger_save") ) {
+        SaveThingerSettings();
         return;
     }
 
@@ -164,6 +186,23 @@ void ICACHE_FLASH_ATTR SystemPage::SaveLoggerSettings() {
     config.settings.loggerSettings = log;
     config.Save();
     logger.Restart( config.settings.loggerSettings );
+
+}
+
+
+// Save the Thinger settings
+void ICACHE_FLASH_ATTR SystemPage::SaveThingerSettings() {
+    
+    ThingerSettings thingsets;
+        
+    thingsets.enabled = thinger_enabled.isChecked();   
+    strncpy( thingsets.user, thinger_user.value(), THINGER_USER_MAX_LEN );
+    strncpy( thingsets.device, thinger_device.value(), THINGER_DEVICE_MAX_LEN );
+    strncpy( thingsets.token, thinger_token.value(), THINGER_TOKEN_MAX_LEN );
+
+    config.settings.thingerSettings = thingsets;
+    config.Save();
+    thing.Restart( config.settings.thingerSettings );
 
 }
 

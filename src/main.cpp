@@ -54,7 +54,7 @@ void ICACHE_FLASH_ATTR setup() {
     updater.Begin( network.GetWiFiClient(), config.settings.otaUpdaterSettings );
 #endif
 
-    thing.Begin( network.GetWiFiClient() );
+    thing.Begin( network.GetWiFiClient(), config.settings.thingerSettings );
 
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     
