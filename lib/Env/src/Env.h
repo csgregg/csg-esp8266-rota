@@ -1,5 +1,5 @@
 /**
- * @file        IOTDevice.h
+ * @file        Env.h
  * @author      Chris Gregg
  * 
  * @brief       Defines the physical attributes of the IOT device and the build environment.
@@ -156,7 +156,7 @@ SOFTWARE. */
 
     /** @class IOT Device Class
      *  @brief Expand the EspClass to add build flags, and contains any hardware specifics. */
-    class IOTDevice : public EspClass
+    class Env : public EspClass
     {
 
         public:
@@ -205,6 +205,6 @@ SOFTWARE. */
 
     // Declaring the global instances
 
-    extern IOTDevice device;        
+    extern Env device;        
 
 #endif      // IOT_DEVICE_H

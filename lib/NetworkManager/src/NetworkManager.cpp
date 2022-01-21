@@ -32,7 +32,7 @@ SOFTWARE. */
 // Project Libraries
 #include "NetworkManager.h"
 #include "Logger.h"
-#include "IOTDevice.h"
+#include "Env.h"
 
 
 ////////////////////////////////////////////
@@ -61,7 +61,7 @@ void ICACHE_FLASH_ATTR NetworkManager::Begin( NetworkSettings& settings ) {
     _settings = &settings;
 
     // If double reset start in AP mode
-    if( device.GetStartMode() == IOTDevice::DOUBLERESET ) {
+    if( device.GetStartMode() == Env::DOUBLERESET ) {
         LOG( PSTR("(Network) Double Reset - starting in AP Mode") );
         strcpy_P( _settings->wifiSettings.apSettings.SSID, flag_DEVICE_CODE );
         strcpy_P( _settings->wifiSettings.apSettings.password, "" );
