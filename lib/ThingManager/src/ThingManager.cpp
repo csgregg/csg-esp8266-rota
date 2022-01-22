@@ -43,7 +43,10 @@ SOFTWARE. */
 #include "NetworkManager.h"
 #include "OTAUpdater.h"
 #include "TimeLocation.h"
+#include "IndexPage.h"
 
+
+bool LEDstatus = false;
 
 ////////////////////////////////////////////
 //// Thinger.io Settings Class
@@ -70,6 +73,7 @@ void ICACHE_FLASH_ATTR ThingerSettings::SetDefaults() {
 void ICACHE_FLASH_ATTR ThingManager::Begin(Client& client, ThingerSettings& settings ){
     _client = &client;
     Restart( settings );
+    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
 }
 
 
@@ -88,7 +92,18 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
 
         if( NULL == io ){
             io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
-            (*thing.io)["led"] << digitalPin(LED_BUILTIN);
+            
+            (*thing.io)["led"] << [](pson& in){
+                if(in.is_empty()){
+                    in = LEDstatus;
+                }
+                else{
+                    LEDstatus = in;
+                    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
+                    indexpage.thing_led.setValue(LEDstatus);
+                }
+            };
+
         }
     }
 

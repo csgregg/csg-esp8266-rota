@@ -176,7 +176,7 @@ template<> bool EmbAJAXVariable<bool>::GetBoolValue() const {
 
 
 ////////////////////////////////////////////
-//// EmbAJAXVariable Class
+//// EmbAJAXStyle Class
 
 // Public:
 
@@ -202,7 +202,7 @@ void EmbAJAXStyle::setStyle( const char* style ) {
 
 
 ////////////////////////////////////////////
-//// EmbAJAXVariable Class
+//// WebsiteManager Class
 
 // Public:
 
