@@ -228,7 +228,7 @@ SOFTWARE. */
             void setValue( T value ) {
                 if( _value != value ) {
                     _value = value;
-                    setChanged();            
+                    setChanged();      
                 }
             }
 
@@ -236,8 +236,8 @@ SOFTWARE. */
              * @return int     Value */
             int GetIntValue() const;
 
-            /** gets the value of element variable as an int
-             * @return int     Value */
+            /** gets the value of element variable as a bool
+             * @return book     Value */
             bool GetBoolValue() const;
 
 

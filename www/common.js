@@ -301,7 +301,7 @@ class embajaxstatus {
 
 
 function doPoll() {
-   //console.log("Status - Poll");
+   // console.log("Status - Poll");
    
    doRequest('','',updatePage);  
 }

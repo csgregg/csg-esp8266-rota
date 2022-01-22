@@ -85,7 +85,6 @@ SOFTWARE. */
     class ThingManager {
 
         public:
-            ThingerClient* io;
 
             /** Sets up the device hardware and build environment
              * @param client            Reference for the resuable WiFi client
@@ -100,6 +99,8 @@ SOFTWARE. */
             void ICACHE_FLASH_ATTR Restart( ThingerSettings& settings );
             
         protected:
+
+            ThingerClient* io;
 
             Client* _client;                    // Pointer to reuseable WiFiClient
             ThingerSettings* _settings;         // Pointer to the data struct holding the Thigner settings
