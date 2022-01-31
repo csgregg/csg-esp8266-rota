@@ -19,7 +19,7 @@ env:
 
 install:
 - pip install -U platformio
-- platformio platform install espressif8266@2.6.2
+- platformio platform install espressif8266@2.6.3
 - platformio lib install ArduinoJson
 - platformio lib install DoubleResetDetector
 - platformio lib install ezTime
