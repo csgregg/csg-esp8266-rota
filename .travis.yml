@@ -64,7 +64,7 @@ deploy:
     skip_cleanup: true
     script:
     # Sync files and folders
-      - rsync -r --delete-after --rsync-path=~/bin/rsync $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
+      - rsync -r --delete-after --verbose $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
       - chmod 600 /public_html/tools/*
     on:
       all_branches: true
