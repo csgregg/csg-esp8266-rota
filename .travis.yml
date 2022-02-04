@@ -5,12 +5,12 @@ sudo: false
 cache:
   directories:
   - "~/.platformio"
-  
+
 branches:
   only:
   - master
 
-if: tag =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$
+if: tag =~ /^\d+(?:\.\d+){2}$/
 
 env:
   matrix:
