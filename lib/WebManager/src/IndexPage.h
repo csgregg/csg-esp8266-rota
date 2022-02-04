@@ -47,14 +47,16 @@ SOFTWARE. */
 
             PageHandler handler;                // Handler for this page
 
-            EmbAJAXVarBool thing_led;          // Connect station button (on icon)
+            EmbAJAXVarBool thing_led;           // LED icon
+            EmbAJAXServerFunction btn_led;      // LED button
 
             // Array of page elements
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 1] = {
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 2] = {
       
                 WEB_PAGE_COMMON_ELEMENTS,       // Add the elements comment to every page
 
                 &thing_led,                     // Basic LED
+                &btn_led,                       // LED button
 
             };
 
@@ -64,6 +66,7 @@ SOFTWARE. */
             IndexPage( void(*ajaxHandler)(), void(*initHandler)() ) : 
 
                 thing_led( "thing_led" ),
+                btn_led( "btn_led" ),
 
                 ajax( page_elements, "" )
                 {

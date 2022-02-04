@@ -123,14 +123,14 @@ SOFTWARE. */
 
 
     // Type names
-    static const char cCritical[] PROGMEM = "CRITICAL";
-    static const char cNormal[] PROGMEM = "Normal";
-    static const char cHigh[] PROGMEM = "High";
-    static const char cVerbose[] PROGMEM = "Verbose";
+    static const char cCritical[] PROGMEM   = "CRITICAL";
+    static const char cNormal[] PROGMEM     = "Normal  ";
+    static const char cHigh[] PROGMEM       = "High    ";
+    static const char cVerbose[] PROGMEM    = "Verbose ";
     #define LOG_MAX_TYPE_DESC_LEN 9
 
     // Tag names
-    static const char cDebug[] PROGMEM = "DEBUG ";
+    static const char cDebug[] PROGMEM  = "DEBUG ";
     static const char cStatus[] PROGMEM = "Status";
 
 

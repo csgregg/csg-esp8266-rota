@@ -9,6 +9,6 @@ function initPage() {
 
 function updatePage() {
     // console.log("Status - Update Page");
-    if( thing_led=='t' ) document.getElementById('led').style.background = "green";
-    else document.getElementById('led').style.background = "red";
+    if( thing_led=='t' ) document.getElementById('led').style.background = "blue";
+    else document.getElementById('led').style.background = "gray";
 }

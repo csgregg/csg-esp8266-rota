@@ -35,7 +35,7 @@ SOFTWARE. */
 
     // Global Libraries
     #include <Arduino.h>
-    #include <Client.h>
+    #include <WiFiClient.h>
 
     // Define Sizes
     #define THINGER_USER_MAX_LEN 16
@@ -90,21 +90,28 @@ SOFTWARE. */
              * @param client            Reference for the resuable WiFi client
              * @param settings          Reference for the settings struct  //TODO
              */
-            void ICACHE_FLASH_ATTR Begin(Client& client, ThingerSettings& settings );
+            void ICACHE_FLASH_ATTR Begin( ThingerSettings& settings );
 
             /** Handles any repeating device actions */ 
             void ICACHE_FLASH_ATTR Handle();
 
             /** Restart Thinger functions */
             void ICACHE_FLASH_ATTR Restart( ThingerSettings& settings );
-            
+
+            /** Toggle status of LED */
+            void ICACHE_FLASH_ATTR ToggleLED();
+
+            void ICACHE_FLASH_ATTR SendLEDUpdate();
+
         protected:
 
             ThingerClient* io;
-
-            Client* _client;                    // Pointer to reuseable WiFiClient
+            
+            WiFiClient _wifiClient;             // WiFiClient for Thinger.io
             ThingerSettings* _settings;         // Pointer to the data struct holding the Thigner settings
 
+            /** Update status of LED */
+            void ICACHE_FLASH_ATTR UpdateLED( );
     };
 
     extern ThingManager thing;

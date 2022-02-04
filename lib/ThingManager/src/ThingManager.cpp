@@ -70,8 +70,7 @@ void ICACHE_FLASH_ATTR ThingerSettings::SetDefaults() {
 
 
 // Initializes the Thinger.io service
-void ICACHE_FLASH_ATTR ThingManager::Begin(Client& client, ThingerSettings& settings ){
-    _client = &client;
+void ICACHE_FLASH_ATTR ThingManager::Begin(ThingerSettings& settings ){
     Restart( settings );
     digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
 }
@@ -79,7 +78,9 @@ void ICACHE_FLASH_ATTR ThingManager::Begin(Client& client, ThingerSettings& sett
 
 // Handles any repeating device actions
 void ICACHE_FLASH_ATTR ThingManager::Handle(){ 
-    if( _settings->enabled && network.GetNetworkStatus() == NetworkManager::NetworkStatus::NORMAL ) io->handle();
+    if( _settings->enabled && network.GetNetworkStatus() == NetworkManager::NetworkStatus::NORMAL ) {
+        io->handle();
+    }
 }
 
 /** Restart Thinger functions */
@@ -91,8 +92,7 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
         LOG( PSTR("(Updater) Starting Thinger.io service") );
 
         if( NULL == io ){
-            io = new ThingerClient(*_client, _settings->user, _settings->device, _settings->token);
-
+            io = new ThingerClient(_wifiClient, _settings->user, _settings->device, _settings->token);
 
             io->set_state_listener([&](ThingerClient::THINGER_STATE state){
                 switch(state){
@@ -145,14 +145,35 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
                 }
                 else{
                     LEDstatus = in;
-                    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
-                    indexpage.thing_led.setValue(LEDstatus);
+                    thing.UpdateLED();
                 }
             };
 
         }
     }
 
+}
+
+
+/** Sends status of LED to Thinger.io */
+void ICACHE_FLASH_ATTR ThingManager::SendLEDUpdate( ) {
+    io->stream("led");
+}
+
+
+/** Toggle status of LED */
+void ICACHE_FLASH_ATTR ThingManager::UpdateLED( ) {
+    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
+    indexpage.thing_led.setValue(LEDstatus);
+    SendLEDUpdate();
+    LOGF( PSTR("(Thinger) LED: %s"), LEDstatus ? "On" : "Off" );
+}
+
+
+/** Toggle status of LED */
+void ICACHE_FLASH_ATTR ThingManager::ToggleLED( ) {
+    LEDstatus = !LEDstatus;
+    UpdateLED();
 }
 
 ThingManager thing;                             // Create the global instance

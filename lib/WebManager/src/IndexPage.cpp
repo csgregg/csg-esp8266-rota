@@ -34,6 +34,7 @@ SOFTWARE. */
 #include "Logger.h"
 #include "Env.h"
 #include "NetworkManager.h"
+#include "ThingManager.h"
 
 
 ////////////////////////////////////////////
@@ -49,7 +50,10 @@ void ICACHE_FLASH_ATTR IndexPage::InitializeAjax(){
 
 // Function to handle AJAX requests for this page
 void ICACHE_FLASH_ATTR IndexPage::HandleAjax(){
-    LOG_HIGH( PSTR("(Page) Index - Handle AJAX") );     
+    LOG_HIGH( PSTR("(Page) Index - Handle AJAX") );    
+
+    // Toggle LED
+    if( website.AjaxID == F("btn_led") ) thing.ToggleLED(); 
 }
 
 
