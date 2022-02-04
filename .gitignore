@@ -14,5 +14,3 @@ lib/EmbAJAX
 # Important for Security #
 private
 .DS_Store
-travis-godaddy_rsa
-travis-godaddy_rsa
