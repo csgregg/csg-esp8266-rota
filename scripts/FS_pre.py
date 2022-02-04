@@ -66,7 +66,7 @@ def minify_file(file,url):
     print("Minifying: " + str(file))
     data = {'input': open(file, 'rb').read()}
     response = requests.post(url, data=data)
-    time.sleep(1)
+#    time.sleep(1)
     minified = response.content
     with open(file, 'wb') as f_out:
         f_out.write(minified)
