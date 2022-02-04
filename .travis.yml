@@ -6,6 +6,10 @@ cache:
   directories:
   - "~/.platformio"
 
+if:
+  branch = master
+  condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
 env:
   matrix:
   - PLATFORMIO_CI_SRC=src/
@@ -18,27 +22,27 @@ env:
   - secure: hfXJGp5E7344Vog5OhK88vD0lzpnW2YvABNOHLc9AJ3w3yZ4m8w80VenxrxDsYQdmRu6KDSI01qJcoGafo2EswlOlgl3o2AUMDfLCdw2DZC2LkiN+qQOQv47vMMm1dTzxq/g6m/1YLCXAmQUv1/Q++xQGVoJaorZx127jk+wtEoBXMw3gcKZVhMRKbD8r/xCEWoHs3F6t8ShHziVXa2guQsRbyd6//ePG+4PprpWdMSd4ydhEcJGLyNM5M05UM5y54kDo+G2f5zFcBQ8bEyYGqMXOUdHcgYACY+HBc+OB0kbBtHCoaci1ayFZknRRAj2eD8Uo9UhFcDnrr0lhqEmIbgX+52HIXVvnE9L/qzeqKj28yNKR1NyQ9bHm5OEhIaxG5RSSLc/l+GQM8HtI0UEm7Tx5TyedrFBlTK4PKLZwsMknXebD5lzfBjpRSm8FvJen1nGbIeJRU1IaPTXPiiOWs8z7u7dVSPbJfeRqHiu3yPem25ZqUBDhrZz0Wi05Vt+sdVDQpTsyALGRFGUaL3vTfjSWH6dTVfxD99qkf74HuYc25Fh84FAvOB4+9pXcTMMb/7HgCJ3wVaP8kWda/nh1DgYUMdMJIlAdUzyyM7y8c8Guw2XZ/aTXQ8lAq1yYLv346wAWlCq5vHACtD3CzUPWXEM4y/b4RGKFj3KdC4EhaQ=
 
 install:
-- pip install -U platformio
-- platformio platform install espressif8266@2.6.3
-- platformio lib install ArduinoJson
-- platformio lib install DoubleResetDetector
-- platformio lib install ezTime
-- platformio lib install https://github.com/tfry-git/EmbAJAX#master
-- platformio lib install thinger-io/thinger.io
+#- pip install -U platformio
+#- platformio platform install espressif8266@2.6.3
+#- platformio lib install ArduinoJson
+#- platformio lib install DoubleResetDetector
+#- platformio lib install ezTime
+#- platformio lib install https://github.com/tfry-git/EmbAJAX#master
+#- platformio lib install thinger-io/thinger.io
 
 script:
-- platformio run -t buildfs -e travis
-- platformio run -e travis
+#- platformio run -t buildfs -e travis
+#- platformio run -e travis
 
 addons:
   ssh_known_hosts: iot.greggs.org
 # Setup ssh to goDaddy with key
 before_deploy:
-- openssl aes-256-cbc -K $encrypted_29231b0f8d8a_key -iv $encrypted_29231b0f8d8a_iv
-  -in godaddy-travis_rsa.enc -out godaddy-travis_rsa -d
-- eval "$(ssh-agent -s)"
-- chmod 600 godaddy-travis_rsa
-- ssh-add godaddy-travis_rsa
+#- openssl aes-256-cbc -K $encrypted_29231b0f8d8a_key -iv $encrypted_29231b0f8d8a_iv
+#  -in godaddy-travis_rsa.enc -out godaddy-travis_rsa -d
+#- eval "$(ssh-agent -s)"
+#- chmod 600 godaddy-travis_rsa
+#- ssh-add godaddy-travis_rsa
 
 # Deploy binaries
 deploy:
@@ -47,8 +51,8 @@ deploy:
     skip_cleanup: true
     on:
       repo: csgregg/csg-esp8266-rota
-      all_branches: true
-      condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+  #    all_branches: true
+ #     condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
     api_key:
       secure: c19w5t9Nw8B58j9hYx7fKWQ4x79kQjSQffZwodePpqdp2yyS3nVW/z+NZPugSPX0FkahAGDdlSjdGlWgp6QQrtB4yV2w+k9mIjxwk6IF3LxY9z0wpnqiuGHDjEG0n887MhU3quQ9Dq/NqUCWn72aYPFZcNXCIwKELv5L5UI745zE7TnSoKLuGd1Hrhd5S6qOfCBxfMYsrHMMYCRH3sGthL07gUqBAYcwHX2nqqlRW9j9m+ebsdqghVoyQSZLElJzKLomc4VtgvmRrRs5hjjZO00RDARje/DnLxQa2NS6npgJhuaOtMd/tGzU0aruhccbUm75O2oKDnRtU5knwcCY1x1Y/x7jc4s88EL5jDQ34oTPYRH59v350GYkczvREPDQMICKrNySW6VcAj0JTvQDMpGrnXqxzgNz60YbVJbWT0gwFU9tyTVcDj8Nx5FdNKz9OAEI5yN4j7blcXm3u03pKeTCOqTz/Fv4saK54VBcJ4hwiObinNZ4NhvFhy6lmFjwIu7iRsSZO185YD6EhgsDvwKrsMonUC+R6TN1Hw0puBqiJyrebOoxy51SuWADwVeWgrsdOAEpFHcmvWCtN2pL+jOgqMK1dq5hEpGVnAyYe79Y69KiezTdu+/marXq1II8BB1sEyqhmSd+fjLdgrymVhOC3MRpx8h6dPU+1A71i88=
     file_glob: true
@@ -58,13 +62,13 @@ deploy:
       - ".pio/build/travis/*.bin.gz"
 
   # Deploy hosted files
-  - provider: script
-    skip_cleanup: true
-    script:
+#  - provider: script
+#    skip_cleanup: true
+#    script:
     # Sync files and folders
-      - rsync -r --delete-after $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
-      - chmod 600 /public_html/tools/*
-    on:
-      all_branches: true
-      condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+ #     - rsync -r --delete-after $TRAVIS_BUILD_DIR/hosted/iot.greggs.org/ $SSH_USER@iot.greggs.org:public_html
+ #     - chmod 600 /public_html/tools/*
+  #  on:
+   #   all_branches: true
+    #  condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
 
