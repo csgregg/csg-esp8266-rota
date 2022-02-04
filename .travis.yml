@@ -50,7 +50,6 @@ deploy:
     on:
       repo: csgregg/csg-esp8266-rota
       all_branches: true
- #     condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
     api_key:
       secure: c19w5t9Nw8B58j9hYx7fKWQ4x79kQjSQffZwodePpqdp2yyS3nVW/z+NZPugSPX0FkahAGDdlSjdGlWgp6QQrtB4yV2w+k9mIjxwk6IF3LxY9z0wpnqiuGHDjEG0n887MhU3quQ9Dq/NqUCWn72aYPFZcNXCIwKELv5L5UI745zE7TnSoKLuGd1Hrhd5S6qOfCBxfMYsrHMMYCRH3sGthL07gUqBAYcwHX2nqqlRW9j9m+ebsdqghVoyQSZLElJzKLomc4VtgvmRrRs5hjjZO00RDARje/DnLxQa2NS6npgJhuaOtMd/tGzU0aruhccbUm75O2oKDnRtU5knwcCY1x1Y/x7jc4s88EL5jDQ34oTPYRH59v350GYkczvREPDQMICKrNySW6VcAj0JTvQDMpGrnXqxzgNz60YbVJbWT0gwFU9tyTVcDj8Nx5FdNKz9OAEI5yN4j7blcXm3u03pKeTCOqTz/Fv4saK54VBcJ4hwiObinNZ4NhvFhy6lmFjwIu7iRsSZO185YD6EhgsDvwKrsMonUC+R6TN1Hw0puBqiJyrebOoxy51SuWADwVeWgrsdOAEpFHcmvWCtN2pL+jOgqMK1dq5hEpGVnAyYe79Y69KiezTdu+/marXq1II8BB1sEyqhmSd+fjLdgrymVhOC3MRpx8h6dPU+1A71i88=
     file_glob: true
@@ -68,5 +67,5 @@ deploy:
       - chmod 600 /public_html/tools/*
     on:
       all_branches: true
-    #  condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
 
