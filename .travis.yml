@@ -6,10 +6,6 @@ cache:
   directories:
   - "~/.platformio"
 
-branches:
-  only:
-  - master
-
 if: tag =~ /^\d+(?:\.\d+){2}$/
 
 env:
