@@ -110,6 +110,8 @@ SOFTWARE. */
             WiFiClient _wifiClient;             // WiFiClient for Thinger.io
             ThingerSettings* _settings;         // Pointer to the data struct holding the Thigner settings
 
+            bool _LEDStatus = false;
+
             /** Update status of LED */
             void ICACHE_FLASH_ATTR UpdateLED( );
     };
