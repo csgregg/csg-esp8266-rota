@@ -29,7 +29,7 @@ install:
 - platformio lib install thinger-io/thinger.io
 
 script:
-#- platformio run -t buildfs -e travis
+- platformio run -t buildfs -e travis
 - platformio run -e travis
 
 addons:
