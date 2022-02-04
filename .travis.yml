@@ -37,8 +37,8 @@ before_deploy:
 - openssl aes-256-cbc -K $encrypted_29231b0f8d8a_key -iv $encrypted_29231b0f8d8a_iv
   -in godaddy-travis_rsa.enc -out godaddy-travis_rsa -d
 - eval "$(ssh-agent -s)"
-- chmod 600 travis-godaddy_rsa
-- ssh-add travis-godaddy_rsa
+- chmod 600 godaddy-travis_rsa
+- ssh-add godaddy-travis_rsa
 
 # Deploy binaries
 deploy:
