@@ -6,8 +6,7 @@ cache:
   directories:
   - "~/.platformio"
 
-if: branch = master 
-#AND condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+if: tag =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$
 
 env:
   matrix:
