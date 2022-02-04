@@ -46,7 +46,7 @@ SOFTWARE. */
 #include "IndexPage.h"
 
 
-bool LEDstatus = false;
+//bool LEDstatus = false;
 
 ////////////////////////////////////////////
 //// Thinger.io Settings Class
@@ -72,7 +72,7 @@ void ICACHE_FLASH_ATTR ThingerSettings::SetDefaults() {
 // Initializes the Thinger.io service
 void ICACHE_FLASH_ATTR ThingManager::Begin(ThingerSettings& settings ){
     Restart( settings );
-    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
+    UpdateLED();
 }
 
 
@@ -138,13 +138,14 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
                 }
             });
 
+            // Set up the Thinger resources
             
             (*thing.io)["led"] << [](pson& in){
                 if(in.is_empty()){
-                    in = LEDstatus;
+                    in = thing._LEDStatus;
                 }
                 else{
-                    LEDstatus = in;
+                    thing._LEDStatus = in;
                     thing.UpdateLED();
                 }
             };
@@ -163,16 +164,16 @@ void ICACHE_FLASH_ATTR ThingManager::SendLEDUpdate( ) {
 
 /** Toggle status of LED */
 void ICACHE_FLASH_ATTR ThingManager::UpdateLED( ) {
-    digitalWrite(LED_BUILTIN, LEDstatus ? LOW : HIGH);
-    indexpage.thing_led.setValue(LEDstatus);
+    digitalWrite(LED_BUILTIN, thing._LEDStatus ? LOW : HIGH);
+    indexpage.thing_led.setValue(thing._LEDStatus);
     SendLEDUpdate();
-    LOGF( PSTR("(Thinger) LED: %s"), LEDstatus ? "On" : "Off" );
+    LOGF( PSTR("(Thinger) LED: %s"), thing._LEDStatus ? "On" : "Off" );
 }
 
 
 /** Toggle status of LED */
 void ICACHE_FLASH_ATTR ThingManager::ToggleLED( ) {
-    LEDstatus = !LEDstatus;
+    thing._LEDStatus = !thing._LEDStatus;
     UpdateLED();
 }
 
