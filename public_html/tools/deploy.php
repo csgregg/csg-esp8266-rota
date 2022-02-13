@@ -23,14 +23,13 @@ if ($_SERVER['HTTP_X_HUB_SIGNATURE'] == 'sha1=' . $hash) {
     // Run it
     try {
         $tmp = shell_exec("git --git-dir=/home/$user/repo/csg-esp8266-rota/.git --work-tree=/home/$user/repo/csg-esp8266-rota pull");
+        throw new Exception($tmp);
         $tmp = shell_exec("uapi VersionControlDeployment create repository_root=/home/$user/repo/csg-esp8266-rota");
+        throw new Exception($tmp);
     } catch (Exception $e) {
         $tmp = "ERROR!\n";
         $tmp = 'Caught exception: '.  $e->getMessage(). "\n";
     }
-    // Output
-    echo "sh> $cmd\n";
-    echo htmlentities(trim($tmp)) . "\n";
 
 } else {
     throw new Exception('Wrong signature hash!');
