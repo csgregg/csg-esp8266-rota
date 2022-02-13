@@ -22,9 +22,9 @@ if ($_SERVER['HTTP_X_HUB_SIGNATURE'] == 'sha1=' . $hash) {
 
     try {
         $tmp = shell_exec("git --git-dir=/home/$user/repo/csg-esp8266-rota/.git --work-tree=/home/$user/repo/csg-esp8266-rota pull");
-        throw new Exception($tmp);
+        terror_log($tmp);
         $tmp = shell_exec("uapi VersionControlDeployment create repository_root=/home/$user/repo/csg-esp8266-rota");
-        throw new Exception($tmp);
+        error_log($tmp);
     } catch (Exception $e) {
         $tmp = "ERROR!\n";
         $tmp = 'Caught exception: '.  $e->getMessage(). "\n";
