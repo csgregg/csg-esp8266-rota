@@ -1,4 +1,4 @@
 ---
 deployment:
  tasks:
- - $HOME/bin/rsync -avu --delete public_html/ $HOME/public_html/csg-esp8266-rota
+ - $HOME/bin/rsync -avu --delete $HOME/repo/csg-esp8266-rota/public_html/ $HOME/public_html/csg-esp8266-rota
