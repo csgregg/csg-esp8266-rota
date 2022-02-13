@@ -3,5 +3,5 @@ deployment:
  tasks:
  - pwd
  - export DEPLOYPATH=$HOME/public_html/
- - export SOURCEPATH=$HOME/repo/csg-esp8266-rota/public_html
- - /bin/cp -R $SOURCEPATH $DEPLOYPATH
+ - export SOURCEPATH=public_html
+ - /bin/cp -v -R $SOURCEPATH $DEPLOYPATH
