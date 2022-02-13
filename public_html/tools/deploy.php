@@ -19,6 +19,7 @@ $hash =  hash_hmac('sha1', file_get_contents('php://input'), SECRET_TOKEN, false
 if ($_SERVER['HTTP_X_HUB_SIGNATURE'] == 'sha1=' . $hash) {
 
     $user = trim(shell_exec('whoami'));
+
     try {
         $tmp = shell_exec("git --git-dir=/home/$user/repo/csg-esp8266-rota/.git --work-tree=/home/$user/repo/csg-esp8266-rota pull");
         error_log($tmp);
