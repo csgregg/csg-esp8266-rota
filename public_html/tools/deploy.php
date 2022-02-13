@@ -5,10 +5,11 @@
 
 // Secret Random Code You set on github webhook settings
 const SECRET_TOKEN = 'password';
-
+echo $_SERVER['REQUEST_METHOD'];
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
         throw new Exception('Request method must be POST!');
 }
+echo $_SERVER['HTTP_X_GITHUB_EVENT'];
 if (! in_array($_SERVER['HTTP_X_GITHUB_EVENT'], ['push', 'ping'])) {
     throw new Exception('Request event should be either "push" or "ping"!');
 }
