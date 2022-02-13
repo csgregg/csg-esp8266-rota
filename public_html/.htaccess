@@ -1,0 +1,1 @@
+RedirectMatch 301 ^/generate_204 /tools/generate_204.php
