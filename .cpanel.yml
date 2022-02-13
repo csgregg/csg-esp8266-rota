@@ -1,7 +1,6 @@
 ---
 deployment:
  tasks:
- - pwd
- - export DEPLOYPATH=$HOME/public_html/
+ - export DEPLOYPATH=$HOME/public_html
  - export SOURCEPATH=public_html
- - /bin/cp -v -R $SOURCEPATH/* $DEPLOYPATH
+ - $HOME/bin/rsync -avu --delete $SOURCEPATH/ $DEPLOYPATH
