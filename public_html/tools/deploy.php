@@ -14,6 +14,7 @@ if (! in_array($_SERVER['HTTP_X_GITHUB_EVENT'], ['push', 'ping'])) {
     throw new Exception('Request event should be either "push" or "ping"');
 }
 
+
 $hash =  hash_hmac('sha1', file_get_contents('php://input'), SECRET_TOKEN, false);
 
 if ($_SERVER['HTTP_X_HUB_SIGNATURE'] == 'sha1=' . $hash) {
