@@ -5,7 +5,7 @@
 
 // Secret Random Code You set on github webhook settings
 const SECRET_TOKEN = 'password';
-
+echo "here";
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
         throw new Exception('Request method must be POST!');
 }
