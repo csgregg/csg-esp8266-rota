@@ -1,3 +1,4 @@
+# IDE
 .pio
 .vscode
 
@@ -7,10 +8,10 @@ dynamic
 
 # Local temp data 
 data
-
-# Libraries that are not managed
-lib/EmbAJAX
+.DS_Store
 
 # Important for Security #
 private
-.DS_Store
+
+# Non-Deployed
+public_html/deploy
