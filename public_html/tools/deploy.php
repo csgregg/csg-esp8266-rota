@@ -1,15 +1,12 @@
 
 <?php
 
-    $output = shell_exec('pwd && cd && pwd');
-    echo "<pre>$output</pre>";
+    $user = shell_exec('whoami');
 
-    $output = shell_exec('cd');
+    $commmand = 'uapi VersionControlDeployment create repository_root=/home' & $user & '/repo/csg-esp8266-rota';
+    echo "<pre>$command</pre>";
 
-    $output = shell_exec('pwd');
-    echo "<pre>$output</pre>";
-
-    $output = shell_exec('uapi VersionControlDeployment create repository_root=csg-esp8266-rota');
-    echo "<pre>$output</pre>";
+ //   $output = shell_exec('uapi VersionControlDeployment create repository_root=csg-esp8266-rota');
+ //   echo "<pre>$output</pre>";
   
 ?>
