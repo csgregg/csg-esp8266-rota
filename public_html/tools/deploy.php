@@ -21,7 +21,7 @@ if ($_SERVER['HTTP_X_HUB_SIGNATURE'] == 'sha1=' . $hash) {
     $user = trim(shell_exec('whoami'));
     try {
         $tmp = shell_exec("git --git-dir=/home/$user/repo/csg-esp8266-rota/.git --work-tree=/home/$user/repo/csg-esp8266-rota pull");
-        terror_log($tmp);
+        error_log($tmp);
         $tmp = shell_exec("uapi VersionControlDeployment create repository_root=/home/$user/repo/csg-esp8266-rota");
         error_log($tmp);
     } catch (Exception $e) {
