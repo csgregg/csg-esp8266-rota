@@ -2,5 +2,5 @@
 deployment:
  tasks:
  - export DEPLOYPATH=$HOME/public_html/csg-esp8266-rota
- - export SOURCEPATH=$HOME/repo/csg-esp8266-rota/public_html/
+ - export SOURCEPATH=public_html/
  - $HOME/bin/rsync -avu --delete $SOURCEPATH $DEPLOYPATH
