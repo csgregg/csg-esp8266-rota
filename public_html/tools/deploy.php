@@ -1,7 +1,7 @@
 
 <?php
 
-    $output = shell_exec('pwd');
+    $output = shell_exec('pwd && cd && pwd');
     echo "<pre>$output</pre>";
 
     $output = shell_exec('cd');
