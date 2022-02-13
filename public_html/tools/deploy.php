@@ -7,7 +7,7 @@
 const SECRET_TOKEN = 'password';
 
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
-        throw new Exception('Request method must be POST!');
+        throw new Exception('Request method must be POST');
 }
 
 if (! in_array($_SERVER['HTTP_X_GITHUB_EVENT'], ['push', 'ping'])) {
