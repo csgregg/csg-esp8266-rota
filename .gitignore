@@ -13,4 +13,5 @@ data
 # Important for Security #
 private
 
+# Non-deployable
 public_html/deploy
