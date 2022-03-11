@@ -4,4 +4,4 @@ deployment:
  - export SOURCEPATH=public_html/app/devices/csg-esp8266-rota/
  - export DEPLOYPATH=$HOME/public_html/app/devices/csg-esp8266-rota
  - mkdir -p $DEPLOYPATH
- - $HOME/bin/rsync -avu --delete $SOURCEPATH $DEPLOYPATH
+ - $HOME/bin/rsync -a --delete $SOURCEPATH $DEPLOYPATH
