@@ -140,7 +140,7 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
 
             // Set up the Thinger resources
             
-            (*thing.io)["led"] << [](pson& in){
+            (*thing.io)["led"] = [](pson& in, pson& out){
                 if(in.is_empty()){
                     in = thing._LEDStatus;
                 }
@@ -148,6 +148,7 @@ void ICACHE_FLASH_ATTR ThingManager::Restart( ThingerSettings& settings ){
                     thing._LEDStatus = in;
                     thing.UpdateLED();
                 }
+                out["led"] = thing._LEDStatus;
             };
 
         }
