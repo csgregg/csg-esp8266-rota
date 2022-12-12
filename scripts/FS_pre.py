@@ -204,11 +204,11 @@ def minify_files(sourceFolder):
     for folder, subfolders, files in os.walk(p_sourceFolder):
         for file in files:
             if file.endswith('.html'):
-                minify_file(os.path.join(p_sourceFolder,file),'https://html-minifier.com/raw')
+                minify_file(os.path.join(p_sourceFolder,file),'https://www.toptal.com/developers/html-minifier/api/raw')
             elif file.endswith('.js'):
                 minify_file(os.path.join(p_sourceFolder,file),'https://javascript-minifier.com/raw')
             elif file.endswith('.css'):
-                minify_file(os.path.join(p_sourceFolder,file),'https://cssminifier.com/raw')
+                minify_file(os.path.join(p_sourceFolder,file),'https://www.toptal.com/developers/cssminifier/api/raw')
 
 
 # Empty folder
