@@ -38,11 +38,12 @@ Setup and Loop
     #include "OTAUpdater.h"
 #endif
 #include "TimeLocation.h"
-#include "ThingManager.h"
+//#include "ThingManager.h"
 
 
 void ICACHE_FLASH_ATTR setup() {
-
+    delay( 1000 );
+Serial.begin(115200);
     // Services started in the proper order
     device.Begin();
     config.Begin();
@@ -53,7 +54,6 @@ void ICACHE_FLASH_ATTR setup() {
 #ifndef UPDATER_DISABLE
     updater.Begin( network.GetWiFiClient(), config.settings.otaUpdaterSettings );
 #endif
-    thing.Begin( config.settings.thingerSettings );
 
     LOG(PSTR("(Loop) Starting"));        // TODO - Check all LOG levels for all instances
     
@@ -65,7 +65,6 @@ void loop() {
     // Handle each service set
     device.Handle();
     network.Handle();
-    thing.Handle();
     website.Handle();
 #ifndef UPDATER_DISABLE
     updater.Handle();

@@ -52,24 +52,6 @@ function SureYes() {
         disableElmt("log_save","log_cancel");
     }
 
-    if( sureAction == "thinger_save" ) {
-
-        x = document.getElementById('thinger_enabled');
-        doRequestWait(x.id, x.checked ? 't' : 'f');
-        x = document.getElementById('thinger_user');
-        doRequestWait(x.id, x.value);
-        x = document.getElementById('thinger_device');
-        doRequestWait(x.id, x.value);
-        x = document.getElementById('thinger_token');
-        doRequestWait(x.id, x.value);
-
-        showLoader(document.getElementById('thinger_box'));
-
-        doRequest(sureAction,1,ClearLoader);
-
-        disableElmt("thinger_save","thinger_cancel");
-    }
-
     if( sureAction == "ota_save" ) {
 
         x = document.getElementById('ota_mode');

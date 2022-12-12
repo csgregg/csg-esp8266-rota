@@ -148,11 +148,6 @@ SOFTWARE. */
     static const char flag_TLO_IPINFO_TOKEN [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_TOKEN);         // Token for IPInfo.io service
     static const char flag_TLO_IPINFO_SERVICE [] PROGMEM = ESCAPEQUOTE(TLO_IPINFO_SERVICE);     // URL for IPInfo.io service
 
-    // Used by Thinger.io Library
-    static const char flag_THINGER_USER [] PROGMEM = ESCAPEQUOTE(THINGER_USER);                 // User for Thinger.io service
-    static const char flag_THINGER_DEVICE [] PROGMEM = ESCAPEQUOTE(THINGER_DEVICE);             // Device for Thinger.io service
-    static const char flag_THINGER_TOKEN [] PROGMEM = ESCAPEQUOTE(THINGER_TOKEN);               // Token for Thinger.io service
-
 
     /** @class IOT Device Class
      *  @brief Expand the EspClass to add build flags, and contains any hardware specifics. */

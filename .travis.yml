@@ -24,7 +24,6 @@ install:
 - platformio lib install DoubleResetDetector
 - platformio lib install ezTime
 - platformio lib install https://github.com/tfry-git/EmbAJAX#master
-- platformio lib install thinger-io/thinger.io
 
 script:
 - platformio run -t buildfs -e travis

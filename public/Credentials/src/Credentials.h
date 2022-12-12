@@ -9,10 +9,6 @@
     #define LOCAL_WIFI_PWD "WIFI_PASSWORD"
 #endif
 
-// Thinger.io token
-#ifndef THINGER_TOKEN
-    #define THINGER_TOKEN "THINGER_TOKEN"
-#endif
 
 // Environment variables encrypted using Travis CLI
 

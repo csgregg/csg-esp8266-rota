@@ -281,61 +281,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="w3-half">
-                <div class="w3-container w3-padding-notop">
-                    <div id="thinger_box" class="w3-col w3-border w3-light-grey w3-round w3-text-dark-grey w3-padding-horz">
-                        <div class="w3-row w3-padding-vert">
-                            <b>Thinger.io</b>
-                        </div>
-
-                        <div class="w3-row">
-                            <div class="w3-cell w3-padding-8">
-                                <label class="switch">
-                                    <input id="thinger_enabled" type="checkbox" value="t" onchange="enableElmt('thinger_save','thinger_cancel');">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div class="w3-cell w3-padding-small">Thinger.io Service</div>
-                        </div>  
-
-                        <div class="w3-container w3-padding-horz">
-                            <div class="w3-col" style="line-height: 40px;width:100px;">
-                                User
-                            </div>
-                            <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="thinger_user" class="w3-input w3-border w3-padding-small" type="text" maxlength="31" onchange="enableElmt('thinger_save','thinger_cancel');">
-                            </div>
-                        </div>
-
-                        <div class="w3-container w3-padding-horz">
-                            <div class="w3-col" style="line-height: 40px;width:100px;">
-                                Device
-                            </div>
-                            <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="thinger_device" class="w3-input w3-border w3-padding-small" type="text" maxlength="31" onchange="enableElmt('thinger_save','thinger_cancel');">
-                            </div>
-                        </div>
-
-                        <div class="w3-container w3-padding-horz">
-                            <div class="w3-col" style="line-height: 40px;width:100px;">
-                                Token
-                            </div>
-                            <div class="w3-col w3-padding-small" style="width:150px">
-                                <input id="thinger_token" class="w3-input w3-border w3-padding-small" type="text" maxlength="39" onchange="enableElmt('thinger_save','thinger_cancel');">
-                            </div>
-                        </div>
-                        
-                        <!-- Save / Cancel -->
-                        <div class="w3-container w3-padding-horz w3-margin-top w3-margin-bottom">
-                            <button class="w3-button w3-green w3-padding-small" disabled id="thinger_save" onclick="SureDlg(this);" type="button">Save</button>
-                            <button class="w3-button w3-red w3-padding-small" disabled id="thinger_cancel" onclick="disableElmt('thinger_save','thinger_cancel');doRequestAll();" type="button">Cancel</button>
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-
+            
         </div>
 
         <!-- !FOOTER! -->

@@ -39,7 +39,7 @@ SOFTWARE. */
     // Project Libraries
     #include "WebManager.h"
     #include "Logger.h"
-    #include "ThingManager.h"
+   // #include "ThingManager.h"
     #ifndef UPDATER_DISABLE
         #include "OTAUpdater.h"
     #endif
@@ -80,12 +80,6 @@ SOFTWARE. */
 
             // Logger elements
 
-            EmbAJAXCheckButton thinger_enabled;                         // Check box for enabling the Thinger.io functions
-            EmbAJAXTextInput<THINGER_USER_MAX_LEN> thinger_user;        // Input box for user name
-            EmbAJAXTextInput<THINGER_DEVICE_MAX_LEN> thinger_device;    // Input box for device name
-            EmbAJAXTextInput<THINGER_TOKEN_MAX_LEN> thinger_token;      // Input box for token            
-            EmbAJAXServerFunction thinger_save;                         // Save Thinger settings button
-
             #ifndef UPDATER_DISABLE
                 /// OTA Updater elements
 
@@ -100,7 +94,7 @@ SOFTWARE. */
             #endif
 
             // Array of page elements
-            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 6 + 10 + 5
+            EmbAJAXBase* page_elements[WEB_PAGE_COMMON_ELEMENTS_COUNT + 6 + 10 // + 5
                 #ifndef UPDATER_DISABLE
                     + 8
                 #endif
@@ -125,12 +119,6 @@ SOFTWARE. */
                 &log_tags,
                 &log_level,
                 &log_save,
-
-                &thinger_enabled,
-                &thinger_user,
-                &thinger_device,
-                &thinger_token,
-                &thinger_save, 
 
                 #ifndef UPDATER_DISABLE
                     &ota_mode,
@@ -168,12 +156,6 @@ SOFTWARE. */
                 log_level("log_level",logLevels),
                 log_save("log_save"),
 
-                thinger_enabled("thinger_enabled",""),
-                thinger_user("thinger_user"),
-                thinger_device("thinger_device"),
-                thinger_token("thinger_token"),
-                thinger_save("thinger_save"), 
-
                 #ifndef UPDATER_DISABLE
                     ota_mode("ota_mode",""),
                     ota_url("ota_url"),
@@ -206,9 +188,6 @@ SOFTWARE. */
 
             /** Save the logger settings */
             void ICACHE_FLASH_ATTR SaveLoggerSettings();
-
-            /** Save the Thinger settings */
-            void ICACHE_FLASH_ATTR SaveThingerSettings();
 
             #ifndef UPDATER_DISABLE
                 /** Save OTA Updater settings */
